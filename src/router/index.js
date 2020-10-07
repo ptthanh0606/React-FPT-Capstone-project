@@ -11,7 +11,6 @@ import RedirectRoute from './route/RedirectRoute';
 import Route from './route/Route';
 
 import getPath from './helpers/getPath';
-import getPaths from './helpers/getPaths';
 
 // Prepare route dictionary ----------------------------------------------------
 
@@ -34,15 +33,15 @@ function Router() {
     <Suspense fallback={<div>Loading...</div>}>
       <Switch>
         <Route
-          path={getPaths('home')}
+          path={getPath('home', 1)}
           exact
           component={lazy(() =>
             import('views/Home' /* webpackChunkName: "home" */)
           )}
         />
-        <RedirectRoute path={getPaths('home2')} exact to={getPath('home')} />
+        <RedirectRoute path={getPath('home2', 1)} exact to={getPath('home')} />
         <ConditionalRoute
-          path={getPaths('login')}
+          path={getPath('login', 1)}
           exact
           component={lazy(() =>
             import('views/Login' /* webpackChunkName: "login" */)
