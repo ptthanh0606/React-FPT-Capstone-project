@@ -4,11 +4,11 @@ import { lazy } from 'react';
 
 import { BrowserRouter } from 'react-router-dom';
 
-import ConditionalRoute from './helpers/ConditionalRoute';
-import PrivateRoute from './helpers/PrivateRoute';
-import GuestRoute from './helpers/GuestRoute';
-import RedirectRoute from './helpers/RedirectRoute';
-import Route from './helpers/Route';
+import ConditionalRoute from './route/ConditionalRoute';
+import PrivateRoute from './route/PrivateRoute';
+import GuestRoute from './route/GuestRoute';
+import RedirectRoute from './route/RedirectRoute';
+import Route from './route/Route';
 
 import getPath from './helpers/getPath';
 import getPaths from './helpers/getPaths';

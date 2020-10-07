@@ -1,10 +1,10 @@
 import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Redirect, withRouter } from 'react-router-dom';
 import is from 'utils/is';
 
-import getUrl from './getUrl';
+import getUrl from '../helpers/getUrl';
 
-export default function ConditionalRoute({
+const ConditionalRoute = withRouter(function ({
   condition, // boolean function(props) or boolean
   redirectTo, // string function(props) or string
   redirectData = {}, // object function(props) or object
@@ -80,4 +80,6 @@ export default function ConditionalRoute({
       }
     />
   );
-}
+});
+
+export default ConditionalRoute;
