@@ -4,11 +4,7 @@ import { lazy } from 'react';
 
 import { BrowserRouter } from 'react-router-dom';
 
-import ConditionalRoute from './route/ConditionalRoute';
-import PrivateRoute from './route/PrivateRoute';
-import GuestRoute from './route/GuestRoute';
-import RedirectRoute from './route/RedirectRoute';
-import Route from './route/Route';
+import Route from './route';
 
 import getPath from './helpers/getPath';
 
@@ -32,15 +28,19 @@ function Router() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Switch>
-        <Route
+        <Route.NormalRoute
           path={getPath('home', 1)}
           exact
           component={lazy(() =>
             import('views/Home' /* webpackChunkName: "home" */)
           )}
         />
-        <RedirectRoute path={getPath('home2', 1)} exact to={getPath('home')} />
-        <ConditionalRoute
+        <Route.RedirectRoute
+          path={getPath('home2', 1)}
+          exact
+          to={getPath('home')}
+        />
+        <Route.ConditionalRoute
           path={getPath('login', 1)}
           exact
           component={lazy(() =>
