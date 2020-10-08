@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { HelmetProvider } from 'react-helmet-async';
+import RecoilLogger from 'recoil-logger';
 
 import './index.scss';
 import App from './App';
@@ -42,6 +43,7 @@ function render(Component) {
   return ReactDOM.render(
     <React.StrictMode>
       <Providers>
+        <RecoilLogger />
         <Component />
       </Providers>
     </React.StrictMode>,

@@ -57,6 +57,7 @@
     "react-test-renderer": "^16.13.1",
     "react-window": "^1.8.5",
     "recoil": "^0.0.13",
+    "recoil-logger": "^1.1.1",
     "source-map-explorer": "^2.5.0",
     "yup": "^0.29.3"
   },
