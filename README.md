@@ -30,11 +30,11 @@ Fix style: `yarn fix:style`
 
 ## Production
 
-Build image: `sudo docker build -t react-starter-kit .`
+Build image: `sudo docker build -t front-end .`
 
-Run container: `sudo docker run -dit -p 3000:80 --name react-starter-kit react-starter-kit:latest`
+Run container: `sudo docker run -dit -p 3000:80 --name front-end front-end:latest`
 
-Kill and remove: `(sudo docker kill react-starter-kit || true) && (sudo docker rm react-starter-kit || true)`
+Kill and remove: `(sudo docker kill front-end || true) && (sudo docker rm front-end || true)`
 
 Without docker: `yarn build`, output is located at `/build`
 

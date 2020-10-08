@@ -32,6 +32,6 @@ CMD ["nginx", "-g", "daemon off;"]
 # Expose port
 EXPOSE 80
 
-# sudo docker build -t react-starter-kit .
-# sudo docker run -dit -p 3000:80 --name react-starter-kit react-starter-kit:latest
-# (sudo docker kill react-starter-kit || true) && sudo docker rm react-starter-kit
+# sudo docker build -t front-end .
+# sudo docker run -dit -p 3000:80 --name front-end front-end:latest
+# (sudo docker kill front-end || true) && sudo docker rm front-end
