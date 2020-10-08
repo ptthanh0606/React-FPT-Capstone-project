@@ -11,6 +11,7 @@ export default function RedirectRoute({
     condition: false,
     redirectTo: to,
     reason: reason,
+    component: () => null,
   };
   return <ConditionalRoute {...config} />;
 }

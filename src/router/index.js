@@ -47,7 +47,7 @@ function Router() {
             import('views/Login' /* webpackChunkName: "login" */)
           )}
           condition={props => {
-            return false;
+            return true;
           }}
           reason={"Don't have permission"}
           redirectTo={getPath('home')}

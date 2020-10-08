@@ -1,6 +1,5 @@
 import React from 'react';
 import { Route, Redirect, withRouter } from 'react-router-dom';
-import is from 'utils/is';
 import { isValidElementType } from 'react-is';
 
 import getUrl from '../helpers/getUrl';
