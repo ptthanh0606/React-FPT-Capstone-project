@@ -9,8 +9,7 @@ import getPath from './helpers/getPath';
 
 export const routes = new Map([
   ['home', ['/', '/home']], // name => path (string or array of strings)
-  ['login', '/login'],
-  ['home2', '/home2'],
+  ['auth', '/auth'],
 ]);
 export const inverseRoutes = new Map();
 
@@ -25,32 +24,18 @@ function Router() {
   return (
     <React.Suspense fallback={<div>Loading...</div>}>
       <Switch>
-        <Route.NormalRoute
+        <Route.PrivateRoute
           path={getPath('home', 1)}
           exact
           component={lazy(() =>
             import('views/Home' /* webpackChunkName: "home" */)
           )}
         />
-        <Route.RedirectRoute
-          path={getPath('home2', 1)}
-          exact
-          to={getPath('home')}
-        />
-        <Route.ConditionalRoute
-          path={getPath('login', 1)}
-          exact
+        <Route.GuestRoute
+          path={getPath('auth', 1)}
           component={lazy(() =>
-            import('views/Login' /* webpackChunkName: "login" */)
+            import('views/Auth' /* webpackChunkName: "auth" */)
           )}
-          condition={props => {
-            return true;
-          }}
-          reason={"Don't have permission"}
-          redirectTo={getPath('home')}
-          redirectData={function (props) {
-            console.log(props);
-          }}
         />
         <Route.NormalRoute
           component={lazy(() =>
