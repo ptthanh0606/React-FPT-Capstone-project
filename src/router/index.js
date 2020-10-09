@@ -1,5 +1,5 @@
 import React, { lazy } from 'react';
-import { Switch, BrowserRouter, Route as DefaultRoute } from 'react-router-dom';
+import { Switch, BrowserRouter } from 'react-router-dom';
 
 import Route from './route';
 
@@ -51,6 +51,11 @@ function Router() {
           redirectData={function (props) {
             console.log(props);
           }}
+        />
+        <Route.NormalRoute
+          component={lazy(() =>
+            import('views/errors/NotFound' /* webpackChunkName: "notFound" */)
+          )}
         />
       </Switch>
     </React.Suspense>

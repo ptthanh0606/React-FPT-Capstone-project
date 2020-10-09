@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Oops from 'views/errors/Oops';
+
 export default class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -16,7 +18,7 @@ export default class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
-      return <h1>Something went wrong.</h1>;
+      return <Oops />;
     }
 
     return this.props.children;
