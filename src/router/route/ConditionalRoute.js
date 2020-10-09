@@ -10,6 +10,8 @@ const ConditionalRoute = withRouter(function ({
   redirectData = {}, // object function(props) or object
   reason, // string function(props) or string
   component: Component, // jsx function(props) or jsx
+  children,
+  render,
   ...rest // pass directly to Route https://reacttraining.com/react-router/web/api/Route
 }) {
   if (condition === undefined) {

@@ -1,8 +1,5 @@
-import React, { Suspense } from 'react';
-import { Switch } from 'react-router-dom';
-import { lazy } from 'react';
-
-import { BrowserRouter } from 'react-router-dom';
+import React, { lazy } from 'react';
+import { Switch, BrowserRouter, Route as DefaultRoute } from 'react-router-dom';
 
 import Route from './route';
 
@@ -26,7 +23,7 @@ routes.forEach((value, key) => {
 
 function Router() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <React.Suspense fallback={<div>Loading...</div>}>
       <Switch>
         <Route.NormalRoute
           path={getPath('home', 1)}
@@ -56,7 +53,7 @@ function Router() {
           }}
         />
       </Switch>
-    </Suspense>
+    </React.Suspense>
   );
 }
 

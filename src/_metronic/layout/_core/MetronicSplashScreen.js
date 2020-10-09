@@ -23,7 +23,7 @@ export function MetronicSplashScreenProvider({ children }) {
     if (splashScreen && !visible) {
       timeout = setTimeout(() => {
         splashScreen.classList.add('hidden');
-      }, 3000);
+      }, 2000);
     }
 
     return () => {
