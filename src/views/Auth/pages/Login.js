@@ -3,25 +3,25 @@ import { Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-/*
-  INTL (i18n) docs:
-  https://github.com/formatjs/react-intl/blob/master/docs/Components.md#formattedmessage
-*/
-
-/*
-  Formik+YUP:
-  https://jaredpalmer.com/formik/docs/tutorial#getfieldprops
-*/
+import * as helpers from 'auth/helpers';
 
 const initialValues = {
   email: 'admin@demo.com',
   password: 'demo',
 };
 
-const login = function () {};
+const login = async function (email, password) {
+  if (email !== initialValues.email && password !== initialValues.password)
+    throw new Error(404);
+  else
+    return {
+      accessToken: 'some.random.token',
+      refreshToken: 'some.random.refreshToken',
+      accessTokenExpiresAt: 1702277966,
+    };
+};
 
 function Login(props) {
-  const { intl } = props;
   const [loading, setLoading] = useState(false);
   const LoginSchema = Yup.object().shape({
     email: Yup.string()
@@ -43,12 +43,12 @@ function Login(props) {
     setLoading(false);
   };
 
-  const getInputClasses = fieldname => {
-    if (formik.touched[fieldname] && formik.errors[fieldname]) {
+  const getInputClasses = fieldName => {
+    if (formik.touched[fieldName] && formik.errors[fieldName]) {
       return 'is-invalid';
     }
 
-    if (formik.touched[fieldname] && !formik.errors[fieldname]) {
+    if (formik.touched[fieldName] && !formik.errors[fieldName]) {
       return 'is-valid';
     }
 
@@ -62,18 +62,16 @@ function Login(props) {
       enableLoading();
       setTimeout(() => {
         login(values.email, values.password)
-          .then(({ data: { accessToken } }) => {
+          .then(({ accessToken, refreshToken, accessTokenExpiresAt }) => {
             disableLoading();
-            props.login(accessToken);
+            helpers.setAccessToken(accessToken);
+            helpers.setRefreshToken(refreshToken);
+            helpers.setAccessTokenExpiresAt(accessTokenExpiresAt);
           })
           .catch(() => {
             disableLoading();
             setSubmitting(false);
-            setStatus(
-              intl.formatMessage({
-                id: 'AUTH.VALIDATION.INVALID_LOGIN',
-              })
-            );
+            setStatus('The login detail is incorrect');
           });
       }, 1000);
     },

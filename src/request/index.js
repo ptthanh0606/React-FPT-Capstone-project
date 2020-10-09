@@ -1,6 +1,6 @@
 import axios from 'axios';
-import * as authHelpers from '../auth/helpers';
-import * as auth from '../auth';
+import authHelpers from '../auth/helpers';
+import { refresh } from 'auth';
 
 const config = {
   timeout: 0,
@@ -12,29 +12,29 @@ function defaultHeaders() {
   headers['Content-Type'] = 'application/json';
 
   const access_token = authHelpers.getAccessToken();
-  if (access_token !== null && !authHelpers.tokenIsExpired)
+  if (access_token !== null && !authHelpers.tokenIsExpired())
     headers.Authorization = `Bearer ${access_token}`;
 
   return headers;
 }
 
-export async function request({
+async function request({
   to,
   method = 'GET',
   data = {},
   params = {},
   headers = {},
-  withCredentials = true,
-  custom,
+  ...rest
 }) {
   if (authHelpers.tokenIsAlmostExpired() || !authHelpers.getAccessToken()) {
     if (!authHelpers.getRefreshToken()) authHelpers.clearAuth();
     // refresh token right before request
     else
-      await auth
-        .refresh()
+      await refresh()
         .then(res => {
-          authHelpers.setAuth();
+          authHelpers.setAccessToken(res.data.access_token);
+          authHelpers.setRefreshToken(res.data.refresh_token);
+          authHelpers.setAccessTokenExpiresAt(res.data.expires_at);
         })
         .catch(() => {
           authHelpers.clearAuth();
@@ -48,76 +48,38 @@ export async function request({
     data,
     params,
     config,
-    ...custom,
+    ...rest,
   });
 }
 
-export function Get({ to, data = {}, params = {}, headers = {} }) {
+function Get(props) {
   return request({
-    to,
     method: 'GET',
-    data,
-    params,
-    headers,
+    ...props,
   });
 }
 
-export function Post({ to, data = {}, params = {}, headers = {} }) {
+function Post(props) {
   return request({
-    to,
     method: 'POST',
-    data,
-    params,
-    headers,
+    ...props,
   });
 }
 
-export function Put({ to, data = {}, params = {}, headers = {} }) {
+function Put(props) {
   return request({
-    to,
     method: 'PUT',
-    data,
-    params,
-    headers,
+    ...props,
   });
 }
 
-export function Patch({ to, data = {}, params = {}, headers = {} }) {
+function Delete(props) {
   return request({
-    to,
-    method: 'PATCH',
-    data,
-    params,
-    headers,
-  });
-}
-
-export function Options({ to, data = {}, params = {}, headers = {} }) {
-  return request({
-    to,
-    method: 'OPTIONS',
-    data,
-    params,
-    headers,
-  });
-}
-
-export function Head({ to, data = {}, params = {}, headers = {} }) {
-  return request({
-    to,
-    method: 'HEAD',
-    data,
-    params,
-    headers,
-  });
-}
-
-export function Delete({ to, data = {}, params = {}, headers = {} }) {
-  return request({
-    to,
     method: 'DELETE',
-    data,
-    params,
-    headers,
+    ...props,
   });
 }
+
+export default request;
+
+export { Get, Put, Post, Delete };

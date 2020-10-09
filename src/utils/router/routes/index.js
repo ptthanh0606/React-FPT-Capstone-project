@@ -11,11 +11,3 @@ export {
   RedirectRoute,
   NormalRoute,
 };
-
-export default {
-  ConditionalRoute,
-  PrivateRoute,
-  GuestRoute,
-  RedirectRoute,
-  NormalRoute,
-};
