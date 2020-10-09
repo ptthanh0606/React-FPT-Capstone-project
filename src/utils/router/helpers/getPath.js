@@ -1,4 +1,4 @@
-import { routes } from '..';
+import { routes } from 'App';
 
 export default function getPath(name, many = false) {
   const paths = routes.get(name);

@@ -5,10 +5,9 @@ import { HelmetProvider } from 'react-helmet-async';
 import RecoilLogger from 'recoil-logger';
 
 import './index.scss';
-import App from './App';
+import App, { Provider as RouterProvider } from './App';
 import * as serviceWorker from './serviceWorker';
 
-import { Provider as RouterProvider } from 'router';
 import { Provider as StoreProvider } from 'store';
 
 import ErrorBoundary from 'utils/ErrorBoundary';
