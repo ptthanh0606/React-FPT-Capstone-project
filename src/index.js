@@ -24,7 +24,7 @@ import {
   MetronicLayoutProvider,
   MetronicSplashScreenProvider,
   MetronicSubheaderProvider,
-} from './_metronic/layout';
+} from '_metronic/layout';
 
 const Providers = buildComponentTree([
   // [SomeProvider, { initialState: '' }],
