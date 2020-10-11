@@ -1,6 +1,6 @@
 import helpers from './helpers';
-import AuthSubscriber from './AuthSubscriber';
+import AuthUpdater from './AuthUpdater';
 import constants from './constants';
 import recoil from './recoil';
 
-export { helpers, AuthSubscriber, constants, recoil };
+export { helpers, AuthUpdater, constants, recoil };

@@ -71,21 +71,21 @@ function Login(props) {
             helpers.setAccessToken(accessToken);
             helpers.setRefreshToken(refreshToken);
             helpers.setAccessTokenExpiresAt(accessTokenExpiresAt);
-            // if (props.state?.from)
-            //   setTimeout(
-            //     () =>
-            //       history.push(
-            //         props.state?.from.pathname +
-            //           props.state?.from.search +
-            //           props.state?.from.hash
-            //       ),
-            //     0
-            //   );
-            // else
-            //   setTimeout(
-            //     () => history.push(getPath(constants.LOGIN_REDIRECT_TO)),
-            //     0
-            //   );
+            if (props.state?.from)
+              setTimeout(
+                () =>
+                  history.push(
+                    props.state?.from.pathname +
+                      props.state?.from.search +
+                      props.state?.from.hash
+                  ),
+                0
+              );
+            else
+              setTimeout(
+                () => history.push(getPath(constants.LOGIN_REDIRECT_TO)),
+                0
+              );
           })
           .catch(() => {
             disableLoading();

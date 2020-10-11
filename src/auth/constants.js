@@ -5,7 +5,7 @@ export const LOCAL_STORAGE_KEY = {
 };
 
 export const LOGIN_REDIRECT_TO = 'home';
-export const LOGOUT_REDIRECT_TO = 'home';
+export const LOGOUT_REDIRECT_TO = 'auth';
 
 export default {
   LOCAL_STORAGE_KEY,

@@ -19,7 +19,7 @@ import '_metronic/_assets/plugins/keenthemes-icons/font/ki.css';
 import '_metronic/_assets/plugins/flaticon/flaticon.css';
 import '_metronic/_assets/plugins/flaticon2/flaticon.css';
 
-import AuthSubscriber from 'auth/AuthSubscriber';
+import AuthUpdater from 'auth/AuthUpdater';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import {
@@ -44,7 +44,7 @@ function render(Component) {
     <React.StrictMode>
       <Providers>
         <RecoilLogger />
-        <AuthSubscriber />
+        <AuthUpdater />
         <Component />
       </Providers>
     </React.StrictMode>,

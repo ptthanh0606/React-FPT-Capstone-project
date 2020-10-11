@@ -1,18 +1,19 @@
 import React, { lazy } from 'react';
-import { Switch, BrowserRouter, useHistory } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { Switch, BrowserRouter } from 'react-router-dom';
 
 import * as Route from 'utils/router/routes';
 
 import getPath from 'utils/router/helpers/getPath';
 import { LayoutSplashScreen } from '_metronic/layout/_core/MetronicSplashScreen';
 
-import isAuthenticatedSelector from 'auth/recoil/selectors/isAuthenticated';
+import AuthGuard from 'auth/AuthGuard';
+import { Layout } from '_metronic/layout';
 
 // Prepare route dictionary ----------------------------------------------------
 export const routes = new Map([
-  ['home', ['/', '/home']], // name => path (string or array of strings)
+  ['home', '/'], // name => path (string or array of strings)
   ['auth', '/auth'],
+  ['logout', '/logout'],
 ]);
 export const inverseRoutes = new Map();
 
@@ -23,28 +24,45 @@ routes.forEach((value, key) => {
 
 // End prepare route dictionary ------------------------------------------------
 
+const Private = React.memo(function () {
+  return (
+    <>
+      <AuthGuard />
+      <Layout>
+        <Switch>
+          <Route.NormalRoute
+            path={getPath('home', 1)}
+            exact
+            component={lazy(() =>
+              import('views/Dashboard' /* webpackChunkName: "dashboard" */)
+            )}
+          />
+        </Switch>
+      </Layout>
+    </>
+  );
+});
+
 function App() {
-  // const isAuthenticated = useRecoilValue(isAuthenticatedSelector);
-  // const history = useHistory();
-
-  // React.useEffect(() => {
-  //   if (isAuthenticated === false) history.push('/auth/login');
-  // }, [history, isAuthenticated]);
-
   return (
     <React.Suspense fallback={<LayoutSplashScreen />}>
       <Switch>
         <Route.PrivateRoute
           path={getPath('home', 1)}
           exact
-          component={lazy(() =>
-            import('views/Home' /* webpackChunkName: "home" */)
-          )}
+          component={Private}
         />
         <Route.GuestRoute
           path={getPath('auth', 1)}
           component={lazy(() =>
             import('views/Auth' /* webpackChunkName: "auth" */)
+          )}
+        />
+        <Route.NormalRoute
+          path={getPath('logout')}
+          exact
+          component={lazy(() =>
+            import('views/logout' /* webpackChunkName: "logout" */)
           )}
         />
         <Route.NormalRoute
