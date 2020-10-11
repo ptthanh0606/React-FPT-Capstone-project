@@ -1,10 +1,12 @@
+import { memo } from 'react';
+
 import { useEffect, useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 
 import atom from './recoil';
 import isAuthenticated from './helpers/isAuthenticated';
 
-function AuthSubscriber() {
+const AuthSubscriber = memo(() => {
   const [state, setState] = useRecoilState(atom);
 
   const subscriber = useCallback(
@@ -32,6 +34,6 @@ function AuthSubscriber() {
   }, [subscriber]);
 
   return null;
-}
+});
 
 export default AuthSubscriber;

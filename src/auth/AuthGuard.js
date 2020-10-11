@@ -5,7 +5,7 @@ import { Button } from 'react-bootstrap';
 
 import isAuthenticatedSelector from 'auth/recoil/selectors/isAuthenticated';
 
-const AuthGuard = () => {
+const AuthGuard = React.memo(() => {
   const isAuthenticated = useRecoilValue(isAuthenticatedSelector);
 
   if (isAuthenticated) return null;
@@ -42,6 +42,6 @@ const AuthGuard = () => {
       </div>
     </div>
   );
-};
+});
 
 export default AuthGuard;

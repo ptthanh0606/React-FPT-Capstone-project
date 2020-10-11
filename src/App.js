@@ -24,26 +24,32 @@ routes.forEach((value, key) => {
 
 // End prepare route dictionary ------------------------------------------------
 
-const Private = React.memo(function () {
+const Base = React.memo(function Base() {
+  return (
+    <Switch>
+      <Route.NormalRoute
+        path={getPath('home', 1)}
+        exact
+        component={lazy(() =>
+          import('views/Dashboard' /* webpackChunkName: "dashboard" */)
+        )}
+      />
+    </Switch>
+  );
+});
+
+const Private = React.memo(function Private() {
   return (
     <>
       <AuthGuard />
       <Layout>
-        <Switch>
-          <Route.NormalRoute
-            path={getPath('home', 1)}
-            exact
-            component={lazy(() =>
-              import('views/Dashboard' /* webpackChunkName: "dashboard" */)
-            )}
-          />
-        </Switch>
+        <Base />
       </Layout>
     </>
   );
 });
 
-function App() {
+const App = React.memo(function App() {
   return (
     <React.Suspense fallback={<LayoutSplashScreen />}>
       <Switch>
@@ -73,7 +79,7 @@ function App() {
       </Switch>
     </React.Suspense>
   );
-}
+});
 
 export default App;
 
