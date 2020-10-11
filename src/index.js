@@ -15,9 +15,9 @@ import buildComponentTree from 'utils/buildComponentTree';
 
 import 'react-app-polyfill/ie11';
 import 'react-app-polyfill/stable';
-import './_metronic/_assets/plugins/keenthemes-icons/font/ki.css';
-import './_metronic/_assets/plugins/flaticon/flaticon.css';
-import './_metronic/_assets/plugins/flaticon2/flaticon.css';
+import '_metronic/_assets/plugins/keenthemes-icons/font/ki.css';
+import '_metronic/_assets/plugins/flaticon/flaticon.css';
+import '_metronic/_assets/plugins/flaticon2/flaticon.css';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import {

@@ -6,7 +6,7 @@ import * as Route from 'utils/router/routes';
 import AuthSubscriber from 'auth/AuthSubscriber';
 
 import getPath from 'utils/router/helpers/getPath';
-// import { LayoutSplashScreen } from '_metronic/layout';
+import { LayoutSplashScreen } from '_metronic/layout/_core/MetronicSplashScreen';
 
 // import isAuthenticatedSelector from 'auth/recoil/selectors/isAuthenticated';
 
@@ -30,8 +30,7 @@ function App() {
   return (
     <>
       <AuthSubscriber />
-      <React.Suspense fallback={<>Loading...</>}>
-        {/* <React.Suspense fallback={<LayoutSplashScreen />}> */}
+      <React.Suspense fallback={<LayoutSplashScreen />}>
         <Switch>
           <Route.PrivateRoute
             path={getPath('home', 1)}
