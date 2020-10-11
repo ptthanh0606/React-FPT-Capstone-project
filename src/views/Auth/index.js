@@ -6,7 +6,7 @@ import Registration from './pages/Registration';
 import ForgotPassword from './pages/ForgotPassword';
 import '_metronic/_assets/sass/pages/login/classic/login-1.scss';
 
-export default function AuthPage() {
+export default function Auth(props) {
   return (
     <>
       <div className="d-flex flex-column flex-root">
@@ -72,7 +72,12 @@ export default function AuthPage() {
             </div>
             <div className="d-flex flex-column-fluid flex-center mt-30 mt-lg-0">
               <Switch>
-                <ContentRoute path="/auth/login" component={Login} />
+                <ContentRoute
+                  path="/auth/login"
+                  render={renderProps => (
+                    <Login {...renderProps} state={props.location.state} />
+                  )}
+                />
                 <ContentRoute
                   path="/auth/registration"
                   component={Registration}
@@ -81,8 +86,9 @@ export default function AuthPage() {
                   path="/auth/forgot-password"
                   component={ForgotPassword}
                 />
-                <Redirect from="/auth" exact={true} to="/auth/login" />
-                <Redirect to="/auth/login" />
+                <Redirect
+                  to={{ pathname: '/auth/login', state: props.location.state }}
+                />
               </Switch>
             </div>
             <div className="d-flex d-lg-none flex-column-auto flex-column flex-sm-row justify-content-between align-items-center mt-5 p-5">

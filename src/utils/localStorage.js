@@ -7,6 +7,14 @@ function generateKey(key) {
 export function clear() {
   if (typeof localStorage !== 'undefined') {
     localStorage.clear();
+    const event = new StorageEvent('localStorage', {
+      key: null,
+      newValue: null,
+      oldValue: null,
+      url: window.location.href,
+      storageArea: localStorage,
+    });
+    window.dispatchEvent(event);
   }
 }
 
@@ -18,13 +26,31 @@ export function get(key, defaultValue = null) {
 
 export function set(key, value) {
   if (typeof localStorage !== 'undefined') {
-    localStorage.setItem(generateKey(key), value);
+    const k = generateKey(key);
+    const event = new StorageEvent('localStorage', {
+      key: k,
+      newValue: value,
+      oldValue: localStorage.getItem(k),
+      url: window.location.href,
+      storageArea: localStorage,
+    });
+    localStorage.setItem(k, value);
+    window.dispatchEvent(event);
   }
 }
 
 export function remove(key) {
   if (typeof localStorage !== 'undefined') {
-    localStorage.removeItem(generateKey(key));
+    const k = generateKey(key);
+    const event = new StorageEvent('localStorage', {
+      key: k,
+      newValue: null,
+      oldValue: localStorage.getItem(k),
+      url: window.location.href,
+      storageArea: localStorage,
+    });
+    localStorage.removeItem(k);
+    window.dispatchEvent(event);
   }
 }
 

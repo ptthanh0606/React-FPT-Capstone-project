@@ -24,12 +24,13 @@ async function request({
   data = {},
   params = {},
   headers = {},
+  r = true,
   ...rest
 }) {
   if (authHelpers.tokenIsAlmostExpired() || !authHelpers.getAccessToken()) {
     if (!authHelpers.getRefreshToken()) authHelpers.clearAuth();
     // refresh token right before request
-    else
+    else if (r)
       await refresh()
         .then(res => {
           authHelpers.setAccessToken(res.data.access_token);

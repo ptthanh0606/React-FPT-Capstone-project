@@ -10,6 +10,7 @@ function AuthSubscriber() {
   const subscriber = useCallback(
     function (event) {
       if (event.storageArea === localStorage) {
+        console.log('localStorage updated', isAuthenticated());
         if (state.isAuthenticated !== isAuthenticated())
           setState(state => ({
             ...state,
@@ -22,7 +23,12 @@ function AuthSubscriber() {
 
   useEffect(() => {
     window.addEventListener('storage', subscriber);
-    return () => window.removeEventListener('storage', subscriber);
+    window.addEventListener('localStorage', subscriber);
+
+    return () => {
+      window.removeEventListener('storage', subscriber);
+      window.addEventListener('localStorage', subscriber);
+    };
   }, [subscriber]);
 
   return null;

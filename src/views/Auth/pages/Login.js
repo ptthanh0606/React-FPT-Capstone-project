@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 import * as helpers from 'auth/helpers';
+import constants from 'auth/constants';
+import getPath from 'utils/router/helpers/getPath';
 
 const initialValues = {
   email: 'admin@demo.com',
@@ -11,9 +13,9 @@ const initialValues = {
 };
 
 const login = async function (email, password) {
-  if (email !== initialValues.email && password !== initialValues.password)
+  if (email !== initialValues.email || password !== initialValues.password) {
     throw new Error(404);
-  else
+  } else
     return {
       accessToken: 'some.random.token',
       refreshToken: 'some.random.refreshToken',
@@ -22,7 +24,9 @@ const login = async function (email, password) {
 };
 
 function Login(props) {
+  const history = useHistory();
   const [loading, setLoading] = useState(false);
+
   const LoginSchema = Yup.object().shape({
     email: Yup.string()
       .email('Wrong email format')
@@ -67,6 +71,21 @@ function Login(props) {
             helpers.setAccessToken(accessToken);
             helpers.setRefreshToken(refreshToken);
             helpers.setAccessTokenExpiresAt(accessTokenExpiresAt);
+            // if (props.state?.from)
+            //   setTimeout(
+            //     () =>
+            //       history.push(
+            //         props.state?.from.pathname +
+            //           props.state?.from.search +
+            //           props.state?.from.hash
+            //       ),
+            //     0
+            //   );
+            // else
+            //   setTimeout(
+            //     () => history.push(getPath(constants.LOGIN_REDIRECT_TO)),
+            //     0
+            //   );
           })
           .catch(() => {
             disableLoading();

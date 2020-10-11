@@ -1,14 +1,13 @@
 import React, { lazy } from 'react';
-import { Switch, BrowserRouter } from 'react-router-dom';
-// import { useRecoilValue } from 'recoil';
+import { Switch, BrowserRouter, useHistory } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 
 import * as Route from 'utils/router/routes';
-import AuthSubscriber from 'auth/AuthSubscriber';
 
 import getPath from 'utils/router/helpers/getPath';
 import { LayoutSplashScreen } from '_metronic/layout/_core/MetronicSplashScreen';
 
-// import isAuthenticatedSelector from 'auth/recoil/selectors/isAuthenticated';
+import isAuthenticatedSelector from 'auth/recoil/selectors/isAuthenticated';
 
 // Prepare route dictionary ----------------------------------------------------
 export const routes = new Map([
@@ -26,33 +25,35 @@ routes.forEach((value, key) => {
 
 function App() {
   // const isAuthenticated = useRecoilValue(isAuthenticatedSelector);
+  // const history = useHistory();
+
+  // React.useEffect(() => {
+  //   if (isAuthenticated === false) history.push('/auth/login');
+  // }, [history, isAuthenticated]);
 
   return (
-    <>
-      <AuthSubscriber />
-      <React.Suspense fallback={<LayoutSplashScreen />}>
-        <Switch>
-          <Route.PrivateRoute
-            path={getPath('home', 1)}
-            exact
-            component={lazy(() =>
-              import('views/Home' /* webpackChunkName: "home" */)
-            )}
-          />
-          <Route.GuestRoute
-            path={getPath('auth', 1)}
-            component={lazy(() =>
-              import('views/Auth' /* webpackChunkName: "auth" */)
-            )}
-          />
-          <Route.NormalRoute
-            component={lazy(() =>
-              import('views/errors/NotFound' /* webpackChunkName: "notFound" */)
-            )}
-          />
-        </Switch>
-      </React.Suspense>
-    </>
+    <React.Suspense fallback={<LayoutSplashScreen />}>
+      <Switch>
+        <Route.PrivateRoute
+          path={getPath('home', 1)}
+          exact
+          component={lazy(() =>
+            import('views/Home' /* webpackChunkName: "home" */)
+          )}
+        />
+        <Route.GuestRoute
+          path={getPath('auth', 1)}
+          component={lazy(() =>
+            import('views/Auth' /* webpackChunkName: "auth" */)
+          )}
+        />
+        <Route.NormalRoute
+          component={lazy(() =>
+            import('views/errors/NotFound' /* webpackChunkName: "notFound" */)
+          )}
+        />
+      </Switch>
+    </React.Suspense>
   );
 }
 
