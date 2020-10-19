@@ -16,18 +16,20 @@ const initialValues = {
   password: 'demo',
 };
 
-const login = async function (email, password) {
-  if (email !== initialValues.email || password !== initialValues.password) {
-    throw new Error(404);
-  } else
-    return {
-      accessToken: 'some.random.token',
-      refreshToken: 'some.random.refreshToken',
-      accessTokenExpiresAt: 1702277966,
-    };
+const result = {
+  accessToken: 'some.random.token',
+  refreshToken: 'some.random.refreshToken',
+  accessTokenExpiresAt: 1702277966,
 };
 
-function Login(props) {
+const login = async function ({ email, password, google_token }) {
+  if (google_token) return result;
+  if (email !== initialValues.email || password !== initialValues.password) {
+    throw new Error(404);
+  } else return result;
+};
+
+function Login({ state = {} }) {
   const history = useHistory();
   const [loading, setLoading] = useState(false);
 
@@ -38,8 +40,31 @@ function Login(props) {
   const loginWithGoogle = React.useCallback(() => {
     signIn().then(googleUser => {
       console.log(googleUser.tokenId);
+      login({ google_token: googleUser.tokenId })
+        .then(({ accessToken, refreshToken, accessTokenExpiresAt }) => {
+          disableLoading();
+          helpers.setAccessToken(accessToken);
+          helpers.setRefreshToken(refreshToken);
+          helpers.setAccessTokenExpiresAt(accessTokenExpiresAt);
+          if (state?.from)
+            setTimeout(
+              () =>
+                history.push(
+                  state?.from.pathname + state?.from.search + state?.from.hash
+                ),
+              0
+            );
+          else
+            setTimeout(
+              () => history.push(getPath(constants.LOGIN_REDIRECT_TO)),
+              0
+            );
+        })
+        .catch(() => {
+          // setStatus('The login detail is incorrect');
+        });
     });
-  }, [signIn]);
+  }, [history, state.from, signIn]);
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string()
@@ -79,19 +104,17 @@ function Login(props) {
     onSubmit: (values, { setStatus, setSubmitting }) => {
       enableLoading();
       setTimeout(() => {
-        login(values.email, values.password)
+        login({ email: values.email, password: values.password })
           .then(({ accessToken, refreshToken, accessTokenExpiresAt }) => {
             disableLoading();
             helpers.setAccessToken(accessToken);
             helpers.setRefreshToken(refreshToken);
             helpers.setAccessTokenExpiresAt(accessTokenExpiresAt);
-            if (props.state?.from)
+            if (state?.from)
               setTimeout(
                 () =>
                   history.push(
-                    props.state?.from.pathname +
-                      props.state?.from.search +
-                      props.state?.from.hash
+                    state?.from.pathname + state?.from.search + state?.from.hash
                   ),
                 0
               );
