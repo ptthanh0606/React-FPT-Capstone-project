@@ -209,7 +209,7 @@ function Login({ state = {} }) {
           </button>
         </div>
       </form>
-      <div id="or" class="form-group">
+      <div id="or" className="form-group">
         OR
       </div>
       <div className="form-group d-flex flex-wrap justify-content-between align-items-center">

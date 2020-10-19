@@ -11,17 +11,26 @@ const AuthSubscriber = memo(() => {
 
   const subscriber = useCallback(
     function (event) {
-      if (event.storageArea === localStorage) {
-        console.log('localStorage updated', isAuthenticated());
-        if (state.isAuthenticated !== isAuthenticated())
-          setState(state => ({
-            ...state,
-            isAuthenticated: isAuthenticated(),
-          }));
+      if (
+        event.storageArea === localStorage &&
+        state.isAuthenticated !== isAuthenticated()
+      ) {
+        console.log(
+          'auth status updated from',
+          state.isAuthenticated,
+          'to',
+          isAuthenticated()
+        );
+        setState(state => ({
+          ...state,
+          isAuthenticated: isAuthenticated(),
+        }));
       }
     },
     [setState, state.isAuthenticated]
   );
+
+  useEffect(() => console.log('rerender'));
 
   useEffect(() => {
     window.addEventListener('storage', subscriber);
