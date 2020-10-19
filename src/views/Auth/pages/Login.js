@@ -217,7 +217,7 @@ function Login({ state = {} }) {
           className={`w-100 btn btn-danger font-weight-bold px-9 py-4 my-3`}
           onClick={loginWithGoogle}
         >
-          <i class="fab fa-google mr-4"></i>
+          <i className="fab fa-google mr-4"></i>
           <span>Sign in with Google</span>
         </button>
       </div>
