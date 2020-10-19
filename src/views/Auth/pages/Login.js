@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useGoogleLogin } from 'react-use-googlelogin';
 
 import * as helpers from 'auth/helpers';
 import constants from 'auth/constants';
 import getPath from 'utils/router/helpers/getPath';
+import config from 'config';
+
+import './login.scss';
 
 const initialValues = {
   email: 'admin@demo.com',
@@ -26,6 +30,16 @@ const login = async function (email, password) {
 function Login(props) {
   const history = useHistory();
   const [loading, setLoading] = useState(false);
+
+  const { signIn } = useGoogleLogin({
+    clientId: config.google_oauth_client_id,
+  });
+
+  const loginWithGoogle = React.useCallback(() => {
+    signIn().then(googleUser => {
+      console.log(googleUser.tokenId);
+    });
+  }, [signIn]);
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string()
@@ -172,6 +186,18 @@ function Login(props) {
           </button>
         </div>
       </form>
+      <div id="or" class="form-group">
+        OR
+      </div>
+      <div className="form-group d-flex flex-wrap justify-content-between align-items-center">
+        <button
+          className={`w-100 btn btn-danger font-weight-bold px-9 py-4 my-3`}
+          onClick={loginWithGoogle}
+        >
+          <i class="fab fa-google mr-4"></i>
+          <span>Sign in with Google</span>
+        </button>
+      </div>
     </div>
   );
 }
