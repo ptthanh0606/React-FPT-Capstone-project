@@ -31,8 +31,14 @@ jobs:
       run: |
         yarn install
         yarn lint
-        yarn test --coverage
+        yarn test:coverage
       env:
         CI: true
+    - name: Report test coverage to DeepSource
+      uses: deepsourcelabs/test-coverage-action@master
+      with:
+        key: javascript
+        coverage-file: ./coverage/cobertura-coverage.xml
+        dsn: ${{ secrets.DEEPSOURCE_DSN }}
       
       
