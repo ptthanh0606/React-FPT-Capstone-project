@@ -71,8 +71,10 @@
     "refresh": "rm -rf node_modules && rm -rf yarn.lock && yarn cache clean && yarn",
     "lint:code": "eslint 'src/**/*.{js,jsx,mjs,ts,tsx,json}'",
     "lint:style": "prettier 'src/**/*.{scss,sass,css}'",
+    "lint": "yarn lint:code && yarn lint:style",
     "fix:code": " eslint --fix 'src/**/*.{js,jsx,mjs,ts,tsx,json}'",
     "fix:style": "prettier --write 'src/**/*.{scss,sass,css}'",
+    "fix": "yarn fix:code && yarn fix:style",
     "eject": "react-scripts eject"
   }
 }
