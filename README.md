@@ -1,3 +1,5 @@
+![CD](https://github.com/fptu-cms/front-end/workflows/CD/badge.svg)
+
 # Duy's React Starter Kit
 
 This project was based on [Create React App](https://github.com/facebook/create-react-app). [(3.4.3 (2020-08-12))](https://github.com/facebook/create-react-app/blob/master/CHANGELOG.md)
