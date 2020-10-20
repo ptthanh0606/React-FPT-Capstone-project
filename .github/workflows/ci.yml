@@ -37,6 +37,11 @@ jobs:
         run: |
           curl https://deepsource.io/cli | sh
           ./bin/deepsource report --analyzer test-coverage --key javascript --value-file ./coverage/cobertura-coverage.xml
-
         env:
           DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
+      - name: Report test coverage to Codecov
+        run: |
+          bash <(curl -s https://codecov.io/bash)
+          ./coverage/cobertura-coverage.xml
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
