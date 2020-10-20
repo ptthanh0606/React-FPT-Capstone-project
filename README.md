@@ -1,3 +1,5 @@
+# Capstone Project Management for FPT University (Web App)
+
 ![Uptime Robot ratio (7 days)](https://img.shields.io/uptimerobot/ratio/7/m786179695-ca8baf58c0585a97280c726f)
 ![CI](https://github.com/fptu-cms/front-end/workflows/CI/badge.svg)
 ![CD](https://github.com/fptu-cms/front-end/workflows/CD/badge.svg)
@@ -11,8 +13,6 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/fptu-cms/front-end)
 ![GitHub contributors](https://img.shields.io/github/contributors/fptu-cms/front-end)
 ![GitHub](https://img.shields.io/github/license/fptu-cms/front-end)
-
-# Duy's React Starter Kit
 
 This project was based on [Create React App](https://github.com/facebook/create-react-app). [(3.4.3 (2020-08-12))](https://github.com/facebook/create-react-app/blob/master/CHANGELOG.md)
 
