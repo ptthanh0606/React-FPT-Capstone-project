@@ -13,12 +13,11 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Make .env
-      uses: SpicyPizza/create-envfile@v1
-      with:
-        envkey_REACT_APP_NAME: ${{ secrets.REACT_APP_NAME }}
-        envkey_REACT_APP_GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.REACT_APP_GOOGLE_OAUTH_CLIENT_ID }}
-        file_name: .env
+    - name: Create .env
+      run: |
+        touch .env
+        echo REACT_APP_NAME="https://xxx.execute-api.us-west-2.amazonaws.com" >> .env
+        echo REACT_APP_GOOGLE_OAUTH_CLIENT_ID=${{ secrets.API_KEY }} >> .env
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
     - name: Login to DockerHub
@@ -33,6 +32,6 @@ jobs:
         file: ./Dockerfile
         pull: true
         push: true
-        cache-from: type=registry,ref=${{ secrets.DOCKER_REPO }}:${{ github.ref != 'refs/heads/master' && 'latest' || 'staging' }}
+        cache-from: type=registry,ref=${{ secrets.DOCKER_REPO }}:${{ github.ref == 'refs/heads/master' && 'latest' || 'staging' }}
         cache-to: type=inline
-        tags: ${{ secrets.DOCKER_REPO }}:${{ github.ref != 'refs/heads/master' && 'latest' || 'staging' }}
+        tags: ${{ secrets.DOCKER_REPO }}:${{ github.ref == 'refs/heads/master' && 'latest' || 'staging' }}
