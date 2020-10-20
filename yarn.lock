@@ -1688,10 +1688,10 @@
     "@svgr/plugin-svgo" "^4.3.1"
     loader-utils "^1.2.3"
 
-"@tanem/svg-injector@^8.0.71":
-  version "8.0.71"
-  resolved "https://registry.yarnpkg.com/@tanem/svg-injector/-/svg-injector-8.0.71.tgz#810e1b0de741c774d68722499a4a48fb61dfa9e9"
-  integrity sha512-JOlNQDnhWjWyR9g2P3cYA+CPiBstxS0rLoSFOFtHxavpwwPiQf2JtyqAqMVxgR8XV1USadLrTFUtk4fEq3Pxow==
+"@tanem/svg-injector@^8.0.72":
+  version "8.0.72"
+  resolved "https://registry.yarnpkg.com/@tanem/svg-injector/-/svg-injector-8.0.72.tgz#d9ca8a6950492253c7ed4623ff20c59bc4743730"
+  integrity sha512-xBGrX4JyuboQsP1bbTIaEF1w0I8KlpXHIWfIkg2JXCgsKjrdf8QdI/9MGYeepiHbPL5I8em8hZm/kUcLREeopQ==
   dependencies:
     "@babel/runtime" "^7.11.2"
 
