@@ -1,6 +1,7 @@
 name: CI
 
 on:
+  workflow_dispatch:
   # push:
   #   branches:
   #     - '*'
@@ -14,19 +15,28 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [12.x, 14.x]
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Environment (Node.js ${{ matrix.node-version }})
         uses: actions/setup-node@v2-beta
         with:
           node-version: ${{ matrix.node-version }}
-      - name: yarn install and test
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: node_modules-${{ runner.os }}-node v${{ matrix.node-version }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            node_modules-${{ runner.os }}-node v${{ matrix.node-version }}-
+            node_modules-${{ runner.os }}-node v
+            node_modules-
+      - name: Install dependencies, lint and test
         run: |
           yarn install
           yarn lint
