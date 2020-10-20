@@ -19,18 +19,20 @@ jobs:
       matrix:
         node-version: [12.x, 14.x]
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Environment (Node.js ${{ matrix.node-version }})
         uses: actions/setup-node@v2-beta
         with:
           node-version: ${{ matrix.node-version }}
-      - uses: actions/cache@v2
+      - name: Cache dependencies
+        uses: actions/cache@v2
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-      - name: yarn install and test
+      - name: Install dependencies, lint and test
         run: |
           yarn install
           yarn lint
