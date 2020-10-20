@@ -1,4 +1,5 @@
 ![CD](https://github.com/fptu-cms/front-end/workflows/CD/badge.svg)
+[![DeepSource](https://deepsource.io/gh/fptu-cms/front-end.svg/?label=resolved+issues&show_trend=true)](https://deepsource.io/gh/fptu-cms/front-end/?ref=repository-badge)
 
 # Duy's React Starter Kit
 
