@@ -1,6 +1,7 @@
 name: CI
 
 on:
+  workflow_dispatch:
   # push:
   #   branches:
   #     - '*'
@@ -14,7 +15,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [12.x, 14.x]
@@ -26,6 +26,10 @@ jobs:
         uses: actions/setup-node@v2-beta
         with:
           node-version: ${{ matrix.node-version }}
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
       - name: yarn install and test
         run: |
           yarn install
