@@ -8,7 +8,9 @@ RUN apt-get update && \
   libnss3 \
   libxss1 \
   libasound2 \
-  xvfb
+  xvfb && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/*
 # Create working directory
 WORKDIR /app
 # Copy dependencies
