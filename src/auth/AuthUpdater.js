@@ -30,8 +30,6 @@ const AuthSubscriber = memo(() => {
     [setState, state.isAuthenticated]
   );
 
-  useEffect(() => console.log('rerender'));
-
   useEffect(() => {
     window.addEventListener('storage', subscriber);
     window.addEventListener('localStorage', subscriber);
