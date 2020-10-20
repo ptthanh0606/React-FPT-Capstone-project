@@ -31,7 +31,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          key: node_modules-${{ runner.os }}-node v${{ matrix.node-version }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            node_modules-${{ runner.os }}-node v${{ matrix.node-version }}-
+            node_modules-${{ runner.os }}-node v
+            node_modules-
       - name: Install dependencies, lint and test
         run: |
           yarn install
