@@ -3,41 +3,37 @@ name: CI
 on:
   push:
     branches:
-    - '*'
-    - '!develop'
-    - '!master'
+      - '*'
+      - '!develop'
+      - '!master'
   pull_request:
     branches:
-    - '*'
-    - '!master'
+      - '*'
+      - '!master'
 
 jobs:
-
   test:
-  
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         node-version: [10.x, 12.x, 14.x]
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2-beta
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: yarn install and test
-      run: |
-        yarn install
-        yarn lint
-        yarn test:coverage
-      env:
-        CI: true
-    - name: Report test coverage to DeepSource
-      uses: deepsourcelabs/test-coverage-action@master
-      with:
-        key: javascript
-        coverage-file: ./coverage/cobertura-coverage.xml
-        dsn: ${{ secrets.DEEPSOURCE_DSN }}
-      
-      
+      - uses: actions/checkout@v2
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: yarn install and test
+        run: |
+          yarn install
+          yarn lint
+          yarn test:coverage
+        env:
+          CI: true
+      - name: Report test coverage to DeepSource
+        uses: deepsourcelabs/test-coverage-action@master
+        with:
+          key: javascript
+          coverage-file: ./coverage/cobertura-coverage.xml
+          dsn: ${{ secrets.DEEPSOURCE_DSN }}
