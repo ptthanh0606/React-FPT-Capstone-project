@@ -1,6 +1,7 @@
 {
   "name": "front-end",
   "version": "0.1.0",
+  "license": "SEE LICENSE IN LICENSE",
   "private": false,
   "dependencies": {
     "@date-io/date-fns": "^2.10.6",

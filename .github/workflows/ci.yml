@@ -1,11 +1,11 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - '*'
-      - '!develop'
-      - '!master'
+  # push:
+  #   branches:
+  #     - '*'
+  #     - '!develop'
+  #     - '!master'
   pull_request:
     branches:
       - master
@@ -20,6 +20,8 @@ jobs:
         node-version: [12.x, 14.x]
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2-beta
         with:
@@ -32,8 +34,13 @@ jobs:
         env:
           CI: true
       - name: Report test coverage to DeepSource
-        uses: deepsourcelabs/test-coverage-action@master
-        with:
-          key: javascript
-          coverage-file: ./coverage/cobertura-coverage.xml
-          dsn: ${{ secrets.DEEPSOURCE_DSN }}
+        run: |
+          curl https://deepsource.io/cli | sh
+          ./bin/deepsource report --analyzer test-coverage --key javascript --value-file ./coverage/cobertura-coverage.xml
+        env:
+          DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
+      - name: Report test coverage to Codecov
+        run: |
+          bash <(curl -s https://codecov.io/bash)
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
