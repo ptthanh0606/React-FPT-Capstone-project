@@ -1,0 +1,29 @@
+name: CD
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Make .env
+      uses: SpicyPizza/create-envfile@v1
+      with:
+        envkey_REACT_APP_NAME: ${{ secrets.REACT_APP_NAME }}
+        envkey_REACT_APP_GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.REACT_APP_GOOGLE_OAUTH_CLIENT_ID }}
+        file_name: .env
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile -t ${{ secrets.DOCKER_REPO }}:latest
+    - name: Push to Docker Hub
+      uses: docker/build-push-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USER }}
+        password: ${{ secrets.DOCKER_PASS }}
+        repository: ${{ secrets.DOCKER_REPO }}
+        tag_with_ref: true
