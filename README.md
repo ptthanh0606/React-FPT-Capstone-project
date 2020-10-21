@@ -1,4 +1,4 @@
-# Capstone Project Management for FPT University (Web App)
+# Capstone Project Management for FPT University
 
 ![Uptime Robot ratio (7 days)](https://img.shields.io/uptimerobot/ratio/7/m786179695-ca8baf58c0585a97280c726f)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/fptu-cms/front-end/CI?label=test&logo=github)
