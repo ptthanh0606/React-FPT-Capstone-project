@@ -47,7 +47,7 @@
     "react-draggable": "^4.4.3",
     "react-helmet-async": "^1.0.7",
     "react-inlinesvg": "^2.1.1",
-    "react-is": "^16.13.1",
+    "react-is": "^17.0.0",
     "react-perfect-scrollbar": "^1.5.8",
     "react-portal": "^4.2.1",
     "react-router-dom": "^5.2.0",
