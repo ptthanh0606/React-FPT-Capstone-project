@@ -35,21 +35,23 @@ jobs:
           restore-keys: |
             node_modules-${{ runner.os }}-node v${{ matrix.node-version }}-
             node_modules-${{ runner.os }}-node v
-            node_modules-
-      - name: Install dependencies, lint and test
+      - name: Install dependencies
+        run: yarn
+        env:
+          CI: true
+      - name: Lint and test
         run: |
-          yarn install
           yarn lint
           yarn test:coverage
         env:
           CI: true
-      - name: Report test coverage to DeepSource
+      - name: Report test coverage to DeepSource # Migrate to deepsourcelabs/test-coverage-action?
         run: |
           curl https://deepsource.io/cli | sh
           ./bin/deepsource report --analyzer test-coverage --key javascript --value-file ./coverage/cobertura-coverage.xml
         env:
           DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
-      - name: Report test coverage to Codecov
+      - name: Report test coverage to Codecov # Migrate to codecov/codecov-action?
         run: |
           bash <(curl -s https://codecov.io/bash)
         env:

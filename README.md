@@ -8,10 +8,6 @@
 ![Codecov](https://img.shields.io/codecov/c/github/fptu-cms/front-end?logo=codecov&token=VLMIXK11LQ)
 ![Security Headers](https://img.shields.io/security-headers?url=http%3A%2F%2Ffptu-cms.tk)
 ![Package.json version](https://img.shields.io/github/package-json/v/fptu-cms/front-end)
-![Dependencies](https://david-dm.org/fptu-cms/front-end.svg)
-![GitHub top language](https://img.shields.io/github/languages/top/fptu-cms/front-end)
-![GitHub last commit](https://img.shields.io/github/last-commit/fptu-cms/front-end)
-![GitHub contributors](https://img.shields.io/github/contributors/fptu-cms/front-end)
 ![GitHub](https://img.shields.io/github/license/fptu-cms/front-end)
 
 This project was based on [Create React App](https://github.com/facebook/create-react-app). [(3.4.3 (2020-08-12))](https://github.com/facebook/create-react-app/blob/master/CHANGELOG.md)
