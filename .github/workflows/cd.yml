@@ -45,7 +45,6 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          pull: true
           push: true
           # cache-from: type=registry,ref=${{ secrets.DOCKER_REPO }}:${{ github.ref == 'refs/heads/master' && 'latest' || 'staging' }}
           # cache-to: type=inline
