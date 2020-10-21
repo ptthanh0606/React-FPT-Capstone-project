@@ -1,4 +1,4 @@
-FROM node:lts AS develop
+FROM node:12.19.0 AS develop
 # Just in case
 RUN apt-get update && \
   apt-get install -y \
@@ -23,7 +23,7 @@ FROM develop AS build
 COPY . .
 RUN yarn build
 
-FROM nginx:stable-alpine AS production
+FROM nginx:1.18.0-alpine AS production
 # Copy nginx config, project to machine
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/build /app
