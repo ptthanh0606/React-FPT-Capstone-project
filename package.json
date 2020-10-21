@@ -10,7 +10,7 @@
     "@tanem/svg-injector": "^8.0.71",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
+    "@testing-library/user-event": "^12.1.8",
     "apexcharts": "^3.22.0",
     "axios": "^0.20.0",
     "bootstrap": "^4.5.2",
