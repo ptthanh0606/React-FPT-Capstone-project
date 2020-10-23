@@ -1,6 +1,5 @@
 import axios from 'axios';
-import authHelpers from '../auth/helpers';
-import { refresh } from 'auth';
+import { helpers as authHelpers } from 'auth';
 
 const config = {
   timeout: 0,
@@ -30,16 +29,16 @@ async function request({
   if (authHelpers.tokenIsAlmostExpired() || !authHelpers.getAccessToken()) {
     if (!authHelpers.getRefreshToken()) authHelpers.clearAuth();
     // refresh token right before request
-    else if (r)
-      await refresh()
-        .then(res => {
-          authHelpers.setAccessToken(res.data.access_token);
-          authHelpers.setRefreshToken(res.data.refresh_token);
-          authHelpers.setAccessTokenExpiresAt(res.data.expires_at);
-        })
-        .catch(() => {
-          authHelpers.clearAuth();
-        });
+    // else if (r)
+    //   await refresh()
+    //     .then(res => {
+    //       authHelpers.setAccessToken(res.data.access_token);
+    //       authHelpers.setRefreshToken(res.data.refresh_token);
+    //       authHelpers.setAccessTokenExpiresAt(res.data.expires_at);
+    //     })
+    //     .catch(() => {
+    //       authHelpers.clearAuth();
+    //     });
   }
 
   return axios({
