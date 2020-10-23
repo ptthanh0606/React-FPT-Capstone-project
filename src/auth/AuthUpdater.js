@@ -15,12 +15,6 @@ const AuthSubscriber = memo(() => {
         event.storageArea === localStorage &&
         state.isAuthenticated !== isAuthenticated()
       ) {
-        console.log(
-          'auth status updated from',
-          state.isAuthenticated,
-          'to',
-          isAuthenticated()
-        );
         setState(state => ({
           ...state,
           isAuthenticated: isAuthenticated(),
