@@ -7,13 +7,10 @@ import { useGoogleLogin } from 'react-use-googlelogin';
 import * as helpers from 'auth/helpers';
 import constants from 'auth/constants';
 import config from 'config';
+import request from 'utils/request';
+import { LOGIN } from 'endpoints';
 
 import './login.scss';
-
-const initialValues = {
-  email: 'admin@demo.com',
-  password: 'demo',
-};
 
 const result = {
   accessToken: 'some.random.token',
@@ -21,16 +18,37 @@ const result = {
   accessTokenExpiresAt: 1702277966,
 };
 
+const initialValues = {
+  email: '',
+  password: '',
+};
+
 const login = async function ({ email, password, google_token }) {
-  if (google_token) return result;
-  if (email !== initialValues.email || password !== initialValues.password) {
-    throw new Error(404);
-  } else return result;
+  if (google_token) {
+    return request({
+      to: LOGIN.url,
+      method: LOGIN.method,
+      params: {
+        googleToken: google_token,
+      },
+    })
+      .then(res => {
+        return {
+          ...result,
+          accessToken: res.data.resource.token,
+        };
+      })
+      .catch(({ response }) => {
+        throw new Error(response.data.messages[0]);
+      });
+  }
+  throw new Error(404);
 };
 
 function Login({ state = {} }) {
   const history = useHistory();
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState();
 
   const { signIn } = useGoogleLogin({
     clientId: config.google_oauth_client_id,
@@ -38,7 +56,6 @@ function Login({ state = {} }) {
 
   const loginWithGoogle = React.useCallback(() => {
     signIn().then(googleUser => {
-      console.log(googleUser.tokenId);
       login({ google_token: googleUser.tokenId })
         .then(({ accessToken, refreshToken, accessTokenExpiresAt }) => {
           disableLoading();
@@ -46,20 +63,16 @@ function Login({ state = {} }) {
           helpers.setRefreshToken(refreshToken);
           helpers.setAccessTokenExpiresAt(accessTokenExpiresAt);
           if (state?.from)
-            setTimeout(
-              () =>
-                history.push(
-                  state?.from.pathname + state?.from.search + state?.from.hash
-                ),
-              0
+            history.push(
+              state?.from.pathname + state?.from.search + state?.from.hash
             );
-          else setTimeout(() => history.push(constants.LOGIN_REDIRECT_TO), 0);
+          else history.push(constants.LOGIN_REDIRECT_TO);
         })
-        .catch(() => {
-          // setStatus('The login detail is incorrect');
+        .catch(({ message }) => {
+          setStatus(message);
         });
     });
-  }, [history, state.from, signIn]);
+  }, [history, signIn, state.from]);
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string()
@@ -106,14 +119,10 @@ function Login({ state = {} }) {
             helpers.setRefreshToken(refreshToken);
             helpers.setAccessTokenExpiresAt(accessTokenExpiresAt);
             if (state?.from)
-              setTimeout(
-                () =>
-                  history.push(
-                    state?.from.pathname + state?.from.search + state?.from.hash
-                  ),
-                0
+              history.push(
+                state?.from.pathname + state?.from.search + state?.from.hash
               );
-            else setTimeout(() => history.push(constants.LOGIN_REDIRECT_TO), 0);
+            else history.push(constants.LOGIN_REDIRECT_TO);
           })
           .catch(() => {
             disableLoading();
@@ -136,9 +145,11 @@ function Login({ state = {} }) {
         onSubmit={formik.handleSubmit}
         className="form fv-plugins-bootstrap fv-plugins-framework"
       >
-        {formik.status ? (
+        {formik.status || status ? (
           <div className="mb-10 alert alert-custom alert-light-danger alert-dismissible">
-            <div className="alert-text font-weight-bold">{formik.status}</div>
+            <div className="alert-text font-weight-bold">
+              {formik.status || status}
+            </div>
           </div>
         ) : (
           <div className="mb-10 alert alert-custom alert-light-info alert-dismissible">
@@ -160,7 +171,10 @@ function Login({ state = {} }) {
             {...formik.getFieldProps('email')}
           />
           {formik.touched.email && formik.errors.email ? (
-            <div className="fv-plugins-message-container">
+            <div
+              className="fv-plugins-message-container"
+              style={{ marginTop: 5, marginLeft: 10, color: '#f64e60' }}
+            >
               <div className="fv-help-block">{formik.errors.email}</div>
             </div>
           ) : null}
@@ -176,7 +190,10 @@ function Login({ state = {} }) {
             {...formik.getFieldProps('password')}
           />
           {formik.touched.password && formik.errors.password ? (
-            <div className="fv-plugins-message-container">
+            <div
+              className="fv-plugins-message-container"
+              style={{ marginTop: 5, marginLeft: 10, color: '#f64e60' }}
+            >
               <div className="fv-help-block">{formik.errors.password}</div>
             </div>
           ) : null}

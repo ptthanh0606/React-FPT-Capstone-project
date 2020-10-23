@@ -6,7 +6,7 @@ export default function GuestRoute({ ...rest }) {
   const config = {
     ...rest,
     condition: () => !isAuthenticated(),
-    redirectTo: 'home',
+    redirectTo: '/',
     reason: '',
   };
 

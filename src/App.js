@@ -39,20 +39,20 @@ const App = React.memo(function App() {
   return (
     <React.Suspense fallback={<LayoutSplashScreen />}>
       <Switch>
-        <Route.PrivateRoute path="/" exact component={Private} />
         <Route.GuestRoute
-          path={'/auth'}
+          path="/auth"
           component={lazy(() =>
             import('views/Auth' /* webpackChunkName: "auth" */)
           )}
         />
         <Route.NormalRoute
-          path={'/logout'}
+          path="/logout"
           exact
           component={lazy(() =>
             import('views/logout' /* webpackChunkName: "logout" */)
           )}
         />
+        <Route.PrivateRoute path="/" exact component={Private} />
         <Route.NormalRoute
           component={lazy(() =>
             import('views/errors/NotFound' /* webpackChunkName: "notFound" */)
