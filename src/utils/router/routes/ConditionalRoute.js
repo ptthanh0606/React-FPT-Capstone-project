@@ -58,8 +58,8 @@ const ConditionalRoute = withRouter(function ({
     <Route
       {...rest}
       render={props =>
-        (typeof condition === 'function' && condition(props) === true) ||
-        condition === true ? (
+        condition === true ||
+        (typeof condition === 'function' && condition(props) === true) ? (
           <Component {...props} />
         ) : (
           <Redirect
