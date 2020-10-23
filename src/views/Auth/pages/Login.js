@@ -6,7 +6,6 @@ import { useGoogleLogin } from 'react-use-googlelogin';
 
 import * as helpers from 'auth/helpers';
 import constants from 'auth/constants';
-import getPath from 'utils/router/helpers/getPath';
 import config from 'config';
 
 import './login.scss';
@@ -54,11 +53,7 @@ function Login({ state = {} }) {
                 ),
               0
             );
-          else
-            setTimeout(
-              () => history.push(getPath(constants.LOGIN_REDIRECT_TO)),
-              0
-            );
+          else setTimeout(() => history.push(constants.LOGIN_REDIRECT_TO), 0);
         })
         .catch(() => {
           // setStatus('The login detail is incorrect');
@@ -118,11 +113,7 @@ function Login({ state = {} }) {
                   ),
                 0
               );
-            else
-              setTimeout(
-                () => history.push(getPath(constants.LOGIN_REDIRECT_TO)),
-                0
-              );
+            else setTimeout(() => history.push(constants.LOGIN_REDIRECT_TO), 0);
           })
           .catch(() => {
             disableLoading();

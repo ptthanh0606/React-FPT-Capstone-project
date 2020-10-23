@@ -3,24 +3,10 @@ import { Switch, BrowserRouter } from 'react-router-dom';
 
 import * as Route from 'utils/router/routes';
 
-import getPath from 'utils/router/helpers/getPath';
 import { LayoutSplashScreen } from '_metronic/layout/_core/MetronicSplashScreen';
 
 import AuthGuard from 'auth/AuthGuard';
 import { Layout } from '_metronic/layout';
-
-// Prepare route dictionary ----------------------------------------------------
-export const routes = new Map([
-  ['home', '/'], // name => path (string or array of strings)
-  ['auth', '/auth'],
-  ['logout', '/logout'],
-]);
-export const inverseRoutes = new Map();
-
-routes.forEach((value, key) => {
-  if (Array.isArray(value)) for (const i of value) inverseRoutes.set(i, key);
-  else inverseRoutes.set(value, key);
-});
 
 // End prepare route dictionary ------------------------------------------------
 
@@ -28,7 +14,7 @@ const Base = React.memo(function Base() {
   return (
     <Switch>
       <Route.NormalRoute
-        path={getPath('home', 1)}
+        path={'/'}
         exact
         component={lazy(() =>
           import('views/Dashboard' /* webpackChunkName: "dashboard" */)
@@ -53,19 +39,15 @@ const App = React.memo(function App() {
   return (
     <React.Suspense fallback={<LayoutSplashScreen />}>
       <Switch>
-        <Route.PrivateRoute
-          path={getPath('home', 1)}
-          exact
-          component={Private}
-        />
+        <Route.PrivateRoute path="/" exact component={Private} />
         <Route.GuestRoute
-          path={getPath('auth', 1)}
+          path={'/auth'}
           component={lazy(() =>
             import('views/Auth' /* webpackChunkName: "auth" */)
           )}
         />
         <Route.NormalRoute
-          path={getPath('logout')}
+          path={'/logout'}
           exact
           component={lazy(() =>
             import('views/logout' /* webpackChunkName: "logout" */)

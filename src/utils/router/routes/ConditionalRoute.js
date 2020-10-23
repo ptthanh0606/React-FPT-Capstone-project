@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Redirect, withRouter } from 'react-router-dom';
 import { isValidElementType } from 'react-is';
 
-import getUrl from '../helpers/getUrl';
+import getUrl from '../getUrl';
 
 const ConditionalRoute = withRouter(function ({
   condition, // boolean function(props) or boolean

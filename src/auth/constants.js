@@ -4,8 +4,8 @@ export const LOCAL_STORAGE_KEY = {
   REFRESH_TOKEN: 'refresh_token',
 };
 
-export const LOGIN_REDIRECT_TO = 'home';
-export const LOGOUT_REDIRECT_TO = 'auth';
+export const LOGIN_REDIRECT_TO = '/';
+export const LOGOUT_REDIRECT_TO = '/auth';
 
 export default {
   LOCAL_STORAGE_KEY,
