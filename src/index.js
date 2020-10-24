@@ -1,13 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
 import { HelmetProvider } from 'react-helmet-async';
 import RecoilLogger from 'recoil-logger';
+import { useRecoilValue } from 'recoil';
+import { Helmet } from 'react-helmet-async';
+
+import * as meta from 'store/meta';
 
 import './index.scss';
 import App, { Provider as RouterProvider } from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
-import reportWebVitals from './reportWebVitals';
+// import reportWebVitals from './reportWebVitals';
 
 import { Provider as StoreProvider } from 'store';
 
@@ -40,12 +43,22 @@ const Providers = buildComponentTree([
   [ErrorBoundary],
 ]);
 
+const MetaData = function () {
+  const title = useRecoilValue(meta.title);
+  return (
+    <Helmet>
+      <title>{title}</title>
+    </Helmet>
+  );
+};
+
 function render(Component) {
   return ReactDOM.render(
     <React.StrictMode>
       <Providers>
         <RecoilLogger />
         <AuthUpdater />
+        <MetaData />
         <Component />
       </Providers>
     </React.StrictMode>,

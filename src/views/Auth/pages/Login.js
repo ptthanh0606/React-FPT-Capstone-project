@@ -3,6 +3,8 @@ import { Link, useHistory } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useGoogleLogin } from 'react-use-googlelogin';
+import { useRecoilState } from 'recoil';
+import { title } from 'store/meta';
 
 import * as helpers from 'auth/helpers';
 import constants from 'auth/constants';
@@ -46,6 +48,13 @@ const login = async function ({ email, password, google_token }) {
 };
 
 function Login({ state = {} }) {
+  const [metaTitle, setMetaTitle] = useRecoilState(title);
+
+  React.useEffect(() => {
+    if (metaTitle !== 'Login') setMetaTitle('Login');
+    setMetaTitle('Login');
+  }, [metaTitle, setMetaTitle]);
+
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState();
@@ -145,20 +154,14 @@ function Login({ state = {} }) {
         onSubmit={formik.handleSubmit}
         className="form fv-plugins-bootstrap fv-plugins-framework"
       >
-        {formik.status || status ? (
-          <div className="mb-10 alert alert-custom alert-light-danger alert-dismissible">
-            <div className="alert-text font-weight-bold">
-              {formik.status || status}
+        {formik.status ||
+          (status && (
+            <div className="mb-10 alert alert-custom alert-light-danger alert-dismissible">
+              <div className="alert-text font-weight-bold">
+                {formik.status || status}
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="mb-10 alert alert-custom alert-light-info alert-dismissible">
-            <div className="alert-text ">
-              Use account <strong>admin@demo.com</strong> and password{' '}
-              <strong>demo</strong> to continue.
-            </div>
-          </div>
-        )}
+          ))}
 
         <div className="form-group fv-plugins-icon-container">
           <input
