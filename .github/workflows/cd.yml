@@ -18,6 +18,7 @@ jobs:
           touch .env
           echo REACT_APP_NAME=${{ secrets.REACT_APP_NAME }} >> .env
           echo REACT_APP_GOOGLE_OAUTH_CLIENT_ID=${{ secrets.REACT_APP_GOOGLE_OAUTH_CLIENT_ID }} >> .env
+          echo REACT_APP_API=${{ github.ref == 'refs/heads/master' && secrets.REACT_APP_API || secrets.REACT_APP_API_DEV }} >> .env
       # - name: Build and push Docker image
       #   uses: docker/build-push-action@v1
       #   with:
