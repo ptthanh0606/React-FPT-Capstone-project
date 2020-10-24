@@ -1,14 +1,14 @@
 module.exports = {
   extends: [
-    "react-app",
-    "plugin:json/recommended",
-    "plugin:prettier/recommended",
-    "prettier/react",
-    "prettier/standard",
-    "prettier/babel",
+    'react-app',
+    'plugin:json/recommended',
+    'plugin:prettier/recommended',
+    'prettier/react',
+    'prettier/standard',
+    'prettier/babel',
     // "prettier/@typescript-eslint"
   ],
-  parser: "babel-eslint",
+  parser: 'babel-eslint',
   // parser: "@typescript-eslint/parser",
   // overrides: [
   //   {
@@ -16,10 +16,17 @@ module.exports = {
   //     parser: "babel-eslint",
   //   },
   // ],
-  rules: {},
+  rules: {
+    'react-hooks/exhaustive-deps': [
+      'warn',
+      {
+        additionalHooks: 'useRecoilCallback',
+      },
+    ],
+  },
   settings: {
-    "react": {
-      "version": "detect"
+    react: {
+      version: 'detect',
     },
   },
   env: {
@@ -34,12 +41,12 @@ module.exports = {
   },
   parserOptions: {
     ecmaVersion: 2020,
-    sourceType: "module",
+    sourceType: 'module',
     ecmaFeatures: {
-      jsx: true
+      jsx: true,
     },
     // project: './tsconfig.json',
     project: './jsconfig.json',
   },
-  globals: {}
-}
+  globals: {},
+};
