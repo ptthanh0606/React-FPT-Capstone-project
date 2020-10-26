@@ -36,7 +36,7 @@ jobs:
             node_modules-${{ runner.os }}-node v${{ matrix.node-version }}-
             node_modules-${{ runner.os }}-node v
       - name: Install dependencies
-        run: yarn
+        run: yarn install --pure-lockfile
         env:
           CI: true
       - name: Lint and test
