@@ -1263,10 +1263,10 @@
   dependencies:
     tslib "^2.0.1"
 
-"@formatjs/intl-pluralrules@^3.5.0":
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/@formatjs/intl-pluralrules/-/intl-pluralrules-3.5.0.tgz#9d75226526112cc1a5356c0b19114524e309a1de"
-  integrity sha512-Q6tiuouWF6RgsHp7qBlW3RBsrfYoBtgFX/1g96CDr/Bcao/39Ph7d/clx/exe0Sbt2m+3KlXz8jiKiQIw1yQNA==
+"@formatjs/intl-pluralrules@^3.5.1":
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/@formatjs/intl-pluralrules/-/intl-pluralrules-3.5.1.tgz#c9322a3831c7212df277580729e72a19fa4c2706"
+  integrity sha512-EMWj2WI/12a6fro1GkgcagW1UesuQxzz0NaVBVogXlmHxYu1EtPDLy+R38GzZfb1wMOWfsZk9fO/XHvOjA70hw==
   dependencies:
     "@formatjs/ecma402-abstract" "^1.2.6"
     tslib "^2.0.1"
