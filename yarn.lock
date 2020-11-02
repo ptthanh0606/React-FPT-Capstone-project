@@ -10815,10 +10815,10 @@ recoil-logger@^1.1.1:
   resolved "https://registry.yarnpkg.com/recoil-logger/-/recoil-logger-1.1.1.tgz#21a9d372f6f30a7dd626f8d91e5cc164b3fded67"
   integrity sha512-JUiIQmcwsjN6hBKc8GHvTtqa3L9ram+z48haXAkIalkjftvjag4B9Ry5l8MgH9Q+HZ9TONqnJgvWKMawdqQrsA==
 
-recoil@^0.0.13:
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/recoil/-/recoil-0.0.13.tgz#23e6d63135c07d8defbd91aaa35dca94ec5c15a6"
-  integrity sha512-2OToaQ8GR//KsdKdaEhMi04QKStLGRpk3qjC58iBpZpUtsByZ4dUy2UJtRcYuhnVlltGZ8HNwcEQRdFOS864SQ==
+recoil@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/recoil/-/recoil-0.1.2.tgz#844c612f535826dbe54c977761a67ded16f6d063"
+  integrity sha512-hIRrHlkmW4yITlBFprVYjVPhzPKYrJKoaDrrJtAtbkMeXfXaa/XE5OlyR10n+rNfnKWNToCKb3Z4fo86IGjkzg==
 
 recursive-readdir@2.2.2:
   version "2.2.2"
