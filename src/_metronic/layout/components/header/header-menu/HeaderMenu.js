@@ -14,7 +14,7 @@ export function HeaderMenu({ layoutProps }) {
   return (
     <div
       id="kt_header_menu"
-      className={`header-menu header-menu-left header-menu-mobile ${layoutProps.ktMenuClasses}`}
+      className={`header-menu header-menu-mobile ${layoutProps.ktMenuClasses}`}
       {...layoutProps.headerMenuAttributes}
     >
       {/*begin::Header Nav*/}

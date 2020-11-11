@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { Dropdown } from 'react-bootstrap';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { toAbsoluteUrl } from '../../../../_helpers';
-import { DropdownItemToggler } from '../../../../_partials/dropdowns';
+import { DropdownTopbarItemToggler } from '../../../../_partials/dropdowns';
 
 const languages = [
   {
@@ -39,34 +39,30 @@ const languages = [
   },
 ];
 
-const lang = 'en';
-const setLanguage = function () {};
-
 export function LanguageSelectorDropdown() {
-  const currentLanguage = languages.find(x => x.lang === lang);
+  const currentLanguage = languages[0];
   return (
     <Dropdown drop="down" alignRight>
       <Dropdown.Toggle
-        as={DropdownItemToggler}
+        as={DropdownTopbarItemToggler}
         id="dropdown-toggle-my-cart"
-        className="mb-2"
       >
         <OverlayTrigger
-          placement="right"
+          placement="bottom"
           overlay={
             <Tooltip id="language-panel-tooltip">Select Language</Tooltip>
           }
         >
-          <div className="btn btn-icon btn-clean btn-lg">
+          <div className="btn btn-icon btn-clean btn-dropdown btn-lg mr-1">
             <img
-              className="w-25px h-25px w-lg-30px h-lg-30px rounded-circle"
+              className="h-25px w-25px rounded"
               src={currentLanguage.flag}
               alt={currentLanguage.name}
             />
           </div>
         </OverlayTrigger>
       </Dropdown.Toggle>
-      <Dropdown.Menu className="dropdown-menu p-0 m-0 dropdown-menu-anim-up dropdown-menu-sm dropdown-menu-left">
+      <Dropdown.Menu className="p-0 m-0 dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround">
         <ul className="navi navi-hover py-4">
           {languages.map(language => (
             <li
@@ -75,11 +71,7 @@ export function LanguageSelectorDropdown() {
                 active: language.lang === currentLanguage.lang,
               })}
             >
-              <a
-                href="#"
-                onClick={() => setLanguage(language.lang)}
-                className="navi-link"
-              >
+              <a href="#" onClick={() => {}} className="navi-link">
                 <span className="symbol symbol-20 mr-3">
                   <img src={language.flag} alt={language.name} />
                 </span>

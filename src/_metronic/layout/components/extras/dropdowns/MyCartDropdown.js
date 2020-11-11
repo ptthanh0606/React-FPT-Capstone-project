@@ -6,7 +6,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import SVG from 'react-inlinesvg';
 import { toAbsoluteUrl } from '../../../../_helpers';
-import { DropdownItemToggler } from '../../../../_partials/dropdowns';
+import { DropdownTopbarItemToggler } from '../../../../_partials/dropdowns';
 
 const perfectScrollbarOptions = {
   wheelSpeed: 2,
@@ -18,21 +18,21 @@ export function MyCartDropdown() {
   return (
     <Dropdown drop="down" alignRight>
       <Dropdown.Toggle
-        as={DropdownItemToggler}
+        as={DropdownTopbarItemToggler}
         id="dropdown-toggle-my-cart-toggle"
       >
         <OverlayTrigger
           placement="left"
           overlay={<Tooltip id="mycart-panel-tooltip">User Cart</Tooltip>}
         >
-          <div className="btn btn-icon btn-hover-transparent-white btn-dropdown btn-lg mr-1">
-            <span className="svg-icon svg-icon-xl">
+          <div className="btn btn-icon btn-clean btn-lg mr-1">
+            <span className="svg-icon svg-icon-xl svg-icon-primary">
               <SVG src={toAbsoluteUrl('/media/svg/icons/Shopping/Cart3.svg')} />
             </span>
           </div>
         </OverlayTrigger>
       </Dropdown.Toggle>
-      <Dropdown.Menu className="dropdown-menu p-0 m-0 dropdown-menu-right dropdown-menu-xl dropdown-menu-anim-up">
+      <Dropdown.Menu className="p-0 m-0 dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-lg">
         <form>
           <div
             className="d-flex align-items-center py-10 px-8 bgi-size-cover bgi-no-repeat rounded-top"

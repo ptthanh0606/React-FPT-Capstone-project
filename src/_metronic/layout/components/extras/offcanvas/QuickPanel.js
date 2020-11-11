@@ -12,7 +12,7 @@ export function QuickPanel() {
   };
 
   return (
-    <div id="kt_quick_panel" className="offcanvas offcanvas-left pt-5 pb-10">
+    <div id="kt_quick_panel" className="offcanvas offcanvas-right pt-5 pb-10">
       <Tab.Container defaultActiveKey={selectedTab}>
         {/*begin::Header*/}
         <div className="offcanvas-header offcanvas-header-navs d-flex align-items-center justify-content-between mb-5">

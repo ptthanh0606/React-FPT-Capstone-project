@@ -1,24 +1,23 @@
 import { toAbsoluteUrl } from '../../_helpers';
 export function getInitLayoutConfig() {
   return {
-    demo: 'demo3',
-    // Javascript Settings
+    demo: 'demo1',
     js: {
       breakpoints: {
-        sm: 576,
-        md: 768,
-        lg: 992,
-        xl: 1200,
-        xxl: 1200,
+        sm: '576',
+        md: '768',
+        lg: '992',
+        xl: '1200',
+        xxl: '1200',
       },
       colors: {
         theme: {
           base: {
             white: '#ffffff',
-            primary: '#1BC5BD',
+            primary: '#6993FF',
             secondary: '#E5EAEE',
             success: '#1BC5BD',
-            info: '#6993FF',
+            info: '#8950FC',
             warning: '#FFA800',
             danger: '#F64E60',
             light: '#F3F6F9',
@@ -26,10 +25,10 @@ export function getInitLayoutConfig() {
           },
           light: {
             white: '#ffffff',
-            primary: '#1BC5BD',
+            primary: '#E1E9FF',
             secondary: '#ECF0F3',
             success: '#C9F7F5',
-            info: '#E1E9FF',
+            info: '#EEE5FF',
             warning: '#FFF4DE',
             danger: '#FFE2E5',
             light: '#F3F6F9',
@@ -61,11 +60,6 @@ export function getInitLayoutConfig() {
       },
       fontFamily: 'Poppins',
     },
-    // Base Settins
-    self: {
-      layout: 'default', // blank/default page mode
-      body: {},
-    },
     // == Page Splash Screen loading
     loader: {
       enabled: true,
@@ -73,10 +67,39 @@ export function getInitLayoutConfig() {
       logo: toAbsoluteUrl('/media/logos/logo-dark-sm.png'),
       message: 'Please wait...',
     },
+    // page toolbar
+    toolbar: {
+      display: true,
+    },
     header: {
       self: {
+        width: 'fluid', // fixed|fluid
+        theme: 'light', // light|dark
         fixed: {
+          desktop: true,
           mobile: true,
+        },
+      },
+      menu: {
+        self: {
+          display: true,
+          layout: 'default', // tab/default
+          'root-arrow': false,
+          'icon-style': 'duotone', // duotone, line, bold, solid
+        },
+        desktop: {
+          arrow: true,
+          toggle: 'click',
+          submenu: {
+            theme: 'light', // light|dark
+            arrow: true,
+          },
+        },
+        mobile: {
+          submenu: {
+            theme: 'dark',
+            accordion: true,
+          },
         },
       },
     },
@@ -84,101 +107,111 @@ export function getInitLayoutConfig() {
       display: true,
       displayDesc: false,
       displayDaterangepicker: true,
-      breadcrumb: {
-        display: true,
-      },
-      layout: 'subheader-v6',
-      fixed: false,
-      width: 'fixed', // fixed/fluid,
+      layout: 'subheader-v1',
+      fixed: true,
+      width: 'fluid', // fixed/fluid,
       clear: false,
-      style: 'transparent', // solid/transparent
+      style: 'solid', // solid/transparent
     },
     content: {
       width: 'fixed', // fluid|fixed
     },
+    brand: {
+      self: {
+        theme: 'dark', // light/dark
+      },
+    },
     aside: {
       self: {
+        theme: 'dark', // light/dark
         display: true,
         fixed: true,
         minimize: {
-          toggle: true,
-          default: false,
+          toggle: true, // allow toggle
+          default: false, // default state
+          hoverable: true, // allow hover
         },
       },
-      secondary: {
-        display: true,
+      footer: {
+        self: {
+          display: true,
+        },
       },
       menu: {
         dropdown: false, // ok
-        scroll: false, // ok
+        scroll: true, // ok
         'icon-style': 'duotone', // duotone, line, bold, solid
         submenu: {
           accordion: true,
+          dropdown: {
+            arrow: true,
+            'hover-timeout': 500, // in milliseconds
+          },
         },
       },
     },
     footer: {
-      width: 'fixed', // fixed|fluid
-      fixed: false,
+      self: {
+        fixed: true,
+        width: 'fluid',
+      },
     },
     extras: {
       search: {
-        display: false,
-        layout: 'offcanvas', // offcanvas, dropdown
+        display: true,
+        layout: 'dropdown', // offcanvas, dropdown
         offcanvas: {
           direction: 'right',
         },
       },
       notifications: {
-        display: false,
-        layout: 'offcanvas', // offcanvas, dropdown
+        display: true,
+        layout: 'dropdown', // offcanvas, dropdown
         dropdown: {
           style: 'dark', // light, dark
         },
         offcanvas: {
-          direction: 'right',
+          directions: 'right',
         },
       },
       'quick-actions': {
         display: true,
-        layout: 'offcanvas', // offcanvas, dropdown,
+        layout: 'dropdown', // offcanvas, dropdown,
         dropdown: {
           style: 'dark', // light, dark
         },
         offcanvas: {
-          direction: 'left',
+          directions: 'right',
         },
-      },
-      cart: {
-        display: false,
-        layout: 'dropdown', // offcanvas, dropdown
-        offcanvas: {
-          direction: 'dark', // ligth, dark
-        },
-      },
-      chat: {
-        display: true,
       },
       user: {
         display: true,
         layout: 'offcanvas', // offcanvas, dropdown
         dropdown: {
-          style: 'light', // light|dark
+          style: 'dark',
         },
         offcanvas: {
-          direction: 'left',
+          directions: 'right',
         },
       },
       languages: {
-        display: false,
+        display: true,
+      },
+      cart: {
+        display: true,
+        dropdown: {
+          style: 'dark', // ligth, dark
+        },
       },
       'quick-panel': {
         display: true,
         offcanvas: {
-          direction: 'left',
+          directions: 'right',
         },
       },
-
+      chat: {
+        display: true,
+      },
       toolbar: {
         display: true,
       },

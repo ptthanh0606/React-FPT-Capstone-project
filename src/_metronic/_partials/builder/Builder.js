@@ -78,7 +78,7 @@ export function Builder() {
                         saveCurrentTab(0);
                       }}
                     >
-                      Mobile Header
+                      Header
                     </a>
                   </li>
                   <li className="nav-item">
@@ -138,7 +138,24 @@ export function Builder() {
                     <div className={`tab-pane ${key === 0 ? 'active' : ''}`}>
                       <div className="form-group row">
                         <label className="col-lg-3 col-form-label text-lg-right">
-                          Fixed Header:
+                          Desktop Fixed Header:
+                        </label>
+                        <div className="col-lg-9 col-xl-4">
+                          <Switch
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            name="header.self.fixed.desktop"
+                            checked={!!get(values, 'header.self.fixed.desktop')}
+                          />
+                          <FormHelperText>
+                            Enable fixed header for mobile mode
+                          </FormHelperText>
+                        </div>
+                      </div>
+
+                      <div className="form-group row">
+                        <label className="col-lg-3 col-form-label text-lg-right">
+                          Mobile Fixed Header:
                         </label>
                         <div className="col-lg-9 col-xl-4">
                           <Switch
@@ -149,6 +166,82 @@ export function Builder() {
                           />
                           <FormHelperText>
                             Enable fixed header for mobile mode
+                          </FormHelperText>
+                        </div>
+                      </div>
+
+                      <div className="form-group row">
+                        <label className="col-lg-3 col-form-label text-lg-right">
+                          Header Width:
+                        </label>
+                        <div className="col-lg-9 col-xl-4">
+                          <select
+                            className="form-control form-control-solid"
+                            name="header.self.width"
+                            onBlur={handleBlur}
+                            value={get(values, 'header.self.width')}
+                            onChange={handleChange}
+                          >
+                            <option value="fluid">Fluid</option>
+                            <option value="fixed">Fixed</option>
+                          </select>
+                          <FormHelperText>
+                            Select header width type
+                          </FormHelperText>
+                        </div>
+                      </div>
+
+                      <div className="form-group row">
+                        <label className="col-lg-3 col-form-label text-lg-right">
+                          Display Header Menu:
+                        </label>
+                        <div className="col-lg-9 col-xl-4">
+                          <Switch
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            name="header.menu.self.display"
+                            checked={!!get(values, 'header.menu.self.display')}
+                          />
+                          <FormHelperText>Display header menu</FormHelperText>
+                        </div>
+                      </div>
+
+                      <div className="form-group row">
+                        <label className="col-lg-3 col-form-label text-lg-right">
+                          Header Menu Layout:
+                        </label>
+                        <div className="col-lg-9 col-xl-4">
+                          <select
+                            className="form-control"
+                            name="header.menu.self.layout"
+                            onBlur={handleBlur}
+                            value={get(values, 'header.menu.self.layout')}
+                            onChange={handleChange}
+                          >
+                            <option value="default">Default</option>
+                            <option value="tab">Tab</option>
+                          </select>
+                          <FormHelperText>
+                            Select header menu layout style
+                          </FormHelperText>
+                        </div>
+                      </div>
+
+                      <div className="form-group row">
+                        <label className="col-lg-3 col-form-label text-lg-right">
+                          Header Menu Arrows:
+                        </label>
+                        <div className="col-lg-9 col-xl-4">
+                          <Switch
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            name="header.menu.self.root-arrow"
+                            checked={
+                              !!get(values, 'header.menu.self.root-arrow')
+                            }
+                          />
+                          <FormHelperText>
+                            Enable header menu root link arrows
                           </FormHelperText>
                         </div>
                       </div>
@@ -254,24 +347,39 @@ export function Builder() {
                     <div className={`tab-pane ${key === 3 ? 'active' : ''}`}>
                       <div className="form-group row">
                         <label className="col-lg-3 col-form-label text-lg-right">
-                          Display Secondary Panel:
+                          Display:
                         </label>
                         <div className="col-lg-9 col-xl-4">
                           <Switch
                             onBlur={handleBlur}
                             onChange={handleChange}
-                            name="aside.secondary.display"
-                            checked={!!get(values, 'aside.secondary.display')}
+                            name="aside.self.display"
+                            checked={!!get(values, 'aside.self.display')}
+                          />
+                          <FormHelperText>Display aside</FormHelperText>
+                        </div>
+                      </div>
+
+                      <div className="form-group row">
+                        <label className="col-lg-3 col-form-label text-lg-right">
+                          Fixed:
+                        </label>
+                        <div className="col-lg-9 col-xl-4">
+                          <Switch
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            name="aside.self.fixed"
+                            checked={!!get(values, 'aside.self.fixed')}
                           />
                           <FormHelperText>
-                            Display aside secondary panel
+                            Set fixed aside layout
                           </FormHelperText>
                         </div>
                       </div>
 
                       <div className="form-group row">
-                        <label className="col-lg-3 col-form-label pt-4 text-lg-right">
-                          Aside Minimize:
+                        <label className="col-lg-3 col-form-label text-lg-right">
+                          Minimize:
                         </label>
                         <div className="col-lg-9 col-xl-4">
                           <Switch
@@ -289,8 +397,27 @@ export function Builder() {
                       </div>
 
                       <div className="form-group row">
-                        <label className="col-lg-3 col-form-label pt-4 text-lg-right">
-                          Aside Default Minimized:
+                        <label className="col-lg-3 col-form-label text-lg-right">
+                          Hoverable:
+                        </label>
+                        <div className="col-lg-9 col-xl-4">
+                          <Switch
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            name="aside.self.minimize.hoverable"
+                            checked={
+                              !!get(values, 'aside.self.minimize.hoverable')
+                            }
+                          />
+                          <FormHelperText>
+                            Expand Minimized Aside on hover
+                          </FormHelperText>
+                        </div>
+                      </div>
+
+                      <div className="form-group row">
+                        <label className="col-lg-3 col-form-label text-lg-right">
+                          Default Minimize:
                         </label>
                         <div className="col-lg-9 col-xl-4">
                           <Switch
@@ -306,11 +433,29 @@ export function Builder() {
                           </FormHelperText>
                         </div>
                       </div>
+
+                      <div className="form-group row">
+                        <label className="col-lg-3 col-form-label pt-4 text-lg-right">
+                          Submenu Toggle:
+                        </label>
+                        <div className="col-lg-9 col-xl-4">
+                          <Switch
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            name="aside.menu.dropdown"
+                            checked={!!get(values, 'aside.menu.dropdown')}
+                          />
+                          <FormHelperText>
+                            Select submenu toggle mode (works only when{' '}
+                            <code>Fixed Mode</code> is disabled)
+                          </FormHelperText>
+                        </div>
+                      </div>
                     </div>
                     <div className={`tab-pane ${key === 4 ? 'active' : ''}`}>
                       <div className="form-group row">
-                        <label className="col-lg-3 col-form-label pt-4 text-lg-right">
-                          Fixed Footer:
+                        <label className="col-lg-3 col-form-label text-lg-right">
+                          Fixed Desktop Footer:
                         </label>
                         <div className="col-lg-9 col-xl-4">
                           <Switch
@@ -319,8 +464,9 @@ export function Builder() {
                             name="footer.fixed"
                             checked={!!get(values, 'footer.fixed')}
                           />
+
                           <FormHelperText>
-                            Set fixed footer for desktop mode only
+                            Set fixed desktop footer
                           </FormHelperText>
                         </div>
                       </div>
@@ -332,9 +478,9 @@ export function Builder() {
                         <div className="col-lg-9 col-xl-4">
                           <select
                             className="form-control form-control-solid"
-                            name="footer.width"
+                            name="footer.self.width"
                             onBlur={handleBlur}
-                            value={get(values, 'footer.width')}
+                            value={get(values, 'footer.self.width')}
                             onChange={handleChange}
                           >
                             <option value="fluid">Fluid</option>

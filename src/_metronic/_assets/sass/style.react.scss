@@ -32,16 +32,20 @@
   'components/quick-search', 'components/scrolltop', 'components/spinner',
   'components/sticky-toolbar', 'components/svg-icon', 'components/svg',
   'components/timeline', 'components/timeline-2', 'components/timeline-3',
-  'components/timeline-4', 'components/timeline-5', 'components/overlay',
-  'components/demo', 'components/wave', 'components/list', 'components/bullet',
-  'components/navi', 'components/ribbon', 'components/toggle';
+  'components/timeline-4', 'components/timeline-5', 'components/timeline-6',
+  'components/overlay', 'components/demo', 'components/wave', 'components/list',
+  'components/bullet', 'components/navi', 'components/ribbon';
 
 // 4: Plugins
-@import 'vendors/plugins/dropzone', 'vendors/plugins/perfect-scrollbar',
-  'vendors/plugins/prismjs', 'vendors/plugins/react-bootstrap-table2';
+@import 'vendors/plugins/formvalidation', 'vendors/plugins/dropzone',
+  'vendors/plugins/perfect-scrollbar', 'vendors/plugins/prismjs',
+  'vendors/plugins/apexcharts';
 
 // 5: Layout
 @import 'layout/init';
+
+// 6: Customizations
+//@import "style.react.custom.scss";
 ////////////////////////////////////////////////////////////////
 ///////////// DO NOT MODIFY ABOVE INCLUDE ORDER ////////////////
 ////////////////////////////////////////////////////////////////

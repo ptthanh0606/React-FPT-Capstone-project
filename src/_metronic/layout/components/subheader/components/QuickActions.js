@@ -4,25 +4,27 @@ import React, { forwardRef } from 'react';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Dropdown from 'react-bootstrap/Dropdown';
 import SVG from 'react-inlinesvg';
-import { toAbsoluteUrl } from '../../../../_helpers';
 import { DropdownMenu1 } from '../../../../_partials/dropdowns';
+import { toAbsoluteUrl } from '../../../../_helpers';
 
 const QuickActionsDropdownToggle = forwardRef((props, ref) => {
   return (
     <a
-      href="#"
       ref={ref}
+      href="#"
       onClick={e => {
         e.preventDefault();
         props.onClick(e);
       }}
       id="kt_subheader_quick_actions"
-      className={`btn btn-fixed-height btn-white btn-hover-primary font-weight-bold px-2 px-lg-5 mr-2`}
+      className="btn btn-sm btn-clean btn-icon"
     >
+      {' '}
       <span className="svg-icon svg-icon-success svg-icon-lg">
-        <SVG src={toAbsoluteUrl('/media/svg/icons/Files/File.svg')} />
+        <span className="svg-icon-success svg-icon-2x">
+          <SVG src={toAbsoluteUrl('/media/svg/icons/Files/File-plus.svg')} />
+        </span>
       </span>
-      {` `}New Report
     </a>
   );
 });
