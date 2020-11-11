@@ -10,27 +10,21 @@ import { Layout } from '_metronic/layout';
 
 // End prepare route dictionary ------------------------------------------------
 
-const Base = React.memo(function Base() {
-  return (
-    <Layout>
-      <Switch>
-        <Route.NormalRoute
-          path={'/'}
-          exact
-          component={lazy(() =>
-            import('views/Dashboard' /* webpackChunkName: "dashboard" */)
-          )}
-        />
-      </Switch>
-    </Layout>
-  );
-});
-
 const Private = React.memo(function Private() {
   return (
     <>
       <AuthGuard />
-      <Base />
+      <Layout>
+        <Switch>
+          <Route.NormalRoute
+            path={'/'}
+            exact
+            component={lazy(() =>
+              import('views/Dashboard' /* webpackChunkName: "dashboard" */)
+            )}
+          />
+        </Switch>
+      </Layout>
     </>
   );
 });
@@ -53,11 +47,6 @@ const App = React.memo(function App() {
           )}
         />
         <Route.PrivateRoute path="/" component={Private} />
-        <Route.NormalRoute
-          component={lazy(() =>
-            import('views/errors/NotFound' /* webpackChunkName: "notFound" */)
-          )}
-        />
       </Switch>
     </React.Suspense>
   );

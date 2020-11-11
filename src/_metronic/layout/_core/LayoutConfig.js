@@ -124,7 +124,7 @@ export function getInitLayoutConfig() {
     aside: {
       self: {
         theme: 'dark', // light/dark
-        display: true,
+        display: false,
         fixed: true,
         minimize: {
           toggle: true, // allow toggle
@@ -158,7 +158,7 @@ export function getInitLayoutConfig() {
     },
     extras: {
       search: {
-        display: true,
+        display: false,
         layout: 'dropdown', // offcanvas, dropdown
         offcanvas: {
           direction: 'right',
@@ -175,7 +175,7 @@ export function getInitLayoutConfig() {
         },
       },
       'quick-actions': {
-        display: true,
+        display: false,
         layout: 'dropdown', // offcanvas, dropdown,
         dropdown: {
           style: 'dark', // light, dark
@@ -195,10 +195,10 @@ export function getInitLayoutConfig() {
         },
       },
       languages: {
-        display: true,
+        display: false,
       },
       cart: {
-        display: true,
+        display: false,
         dropdown: {
           style: 'dark', // ligth, dark
         },
@@ -210,10 +210,10 @@ export function getInitLayoutConfig() {
         },
       },
       chat: {
-        display: true,
+        display: false,
       },
       toolbar: {
-        display: true,
+        display: false,
       },
       scrolltop: {
         display: true,

@@ -5,6 +5,7 @@
 .subheader {
   display: flex;
   align-items: center;
+  z-index: 2;
 
   // Subheader Separator
   .subheader-separator {

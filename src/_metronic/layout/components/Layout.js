@@ -12,7 +12,7 @@ import { SubHeader } from './subheader/SubHeader';
 import { QuickPanel } from './extras/offcanvas/QuickPanel';
 import { QuickUser } from './extras/offcanvas/QuickUser';
 import { ScrollTop } from './extras/ScrollTop';
-import { StickyToolbar } from './extras/StickyToolbar';
+// import { StickyToolbar } from './extras/StickyToolbar';
 
 export function Layout({ children }) {
   const uiService = useHtmlClassService();
@@ -35,50 +35,38 @@ export function Layout({ children }) {
 
   return layoutProps.selfLayout !== 'blank' ? (
     <>
-      {/*begin::Main*/}
       <HeaderMobile />
       <div className="d-flex flex-column flex-root">
-        {/*begin::Page*/}
         <div className="d-flex flex-row flex-column-fluid page">
           {layoutProps.asideDisplay && <Aside />}
-          {/*begin::Wrapper*/}
           <div
             className="d-flex flex-column flex-row-fluid wrapper"
             id="kt_wrapper"
           >
             <Header />
-            {/*begin::Content*/}
             <div
               id="kt_content"
               className={`content ${layoutProps.contentCssClasses} d-flex flex-column flex-column-fluid`}
             >
               {layoutProps.subheaderDisplay && <SubHeader />}
-              {/*begin::Entry*/}
               {!layoutProps.contentExtended && (
                 <div className="d-flex flex-column-fluid">
-                  {/*begin::Container*/}
                   <div className={layoutProps.contentContainerClasses}>
                     {children}
                   </div>
-                  {/*end::Container*/}
                 </div>
               )}
 
               {layoutProps.contentExtended && { children }}
-              {/*end::Entry*/}
             </div>
-            {/*end::Content*/}
             <Footer />
           </div>
-          {/*end::Wrapper*/}
         </div>
-        {/*end::Page*/}
       </div>
       <QuickUser />
       <QuickPanel />
       <ScrollTop />
-      <StickyToolbar />
-      {/*end::Main*/}
+      {/* <StickyToolbar /> */}
       <LayoutInit />
     </>
   ) : (

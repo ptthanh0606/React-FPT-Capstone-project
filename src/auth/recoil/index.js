@@ -8,6 +8,7 @@ const auth = atom({
   key: 'auth',
   default: {
     isAuthenticated: isAuthenticated(),
+    idAdmin: 'false',
   },
 });
 
