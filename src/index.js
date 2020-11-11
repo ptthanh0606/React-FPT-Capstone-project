@@ -4,6 +4,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import RecoilLogger from 'recoil-logger';
 import { useRecoilValue } from 'recoil';
 import { Helmet } from 'react-helmet-async';
+import axios from 'axios';
 
 import * as meta from 'store/meta';
 
@@ -31,6 +32,9 @@ import {
   MetronicSplashScreenProvider,
   MetronicSubheaderProvider,
 } from '_metronic/layout';
+
+import mockAxios from 'utils/request/mocks';
+mockAxios(axios);
 
 const Providers = buildComponentTree([
   // [SomeProvider, { initialState: '' }],

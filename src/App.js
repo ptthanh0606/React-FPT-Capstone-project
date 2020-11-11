@@ -8,8 +8,6 @@ import { LayoutSplashScreen } from '_metronic/layout/_core/MetronicSplashScreen'
 import AuthGuard from 'auth/AuthGuard';
 import { Layout } from '_metronic/layout';
 
-// End prepare route dictionary ------------------------------------------------
-
 const Private = React.memo(function Private() {
   return (
     <>
@@ -17,12 +15,20 @@ const Private = React.memo(function Private() {
       <Layout>
         <Switch>
           <Route.NormalRoute
-            path={'/'}
+            path={'/dashboard'}
             exact
             component={lazy(() =>
               import('views/Dashboard' /* webpackChunkName: "dashboard" */)
             )}
           />
+          <Route.NormalRoute
+            path={'/semester'}
+            exact
+            component={lazy(() =>
+              import('views/Semester' /* webpackChunkName: "semester" */)
+            )}
+          />
+          <Route.RedirectRoute to="/dashboard" />
         </Switch>
       </Layout>
     </>
