@@ -33,8 +33,8 @@ import {
   MetronicSubheaderProvider,
 } from '_metronic/layout';
 
-import mockAxios from 'utils/request/mocks';
-mockAxios(axios);
+// import mockAxios from 'utils/request/mocks';
+// mockAxios(axios);
 
 const Providers = buildComponentTree([
   // [SomeProvider, { initialState: '' }],

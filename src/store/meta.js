@@ -4,6 +4,8 @@ const meta = atom({
   key: 'meta',
   default: {
     title: 'Untitled | Capstone Management System for FPT University',
+    description: '',
+    breadcrumb: [],
   },
 });
 
