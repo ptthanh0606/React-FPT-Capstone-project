@@ -51,7 +51,6 @@ function Login({ state = {} }) {
   const [metaTitle, setMetaTitle] = useRecoilState(title);
 
   React.useEffect(() => {
-    if (metaTitle !== 'Login') setMetaTitle('Login');
     setMetaTitle('Login');
   }, [metaTitle, setMetaTitle]);
 

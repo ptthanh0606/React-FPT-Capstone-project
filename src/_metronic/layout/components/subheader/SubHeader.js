@@ -2,8 +2,6 @@
 import React, { useMemo, useLayoutEffect, useEffect } from 'react';
 import objectPath from 'object-path';
 import { useLocation } from 'react-router-dom';
-import SVG from 'react-inlinesvg';
-import { toAbsoluteUrl } from '../../../_helpers';
 import { QuickActions } from './components/QuickActions';
 import { BreadCrumbs } from './components/BreadCrumbs';
 import {
@@ -20,7 +18,6 @@ export function SubHeader() {
   const layoutProps = useMemo(() => {
     return {
       config: uiService.config,
-      subheaderFixed: objectPath.get(uiService.config, 'subheader.fixed'),
       subheaderMobileToggle: objectPath.get(
         uiService.config,
         'subheader.mobile-toggle'
@@ -55,14 +52,13 @@ export function SubHeader() {
   return (
     <div
       id="kt_subheader"
-      className={`subheader py-3 py-lg-8 ${layoutProps.subheaderCssClasses}`}
+      className={`subheader py-2 py-lg-4   ${layoutProps.subheaderCssClasses}`}
     >
       <div
         className={`${layoutProps.subheaderContainerCssClasses} d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap`}
       >
         {/* Info */}
         <div className="d-flex align-items-center flex-wrap mr-1">
-          {/* begin::Mobile Toggle */}
           {layoutProps.subheaderMobileToggle && (
             <button
               className="burger-icon burger-icon-left mr-4 d-inline-block d-lg-none"
@@ -71,56 +67,41 @@ export function SubHeader() {
               <span />
             </button>
           )}
-          {/* end::Mobile Toggle */}
 
-          {/* begin::Heading */}
           <div className="d-flex align-items-baseline mr-5">
-            {/* begin::Title */}
-            <h2 className="subheader-title text-dark font-weight-bold my-2 mr-3">
-              {subheader.title}
-            </h2>
-            {/* end::Title */}
-
-            <BreadCrumbs items={subheader.breadcrumbs} />
+            <h5 className="text-dark font-weight-bold my-2 mr-5">
+              <>{subheader.title}</>
+              {/*<small></small>*/}
+            </h5>
           </div>
-          {/* end::Heading */}
+
+          <BreadCrumbs items={subheader.breadcrumbs} />
         </div>
-        {/* Info */}
 
         {/* Toolbar */}
         <div className="d-flex align-items-center">
-          <button
-            type="button"
-            className={`btn btn-fixed-height ${
-              layoutProps.subheaderFixed ? 'btn-default' : 'btn-white'
-            } btn-hover-primary font-weight-bold px-2 px-lg-5 mr-2`}
+          <a
+            href="#"
+            className="btn btn-light btn-sm font-weight-bold"
+            id="kt_dashboard_daterangepicker"
+            data-toggle="tooltip"
+            title="Select dashboard daterange"
+            data-placement="left"
           >
-            <span className="svg-icon svg-icon-success svg-icon-lg">
-              <SVG
-                src={toAbsoluteUrl(
-                  '/media/svg/icons/Communication/Add-user.svg'
-                )}
-              />
+            <span
+              className="text-muted font-weight-bold mr-2"
+              id="kt_dashboard_daterangepicker_title"
+            >
+              Today
             </span>
-            {` `}New Member
-          </button>
-
+            <span
+              className="text-primary font-weight-bold"
+              id="kt_dashboard_daterangepicker_date"
+            >
+              Aug 16
+            </span>
+          </a>
           <QuickActions />
-
-          {/* Button */}
-          <button
-            className="btn btn-success btn-icon font-weight-bold"
-            data-toggle="modal"
-            data-target="#kt_chat_modal"
-          >
-            <span className="svg-icon svg-icon-lg">
-              <SVG
-                src={toAbsoluteUrl(
-                  '/media/svg/icons/Communication/Group-chat.svg'
-                )}
-              />
-            </span>
-          </button>
         </div>
       </div>
     </div>

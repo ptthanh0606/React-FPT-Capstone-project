@@ -1,8 +1,9 @@
 /* eslint-disable */
 "use strict";
 
-import KTMenu from "./../../components/menu.js";
 import { KTUtil } from "./../../components/util.js";
+import KTLayoutBrand from "./brand.js";
+import KTMenu from "./../../components/menu.js";
 import KTLayoutAside from "./aside.js";
 
 var KTLayoutAsideMenu = function() {
@@ -12,10 +13,33 @@ var KTLayoutAsideMenu = function() {
 
 	// Initialize
 	var _init = function() {
+		var menuDesktopMode = (KTUtil.attr(_element, 'data-menu-dropdown') === '1' ? 'dropdown' : 'accordion');
+        var scroll;
+
+		if (KTUtil.attr(_element, 'data-menu-scroll') === '1') {
+			scroll = {
+				rememberPosition: true, // remember position on page reload
+				height: function() { // calculate available scrollable area height
+					var height = parseInt(KTUtil.getViewPort().height);
+
+					if (KTUtil.isBreakpointUp('lg')) {
+						height = height - KTLayoutBrand.getHeight();
+					}
+
+					height = height - (parseInt(KTUtil.css(_element, 'marginBottom')) + parseInt(KTUtil.css(_element, 'marginTop')));
+
+					return height;
+				}
+			};
+		}
+
 		_menuObject = new KTMenu(_element, {
+			// Vertical scroll
+			scroll: scroll,
+
 			// Submenu setup
 			submenu: {
-				desktop: 'accordion',
+				desktop: menuDesktopMode,
 				tablet: 'accordion', // menu set to accordion in tablet mode
 				mobile: 'accordion' // menu set to accordion in mobile mode
 			},
@@ -26,7 +50,14 @@ var KTLayoutAsideMenu = function() {
 			}
 		});
 
-		 // Close aside offcanvas panel before page reload On tablet and mobile
+        // Disable menu click if aside is fixed and minimized
+        _menuObject.on('submenuToggle', function(menu) {
+            if (KTLayoutAside.isMinimized() === true  && KTLayoutAside.isHoverable() === false) {
+                return false;
+            }
+        });
+
+        // Close aside offcanvas panel before page reload On tablet and mobile
         _menuObject.on('linkClick', function(menu) {
             if (KTUtil.isBreakpointDown('lg')) { // Tablet and mobile mode
                 KTLayoutAside.getOffcanvas().hide(); // Hide offcanvas after general link click

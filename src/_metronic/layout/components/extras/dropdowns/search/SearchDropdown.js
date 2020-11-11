@@ -6,7 +6,7 @@ import objectPath from 'object-path';
 import { useHtmlClassService } from '../../../../_core/MetronicLayout';
 import { SearchResult } from './SearchResult';
 import { toAbsoluteUrl } from '../../../../../_helpers';
-import { DropdownItemToggler } from '../../../../../_partials/dropdowns';
+import { DropdownTopbarItemToggler } from '../../../../../_partials/dropdowns';
 const fakeData = [
   {
     type: 0,
@@ -170,15 +170,15 @@ export function SearchDropdown() {
           }}
           id="kt_quick_search_toggle"
         >
-          <Dropdown.Toggle as={DropdownItemToggler}>
+          <Dropdown.Toggle as={DropdownTopbarItemToggler}>
             <OverlayTrigger
               placement="bottom"
               overlay={
                 <Tooltip id="search-panel-tooltip">Quick search</Tooltip>
               }
             >
-              <div className="btn btn-icon btn-hover-transparent-white btn-lg btn-dropdown mr-1">
-                <span className="svg-icon svg-icon-xl">
+              <div className="btn btn-icon btn-clean btn-lg btn-dropdown mr-1">
+                <span className="svg-icon svg-icon-xl svg-icon-primary">
                   <SVG
                     src={toAbsoluteUrl('/media/svg/icons/General/Search.svg')}
                   />

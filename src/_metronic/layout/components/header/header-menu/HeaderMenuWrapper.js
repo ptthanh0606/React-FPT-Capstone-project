@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
 import objectPath from 'object-path';
+import { Link } from 'react-router-dom';
+import { toAbsoluteUrl } from '../../../../_helpers';
 import { useHtmlClassService } from '../../../_core/MetronicLayout';
 import { HeaderMenu } from './HeaderMenu';
 
@@ -24,6 +26,13 @@ export function HeaderMenuWrapper() {
         objectPath.get(uiService.config, 'aside.self.display') === false,
     };
   }, [uiService]);
+  const getHeaderLogo = () => {
+    let result = 'logo-light.png';
+    if (layoutProps.headerSelfTheme && layoutProps.headerSelfTheme !== 'dark') {
+      result = 'logo-dark.png';
+    }
+    return toAbsoluteUrl(`/media/logos/${result}`);
+  };
 
   return (
     <>
@@ -32,6 +41,17 @@ export function HeaderMenuWrapper() {
         className="header-menu-wrapper header-menu-wrapper-left"
         id="kt_header_menu_wrapper"
       >
+        {layoutProps.disabledAsideSelfDisplay && (
+          <>
+            {/*begin::Header Logo*/}
+            <div className="header-logo">
+              <Link to="/">
+                <img alt="logo" src={getHeaderLogo()} />
+              </Link>
+            </div>
+            {/*end::Header Logo*/}
+          </>
+        )}
         {/*begin::Header Menu*/}
         <HeaderMenu layoutProps={layoutProps} />
         {/*end::Header Menu*/}

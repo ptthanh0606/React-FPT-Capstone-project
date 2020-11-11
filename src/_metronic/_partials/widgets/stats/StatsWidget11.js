@@ -2,11 +2,9 @@
 import React, { useMemo, useEffect } from 'react';
 import objectPath from 'object-path';
 import ApexCharts from 'apexcharts';
-import SVG from 'react-inlinesvg';
-import { toAbsoluteUrl } from '../../../_helpers';
 import { useHtmlClassService } from '../../../layout';
 
-export function StatsWidget11({ className, symbolShape, baseColor }) {
+export function StatsWidget11({ className }) {
   const uiService = useHtmlClassService();
   const layoutProps = useMemo(() => {
     return {
@@ -24,18 +22,18 @@ export function StatsWidget11({ className, symbolShape, baseColor }) {
       ),
       colorsThemeBaseSuccess: objectPath.get(
         uiService.config,
-        `js.colors.theme.base.${baseColor}`
+        'js.colors.theme.base.success'
       ),
       colorsThemeLightSuccess: objectPath.get(
         uiService.config,
-        `js.colors.theme.light.${baseColor}`
+        'js.colors.theme.light.success'
       ),
       fontFamily: objectPath.get(uiService.config, 'js.fontFamily'),
     };
-  }, [uiService, baseColor]);
+  }, [uiService]);
 
   useEffect(() => {
-    const element = document.getElementById('kt_stats_widget_11_chart');
+    const element = document.getElementById('kt_stats_widget_7_chart');
 
     if (!element) {
       return;
@@ -51,32 +49,27 @@ export function StatsWidget11({ className, symbolShape, baseColor }) {
 
   return (
     <div className={`card card-custom ${className}`}>
-      <div className="card-body p-0">
+      <div className="card-body d-flex flex-column p-0">
         <div className="d-flex align-items-center justify-content-between card-spacer flex-grow-1">
-          <span
-            className={`symbol ${symbolShape} symbol-50 symbol-light-${baseColor} mr-2`}
-          >
-            <span className="symbol-label">
-              <span className={`svg-icon svg-icon-xl svg-icon-${baseColor}`}>
-                <SVG
-                  src={toAbsoluteUrl(
-                    '/media/svg/icons/Layout/Layout-4-blocks.svg'
-                  )}
-                ></SVG>
-              </span>
-            </span>
-          </span>
-          <div className="d-flex flex-column text-right">
-            <span className="text-dark-75 font-weight-bolder font-size-h3">
-              750$
-            </span>
+          <div className="d-flex flex-column mr-2">
+            <a
+              href="#"
+              className="text-dark-75 text-hover-primary font-weight-bolder font-size-h5"
+            >
+              Weekly Sales
+            </a>
             <span className="text-muted font-weight-bold mt-2">
-              Weekly Income
+              Your Weekly Sales Chart
             </span>
           </div>
+          <span className="symbol symbol-light-success symbol-45">
+            <span className="symbol-label font-weight-bolder font-size-h6">
+              +57
+            </span>
+          </span>
         </div>
         <div
-          id="kt_stats_widget_11_chart"
+          id="kt_stats_widget_7_chart"
           className="card-rounded-bottom"
           style={{ height: '150px' }}
         ></div>
@@ -90,7 +83,7 @@ function getChartOption(layoutProps) {
     series: [
       {
         name: 'Net Profit',
-        data: [40, 40, 30, 30, 35, 35, 50],
+        data: [30, 45, 32, 70, 40],
       },
     ],
     chart: {
@@ -124,7 +117,7 @@ function getChartOption(layoutProps) {
       colors: [layoutProps.colorsThemeBaseSuccess],
     },
     xaxis: {
-      categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Aug', 'Sep'],
+      categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
       axisBorder: {
         show: false,
       },
@@ -159,8 +152,6 @@ function getChartOption(layoutProps) {
       },
     },
     yaxis: {
-      min: 0,
-      max: 55,
       labels: {
         show: false,
         style: {

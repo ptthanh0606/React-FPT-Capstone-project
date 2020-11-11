@@ -6,7 +6,7 @@ import { useRecoilState } from 'recoil';
 import atom from './recoil';
 import isAuthenticated from './helpers/isAuthenticated';
 
-const AuthSubscriber = memo(() => {
+const AuthUpdater = memo(() => {
   const [state, setState] = useRecoilState(atom);
 
   const subscriber = useCallback(
@@ -37,4 +37,4 @@ const AuthSubscriber = memo(() => {
   return null;
 });
 
-export default AuthSubscriber;
+export default AuthUpdater;

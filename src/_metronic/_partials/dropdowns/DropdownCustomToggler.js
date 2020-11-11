@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { forwardRef } from 'react';
+import React from 'react';
 
-export const DropdownCustomToggler = forwardRef((props, ref) => {
+export const DropdownCustomToggler = React.forwardRef((props, ref) => {
   return (
     <a
       ref={ref}
