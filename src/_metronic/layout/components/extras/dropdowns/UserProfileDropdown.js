@@ -3,15 +3,14 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
-// import { useSelector } from 'react-redux';
 import objectPath from 'object-path';
 import { useHtmlClassService } from '../../../_core/MetronicLayout';
 import { toAbsoluteUrl } from '../../../../_helpers';
-import { DropdownItemToggler } from '../../../../_partials/dropdowns';
+import { DropdownTopbarItemToggler } from '../../../../_partials/dropdowns';
 
 export function UserProfileDropdown() {
   const user = {
-    fullname: 'Duy Huynh',
+    fullname: 'Huynh Duc Duy',
   };
 
   const uiService = useHtmlClassService();
@@ -26,28 +25,29 @@ export function UserProfileDropdown() {
   return (
     <Dropdown drop="down" alignRight>
       <Dropdown.Toggle
-        as={DropdownItemToggler}
+        as={DropdownTopbarItemToggler}
         id="dropdown-toggle-user-profile"
       >
         <div
           className={
-            'btn btn-icon btn-hover-transparent-white d-flex align-items-center btn-lg px-md-2 w-md-auto'
+            'btn btn-icon w-auto btn-clean d-flex align-items-center btn-lg px-2'
           }
         >
-          <span className="text-white opacity-70 font-weight-bold font-size-base d-none d-md-inline mr-1">
+          <span className="text-muted font-weight-bold font-size-base d-none d-md-inline mr-1">
             Hi,
-          </span>
-          <span className="text-white opacity-90 font-weight-bolder font-size-base d-none d-md-inline mr-4">
+          </span>{' '}
+          )}
+          <span className="text-dark-50 font-weight-bolder font-size-base d-none d-md-inline mr-3">
             {user.fullname}
           </span>
-          <span className="symbol symbol-35">
-            <span className="symbol-label text-white font-size-h5 font-weight-bold bg-white-o-30">
+          <span className="symbol symbol-35 symbol-light-success">
+            <span className="symbol-label font-size-h5 font-weight-bold">
               {user.fullname[0]}
             </span>
           </span>
         </div>
       </Dropdown.Toggle>
-      <Dropdown.Menu className="dropdown-menu p-0 m-0 dropdown-menu-right dropdown-menu-anim-up dropdown-menu-lg p-0">
+      <Dropdown.Menu className="p-0 m-0 dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-xl">
         <>
           {/** ClassName should be 'dropdown-menu p-0 m-0 dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-xl' */}
           {layoutProps.light && (
@@ -101,7 +101,7 @@ export function UserProfileDropdown() {
               <div className="navi-text">
                 <div className="font-weight-bold">My Profile</div>
                 <div className="text-muted">
-                  Account settings and more{` `}
+                  Account settings and more
                   <span className="label label-light-danger label-inline font-weight-bold">
                     update
                   </span>

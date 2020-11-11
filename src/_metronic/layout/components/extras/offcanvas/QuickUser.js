@@ -16,7 +16,10 @@ export function QuickUser() {
   };
 
   return (
-    <div id="kt_quick_user" className="offcanvas offcanvas-left offcanvas p-10">
+    <div
+      id="kt_quick_user"
+      className="offcanvas offcanvas-right offcanvas p-10"
+    >
       <div className="offcanvas-header d-flex align-items-center justify-content-between pb-5">
         <h3 className="font-weight-bold m-0">
           User Profile

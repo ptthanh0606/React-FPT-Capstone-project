@@ -3,6 +3,7 @@
 
 import { KTUtil } from "./../../components/util.js";
 import KTOffcanvas from "./../../components/offcanvas.js";
+import KTLayoutAsideMenu from "./aside-menu.js";
 
 var KTLayoutAside = function() {
     // Private properties
@@ -25,64 +26,63 @@ var KTLayoutAside = function() {
 				state: 'mobile-toggle-active'
 			}
 		});
+
+		// Handle Minimized Aside Hover
+		if (KTUtil.hasClass(_body, 'aside-fixed') && KTUtil.hasClass(_body, 'aside-minimize-hoverable')) {
+			var insideTm;
+			var outsideTm;
+
+            // Handle Aside Hover Mode
+			KTUtil.addEvent(_element, 'mouseenter', function(e) {
+				e.preventDefault();
+
+				if (KTUtil.isBreakpointUp('lg') === false) {
+					return;
+				}
+
+				if (outsideTm) {
+					clearTimeout(outsideTm);
+					outsideTm = null;
+				}
+
+				insideTm = setTimeout(function() {
+					if (KTUtil.hasClass(_body, 'aside-minimize') && KTUtil.isBreakpointUp('lg')) {
+						KTUtil.removeClass(_body, 'aside-minimize');
+
+						// Hover class
+						KTUtil.addClass(_body, 'aside-minimize-hover');
+
+						KTLayoutAsideMenu.getMenu().scrollUpdate();
+						KTLayoutAsideMenu.getMenu().scrollTop();
+					}
+				}, 50);
+			});
+
+			KTUtil.addEvent(_element, 'mouseleave', function(e) {
+				e.preventDefault();
+
+				if (KTUtil.isBreakpointUp('lg') === false) {
+					return;
+				}
+
+				if (insideTm) {
+					clearTimeout(insideTm);
+					insideTm = null;
+				}
+
+				outsideTm = setTimeout(function() {
+				    if (KTUtil.hasClass(_body, 'aside-minimize-hover') && KTUtil.isBreakpointUp('lg')) {
+					    KTUtil.removeClass(_body, 'aside-minimize-hover');
+					    KTUtil.addClass(_body, 'aside-minimize');
+
+						// Hover class
+                        KTLayoutAsideMenu.getMenu().scrollUpdate();
+						KTLayoutAsideMenu.getMenu().scrollTop();
+					}
+				}, 100);
+			});
+		}
 	}
-
-    var _initNav = function() {
-        var asideNav = KTUtil.find(_element, '.aside-primary .aside-nav');
-
-        if (!asideNav) {
-            return;
-        }
-
-        KTUtil.scrollInit(asideNav, {
-            disableForMobile: true,
-            resetHeightOnDestroy: true,
-            handleWindowResize: true,
-            height: function() {
-                var height = parseInt(KTUtil.getViewPort().height);
-                var asideBrand = KTUtil.find(_element, '.aside-primary .aside-brand');
-                var asideFooter = KTUtil.find(_element, '.aside-primary .aside-footer');
-
-                height = height - (parseInt(KTUtil.css(asideBrand, 'height')));
-                height = height - (parseInt(KTUtil.css(asideBrand, 'marginBottom')) + parseInt(KTUtil.css(asideBrand, 'marginTop')));
-
-                height = height - (parseInt(KTUtil.css(asideFooter, 'height')));
-                height = height - (parseInt(KTUtil.css(asideFooter, 'marginBottom')) + parseInt(KTUtil.css(asideFooter, 'marginTop')));
-
-                return height;
-            }
-        });
-    }
-
-    var _initWorkspace = function() {
-        var asideTabs = KTUtil.find(_element, '.aside-primary .aside-nav .nav');
-        var asideWorkspace = KTUtil.find(_element, '.aside-secondary .aside-workspace');
-
-        if (!asideWorkspace) {
-            return;
-        }
-
-        KTUtil.scrollInit(asideWorkspace, {
-            disableForMobile: true,
-            resetHeightOnDestroy: true,
-            handleWindowResize: true,
-            height: function() {
-                var height = parseInt(KTUtil.getViewPort().height);
-                var asideSecondary = KTUtil.find(_element, '.aside-secondary');
-
-                height = height - (parseInt(KTUtil.css(asideWorkspace, 'marginBottom')) + parseInt(KTUtil.css(asideWorkspace, 'marginTop')));
-                height = height - (parseInt(KTUtil.css(asideSecondary, 'paddingBottom')) + parseInt(KTUtil.css(asideSecondary, 'paddingTop')));
-
-                return height;
-            }
-        });
-
-        if (asideTabs) {
-            $(asideTabs).find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                KTUtil.scrollUpdate(asideWorkspace);
-            });
-        }
-    }
 
     // Public methods
 	return {
@@ -96,8 +96,6 @@ var KTLayoutAside = function() {
 
             // Initialize
             _init();
-            _initNav();
-            _initWorkspace();
         },
 
         getElement: function() {
@@ -106,6 +104,18 @@ var KTLayoutAside = function() {
 
         getOffcanvas: function() {
             return _offcanvasObject;
+        },
+
+        isFixed: function() {
+            return KTUtil.hasClass(_body, 'aside-fixed');
+        },
+
+        isMinimized: function() {
+            return (KTUtil.hasClass(_body, 'aside-fixed') && KTUtil.hasClass(_body, 'aside-minimize'));
+        },
+
+        isHoverable: function() {
+            return (KTUtil.hasClass(_body, 'aside-fixed') && KTUtil.hasClass(_body, 'aside-minimize-hoverable'));
         }
 	};
 }();
