@@ -58,7 +58,7 @@ export function getInitLayoutConfig() {
           gray900: '#212121',
         },
       },
-      fontFamily: 'Poppins',
+      fontFamily: 'Noto Sans',
     },
     // == Page Splash Screen loading
     loader: {
@@ -114,7 +114,7 @@ export function getInitLayoutConfig() {
       style: 'solid', // solid/transparent
     },
     content: {
-      width: 'fixed', // fluid|fixed
+      width: 'fluid', // fluid|fixed
     },
     brand: {
       self: {

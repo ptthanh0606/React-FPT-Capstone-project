@@ -1,5 +1,10 @@
 export const CustomerStatusCssClasses = ['danger', 'success', 'info', ''];
-export const CustomerStatusTitles = ['Suspended', 'Active', 'Pending', ''];
+export const CustomerStatusTitles = [
+  'Finished',
+  'In progress',
+  'Preparing',
+  '',
+];
 export const CustomerTypeCssClasses = ['success', 'primary', ''];
 export const CustomerTypeTitles = ['Business', 'Individual', ''];
 export const defaultSorted = [{ dataField: 'id', order: 'asc' }];

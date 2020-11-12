@@ -6,6 +6,7 @@ const meta = atom({
     title: 'Untitled',
     description: '',
     breadcrumb: [],
+    toolbar: null,
   },
 });
 
@@ -20,13 +21,33 @@ export const title = selector({
     })),
 });
 
+export const description = selector({
+  key: 'description',
+  get: ({ get }) => get(meta).description,
+  set: ({ set }, newValue) =>
+    set(meta, state => ({
+      ...state,
+      description: newValue,
+    })),
+});
+
 export const breadcrumb = selector({
   key: 'breadcrumb',
   get: ({ get }) => get(meta).breadcrumb,
   set: ({ set }, newValue) =>
     set(meta, state => ({
       ...state,
-      breadcrumb: breadcrumb,
+      breadcrumb: newValue,
+    })),
+});
+
+export const toolbar = selector({
+  key: 'toolbar',
+  get: ({ get }) => get(meta).toolbar,
+  set: ({ set }, newValue) =>
+    set(meta, state => ({
+      ...state,
+      toolbar: newValue,
     })),
 });
 

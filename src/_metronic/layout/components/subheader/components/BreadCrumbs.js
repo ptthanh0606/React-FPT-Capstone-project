@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export function BreadCrumbs({ items }) {
+export const BreadCrumbs = React.memo(function ({ items }) {
   if (!items || !items.length) {
     return null;
   }
@@ -23,4 +23,4 @@ export function BreadCrumbs({ items }) {
       ))}
     </ul>
   );
-}
+});

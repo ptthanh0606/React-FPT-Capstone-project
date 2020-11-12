@@ -1,6 +1,7 @@
 import React from 'react';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 import SVG from 'react-inlinesvg';
+import { Link } from 'react-router-dom';
 
 const SemesterCard = props => {
   return (
@@ -12,9 +13,11 @@ const SemesterCard = props => {
           src={toAbsoluteUrl('/media/svg/icons/Communication/Dial-numbers.svg')}
         ></SVG>
       </span>
-      <span className="text-white font-weight-bold font-size-h3">
-        {props.title}
-      </span>
+      <Link to={'/semester/' + props.id}>
+        <span className="text-white font-size-h2" style={{ fontWeight: 700 }}>
+          {props.title}
+        </span>
+      </Link>
       <br />
       <span className="text-light font-weight-bold font-size-h6">
         {props.status}

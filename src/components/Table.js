@@ -24,6 +24,7 @@ const Table = React.memo(function ({
   setSortOrder,
   defaultSorted,
   pageSizeList,
+  selectable = false,
 }) {
   const paginationOptions = {
     custom: true,
@@ -55,11 +56,15 @@ const Table = React.memo(function ({
                   setSortField,
                   setSortOrder
                 )}
-                selectRow={getSelectRow({
-                  entities: data,
-                  ids: selected,
-                  setIds: setSelected,
-                })}
+                selectRow={
+                  selectable
+                    ? getSelectRow({
+                        entities: data,
+                        ids: selected,
+                        setIds: setSelected,
+                      })
+                    : undefined
+                }
                 noDataIndication={() => (
                   <div style={{ textAlign: 'center' }} className="mt-5">
                     No records found
