@@ -30,7 +30,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 import {
   MetronicLayoutProvider,
   MetronicSplashScreenProvider,
-  MetronicSubheaderProvider,
 } from '_metronic/layout';
 
 // import mockAxios from 'utils/request/mocks';
@@ -43,7 +42,6 @@ const Providers = buildComponentTree([
   [RouterProvider],
   [MetronicLayoutProvider],
   [MetronicSplashScreenProvider],
-  [MetronicSubheaderProvider],
   [ErrorBoundary],
 ]);
 

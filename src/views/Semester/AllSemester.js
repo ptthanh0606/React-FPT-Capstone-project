@@ -1,5 +1,4 @@
 import React from 'react';
-import { useSetRecoilState } from 'recoil';
 import {
   Card,
   CardBody,
@@ -12,7 +11,6 @@ import Filters from 'views/Semester/SemesterFilters';
 import customers from 'utils/request/mocks/customer/customers';
 import * as columnFormatters from './column-formatters';
 import * as uiHelpers from './uiHelpers';
-import { title } from 'store/meta';
 
 const columns = [
   {
@@ -71,12 +69,6 @@ export default function CustomersCard() {
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
 
-  const setMetaTitle = useSetRecoilState(title);
-
-  React.useEffect(() => {
-    setMetaTitle('Semesters');
-  }, [setMetaTitle]);
-
   React.useEffect(() => {
     setData(customers);
     setTotal(100);
@@ -91,7 +83,7 @@ export default function CustomersCard() {
             className="btn btn-primary"
             // onClick={}
           >
-            New
+            New semester
           </button>
         </CardHeaderToolbar>
       </CardHeader>

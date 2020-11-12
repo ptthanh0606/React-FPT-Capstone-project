@@ -4,19 +4,19 @@ import { Link } from 'react-router-dom';
 
 export function BreadCrumbs({ items }) {
   if (!items || !items.length) {
-    return '';
+    return null;
   }
 
   return (
     <ul className="breadcrumb breadcrumb-transparent breadcrumb-dot font-weight-bold p-0 my-2">
       <li className="breadcrumb-item">
-        <Link to="/dashboard">
+        <Link to="/">
           <i className="flaticon2-shelter text-muted icon-1x" />
         </Link>
       </li>
-      {items.map((item, index) => (
-        <li key={`bc${index}`} className="breadcrumb-item">
-          <Link className="text-muted" to={{ pathname: item.pathname }}>
+      {items.map(item => (
+        <li key={`bc${item.path}`} className="breadcrumb-item">
+          <Link className="text-muted" to={{ pathname: item.path }}>
             {item.title}
           </Link>
         </li>

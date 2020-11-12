@@ -1,4 +1,7 @@
 import React from 'react';
+import { useSetRecoilState } from 'recoil';
+import metaAtom from 'store/meta';
+
 import SemesterCard from './SemesterCard';
 import AllSemester from './AllSemester';
 import ScrollContainer from 'react-indiana-drag-scroll';
@@ -33,9 +36,21 @@ const semesters = [
 ];
 
 export default React.memo(function DashboardPage() {
+  const setMeta = useSetRecoilState(metaAtom);
+
+  React.useEffect(() => {
+    setMeta({
+      title: 'All semesters',
+      breadcrumb: [
+        { title: 'Semester', path: '/semester' },
+        { title: 'All semesters', path: '/semester' },
+      ],
+    });
+  }, [setMeta]);
+
   return (
     <>
-      <h1>Nearest Semesters</h1>
+      <h2>Nearest semesters</h2>
       <ScrollContainer className={styles['semester-scroll']}>
         {semesters.map(s => (
           <SemesterCard {...s} key={s.title} />

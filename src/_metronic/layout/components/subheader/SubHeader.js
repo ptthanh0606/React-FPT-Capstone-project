@@ -1,21 +1,17 @@
 /* eslint-disable no-script-url,jsx-a11y/anchor-is-valid */
-import React, { useMemo, useLayoutEffect, useEffect } from 'react';
+import React from 'react';
+import { useRecoilValue } from 'recoil';
 import objectPath from 'object-path';
-import { useLocation } from 'react-router-dom';
 import { QuickActions } from './components/QuickActions';
 import { BreadCrumbs } from './components/BreadCrumbs';
-import {
-  getBreadcrumbsAndTitle,
-  useSubheader,
-} from '../../_core/MetronicSubheader';
 import { useHtmlClassService } from '../../_core/MetronicLayout';
+import metaAtom from 'store/meta';
 
 export function SubHeader() {
   const uiService = useHtmlClassService();
-  const location = useLocation();
-  const subheader = useSubheader();
+  const { title, breadcrumb } = useRecoilValue(metaAtom);
 
-  const layoutProps = useMemo(() => {
+  const layoutProps = React.useMemo(() => {
     return {
       config: uiService.config,
       subheaderMobileToggle: objectPath.get(
@@ -29,25 +25,6 @@ export function SubHeader() {
       ),
     };
   }, [uiService]);
-
-  useLayoutEffect(() => {
-    const aside = getBreadcrumbsAndTitle('kt_aside_menu', location.pathname);
-    const header = getBreadcrumbsAndTitle('kt_header_menu', location.pathname);
-    const breadcrumbs =
-      aside && aside.breadcrumbs.length > 0
-        ? aside.breadcrumbs
-        : header.breadcrumbs;
-    subheader.setBreadcrumbs(breadcrumbs);
-    subheader.setTitle(
-      aside && aside.title && aside.title.length > 0
-        ? aside.title
-        : header.title
-    );
-    // eslint-disable-next-line
-  }, [location.pathname]);
-
-  // Do not remove this useEffect, need from update title/breadcrumbs outside (from the page)
-  useEffect(() => {}, [subheader]);
 
   return (
     <div
@@ -70,11 +47,11 @@ export function SubHeader() {
 
           <div className="d-flex align-items-baseline mr-5">
             <h5 className="text-dark font-weight-bold my-2 mr-5">
-              <>{subheader.title}</>
+              <>{title}</>
             </h5>
           </div>
 
-          <BreadCrumbs items={subheader.breadcrumbs} />
+          <BreadCrumbs items={breadcrumb} />
         </div>
 
         {/* Toolbar */}
