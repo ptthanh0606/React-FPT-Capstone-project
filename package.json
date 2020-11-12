@@ -5,7 +5,7 @@
   "private": false,
   "dependencies": {
     "@date-io/date-fns": "^2.10.6",
-    "@formatjs/intl-pluralrules": "^3.5.1",
+    "@formatjs/intl-pluralrules": "^3.5.5",
     "@material-ui/core": "^4.11.0",
     "@tanem/svg-injector": "^8.1.0",
     "@testing-library/jest-dom": "^5.11.5",
