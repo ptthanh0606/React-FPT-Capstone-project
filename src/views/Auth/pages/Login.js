@@ -3,7 +3,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useGoogleLogin } from 'react-use-googlelogin';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { title } from 'store/meta';
 
 import * as helpers from 'auth/helpers';
@@ -48,11 +48,11 @@ const login = async function ({ email, password, google_token }) {
 };
 
 function Login({ state = {} }) {
-  const [metaTitle, setMetaTitle] = useRecoilState(title);
+  const setMetaTitle = useSetRecoilState(title);
 
   React.useEffect(() => {
     setMetaTitle('Login');
-  }, [metaTitle, setMetaTitle]);
+  }, [setMetaTitle]);
 
   const history = useHistory();
   const [loading, setLoading] = useState(false);

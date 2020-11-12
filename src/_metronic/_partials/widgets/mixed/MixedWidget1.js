@@ -5,7 +5,7 @@ import SVG from 'react-inlinesvg';
 import objectPath from 'object-path';
 import ApexCharts from 'apexcharts';
 import { Dropdown } from 'react-bootstrap';
-import { toAbsoluteUrl } from '../../../_helpers';
+import { toAbsoluteUrl } from '_metronic/_helpers';
 import { useHtmlClassService } from '../../../layout';
 import { DropdownMenu2 } from '../../dropdowns';
 

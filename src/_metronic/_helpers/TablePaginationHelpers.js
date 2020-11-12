@@ -1,5 +1,4 @@
-/* Pagination Helprs */
-import React from 'react';
+/* Pagination Helpers */
 
 export const getPagesCount = (totalSize, sizePerPage) => {
   return Math.ceil(totalSize / sizePerPage);
@@ -81,30 +80,21 @@ export const getPages = (page, pagesCount, paginationSize) => {
   return result;
 };
 
-export function getHandlerTableChange(setQueryParams) {
+export function getHandlerTableChange(
+  setPage,
+  setPageSize,
+  setSortField,
+  setSortOrder
+) {
   return (type, { page, sizePerPage, sortField, sortOrder, data }) => {
     const pageNumber = page || 1;
-    setQueryParams(prev =>
-      type === 'sort'
-        ? { ...prev, sortOrder, sortField }
-        : type === 'pagination'
-        ? { ...prev, pageNumber, pageSize: sizePerPage }
-        : prev
-    );
+
+    if (type === 'sort') {
+      setSortOrder(sortOrder);
+      setSortField(sortField);
+    } else if (type === 'pagination') {
+      setPage(pageNumber);
+      setPageSize(sizePerPage);
+    }
   };
-}
-
-export function PleaseWaitMessage({ entities }) {
-  return <>{entities === null && <div>Please wait...</div>}</>;
-}
-
-export function NoRecordsFoundMessage({ entities }) {
-  const customersList = entities === null ? [] : entities;
-  return (
-    <>
-      {customersList.length === 0 && entities !== null && (
-        <div>No records found</div>
-      )}
-    </>
-  );
 }
