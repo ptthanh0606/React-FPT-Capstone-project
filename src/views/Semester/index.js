@@ -11,26 +11,31 @@ const semesters = [
   {
     title: 'Fall 2020',
     id: 1,
+    status: 'In progress',
     color: 'danger',
   },
   {
     title: 'Summer 2020',
     id: 2,
+    status: 'Planning',
     color: 'warning',
   },
   {
     title: 'Spring 2021',
     id: 3,
+    status: 'Prepare',
     color: 'success',
   },
   {
     title: 'Spring 2022',
     id: 3,
+    status: 'Ended',
     color: 'primary',
   },
   {
     title: 'Spring 2023',
     id: 3,
+    status: 'Ended',
     color: 'info',
   },
 ];

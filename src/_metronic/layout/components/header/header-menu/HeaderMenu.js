@@ -13,18 +13,22 @@ const menus = [
   {
     path: '/semester',
     title: 'Semester',
-    children: [
-      {
-        path: '/semester',
-        title: 'List semester',
-        icon: '/media/svg/icons/Design/PenAndRuller.svg',
-      },
-      {
-        path: '/semester/create',
-        title: 'Create semester',
-        icon: '/media/svg/icons/Design/PenAndRuller.svg',
-      },
-    ],
+    // children: [
+    //   {
+    //     path: '/semester',
+    //     title: 'List semester',
+    //     icon: '/media/svg/icons/Design/PenAndRuller.svg',
+    //   },
+    //   {
+    //     path: '/semester/create',
+    //     title: 'Create semester',
+    //     icon: '/media/svg/icons/Design/PenAndRuller.svg',
+    //   },
+    // ],
+  },
+  {
+    path: '/user',
+    title: 'User',
   },
 ];
 
