@@ -26,17 +26,17 @@ export function Footer() {
           </span>{' '}
           &copy;{' '}
           <a
-            href="http://keenthemes.com/metronic"
+            href="https://github.com/fptu-cms"
             target="_blank"
             rel="noopener noreferrer"
             className="text-dark-75 text-hover-primary"
           >
-            Keenthemes
+            FPTU CMS
           </a>
         </div>
         <div className="nav nav-dark order-1 order-md-2">
           <a
-            href="http://keenthemes.com/metronic"
+            href="https://github.com/fptu-cms"
             target="_blank"
             rel="noopener noreferrer"
             className="nav-link pr-3 pl-0"
@@ -44,7 +44,7 @@ export function Footer() {
             About
           </a>
           <a
-            href="http://keenthemes.com/metronic"
+            href="https://github.com/orgs/fptu-cms/people"
             target="_blank"
             rel="noopener noreferrer"
             className="nav-link px-3"
@@ -52,7 +52,7 @@ export function Footer() {
             Team
           </a>
           <a
-            href="http://keenthemes.com/metronic"
+            href="mailto:admin@fptu-cms.tk"
             target="_blank"
             rel="noopener noreferrer"
             className="nav-link pl-3 pr-0"
