@@ -12,6 +12,8 @@ import Table from 'components/Table';
 import Filters from './Filters';
 import { Link } from 'react-router-dom';
 
+import { useParams } from 'react-router-dom';
+
 export const statusClasses = ['danger', 'success', 'info', ''];
 export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
 export const defaultSorted = [{ dataField: 'id', order: 'asc' }];
@@ -314,24 +316,20 @@ export default function CustomersCard() {
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
 
+  const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
 
   React.useEffect(() => {
-    setMeta({
-      toolbar: (
-        <>
-          <button
-            type="button"
-            className="btn btn-danger font-weight-bold btn-sm"
-            // onClick={}
-          >
-            <i class="fas fa-trash mr-2"></i>
-            Remove
-          </button>
-        </>
-      ),
-    });
-  }, [setMeta]);
+    setMeta(meta => ({
+      ...meta,
+      title: 'Topics of Fall 2020',
+      breadcrumb: [
+        { title: 'Semester', path: '/semester' },
+        { title: 'Fall 2020', path: '/semester/' + id },
+        { title: 'Topic', path: '/semester/' + id + '/topic' },
+      ],
+    }));
+  }, [setMeta, id]);
 
   React.useEffect(() => {
     setData(mockData);

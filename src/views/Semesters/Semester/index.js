@@ -21,11 +21,6 @@ const Semester = () => {
   React.useEffect(() => {
     setMeta(meta => ({
       ...meta,
-      title: 'Fall 2020',
-      breadcrumb: [
-        { title: 'Semester', path: '/semester' },
-        { title: 'Fall 2020', path: '/semester/' + id },
-      ],
       toolbar: (
         <>
           <button

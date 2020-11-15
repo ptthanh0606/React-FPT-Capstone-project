@@ -1,5 +1,9 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
+
+import metaAtom from 'store/meta';
+import { useSetRecoilState } from 'recoil';
 
 import {
   Card,
@@ -10,7 +14,22 @@ import {
 
 import { Form } from 'react-bootstrap';
 
-const Infomation = ({ id }) => {
+const Infomation = () => {
+  const setMeta = useSetRecoilState(metaAtom);
+  const { id } = useParams();
+
+  React.useEffect(() => {
+    setMeta(meta => ({
+      ...meta,
+      title: 'Information of Fall 2020',
+      breadcrumb: [
+        { title: 'Semester', path: '/semester' },
+        { title: 'Fall 2020', path: '/semester/' + id },
+        { title: 'Information', path: '/semester/' + id + '/information' },
+      ],
+    }));
+  }, [setMeta, id]);
+
   return (
     <>
       <Card>
@@ -29,10 +48,10 @@ const Infomation = ({ id }) => {
         <CardBody>
           <Form>
             <Form.Group as={Row} controlId="formHorizontalEmail">
-              <Form.Label column sm={2}>
+              <Form.Label column sm={3}>
                 Name
               </Form.Label>
-              <Col sm={10}>
+              <Col sm={9}>
                 <Form.Control
                   type="text"
                   placeholder="Name"
@@ -41,10 +60,10 @@ const Infomation = ({ id }) => {
               </Col>
             </Form.Group>
             <Form.Group as={Row} controlId="formHorizontalEmail">
-              <Form.Label column sm={2}>
+              <Form.Label column sm={3}>
                 Maximum topic per mentor
               </Form.Label>
-              <Col sm={10}>
+              <Col sm={9}>
                 <Form.Control
                   type="number"
                   placeholder="Maximum topic per mentor"
@@ -53,10 +72,10 @@ const Infomation = ({ id }) => {
               </Col>
             </Form.Group>
             <Form.Group as={Row} controlId="formHorizontalEmail">
-              <Form.Label column sm={2}>
+              <Form.Label column sm={3}>
                 Maximum mentor per topic
               </Form.Label>
-              <Col sm={10}>
+              <Col sm={9}>
                 <Form.Control
                   type="number"
                   placeholder="Maximum mentor per topic"
@@ -69,10 +88,10 @@ const Infomation = ({ id }) => {
               controlId="formHorizontalEmail"
               style={{ marginBottom: 0 }}
             >
-              <Form.Label column sm={2}>
+              <Form.Label column sm={3}>
                 Maximum applications per team
               </Form.Label>
-              <Col sm={10}>
+              <Col sm={9}>
                 <Form.Control
                   type="number"
                   placeholder="Maximum applications per team"
@@ -99,10 +118,10 @@ const Infomation = ({ id }) => {
         <CardBody>
           <Form>
             <Form.Group as={Row} controlId="formHorizontalEmail">
-              <Form.Label column sm={2}>
+              <Form.Label column sm={3}>
                 Matching
               </Form.Label>
-              <Col sm={10}>
+              <Col sm={9}>
                 <Form.Control
                   type="date"
                   placeholder="Date"
@@ -111,10 +130,10 @@ const Infomation = ({ id }) => {
               </Col>
             </Form.Group>
             <Form.Group as={Row} controlId="formHorizontalEmail">
-              <Form.Label column sm={2}>
+              <Form.Label column sm={3}>
                 In progress
               </Form.Label>
-              <Col sm={10}>
+              <Col sm={9}>
                 <Form.Control
                   type="date"
                   placeholder="Date"
@@ -127,10 +146,10 @@ const Infomation = ({ id }) => {
               controlId="formHorizontalEmail"
               style={{ marginBottom: 0 }}
             >
-              <Form.Label column sm={2}>
+              <Form.Label column sm={3}>
                 Finished
               </Form.Label>
-              <Col sm={10}>
+              <Col sm={9}>
                 <Form.Control
                   type="date"
                   placeholder="Date"

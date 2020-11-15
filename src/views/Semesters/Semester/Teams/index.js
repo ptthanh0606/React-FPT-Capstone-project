@@ -5,16 +5,19 @@ import {
   CardHeader,
   CardHeaderToolbar,
 } from '_metronic/_partials/controls';
-import metaAtom from 'store/meta';
-import { useSetRecoilState } from 'recoil';
+
 import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from './Filters';
 import { Link } from 'react-router-dom';
+import metaAtom from 'store/meta';
+import { useSetRecoilState } from 'recoil';
+
+import { useParams } from 'react-router-dom';
 
 export const statusClasses = ['danger', 'info', 'success', ''];
 export const statusTitles = ['Not in a team', 'Matching', 'Matched', ''];
-export const lockClasses = ['danger', 'success'];
+export const lockClasses = ['success', 'danger'];
 export const lockTitles = ['Unlocked', 'Locked'];
 export const privateClasses = ['success', 'danger'];
 export const privateTitles = ['Public', 'Private'];
@@ -183,17 +186,20 @@ export default function CustomersCard() {
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
 
+  const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
 
   React.useEffect(() => {
-    setMeta({
-      title: 'All semesters',
+    setMeta(meta => ({
+      ...meta,
+      title: 'Teams of Fall 2020',
       breadcrumb: [
         { title: 'Semester', path: '/semester' },
-        { title: 'All semesters', path: '/semester/all' },
+        { title: 'Fall 2020', path: '/semester/' + id },
+        { title: 'Team', path: '/semester/' + id + '/team' },
       ],
-    });
-  }, [setMeta]);
+    }));
+  }, [setMeta, id]);
 
   React.useEffect(() => {
     setData(mockData);

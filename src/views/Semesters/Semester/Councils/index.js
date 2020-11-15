@@ -5,12 +5,15 @@ import {
   CardHeader,
   CardHeaderToolbar,
 } from '_metronic/_partials/controls';
-import metaAtom from 'store/meta';
-import { useSetRecoilState } from 'recoil';
 import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from './Filters';
 import { Link } from 'react-router-dom';
+
+import metaAtom from 'store/meta';
+import { useSetRecoilState } from 'recoil';
+
+import { useParams } from 'react-router-dom';
 
 export const statusClasses = ['danger', 'success', 'info', ''];
 export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
@@ -135,17 +138,20 @@ export default function CustomersCard() {
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
 
+  const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
 
   React.useEffect(() => {
-    setMeta({
-      title: 'All semesters',
+    setMeta(meta => ({
+      ...meta,
+      title: 'Councils of Fall 2020',
       breadcrumb: [
         { title: 'Semester', path: '/semester' },
-        { title: 'All semesters', path: '/semester/all' },
+        { title: 'Fall 2020', path: '/semester/' + id },
+        { title: 'Council', path: '/semester/' + id + '/council' },
       ],
-    });
-  }, [setMeta]);
+    }));
+  }, [setMeta, id]);
 
   React.useEffect(() => {
     setData(mockData);

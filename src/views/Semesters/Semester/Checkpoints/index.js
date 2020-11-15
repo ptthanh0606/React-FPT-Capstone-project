@@ -10,6 +10,10 @@ import Table from 'components/Table';
 import Filters from './Filters';
 import { Link } from 'react-router-dom';
 
+import metaAtom from 'store/meta';
+import { useSetRecoilState } from 'recoil';
+import { useParams } from 'react-router-dom';
+
 export const statusClasses = ['danger', 'success', 'info', ''];
 export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
 export const defaultSorted = [{ dataField: 'id', order: 'asc' }];
@@ -152,6 +156,21 @@ export default function CustomersCard() {
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+
+  const { id } = useParams();
+  const setMeta = useSetRecoilState(metaAtom);
+
+  React.useEffect(() => {
+    setMeta(meta => ({
+      ...meta,
+      title: 'Checkpoints of Fall 2020',
+      breadcrumb: [
+        { title: 'Semester', path: '/semester' },
+        { title: 'Fall 2020', path: '/semester/' + id },
+        { title: 'Checkpoints', path: '/semester/' + id + '/checkpoint' },
+      ],
+    }));
+  }, [id, setMeta]);
 
   React.useEffect(() => {
     setData(mockData);
