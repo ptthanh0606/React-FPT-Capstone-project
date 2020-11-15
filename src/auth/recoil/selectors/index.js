@@ -1,4 +1,4 @@
 import isAuthenticated from './isAuthenticated';
-import isAdmin from './isAdmin';
+import role from './role';
 
-export { isAuthenticated, isAdmin };
+export { isAuthenticated, role };
