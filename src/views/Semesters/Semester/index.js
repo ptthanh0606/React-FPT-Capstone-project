@@ -9,7 +9,7 @@ import styles from './styles.module.scss';
 
 import Information from './Information';
 import Topics from './Topics';
-import Students from './Students';
+import ActiveStudents from './ActiveStudents';
 import Councils from './Councils';
 import Teams from './Teams';
 import Checkpoints from './Checkpoints';
@@ -34,7 +34,7 @@ const Semester = () => {
             // onClick={}
           >
             <i class="fas fa-trash mr-2"></i>
-            Delete
+            Remove
           </button>
         </>
       ),
@@ -72,11 +72,11 @@ const Semester = () => {
                 Topics
               </NavLink>
               <NavLink
-                to={'/semester/' + id + '/student'}
+                to={'/semester/' + id + '/active-student'}
                 activeClassName={styles['active']}
                 className={styles['menu-item']}
               >
-                Students
+                Active students
               </NavLink>
               <NavLink
                 to={'/semester/' + id + '/council'}
@@ -99,7 +99,10 @@ const Semester = () => {
           <Switch>
             <Route path="/semester/:id/information" component={Information} />
             <Route path="/semester/:id/topic" component={Topics} />
-            <Route path="/semester/:id/student" component={Students} />
+            <Route
+              path="/semester/:id/active-student"
+              component={ActiveStudents}
+            />
             <Route path="/semester/:id/council" component={Councils} />
             <Route path="/semester/:id/team" component={Teams} />
             <Route path="/semester/:id/checkpoint" component={Checkpoints} />

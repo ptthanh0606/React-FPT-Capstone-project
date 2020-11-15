@@ -63,47 +63,7 @@ export default function CustomersFilter({ filters, setFilters }) {
                   Filter by <b>status</b>
                 </small>
               </div>
-              <div className="col-lg-2">
-                <select
-                  className="form-control form-control-solid"
-                  name="status"
-                  placeholder="Filter by status"
-                  onChange={e => {
-                    setFieldValue('status', e.target.value);
-                    handleSubmit();
-                  }}
-                  onBlur={handleBlur}
-                  value={values.status}
-                >
-                  <option value="">All</option>
-                  <option value="0">Locked</option>
-                  <option value="1">Unlocked</option>
-                </select>
-                <small className="form-text text-muted">
-                  Filter by <b>lock</b>
-                </small>
-              </div>
-              <div className="col-lg-2">
-                <select
-                  className="form-control form-control-solid"
-                  name="status"
-                  placeholder="Filter by Department"
-                  onChange={e => {
-                    setFieldValue('status', e.target.value);
-                    handleSubmit();
-                  }}
-                  onBlur={handleBlur}
-                  value={values.status}
-                >
-                  <option value="">All</option>
-                  <option value="0">Public</option>
-                  <option value="1">Private</option>
-                </select>
-                <small className="form-text text-muted">
-                  Filter by <b>private</b>
-                </small>
-              </div>
-              <div className="col-lg-4">
+              <div className="col-lg-8">
                 <div class="input-icon">
                   <input
                     type="text"

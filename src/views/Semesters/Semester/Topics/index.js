@@ -140,7 +140,7 @@ function ActionsColumnFormatter(
         <i class="fas fa-pencil-alt mx-2"></i>
       </a>
       <a
-        title="Delete"
+        title="Remove"
         className="btn btn-icon btn-light btn-hover-primary btn-sm"
         onClick={() => openDeleteCustomerDialog(row.id)}
       >
@@ -157,7 +157,7 @@ function StatusColumnFormatter(cellContent, row) {
   const getLabelCssClasses = () => {
     return `label label-lg label-light-${
       classes[row.status]
-    } label-inline text-nowrap`;
+    } label-inline text-nowrap text-nowrap`;
   };
   return <span className={getLabelCssClasses()}>{titles[row.status]}</span>;
 }
@@ -326,7 +326,7 @@ export default function CustomersCard() {
             // onClick={}
           >
             <i class="fas fa-trash mr-2"></i>
-            Delete
+            Remove
           </button>
         </>
       ),
@@ -349,7 +349,7 @@ export default function CustomersCard() {
             // onClick={}
           >
             <i class="fas fa-trash mr-2"></i>
-            Delete ({(Array.isArray(selected) && selected.length) || 0})
+            Remove ({(Array.isArray(selected) && selected.length) || 0})
           </button>
           &nbsp;
           <button

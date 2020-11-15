@@ -20,7 +20,29 @@ export default function CustomersFilter({ filters, setFilters }) {
         }) => (
           <form onSubmit={handleSubmit} className="form form-label-right">
             <div className="form-group row">
-              <div className="col-lg-12">
+              <div className="col-lg-2">
+                <select
+                  className="form-control form-control-solid"
+                  name="status"
+                  placeholder="Filter by Department"
+                  onChange={e => {
+                    setFieldValue('status', e.target.value);
+                    handleSubmit();
+                  }}
+                  onBlur={handleBlur}
+                  value={values.status}
+                >
+                  <option value="">All</option>
+                  <option value="0">SE</option>
+                  <option value="1">BA</option>
+                  <option value="2">SS</option>
+                  <option value="2">JP</option>
+                </select>
+                <small className="form-text text-muted">
+                  Filter by <b>department</b>
+                </small>
+              </div>
+              <div className="col-lg-10">
                 <div class="input-icon">
                   <input
                     type="text"

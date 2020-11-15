@@ -24,18 +24,10 @@ export const sizePerPageList = [
 const mockData = [
   {
     id: 0,
-    code: 'SE',
-    name: 'Software Engineering',
-  },
-  {
-    id: 1,
-    code: 'SE',
-    name: 'Software Engineering',
-  },
-  {
-    id: 3,
-    code: 'SE',
-    name: 'Software Engineering',
+    name: 'HKT',
+    department: 'SE',
+    leader: ['Duy Duc Huynh'],
+    members: ['Huynh Duc Duy', 'Phan Thong Thanh'],
   },
 ];
 
@@ -55,7 +47,7 @@ function ActionsColumnFormatter(
         <i class="fas fa-pencil-alt mx-2"></i>
       </a>
       <a
-        title="Delete"
+        title="Remove"
         className="btn btn-icon btn-light btn-hover-primary btn-sm"
         onClick={() => openDeleteCustomerDialog(row.id)}
       >
@@ -69,7 +61,7 @@ function StatusColumnFormatter(cellContent, row) {
   const getLabelCssClasses = () => {
     return `label label-lg label-light-${
       statusClasses[row.status]
-    } label-inline`;
+    } label-inline text-nowrap`;
   };
   return (
     <span className={getLabelCssClasses()}>{statusTitles[row.status]}</span>
@@ -78,8 +70,8 @@ function StatusColumnFormatter(cellContent, row) {
 
 const columns = [
   {
-    dataField: 'code',
-    text: 'Code',
+    dataField: 'department',
+    text: 'DEP',
     sort: true,
     sortCaret: sortCaret,
     headerSortingClasses,
@@ -97,6 +89,24 @@ const columns = [
       );
     },
     headerSortingClasses,
+  },
+  {
+    dataField: 'leader',
+    text: 'Leader',
+    sort: true,
+    sortCaret: sortCaret,
+    headerSortingClasses,
+  },
+  {
+    dataField: 'members',
+    text: 'Members',
+    formatter: function StatusColumnFormatter(cellContent, row) {
+      return (
+        <Link className="text-dark font-weight-bold" to={'/semester/' + row.id}>
+          {cellContent.join(', ')}
+        </Link>
+      );
+    },
   },
   {
     dataField: 'action',
@@ -144,7 +154,7 @@ export default function CustomersCard() {
 
   return (
     <Card>
-      <CardHeader title="All departments">
+      <CardHeader title="All councils">
         <CardHeaderToolbar className="text-nowrap">
           <button
             type="button"
@@ -153,7 +163,7 @@ export default function CustomersCard() {
             // onClick={}
           >
             <i class="fas fa-trash mr-2"></i>
-            Delete ({(Array.isArray(selected) && selected.length) || 0})
+            Remove ({(Array.isArray(selected) && selected.length) || 0})
           </button>
           &nbsp;
           <button

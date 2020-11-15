@@ -49,7 +49,7 @@ function ActionsColumnFormatter(
         <i class="fas fa-pencil-alt mx-2"></i>
       </a>
       <a
-        title="Delete"
+        title="Remove"
         className="btn btn-icon btn-light btn-hover-primary btn-sm"
         onClick={() => openDeleteCustomerDialog(row.id)}
       >
@@ -63,7 +63,7 @@ function StatusColumnFormatter(cellContent, row) {
   const getLabelCssClasses = () => {
     return `label label-lg label-light-${
       statusClasses[row.status]
-    } label-inline`;
+    } label-inline text-nowrap`;
   };
   return (
     <span className={getLabelCssClasses()}>{statusTitles[row.status]}</span>

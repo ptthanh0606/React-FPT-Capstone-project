@@ -12,8 +12,13 @@ import Table from 'components/Table';
 import Filters from './Filters';
 import { Link } from 'react-router-dom';
 
-export const statusClasses = ['danger', 'success', 'info', ''];
-export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
+export const statusClasses = ['danger', 'info', 'success', ''];
+export const statusTitles = ['Not in a team', 'Matching', 'Matched', ''];
+export const lockClasses = ['danger', 'success'];
+export const lockTitles = ['Unlocked', 'Locked'];
+export const privateClasses = ['success', 'danger'];
+export const privateTitles = ['Public', 'Private'];
+
 export const defaultSorted = [{ dataField: 'id', order: 'asc' }];
 export const sizePerPageList = [
   { text: '10', value: 10 },
@@ -24,18 +29,15 @@ export const sizePerPageList = [
 const mockData = [
   {
     id: 0,
-    code: 'SE',
-    name: 'Software Engineering',
-  },
-  {
-    id: 1,
-    code: 'SE',
-    name: 'Software Engineering',
-  },
-  {
-    id: 3,
-    code: 'SE',
-    name: 'Software Engineering',
+    name: 'HKT',
+    code: 'JDNU8KD',
+    department: 'SE',
+    leader: ['Duy Duc Huynh'],
+    members: ['Huynh Duc Duy', 'Phan Thong Thanh'],
+    topic: 'FPT CMS',
+    status: 0,
+    lock: false,
+    private: false,
   },
 ];
 
@@ -55,7 +57,7 @@ function ActionsColumnFormatter(
         <i class="fas fa-pencil-alt mx-2"></i>
       </a>
       <a
-        title="Delete"
+        title="Remove"
         className="btn btn-icon btn-light btn-hover-primary btn-sm"
         onClick={() => openDeleteCustomerDialog(row.id)}
       >
@@ -65,18 +67,25 @@ function ActionsColumnFormatter(
   );
 }
 
-function StatusColumnFormatter(cellContent, row) {
-  const getLabelCssClasses = () => {
-    return `label label-lg label-light-${
-      statusClasses[row.status]
-    } label-inline`;
+function ColumnFormatter(classes, titles) {
+  return function (cellContent, row) {
+    const getLabelCssClasses = () => {
+      return `label label-lg label-light-${
+        classes[row.status]
+      } label-inline text-nowrap text-nowrap`;
+    };
+    return <span className={getLabelCssClasses()}>{titles[row.status]}</span>;
   };
-  return (
-    <span className={getLabelCssClasses()}>{statusTitles[row.status]}</span>
-  );
 }
 
 const columns = [
+  {
+    dataField: 'department',
+    text: 'DEP',
+    sort: true,
+    sortCaret: sortCaret,
+    headerSortingClasses,
+  },
   {
     dataField: 'code',
     text: 'Code',
@@ -96,6 +105,55 @@ const columns = [
         </Link>
       );
     },
+    headerSortingClasses,
+  },
+  {
+    dataField: 'leader',
+    text: 'Leader',
+    sort: true,
+    sortCaret: sortCaret,
+    headerSortingClasses,
+  },
+  {
+    dataField: 'members',
+    text: 'Members',
+    formatter: function StatusColumnFormatter(cellContent, row) {
+      return (
+        <Link className="text-dark font-weight-bold" to={'/semester/' + row.id}>
+          {cellContent.join(', ')}
+        </Link>
+      );
+    },
+  },
+  {
+    dataField: 'topic',
+    text: 'Topic',
+    sort: true,
+    sortCaret: sortCaret,
+    headerSortingClasses,
+  },
+  {
+    dataField: 'status',
+    text: 'Status',
+    sort: true,
+    sortCaret: sortCaret,
+    formatter: ColumnFormatter(statusClasses, statusTitles),
+    headerSortingClasses,
+  },
+  {
+    dataField: 'lock',
+    text: 'Lock',
+    sort: true,
+    sortCaret: sortCaret,
+    formatter: ColumnFormatter(lockClasses, lockTitles),
+    headerSortingClasses,
+  },
+  {
+    dataField: 'private',
+    text: 'Private',
+    sort: true,
+    sortCaret: sortCaret,
+    formatter: ColumnFormatter(privateClasses, privateTitles),
     headerSortingClasses,
   },
   {
@@ -144,7 +202,7 @@ export default function CustomersCard() {
 
   return (
     <Card>
-      <CardHeader title="All departments">
+      <CardHeader title="All teams">
         <CardHeaderToolbar className="text-nowrap">
           <button
             type="button"
@@ -153,7 +211,7 @@ export default function CustomersCard() {
             // onClick={}
           >
             <i class="fas fa-trash mr-2"></i>
-            Delete ({(Array.isArray(selected) && selected.length) || 0})
+            Remove ({(Array.isArray(selected) && selected.length) || 0})
           </button>
           &nbsp;
           <button
