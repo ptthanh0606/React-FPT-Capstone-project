@@ -7,7 +7,6 @@ export default function CustomersFilter({ filters, setFilters }) {
       <Formik
         initialValues={{
           status: '',
-          type: '',
           searchText: '',
         }}
         onSubmit={setFilters}
@@ -23,9 +22,9 @@ export default function CustomersFilter({ filters, setFilters }) {
             <div className="form-group row">
               <div className="col-lg-2">
                 <select
-                  className="form-control"
+                  className="form-control form-control-solid"
                   name="status"
-                  placeholder="Filter by Status"
+                  placeholder="Filter by Department"
                   onChange={e => {
                     setFieldValue('status', e.target.value);
                     handleSubmit();
@@ -34,47 +33,51 @@ export default function CustomersFilter({ filters, setFilters }) {
                   value={values.status}
                 >
                   <option value="">All</option>
-                  <option value="0">Susspended</option>
-                  <option value="1">Active</option>
-                  <option value="2">Pending</option>
+                  <option value="0">SE</option>
+                  <option value="1">BA</option>
                 </select>
                 <small className="form-text text-muted">
-                  <b>Filter</b> by Status
+                  Filter by <b>department</b>
                 </small>
               </div>
               <div className="col-lg-2">
                 <select
-                  className="form-control"
-                  placeholder="Filter by Type"
-                  name="type"
-                  onBlur={handleBlur}
+                  className="form-control form-control-solid"
+                  name="status"
+                  placeholder="Filter by Department"
                   onChange={e => {
-                    setFieldValue('type', e.target.value);
+                    setFieldValue('status', e.target.value);
                     handleSubmit();
                   }}
-                  value={values.type}
+                  onBlur={handleBlur}
+                  value={values.status}
                 >
                   <option value="">All</option>
-                  <option value="0">Business</option>
-                  <option value="1">Individual</option>
+                  <option value="0">Deactivated</option>
+                  <option value="1">Activated</option>
                 </select>
                 <small className="form-text text-muted">
-                  <b>Filter</b> by Type
+                  Filter by <b>status</b>
                 </small>
               </div>
-              <div className="col-lg-2">
-                <input
-                  type="text"
-                  className="form-control"
-                  name="searchText"
-                  placeholder="Search"
-                  onBlur={handleBlur}
-                  value={values.searchText}
-                  onChange={e => {
-                    setFieldValue('searchText', e.target.value);
-                    handleSubmit();
-                  }}
-                />
+              <div className="col-lg-8">
+                <div class="input-icon">
+                  <input
+                    type="text"
+                    className="form-control form-control-solid"
+                    name="searchText"
+                    placeholder="Search"
+                    onBlur={handleBlur}
+                    value={values.searchText}
+                    onChange={e => {
+                      setFieldValue('searchText', e.target.value);
+                      handleSubmit();
+                    }}
+                  />
+                  <span>
+                    <i class="flaticon2-search-1 text-muted"></i>
+                  </span>
+                </div>
                 <small className="form-text text-muted">
                   <b>Search</b> in all fields
                 </small>

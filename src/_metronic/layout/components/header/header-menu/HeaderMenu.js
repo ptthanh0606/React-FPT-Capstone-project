@@ -13,18 +13,38 @@ const menus = [
   {
     path: '/semester',
     title: 'Semester',
-    children: [
-      {
-        path: '/semester',
-        title: 'List semester',
-        icon: '/media/svg/icons/Design/PenAndRuller.svg',
-      },
-      {
-        path: '/semester/create',
-        title: 'Create semester',
-        icon: '/media/svg/icons/Design/PenAndRuller.svg',
-      },
-    ],
+    // children: [
+    //   {
+    //     path: '/semester',
+    //     title: 'List semester',
+    //     icon: '/media/svg/icons/Design/PenAndRuller.svg',
+    //   },
+    //   {
+    //     path: '/semester/create',
+    //     title: 'Create semester',
+    //     icon: '/media/svg/icons/Design/PenAndRuller.svg',
+    //   },
+    // ],
+  },
+  {
+    path: '/checkpoint-template',
+    title: 'Checkpoint Template',
+  },
+  {
+    path: '/department',
+    title: 'Department',
+  },
+  {
+    path: '/lecturer',
+    title: 'Lecturer',
+  },
+  {
+    path: '/student',
+    title: 'Student',
+  },
+  {
+    path: '/admin',
+    title: 'Admin',
   },
 ];
 

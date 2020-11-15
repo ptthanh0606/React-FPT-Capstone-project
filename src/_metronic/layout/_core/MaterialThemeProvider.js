@@ -8,7 +8,7 @@ const theme = createMuiTheme(
   {
     // direction: "rtl",
     typography: {
-      fontFamily: ['Poppins'].join(','),
+      fontFamily: ['Noto Sans'].join(','),
     },
 
     palette: {

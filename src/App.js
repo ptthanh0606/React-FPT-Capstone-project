@@ -1,5 +1,5 @@
 import React, { lazy } from 'react';
-import { Switch, BrowserRouter } from 'react-router-dom';
+import { Switch, BrowserRouter, Route as DefaultRoute } from 'react-router-dom';
 
 import * as Route from 'utils/router/routes';
 
@@ -21,11 +21,35 @@ const Private = React.memo(function Private() {
               import('views/Dashboard' /* webpackChunkName: "dashboard" */)
             )}
           />
+          <DefaultRoute path={'/user'}>User</DefaultRoute>
           <Route.NormalRoute
             path={'/semester'}
-            exact
             component={lazy(() =>
-              import('views/Semester' /* webpackChunkName: "semester" */)
+              import('views/Semesters' /* webpackChunkName: "semester" */)
+            )}
+          />
+          <Route.NormalRoute
+            path={'/department'}
+            component={lazy(() =>
+              import('views/Departments' /* webpackChunkName: "department" */)
+            )}
+          />
+          <Route.NormalRoute
+            path={'/lecturer'}
+            component={lazy(() =>
+              import('views/Lecturers' /* webpackChunkName: "lecturer" */)
+            )}
+          />
+          <Route.NormalRoute
+            path={'/student'}
+            component={lazy(() =>
+              import('views/Students' /* webpackChunkName: "student" */)
+            )}
+          />
+          <Route.NormalRoute
+            path={'/admin'}
+            component={lazy(() =>
+              import('views/Admins' /* webpackChunkName: "admin" */)
             )}
           />
           <Route.RedirectRoute to="/dashboard" />
