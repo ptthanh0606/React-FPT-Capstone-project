@@ -8,9 +8,6 @@ import {
   CardHeaderToolbar,
 } from '_metronic/_partials/controls';
 
-import SVG from 'react-inlinesvg';
-import { toAbsoluteUrl } from '_metronic/_helpers';
-
 import { Form } from 'react-bootstrap';
 
 const Infomation = ({ id }) => {
@@ -24,13 +21,7 @@ const Infomation = ({ id }) => {
               className="btn btn-primary font-weight-bold"
               // onClick={}
             >
-              <span className="svg-icon svg-icon-md svg-icon-white mr-3">
-                <SVG
-                  src={toAbsoluteUrl(
-                    '/media/svg/icons/Communication/Write.svg'
-                  )}
-                />
-              </span>
+              <i class="fas fa-save mr-2"></i>
               Save
             </button>
           </CardHeaderToolbar>
@@ -100,13 +91,7 @@ const Infomation = ({ id }) => {
               className="btn btn-primary font-weight-bold"
               // onClick={}
             >
-              <span className="svg-icon svg-icon-md svg-icon-white mr-3">
-                <SVG
-                  src={toAbsoluteUrl(
-                    '/media/svg/icons/Communication/Write.svg'
-                  )}
-                />
-              </span>
+              <i class="fas fa-save mr-2"></i>
               Save
             </button>
           </CardHeaderToolbar>

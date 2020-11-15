@@ -14,9 +14,6 @@ import Councils from './Councils';
 import Teams from './Teams';
 import Checkpoints from './Checkpoints';
 
-import SVG from 'react-inlinesvg';
-import { toAbsoluteUrl } from '_metronic/_helpers';
-
 const Semester = () => {
   const setMeta = useSetRecoilState(metaAtom);
   const { id } = useParams();
@@ -36,9 +33,7 @@ const Semester = () => {
             className="btn btn-danger font-weight-bold btn-sm"
             // onClick={}
           >
-            <span className="svg-icon svg-icon-md svg-icon-white mr-3">
-              <SVG src={toAbsoluteUrl('/media/svg/icons/General/Trash.svg')} />
-            </span>
+            <i class="fas fa-trash mr-2"></i>
             Delete
           </button>
         </>

@@ -11,8 +11,6 @@ import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from './Filters';
 import { Link } from 'react-router-dom';
-import SVG from 'react-inlinesvg';
-import { toAbsoluteUrl } from '_metronic/_helpers';
 
 export const statusClasses = ['danger', 'success', 'info', ''];
 export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
@@ -154,10 +152,8 @@ export default function CustomersCard() {
             disabled={Array.isArray(selected) && selected.length === 0}
             // onClick={}
           >
-            <span className="svg-icon svg-icon-md svg-icon-white mr-3">
-              <SVG src={toAbsoluteUrl('/media/svg/icons/General/Trash.svg')} />
-            </span>
-            Delete selected
+            <i class="fas fa-trash mr-2"></i>
+            Delete ({(Array.isArray(selected) && selected.length) || 0})
           </button>
           &nbsp;
           <button
@@ -165,11 +161,7 @@ export default function CustomersCard() {
             className="btn btn-primary font-weight-bold"
             // onClick={}
           >
-            <span className="svg-icon svg-icon-md svg-icon-white mr-3">
-              <SVG
-                src={toAbsoluteUrl('/media/svg/icons/Communication/Write.svg')}
-              />
-            </span>
+            <i class="fas fa-plus mr-2"></i>
             New
           </button>
         </CardHeaderToolbar>
