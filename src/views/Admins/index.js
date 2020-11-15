@@ -14,30 +14,24 @@ import { Link } from 'react-router-dom';
 import SVG from 'react-inlinesvg';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 
-export const statusClasses = ['danger', 'success', 'info', ''];
-export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
-export const defaultSorted = [{ dataField: 'id', order: 'asc' }];
-export const sizePerPageList = [
+const defaultSorted = [{ dataField: 'id', order: 'asc' }];
+
+const sizePerPageList = [
   { text: '10', value: 10 },
   { text: '20', value: 20 },
   { text: '50', value: 50 },
 ];
 
+const statusClasses = ['danger', 'success'];
+const statusTitles = ['Deactivated', 'Activated'];
+
 const mockData = [
   {
     id: 0,
-    code: 'SE',
-    name: 'Software Engineering',
-  },
-  {
-    id: 1,
-    code: 'SE',
-    name: 'Software Engineering',
-  },
-  {
-    id: 3,
-    code: 'SE',
-    name: 'Software Engineering',
+    code: 'SE130491',
+    email: 'duyhdse130491@fpt.edu.vn',
+    name: 'Huynh Duc Duy',
+    status: 0,
   },
 ];
 
@@ -91,6 +85,13 @@ const columns = [
     headerSortingClasses,
   },
   {
+    dataField: 'email',
+    text: 'Email',
+    sort: true,
+    sortCaret: sortCaret,
+    headerSortingClasses,
+  },
+  {
     dataField: 'name',
     text: 'Name',
     sort: true,
@@ -102,6 +103,14 @@ const columns = [
         </Link>
       );
     },
+    headerSortingClasses,
+  },
+  {
+    dataField: 'status',
+    text: 'Status',
+    sort: true,
+    sortCaret: sortCaret,
+    formatter: StatusColumnFormatter,
     headerSortingClasses,
   },
   {

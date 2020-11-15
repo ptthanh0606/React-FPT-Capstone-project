@@ -5,32 +5,33 @@ import {
   CardHeader,
   CardHeaderToolbar,
 } from '_metronic/_partials/controls';
+import metaAtom from 'store/meta';
+import { useSetRecoilState } from 'recoil';
 import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from './Filters';
-import * as uiHelpers from '../../uiHelpers';
 import { Link } from 'react-router-dom';
 import SVG from 'react-inlinesvg';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 
-const departments = [
+const defaultSorted = [{ dataField: 'id', order: 'asc' }];
+
+const sizePerPageList = [
+  { text: '10', value: 10 },
+  { text: '20', value: 20 },
+  { text: '50', value: 50 },
+];
+
+const statusClasses = ['danger', 'success'];
+const statusTitles = ['Deactivated', 'Activated'];
+
+const mockData = [
   {
     id: 0,
-    code: 'SE',
-    name: 'Software Engineering',
-    approvers: ['Huynh Duc Duy', 'Phan Thong Thanh'],
-  },
-  {
-    id: 1,
-    code: 'SE',
-    name: 'Software Engineering',
-    approvers: ['Huynh Duc Duy', 'Phan Thong Thanh'],
-  },
-  {
-    id: 3,
-    code: 'SE',
-    name: 'Software Engineering',
-    approvers: ['Huynh Duc Duy', 'Phan Thong Thanh'],
+    email: 'duyhdse130491@fpt.edu.vn',
+    name: 'Huynh Duc Duy',
+    department: ['SE', 'BA'],
+    status: 0,
   },
 ];
 
@@ -67,24 +68,15 @@ function ActionsColumnFormatter(
 function StatusColumnFormatter(cellContent, row) {
   const getLabelCssClasses = () => {
     return `label label-lg label-light-${
-      uiHelpers.CustomerStatusCssClasses[row.status]
+      statusClasses[row.status]
     } label-inline`;
   };
   return (
-    <span className={getLabelCssClasses()}>
-      {uiHelpers.CustomerStatusTitles[row.status]}
-    </span>
+    <span className={getLabelCssClasses()}>{statusTitles[row.status]}</span>
   );
 }
 
 const columns = [
-  {
-    dataField: 'code',
-    text: 'Code',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
   {
     dataField: 'name',
     text: 'Name',
@@ -100,15 +92,33 @@ const columns = [
     headerSortingClasses,
   },
   {
-    dataField: 'approvers',
-    text: 'Approvers',
+    dataField: 'email',
+    text: 'Email',
+    sort: true,
+    sortCaret: sortCaret,
+    headerSortingClasses,
+  },
+  {
+    dataField: 'department',
+    text: 'Department',
+    sort: true,
     formatter: function StatusColumnFormatter(cellContent, row) {
       return (
-        <Link className="text-dark font-weight-bold" to={'/semester/' + row.id}>
-          {cellContent.join(', ')}
-        </Link>
+        <>
+          {cellContent && Array.isArray(cellContent) && cellContent.join(', ')}
+        </>
       );
     },
+    sortCaret: sortCaret,
+    headerSortingClasses,
+  },
+  {
+    dataField: 'status',
+    text: 'Status',
+    sort: true,
+    sortCaret: sortCaret,
+    formatter: StatusColumnFormatter,
+    headerSortingClasses,
   },
   {
     dataField: 'action',
@@ -137,14 +147,40 @@ export default function CustomersCard() {
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
 
+  const setMeta = useSetRecoilState(metaAtom);
+
   React.useEffect(() => {
-    setData(departments);
+    setMeta({
+      title: 'All lecturers',
+      breadcrumb: [
+        { title: 'Lecturer', path: '/lecturer' },
+        { title: 'All lecturers', path: '/lecturer/all' },
+      ],
+      toolbar: (
+        <button
+          type="button"
+          className="btn btn-primary font-weight-bold btn-sm"
+          // onClick={}
+        >
+          <span className="svg-icon svg-icon-md svg-icon-white mr-3">
+            <SVG
+              src={toAbsoluteUrl('/media/svg/icons/Communication/Write.svg')}
+            />
+          </span>
+          New lecturer
+        </button>
+      ),
+    });
+  }, [setMeta]);
+
+  React.useEffect(() => {
+    setData(mockData);
     setTotal(100);
   }, []);
 
   return (
     <Card>
-      <CardHeader title="All departments">
+      <CardHeader title="All lecturers">
         <CardHeaderToolbar className="text-nowrap">
           <button
             type="button"
@@ -155,7 +191,7 @@ export default function CustomersCard() {
             <span className="svg-icon svg-icon-md svg-icon-white mr-3">
               <SVG src={toAbsoluteUrl('/media/svg/icons/General/Trash.svg')} />
             </span>
-            Delete selected
+            Deactivate selected
           </button>
           &nbsp;
           <button
@@ -174,7 +210,6 @@ export default function CustomersCard() {
       </CardHeader>
       <CardBody>
         <Filters filters={filters} setFilters={setFilters} />
-        {/* {selected.length > 0 && <CustomersGrouping />} */}
         <Table
           columns={columns}
           data={data}
@@ -190,8 +225,8 @@ export default function CustomersCard() {
           setSortField={setSortField}
           sortOrder={sortOrder}
           setSortOrder={setSortOrder}
-          defaultSorted={uiHelpers.defaultSorted}
-          pageSizeList={uiHelpers.sizePerPageList}
+          defaultSorted={defaultSorted}
+          pageSizeList={sizePerPageList}
           selectable
         />
       </CardBody>

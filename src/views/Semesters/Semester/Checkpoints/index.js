@@ -8,12 +8,20 @@ import {
 import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from './Filters';
-import * as uiHelpers from '../../uiHelpers';
 import { Link } from 'react-router-dom';
 import SVG from 'react-inlinesvg';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 
-const departments = [
+export const statusClasses = ['danger', 'success', 'info', ''];
+export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
+export const defaultSorted = [{ dataField: 'id', order: 'asc' }];
+export const sizePerPageList = [
+  { text: '10', value: 10 },
+  { text: '20', value: 20 },
+  { text: '50', value: 50 },
+];
+
+const mockData = [
   {
     id: 0,
     department: 'SE',
@@ -73,13 +81,11 @@ function ActionsColumnFormatter(
 function StatusColumnFormatter(cellContent, row) {
   const getLabelCssClasses = () => {
     return `label label-lg label-light-${
-      uiHelpers.CustomerStatusCssClasses[row.status]
+      statusClasses[row.status]
     } label-inline`;
   };
   return (
-    <span className={getLabelCssClasses()}>
-      {uiHelpers.CustomerStatusTitles[row.status]}
-    </span>
+    <span className={getLabelCssClasses()}>{statusTitles[row.status]}</span>
   );
 }
 
@@ -154,7 +160,7 @@ export default function CustomersCard() {
   const [sortOrder, setSortOrder] = React.useState(null);
 
   React.useEffect(() => {
-    setData(departments);
+    setData(mockData);
     setTotal(100);
   }, []);
 
@@ -206,8 +212,8 @@ export default function CustomersCard() {
           setSortField={setSortField}
           sortOrder={sortOrder}
           setSortOrder={setSortOrder}
-          defaultSorted={uiHelpers.defaultSorted}
-          pageSizeList={uiHelpers.sizePerPageList}
+          defaultSorted={defaultSorted}
+          pageSizeList={sizePerPageList}
           selectable
         />
       </CardBody>

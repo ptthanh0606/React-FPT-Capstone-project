@@ -28,6 +28,30 @@ const Private = React.memo(function Private() {
               import('views/Semesters' /* webpackChunkName: "semester" */)
             )}
           />
+          <Route.NormalRoute
+            path={'/department'}
+            component={lazy(() =>
+              import('views/Departments' /* webpackChunkName: "department" */)
+            )}
+          />
+          <Route.NormalRoute
+            path={'/lecturer'}
+            component={lazy(() =>
+              import('views/Lecturers' /* webpackChunkName: "lecturer" */)
+            )}
+          />
+          <Route.NormalRoute
+            path={'/student'}
+            component={lazy(() =>
+              import('views/Students' /* webpackChunkName: "student" */)
+            )}
+          />
+          <Route.NormalRoute
+            path={'/admin'}
+            component={lazy(() =>
+              import('views/Admins' /* webpackChunkName: "admin" */)
+            )}
+          />
           <Route.RedirectRoute to="/dashboard" />
         </Switch>
       </Layout>

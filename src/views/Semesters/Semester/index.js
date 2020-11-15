@@ -8,10 +8,8 @@ import { useSetRecoilState } from 'recoil';
 import styles from './styles.module.scss';
 
 import Information from './Information';
-import Departments from './Departments';
 import Topics from './Topics';
 import Students from './Students';
-import Lecturers from './Lecturers';
 import Councils from './Councils';
 import Teams from './Teams';
 import Checkpoints from './Checkpoints';
@@ -65,13 +63,6 @@ const Semester = () => {
                 Information
               </NavLink>
               <NavLink
-                to={'/semester/' + id + '/department'}
-                activeClassName={styles['active']}
-                className={styles['menu-item']}
-              >
-                Departments
-              </NavLink>
-              <NavLink
                 to={'/semester/' + id + '/checkpoint'}
                 activeClassName={styles['active']}
                 className={styles['menu-item']}
@@ -93,13 +84,6 @@ const Semester = () => {
                 Students
               </NavLink>
               <NavLink
-                to={'/semester/' + id + '/lecturer'}
-                activeClassName={styles['active']}
-                className={styles['menu-item']}
-              >
-                Lecturers
-              </NavLink>
-              <NavLink
                 to={'/semester/' + id + '/council'}
                 activeClassName={styles['active']}
                 className={styles['menu-item']}
@@ -119,10 +103,8 @@ const Semester = () => {
         <Col sm={9}>
           <Switch>
             <Route path="/semester/:id/information" component={Information} />
-            <Route path="/semester/:id/department" component={Departments} />
             <Route path="/semester/:id/topic" component={Topics} />
             <Route path="/semester/:id/student" component={Students} />
-            <Route path="/semester/:id/lecturer" component={Lecturers} />
             <Route path="/semester/:id/council" component={Councils} />
             <Route path="/semester/:id/team" component={Teams} />
             <Route path="/semester/:id/checkpoint" component={Checkpoints} />

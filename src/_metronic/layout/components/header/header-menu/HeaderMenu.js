@@ -27,8 +27,20 @@ const menus = [
     // ],
   },
   {
-    path: '/user',
-    title: 'User',
+    path: '/department',
+    title: 'Department',
+  },
+  {
+    path: '/lecturer',
+    title: 'Lecturer',
+  },
+  {
+    path: '/student',
+    title: 'Student',
+  },
+  {
+    path: '/admin',
+    title: 'Admin',
   },
 ];
 

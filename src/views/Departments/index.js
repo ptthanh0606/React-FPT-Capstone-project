@@ -5,8 +5,6 @@ import {
   CardHeader,
   CardHeaderToolbar,
 } from '_metronic/_partials/controls';
-import metaAtom from 'store/meta';
-import { useSetRecoilState } from 'recoil';
 import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from './Filters';
@@ -14,30 +12,41 @@ import { Link } from 'react-router-dom';
 import SVG from 'react-inlinesvg';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 
-export const statusClasses = ['danger', 'success', 'info', ''];
-export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
-export const defaultSorted = [{ dataField: 'id', order: 'asc' }];
-export const sizePerPageList = [
+import metaAtom from 'store/meta';
+import { useSetRecoilState } from 'recoil';
+
+const defaultSorted = [{ dataField: 'id', order: 'asc' }];
+
+const sizePerPageList = [
   { text: '10', value: 10 },
   { text: '20', value: 20 },
   { text: '50', value: 50 },
 ];
+
+const statusClasses = ['danger', 'success'];
+const statusTitles = ['Deactivated', 'Activated'];
 
 const mockData = [
   {
     id: 0,
     code: 'SE',
     name: 'Software Engineering',
+    status: 1,
+    approvers: ['Huynh Duc Duy', 'Phan Thong Thanh'],
   },
   {
     id: 1,
     code: 'SE',
     name: 'Software Engineering',
+    status: 1,
+    approvers: ['Huynh Duc Duy', 'Phan Thong Thanh'],
   },
   {
     id: 3,
     code: 'SE',
     name: 'Software Engineering',
+    status: 0,
+    approvers: ['Huynh Duc Duy', 'Phan Thong Thanh'],
   },
 ];
 
@@ -105,6 +114,25 @@ const columns = [
     headerSortingClasses,
   },
   {
+    dataField: 'status',
+    text: 'Status',
+    sort: true,
+    sortCaret: sortCaret,
+    formatter: StatusColumnFormatter,
+    headerSortingClasses,
+  },
+  {
+    dataField: 'approvers',
+    text: 'Approvers',
+    formatter: function StatusColumnFormatter(cellContent, row) {
+      return (
+        <Link className="text-dark font-weight-bold" to={'/semester/' + row.id}>
+          {cellContent.join(', ')}
+        </Link>
+      );
+    },
+  },
+  {
     dataField: 'action',
     text: 'Actions',
     formatter: ActionsColumnFormatter,
@@ -135,11 +163,25 @@ export default function CustomersCard() {
 
   React.useEffect(() => {
     setMeta({
-      title: 'All semesters',
+      title: 'All departments',
       breadcrumb: [
-        { title: 'Semester', path: '/semester' },
-        { title: 'All semesters', path: '/semester/all' },
+        { title: 'Department', path: '/department' },
+        { title: 'All departments', path: '/department/all' },
       ],
+      toolbar: (
+        <button
+          type="button"
+          className="btn btn-primary font-weight-bold btn-sm"
+          // onClick={}
+        >
+          <span className="svg-icon svg-icon-md svg-icon-white mr-3">
+            <SVG
+              src={toAbsoluteUrl('/media/svg/icons/Communication/Write.svg')}
+            />
+          </span>
+          New department
+        </button>
+      ),
     });
   }, [setMeta]);
 
@@ -161,7 +203,7 @@ export default function CustomersCard() {
             <span className="svg-icon svg-icon-md svg-icon-white mr-3">
               <SVG src={toAbsoluteUrl('/media/svg/icons/General/Trash.svg')} />
             </span>
-            Delete selected
+            Deactivate selected
           </button>
           &nbsp;
           <button

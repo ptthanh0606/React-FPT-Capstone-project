@@ -11,11 +11,18 @@ import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from 'views/Semesters/SemesterFilters';
 import customers from 'utils/request/mocks/customer/customers';
-import * as uiHelpers from './uiHelpers';
 import { Link } from 'react-router-dom';
 import SVG from 'react-inlinesvg';
 import { toAbsoluteUrl } from '_metronic/_helpers';
-import { CustomerStatusCssClasses, CustomerStatusTitles } from './uiHelpers';
+
+export const statusClasses = ['danger', 'success', 'info', ''];
+export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
+export const defaultSorted = [{ dataField: 'id', order: 'asc' }];
+export const sizePerPageList = [
+  { text: '10', value: 10 },
+  { text: '20', value: 20 },
+  { text: '50', value: 50 },
+];
 
 function ActionsColumnFormatter(
   cellContent,
@@ -50,24 +57,15 @@ function ActionsColumnFormatter(
 function StatusColumnFormatter(cellContent, row) {
   const getLabelCssClasses = () => {
     return `label label-lg label-light-${
-      CustomerStatusCssClasses[row.status]
+      statusClasses[row.status]
     } label-inline`;
   };
   return (
-    <span className={getLabelCssClasses()}>
-      {CustomerStatusTitles[row.status]}
-    </span>
+    <span className={getLabelCssClasses()}>{statusTitles[row.status]}</span>
   );
 }
 
 const columns = [
-  // {
-  //   dataField: 'id',
-  //   text: 'ID',
-  //   sort: true,
-  //   sortCaret: sortCaret,
-  //   headerSortingClasses,
-  // },
   {
     dataField: 'name',
     text: 'Name',
@@ -152,7 +150,6 @@ export default function CustomersCard() {
     <Card style={{ marginTop: '1.5rem' }}>
       <CardBody>
         <Filters filters={filters} setFilters={setFilters} />
-        {/* {selected.length > 0 && <CustomersGrouping />} */}
         <Table
           columns={columns}
           data={data}
@@ -168,8 +165,8 @@ export default function CustomersCard() {
           setSortField={setSortField}
           sortOrder={sortOrder}
           setSortOrder={setSortOrder}
-          defaultSorted={uiHelpers.defaultSorted}
-          pageSizeList={uiHelpers.sizePerPageList}
+          defaultSorted={defaultSorted}
+          pageSizeList={sizePerPageList}
         />
       </CardBody>
     </Card>
