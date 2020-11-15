@@ -11,8 +11,6 @@ import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from './Filters';
 import { Link } from 'react-router-dom';
-import SVG from 'react-inlinesvg';
-import { toAbsoluteUrl } from '_metronic/_helpers';
 
 const defaultSorted = [{ dataField: 'id', order: 'asc' }];
 
@@ -48,18 +46,14 @@ function ActionsColumnFormatter(
         className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
         onClick={() => openEditCustomerDialog(row.id)}
       >
-        <span className="svg-icon svg-icon-md svg-icon-primary">
-          <SVG src={toAbsoluteUrl('/media/svg/icons/General/Edit.svg')} />
-        </span>
+        <i class="fas fa-pencil-alt mx-2"></i>
       </a>
       <a
         title="Delete"
         className="btn btn-icon btn-light btn-hover-primary btn-sm"
         onClick={() => openDeleteCustomerDialog(row.id)}
       >
-        <span className="svg-icon svg-icon-md svg-icon-primary">
-          <SVG src={toAbsoluteUrl('/media/svg/icons/General/Trash.svg')} />
-        </span>
+        <i class="fas fa-trash mx-2"></i>
       </a>
     </span>
   );
@@ -162,12 +156,8 @@ export default function CustomersCard() {
           className="btn btn-primary font-weight-bold btn-sm"
           // onClick={}
         >
-          <span className="svg-icon svg-icon-md svg-icon-white mr-3">
-            <SVG
-              src={toAbsoluteUrl('/media/svg/icons/Communication/Write.svg')}
-            />
-          </span>
-          New lecturer
+          <i class="fas fa-plus mr-2"></i>
+          New
         </button>
       ),
     });
@@ -180,34 +170,6 @@ export default function CustomersCard() {
 
   return (
     <Card>
-      <CardHeader title="All lecturers">
-        <CardHeaderToolbar className="text-nowrap">
-          <button
-            type="button"
-            className="btn btn-danger font-weight-bold"
-            disabled={Array.isArray(selected) && selected.length === 0}
-            // onClick={}
-          >
-            <span className="svg-icon svg-icon-md svg-icon-white mr-3">
-              <SVG src={toAbsoluteUrl('/media/svg/icons/General/Trash.svg')} />
-            </span>
-            Deactivate selected
-          </button>
-          &nbsp;
-          <button
-            type="button"
-            className="btn btn-primary font-weight-bold"
-            // onClick={}
-          >
-            <span className="svg-icon svg-icon-md svg-icon-white mr-3">
-              <SVG
-                src={toAbsoluteUrl('/media/svg/icons/Communication/Write.svg')}
-              />
-            </span>
-            New
-          </button>
-        </CardHeaderToolbar>
-      </CardHeader>
       <CardBody>
         <Filters filters={filters} setFilters={setFilters} />
         <Table
@@ -227,7 +189,6 @@ export default function CustomersCard() {
           setSortOrder={setSortOrder}
           defaultSorted={defaultSorted}
           pageSizeList={sizePerPageList}
-          selectable
         />
       </CardBody>
     </Card>

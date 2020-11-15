@@ -61,18 +61,14 @@ function ActionsColumnFormatter(
         className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
         onClick={() => openEditCustomerDialog(row.id)}
       >
-        <span className="svg-icon svg-icon-md svg-icon-primary">
-          <SVG src={toAbsoluteUrl('/media/svg/icons/General/Edit.svg')} />
-        </span>
+        <i class="fas fa-pencil-alt mx-2"></i>
       </a>
       <a
         title="Delete"
         className="btn btn-icon btn-light btn-hover-primary btn-sm"
         onClick={() => openDeleteCustomerDialog(row.id)}
       >
-        <span className="svg-icon svg-icon-md svg-icon-primary">
-          <SVG src={toAbsoluteUrl('/media/svg/icons/General/Trash.svg')} />
-        </span>
+        <i class="fas fa-trash mx-2"></i>
       </a>
     </span>
   );
@@ -196,7 +192,6 @@ export default function CustomersCard() {
       </CardHeader>
       <CardBody>
         <Filters filters={filters} setFilters={setFilters} />
-        {/* {selected.length > 0 && <CustomersGrouping />} */}
         <Table
           columns={columns}
           data={data}

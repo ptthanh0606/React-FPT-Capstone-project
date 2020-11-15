@@ -12,8 +12,6 @@ import Table from 'components/Table';
 import Filters from 'views/Semesters/SemesterFilters';
 import customers from 'utils/request/mocks/customer/customers';
 import { Link } from 'react-router-dom';
-import SVG from 'react-inlinesvg';
-import { toAbsoluteUrl } from '_metronic/_helpers';
 
 export const statusClasses = ['danger', 'success', 'info', ''];
 export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
@@ -37,18 +35,14 @@ function ActionsColumnFormatter(
         className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
         onClick={() => openEditCustomerDialog(row.id)}
       >
-        <span className="svg-icon svg-icon-md svg-icon-primary">
-          <SVG src={toAbsoluteUrl('/media/svg/icons/Media/Play.svg')} />
-        </span>
+        <i class="fas fa-mouse-pointer mx-2"></i>
       </a>
       <a
         title="Delete"
         className="btn btn-icon btn-light btn-hover-primary btn-sm"
         onClick={() => openDeleteCustomerDialog(row.id)}
       >
-        <span className="svg-icon svg-icon-md svg-icon-primary">
-          <SVG src={toAbsoluteUrl('/media/svg/icons/General/Trash.svg')} />
-        </span>
+        <i class="fas fa-trash mx-2"></i>
       </a>
     </span>
   );
@@ -130,12 +124,8 @@ export default function CustomersCard() {
           className="btn btn-primary font-weight-bold btn-sm"
           // onClick={}
         >
-          <span className="svg-icon svg-icon-md svg-icon-white mr-3">
-            <SVG
-              src={toAbsoluteUrl('/media/svg/icons/Communication/Write.svg')}
-            />
-          </span>
-          New semester
+          <i class="fas fa-plus mr-2"></i>
+          New
         </button>
       ),
     });

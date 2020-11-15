@@ -27,6 +27,10 @@ const menus = [
     // ],
   },
   {
+    path: '/checkpoint-template',
+    title: 'Checkpoint Template',
+  },
+  {
     path: '/department',
     title: 'Department',
   },

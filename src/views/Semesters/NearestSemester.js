@@ -6,8 +6,6 @@ import metaAtom from 'store/meta';
 import SemesterCard from './SemesterCard';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import styles from './NearestSemester.module.scss';
-import SVG from 'react-inlinesvg';
-import { toAbsoluteUrl } from '_metronic/_helpers';
 
 const semesters = [
   {
@@ -58,12 +56,8 @@ export default React.memo(function DashboardPage() {
           className="btn btn-primary font-weight-bold btn-sm"
           // onClick={}
         >
-          <span className="svg-icon svg-icon-md svg-icon-white mr-3">
-            <SVG
-              src={toAbsoluteUrl('/media/svg/icons/Communication/Write.svg')}
-            />
-          </span>
-          New semester
+          <i class="fas fa-plus mr-2"></i>
+          New
         </button>
       ),
     });
