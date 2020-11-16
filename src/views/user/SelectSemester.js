@@ -1,64 +1,15 @@
 import React from 'react';
-import { Card, CardBody } from '_metronic/_partials/controls';
-import metaAtom from 'store/meta';
+import { Link } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
+import metaAtom from 'store/meta';
+
+import SemesterCard from 'components/SemesterCard';
+import ScrollContainer from 'react-indiana-drag-scroll';
+import styles from './SelectSemester.module.scss';
+
 import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from 'views/admin/Semesters/SemesterFilters';
-import { Link } from 'react-router-dom';
-
-const semesters = [
-  {
-    id: 1,
-    name: 'Spring 2021',
-    status: 2,
-  },
-  {
-    id: 2,
-    name: 'Fall 2020',
-    status: 1,
-  },
-  {
-    id: 3,
-    name: 'Summer 2020',
-    status: 1,
-  },
-  {
-    id: 3,
-    name: 'Spring 2020',
-    status: 0,
-  },
-  {
-    id: 4,
-    name: 'Fall 2019',
-    status: 0,
-  },
-  {
-    id: 5,
-    name: 'Summer 2019',
-    status: 0,
-  },
-  {
-    id: 6,
-    name: 'Spring 2019',
-    status: 0,
-  },
-  {
-    id: 7,
-    name: 'Fall 2018',
-    status: 0,
-  },
-  {
-    id: 8,
-    name: 'Summer 2018',
-    status: 0,
-  },
-  {
-    id: 9,
-    name: 'Spring 2018',
-    status: 0,
-  },
-];
 
 export const statusClasses = ['info', 'primary', 'warning', 'danger'];
 export const statusTitles = [
@@ -88,13 +39,6 @@ function ActionsColumnFormatter(
         onClick={() => openEditCustomerDialog(row.id)}
       >
         <i class="fas fa-mouse-pointer mx-2"></i>
-      </a>
-      <a
-        title="Remove"
-        className="btn btn-icon btn-light btn-hover-primary btn-sm"
-        onClick={() => openDeleteCustomerDialog(row.id)}
-      >
-        <i class="fas fa-trash mx-2"></i>
       </a>
     </span>
   );
@@ -140,7 +84,6 @@ const columns = [
     formatter: ActionsColumnFormatter,
     formatExtraData: {
       openEditCustomerDialog: () => {},
-      openDeleteCustomerDialog: () => {},
     },
     classes: 'text-right pr-0',
     headerClasses: 'text-right pr-3',
@@ -150,7 +93,70 @@ const columns = [
   },
 ];
 
-export default function CustomersCard() {
+const semesters = [
+  {
+    name: 'Fall 2021',
+    id: 1,
+    status: 0,
+    color: 'danger',
+  },
+  {
+    name: 'Summer 2021',
+    id: 2,
+    status: 1,
+    color: 'warning',
+  },
+  {
+    name: 'Spring 2021',
+    id: 3,
+    status: 2,
+    color: 'success',
+  },
+  {
+    name: 'Fall 2020',
+    id: 3,
+    status: 3,
+    color: 'primary',
+  },
+  {
+    name: 'Summer 2020',
+    id: 3,
+    status: 3,
+    color: 'info',
+  },
+  {
+    name: 'Fall 2021',
+    id: 1,
+    status: 0,
+    color: 'danger',
+  },
+  {
+    name: 'Summer 2021',
+    id: 2,
+    status: 1,
+    color: 'warning',
+  },
+  {
+    name: 'Spring 2021',
+    id: 3,
+    status: 2,
+    color: 'success',
+  },
+  {
+    name: 'Fall 2020',
+    id: 3,
+    status: 3,
+    color: 'primary',
+  },
+  {
+    name: 'Summer 2020',
+    id: 3,
+    status: 3,
+    color: 'info',
+  },
+];
+
+export default React.memo(function DashboardPage() {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -161,56 +167,60 @@ export default function CustomersCard() {
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
 
-  const setMeta = useSetRecoilState(metaAtom);
-
-  React.useEffect(() => {
-    setMeta({
-      title: 'All semesters',
-      breadcrumb: [
-        { title: 'Semester', path: '/semester' },
-        { title: 'All semesters', path: '/semester/all' },
-      ],
-      toolbar: (
-        <button
-          type="button"
-          className="btn btn-primary font-weight-bold btn-sm"
-          // onClick={}
-        >
-          <i class="fas fa-plus mr-2"></i>
-          New
-        </button>
-      ),
-    });
-  }, [setMeta]);
-
   React.useEffect(() => {
     setData(semesters);
     setTotal(100);
   }, []);
+  const setMeta = useSetRecoilState(metaAtom);
+
+  React.useEffect(() => {
+    setMeta({
+      title: 'Select semesters',
+    });
+  }, [setMeta]);
 
   return (
-    <Card style={{ marginTop: '1.5rem' }}>
-      <CardBody>
-        <Filters filters={filters} setFilters={setFilters} />
-        <Table
-          columns={columns}
-          data={data}
-          total={total}
-          isLoading={isLoading}
-          selected={selected}
-          setSelected={setSelected}
-          page={page}
-          setPage={setPage}
-          pageSize={pageSize}
-          setPageSize={setPageSize}
-          sortField={sortField}
-          setSortField={setSortField}
-          sortOrder={sortOrder}
-          setSortOrder={setSortOrder}
-          defaultSorted={defaultSorted}
-          pageSizeList={sizePerPageList}
-        />
-      </CardBody>
-    </Card>
+    <div
+      style={{
+        position: 'fixed',
+        width: '100vw',
+        height: '100vh',
+        top: 0,
+        left: 0,
+        zIndex: 100,
+        backgroundColor: 'white',
+      }}
+    >
+      <div>
+        <ScrollContainer
+          className={styles['semester-scroll'] + ' alert-shadow gutter-b'}
+        >
+          {semesters.map(s => (
+            <SemesterCard {...s} key={s.name} />
+          ))}
+        </ScrollContainer>
+        <div className="mx-8">
+          <Filters filters={filters} setFilters={setFilters} />
+          <Table
+            columns={columns}
+            data={data}
+            total={total}
+            isLoading={isLoading}
+            selected={selected}
+            setSelected={setSelected}
+            page={page}
+            setPage={setPage}
+            pageSize={pageSize}
+            setPageSize={setPageSize}
+            sortField={sortField}
+            setSortField={setSortField}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            defaultSorted={defaultSorted}
+            pageSizeList={sizePerPageList}
+          />
+        </div>
+      </div>
+    </div>
   );
-}
+});

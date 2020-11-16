@@ -6,39 +6,39 @@ import { Modal, Form, Row, Col, Button } from 'react-bootstrap';
 import { useSetRecoilState } from 'recoil';
 import metaAtom from 'store/meta';
 
-import SemesterCard from './SemesterCard';
+import SemesterCard from '../../../components/SemesterCard';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import styles from './NearestSemester.module.scss';
 
 const semesters = [
   {
-    title: 'Fall 2021',
+    name: 'Fall 2021',
     id: 1,
-    status: 'Preparing',
+    status: 0,
     color: 'danger',
   },
   {
-    title: 'Summer 2021',
+    name: 'Summer 2021',
     id: 2,
-    status: 'Preparing',
+    status: 0,
     color: 'warning',
   },
   {
-    title: 'Spring 2021',
+    name: 'Spring 2021',
     id: 3,
-    status: 'In progress',
+    status: 2,
     color: 'success',
   },
   {
-    title: 'Fall 2020',
+    name: 'Fall 2020',
     id: 3,
-    status: 'Finished',
+    status: 3,
     color: 'primary',
   },
   {
-    title: 'Summer 2020',
+    name: 'Summer 2020',
     id: 3,
-    status: 'Finished',
+    status: 3,
     color: 'info',
   },
 ];

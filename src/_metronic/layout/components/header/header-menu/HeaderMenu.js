@@ -4,8 +4,11 @@ import { useLocation } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import SVG from 'react-inlinesvg';
 import { toAbsoluteUrl, checkIsActive } from '../../../../_helpers';
+import { useRecoilValue } from 'recoil';
 
-const menus = [
+import roleSelector from 'auth/recoil/selectors/role';
+
+const menusOfAdmin = [
   {
     path: '/dashboard',
     title: 'Dashboard',
@@ -48,8 +51,31 @@ const menus = [
   },
 ];
 
+const menusOfUser = [
+  {
+    path: '/dashboard',
+    title: 'Dashboard',
+  },
+  {
+    path: '/topic',
+    title: 'Topic',
+  },
+  {
+    path: '/team',
+    title: 'Team',
+  },
+];
+
 export const HeaderMenu = React.memo(function ({ layoutProps }) {
+  const role = useRecoilValue(roleSelector);
   const location = useLocation();
+
+  const [menus, setMenus] = React.useState([]);
+
+  React.useEffect(() => {
+    if (role === 'admin') setMenus(menusOfAdmin);
+    else setMenus(menusOfUser);
+  }, [role]);
 
   const getMenuItemActive = React.useCallback(
     url => {

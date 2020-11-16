@@ -1,0 +1,24 @@
+.semester-scroll {
+  margin-top: 1rem;
+  white-space: nowrap;
+  padding: 2rem 0 0 2rem;
+  overflow: auto;
+  background-color: white;
+  border-radius: 0.5rem;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  div {
+    display: inline-block;
+    width: 25%;
+    min-width: 300px;
+  }
+}
+
+.nav-box {
+  text-align: right;
+  margin-top: -1.25rem;
+  font-size: 1.25rem;
+}

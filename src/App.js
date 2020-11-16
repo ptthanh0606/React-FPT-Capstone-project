@@ -18,7 +18,7 @@ const Private = React.memo(function Private() {
   const setUser = useSetRecoilState(userAtom);
 
   React.useEffect(() => {
-    setRole('admin');
+    setRole('student');
     setUser({
       id: 0,
       email: 'duyhdse130491@fpt.edu.vn',
@@ -30,8 +30,8 @@ const Private = React.memo(function Private() {
   return (
     <>
       <AuthGuard />
-      {role === 'admin' && (
-        <Layout>
+      <Layout>
+        {role === 'admin' && (
           <Switch>
             <Route.NormalRoute
               path={'/dashboard'}
@@ -81,10 +81,17 @@ const Private = React.memo(function Private() {
             />
             <Route.RedirectRoute to="/dashboard" />
           </Switch>
-        </Layout>
-      )}
-      {role === 'student' && <>Hello student</>}
-      {role === 'lecturer' && <>Hello lecturer</>}
+        )}
+        {role === 'student' && (
+          <Switch>
+            <Route.NormalRoute
+              path="/select-semester"
+              component={lazy(() => import('views/user/SelectSemester'))}
+            />
+          </Switch>
+        )}
+        {role === 'lecturer' && <>Hello lecturer</>}
+      </Layout>
     </>
   );
 });
