@@ -8,7 +8,7 @@ const auth = atom({
   key: 'auth',
   default: {
     isAuthenticated: isAuthenticated(),
-    role: 'admin', // student, lecturer
+    role: '', // admin, student, lecturer
   },
 });
 

@@ -12,12 +12,15 @@ import config from 'config';
 import request from 'utils/request';
 import { LOGIN } from 'endpoints';
 
+import { role } from 'auth/recoil/selectors';
+
 import './login.scss';
 
 const result = {
   accessToken: 'some.random.token',
   refreshToken: 'some.random.refreshToken',
   accessTokenExpiresAt: 1702277966,
+  role: '',
 };
 
 const initialValues = {
@@ -43,12 +46,28 @@ const login = async function ({ email, password, google_token }) {
       .catch(({ response }) => {
         throw new Error(response.data.messages[0]);
       });
+  } else if (email === 'admin@de.mo' && password === 'demo') {
+    return {
+      ...result,
+      role: 'admin',
+    };
+  } else if (email === 'student@de.mo' && password === 'demo') {
+    return {
+      ...result,
+      role: 'student',
+    };
+  } else if (email === 'lecturer@de.mo' && password === 'demo') {
+    return {
+      ...result,
+      role: 'lecturer',
+    };
   }
   throw new Error(404);
 };
 
 function Login({ state = {} }) {
   const setMetaTitle = useSetRecoilState(title);
+  const setRole = useSetRecoilState(role);
 
   React.useEffect(() => {
     setMetaTitle('Login');
@@ -65,11 +84,12 @@ function Login({ state = {} }) {
   const loginWithGoogle = React.useCallback(() => {
     signIn().then(googleUser => {
       login({ google_token: googleUser.tokenId })
-        .then(({ accessToken, refreshToken, accessTokenExpiresAt }) => {
+        .then(({ accessToken, refreshToken, accessTokenExpiresAt, role }) => {
           disableLoading();
           helpers.setAccessToken(accessToken);
           helpers.setRefreshToken(refreshToken);
           helpers.setAccessTokenExpiresAt(accessTokenExpiresAt);
+          setRole(role);
           if (state?.from)
             history.push(
               state?.from.pathname + state?.from.search + state?.from.hash
@@ -80,7 +100,7 @@ function Login({ state = {} }) {
           setStatus(message);
         });
     });
-  }, [history, signIn, state.from]);
+  }, [history, setRole, signIn, state.from]);
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string()
@@ -121,11 +141,12 @@ function Login({ state = {} }) {
       enableLoading();
       setTimeout(() => {
         login({ email: values.email, password: values.password })
-          .then(({ accessToken, refreshToken, accessTokenExpiresAt }) => {
+          .then(({ accessToken, refreshToken, accessTokenExpiresAt, role }) => {
             disableLoading();
             helpers.setAccessToken(accessToken);
             helpers.setRefreshToken(refreshToken);
             helpers.setAccessTokenExpiresAt(accessTokenExpiresAt);
+            setRole(role);
             if (state?.from)
               history.push(
                 state?.from.pathname + state?.from.search + state?.from.hash

@@ -9,7 +9,7 @@ import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
 import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
-import Filters from 'views/Semesters/SemesterFilters';
+import Filters from 'views/admin/Semesters/SemesterFilters';
 import customers from 'utils/request/mocks/customer/customers';
 import { Link } from 'react-router-dom';
 

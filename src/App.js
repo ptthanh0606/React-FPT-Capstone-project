@@ -1,6 +1,11 @@
 import React, { lazy } from 'react';
 import { Switch, BrowserRouter, Route as DefaultRoute } from 'react-router-dom';
 
+import { useRecoilState, useSetRecoilState } from 'recoil';
+
+import roleSelector from 'auth/recoil/selectors/role';
+import userAtom from 'store/user';
+
 import * as Route from 'utils/router/routes';
 
 import { LayoutSplashScreen } from '_metronic/layout/_core/MetronicSplashScreen';
@@ -9,52 +14,77 @@ import AuthGuard from 'auth/AuthGuard';
 import { Layout } from '_metronic/layout';
 
 const Private = React.memo(function Private() {
+  const [role, setRole] = useRecoilState(roleSelector);
+  const setUser = useSetRecoilState(userAtom);
+
+  React.useEffect(() => {
+    setRole('admin');
+    setUser({
+      id: 0,
+      email: 'duyhdse130491@fpt.edu.vn',
+      name: 'Huynh Duc Duy',
+      department: ['SE'],
+    });
+  }, [setRole, setUser]);
+
   return (
     <>
       <AuthGuard />
-      <Layout>
-        <Switch>
-          <Route.NormalRoute
-            path={'/dashboard'}
-            exact
-            component={lazy(() =>
-              import('views/Dashboard' /* webpackChunkName: "dashboard" */)
-            )}
-          />
-          <DefaultRoute path={'/user'}>User</DefaultRoute>
-          <Route.NormalRoute
-            path={'/semester'}
-            component={lazy(() =>
-              import('views/Semesters' /* webpackChunkName: "semester" */)
-            )}
-          />
-          <Route.NormalRoute
-            path={'/department'}
-            component={lazy(() =>
-              import('views/Departments' /* webpackChunkName: "department" */)
-            )}
-          />
-          <Route.NormalRoute
-            path={'/lecturer'}
-            component={lazy(() =>
-              import('views/Lecturers' /* webpackChunkName: "lecturer" */)
-            )}
-          />
-          <Route.NormalRoute
-            path={'/student'}
-            component={lazy(() =>
-              import('views/Students' /* webpackChunkName: "student" */)
-            )}
-          />
-          <Route.NormalRoute
-            path={'/admin'}
-            component={lazy(() =>
-              import('views/Admins' /* webpackChunkName: "admin" */)
-            )}
-          />
-          <Route.RedirectRoute to="/dashboard" />
-        </Switch>
-      </Layout>
+      {role === 'admin' && (
+        <Layout>
+          <Switch>
+            <Route.NormalRoute
+              path={'/dashboard'}
+              exact
+              component={lazy(() =>
+                import(
+                  'views/admin/Dashboard' /* webpackChunkName: "dashboard" */
+                )
+              )}
+            />
+            <DefaultRoute path={'/user'}>User</DefaultRoute>
+            <Route.NormalRoute
+              path={'/semester'}
+              component={lazy(() =>
+                import(
+                  'views/admin/Semesters' /* webpackChunkName: "semester" */
+                )
+              )}
+            />
+            <Route.NormalRoute
+              path={'/department'}
+              component={lazy(() =>
+                import(
+                  'views/admin/Departments' /* webpackChunkName: "department" */
+                )
+              )}
+            />
+            <Route.NormalRoute
+              path={'/lecturer'}
+              component={lazy(() =>
+                import(
+                  'views/admin/Lecturers' /* webpackChunkName: "lecturer" */
+                )
+              )}
+            />
+            <Route.NormalRoute
+              path={'/student'}
+              component={lazy(() =>
+                import('views/admin/Students' /* webpackChunkName: "student" */)
+              )}
+            />
+            <Route.NormalRoute
+              path={'/admin'}
+              component={lazy(() =>
+                import('views/admin/Admins' /* webpackChunkName: "admin" */)
+              )}
+            />
+            <Route.RedirectRoute to="/dashboard" />
+          </Switch>
+        </Layout>
+      )}
+      {role === 'student' && <>Hello student</>}
+      {role === 'lecturer' && <>Hello lecturer</>}
     </>
   );
 });
