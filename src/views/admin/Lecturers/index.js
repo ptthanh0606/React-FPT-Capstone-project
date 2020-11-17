@@ -11,6 +11,7 @@ import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from './Filters';
 import { Link } from 'react-router-dom';
+import AddLecturerModal from 'components/AddLecturerModal/AddLecturerModal';
 
 const defaultSorted = [{ dataField: 'id', order: 'asc' }];
 
@@ -42,16 +43,24 @@ function ActionsColumnFormatter(
   return (
     <span className="text-nowrap">
       <a
+        href="/"
         title="Edit"
         className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-        onClick={() => openEditCustomerDialog(row.id)}
+        onClick={event => {
+          event.preventDefault();
+          openEditCustomerDialog(row.id);
+        }}
       >
         <i class="fas fa-pencil-alt mx-2"></i>
       </a>
       <a
+        href="/"
         title="Remove"
         className="btn btn-icon btn-light btn-hover-primary btn-sm"
-        onClick={() => openDeleteCustomerDialog(row.id)}
+        onClick={event => {
+          event.preventDefault();
+          openDeleteCustomerDialog(row.id);
+        }}
       >
         <i class="fas fa-trash mx-2"></i>
       </a>
@@ -140,8 +149,32 @@ export default function CustomersCard() {
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [
+    showRemoveLecturersConfirmModalFlg,
+    setShowRemoveLecturersConfirmModalFlg,
+  ] = React.useState(false);
+  const [
+    showCreateLecturersModalFlg,
+    setShowCreateLecturersModalFlg,
+  ] = React.useState(false);
 
   const setMeta = useSetRecoilState(metaAtom);
+
+  const handleShowRemoveLecturersModal = () => {
+    setShowRemoveLecturersConfirmModalFlg(true);
+  };
+
+  const handleHideRemoveLecturersModal = () => {
+    setShowRemoveLecturersConfirmModalFlg(false);
+  };
+
+  const handleShowCreateLecturersModal = () => {
+    setShowCreateLecturersModalFlg(true);
+  };
+
+  const handleHideCreateLecturersModal = () => {
+    setShowCreateLecturersModalFlg(false);
+  };
 
   React.useEffect(() => {
     setMeta({
@@ -154,7 +187,7 @@ export default function CustomersCard() {
         <button
           type="button"
           className="btn btn-primary font-weight-bold btn-sm"
-          // onClick={}
+          onClick={handleShowCreateLecturersModal}
         >
           <i class="fas fa-plus mr-2"></i>
           New
@@ -191,6 +224,11 @@ export default function CustomersCard() {
           pageSizeList={sizePerPageList}
         />
       </CardBody>
+      <AddLecturerModal
+        isShowFlg={showCreateLecturersModalFlg}
+        onHide={handleHideCreateLecturersModal}
+        onCreate={() => {}}
+      />
     </Card>
   );
 }

@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 
 import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
+import CreateDepartmentModal from 'components/CreateDepartmentModal/CreateDepartmentModal';
 
 const defaultSorted = [{ dataField: 'id', order: 'asc' }];
 
@@ -57,16 +58,24 @@ function ActionsColumnFormatter(
   return (
     <span className="text-nowrap">
       <a
+        href="/"
         title="Edit"
         className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-        onClick={() => openEditCustomerDialog(row.id)}
+        onClick={event => {
+          event.preventDefault();
+          openEditCustomerDialog(row.id);
+        }}
       >
         <i class="fas fa-pencil-alt mx-2"></i>
       </a>
       <a
+        href="/"
         title="Remove"
         className="btn btn-icon btn-light btn-hover-primary btn-sm"
-        onClick={() => openDeleteCustomerDialog(row.id)}
+        onClick={event => {
+          event.preventDefault();
+          openDeleteCustomerDialog(row.id);
+        }}
       >
         <i class="fas fa-trash mx-2"></i>
       </a>
@@ -152,8 +161,20 @@ export default function CustomersCard() {
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [
+    showCreateDepartmentModal,
+    setShowCreateDepartmentModal,
+  ] = React.useState(false);
 
   const setMeta = useSetRecoilState(metaAtom);
+
+  const handleShowCreateDepartmentModal = React.useCallback(() => {
+    setShowCreateDepartmentModal(true);
+  }, [setShowCreateDepartmentModal]);
+
+  const handleHideCreateDepartmentModal = React.useCallback(() => {
+    setShowCreateDepartmentModal(false);
+  }, [setShowCreateDepartmentModal]);
 
   React.useEffect(() => {
     setMeta({
@@ -166,14 +187,14 @@ export default function CustomersCard() {
         <button
           type="button"
           className="btn btn-primary font-weight-bold btn-sm"
-          // onClick={}
+          onClick={handleShowCreateDepartmentModal}
         >
           <i class="fas fa-plus mr-2"></i>
           New
         </button>
       ),
     });
-  }, [setMeta]);
+  }, [handleShowCreateDepartmentModal, setMeta]);
 
   React.useEffect(() => {
     setData(mockData);
@@ -203,6 +224,10 @@ export default function CustomersCard() {
           pageSizeList={sizePerPageList}
         />
       </CardBody>
+      <CreateDepartmentModal
+        isShowFlg={showCreateDepartmentModal}
+        onHide={handleHideCreateDepartmentModal}
+      />
     </Card>
   );
 }
