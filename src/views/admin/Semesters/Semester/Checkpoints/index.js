@@ -52,40 +52,6 @@ const mockData = [
   },
 ];
 
-function ActionsColumnFormatter(
-  cellContent,
-  row,
-  rowIndex,
-  { openEditCustomerDialog, openDeleteCustomerDialog }
-) {
-  return (
-    <span className="text-nowrap">
-      <a
-        href="/"
-        title="Edit"
-        className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-        onClick={event => {
-          event.preventDefault();
-          openEditCustomerDialog(row.id);
-        }}
-      >
-        <i class="fas fa-pencil-alt mx-2"></i>
-      </a>
-      <a
-        href="/"
-        title="Remove"
-        className="btn btn-icon btn-light btn-hover-primary btn-sm"
-        onClick={event => {
-          event.preventDefault();
-          openDeleteCustomerDialog(row.id);
-        }}
-      >
-        <i class="fas fa-trash mx-2"></i>
-      </a>
-    </span>
-  );
-}
-
 // function StatusColumnFormatter(cellContent, row) {
 //   const getLabelCssClasses = () => {
 //     return `label label-lg label-light-${
@@ -96,65 +62,6 @@ function ActionsColumnFormatter(
 //     <span className={getLabelCssClasses()}>{statusTitles[row.status]}</span>
 //   );
 // }
-
-const columns = [
-  {
-    dataField: 'department',
-    text: 'Dep',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'name',
-    text: 'Name',
-    sort: true,
-    sortCaret: sortCaret,
-    formatter: function StatusColumnFormatter(cellContent, row) {
-      return (
-        <Link className="text-dark font-weight-bold" to={'/semester/' + row.id}>
-          {cellContent}
-        </Link>
-      );
-    },
-    headerSortingClasses,
-  },
-  {
-    dataField: 'weight',
-    text: 'Weight',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'dueDate',
-    text: 'Due Date',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'markCols',
-    text: 'Mark columns',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'action',
-    text: 'Actions',
-    formatter: ActionsColumnFormatter,
-    formatExtraData: {
-      openEditCustomerDialog: () => {},
-      openDeleteCustomerDialog: () => {},
-    },
-    classes: 'text-right pr-0',
-    headerClasses: 'text-right pr-3',
-    style: {
-      minWidth: '100px',
-    },
-  },
-];
 
 export default function CustomersCard() {
   const [data, setData] = React.useState([]);
@@ -174,6 +81,13 @@ export default function CustomersCard() {
     showCreateCheckpointModalFlg,
     setShowCreateCheckpointModalFlg,
   ] = React.useState(false);
+
+  const [
+    showUpdateCheckpointModalFlg,
+    setShowUpdateCheckpointModalFlg,
+  ] = React.useState(false);
+
+  const [editId, setEditId] = React.useState(0);
 
   const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
@@ -195,6 +109,111 @@ export default function CustomersCard() {
     setTotal(100);
   }, []);
 
+  //----------------------------------------------------------------------------
+
+  const ActionsColumnFormatter = React.useCallback(
+    (
+      cellContent,
+      row,
+      rowIndex,
+      { openEditCustomerDialog, openDeleteCustomerDialog }
+    ) => {
+      return (
+        <span className="text-nowrap">
+          <a
+            href="/"
+            title="Edit"
+            className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
+            onClick={event => {
+              event.preventDefault();
+              setShowUpdateCheckpointModalFlg(true);
+              setEditId(row.id);
+            }}
+          >
+            <i class="fas fa-pencil-alt mx-2"></i>
+          </a>
+          <a
+            href="/"
+            title="Remove"
+            className="btn btn-icon btn-light btn-hover-primary btn-sm"
+            onClick={event => {
+              event.preventDefault();
+              openDeleteCustomerDialog(row.id);
+            }}
+          >
+            <i class="fas fa-trash mx-2"></i>
+          </a>
+        </span>
+      );
+    },
+    []
+  );
+
+  const columns = React.useMemo(
+    () => [
+      {
+        dataField: 'department',
+        text: 'Dep',
+        sort: true,
+        sortCaret: sortCaret,
+        headerSortingClasses,
+      },
+      {
+        dataField: 'name',
+        text: 'Name',
+        sort: true,
+        sortCaret: sortCaret,
+        formatter: function StatusColumnFormatter(cellContent, row) {
+          return (
+            <Link
+              className="text-dark font-weight-bold"
+              to={'/semester/' + row.id}
+            >
+              {cellContent}
+            </Link>
+          );
+        },
+        headerSortingClasses,
+      },
+      {
+        dataField: 'weight',
+        text: 'Weight',
+        sort: true,
+        sortCaret: sortCaret,
+        headerSortingClasses,
+      },
+      {
+        dataField: 'dueDate',
+        text: 'Due Date',
+        sort: true,
+        sortCaret: sortCaret,
+        headerSortingClasses,
+      },
+      {
+        dataField: 'markCols',
+        text: 'Mark columns',
+        sort: true,
+        sortCaret: sortCaret,
+        headerSortingClasses,
+      },
+      {
+        dataField: 'action',
+        text: 'Actions',
+        formatter: ActionsColumnFormatter,
+        formatExtraData: {
+          openEditCustomerDialog: () => {},
+          openDeleteCustomerDialog: () => {},
+        },
+        classes: 'text-right pr-0',
+        headerClasses: 'text-right pr-3',
+        style: {
+          minWidth: '100px',
+        },
+      },
+    ],
+    [ActionsColumnFormatter]
+  );
+
   const handleShowRemoveCheckpointModal = () => {
     setShowRemoveCheckpointConfirmModalFlg(true);
   };
@@ -210,6 +229,10 @@ export default function CustomersCard() {
   const handleHideCreateCheckpointModal = () => {
     setShowCreateCheckpointModalFlg(false);
   };
+
+  const handleHideUpdateCheckpointModal = React.useCallback(() => {
+    setShowUpdateCheckpointModalFlg(false);
+  }, [setShowUpdateCheckpointModalFlg]);
 
   return (
     <Card>
@@ -267,6 +290,11 @@ export default function CustomersCard() {
       <CreateCheckpointModal
         isShowFlg={showCreateCheckpointModalFlg}
         onHide={handleHideCreateCheckpointModal}
+      />
+      <CreateCheckpointModal
+        isShowFlg={showUpdateCheckpointModalFlg}
+        onHide={handleHideUpdateCheckpointModal}
+        editId={editId}
       />
     </Card>
   );
