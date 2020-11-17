@@ -14,6 +14,8 @@ import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
 
 import { useParams } from 'react-router-dom';
+import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
+import CreateTeamStudentModal from 'components/CreateTeamStudentModal/CreateTeamStudentModal';
 
 export const statusClasses = ['danger', 'info', 'success', ''];
 export const statusTitles = ['Not in a team', 'Matching', 'Matched', ''];
@@ -53,16 +55,24 @@ function ActionsColumnFormatter(
   return (
     <span className="text-nowrap">
       <a
+        href="/"
         title="Edit"
         className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-        onClick={() => openEditCustomerDialog(row.id)}
+        onClick={event => {
+          event.preventDefault();
+          openEditCustomerDialog(row.id);
+        }}
       >
         <i class="fas fa-pencil-alt mx-2"></i>
       </a>
       <a
+        href="/"
         title="Remove"
         className="btn btn-icon btn-light btn-hover-primary btn-sm"
-        onClick={() => openDeleteCustomerDialog(row.id)}
+        onClick={event => {
+          event.preventDefault();
+          openDeleteCustomerDialog(row.id);
+        }}
       >
         <i class="fas fa-trash mx-2"></i>
       </a>
@@ -185,9 +195,33 @@ export default function CustomersCard() {
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [
+    showRemoveStudentTeamConfirmModalFlg,
+    setShowRemoveStudentTeamConfirmModalFlg,
+  ] = React.useState(false);
+  const [
+    showCreateStudentTeamModalFlg,
+    setShowCreateStudentTeamModalFlg,
+  ] = React.useState(false);
 
   const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
+
+  const handleShowRemoveStudentTeamModal = () => {
+    setShowRemoveStudentTeamConfirmModalFlg(true);
+  };
+
+  const handleHideRemoveStudentTeamModal = () => {
+    setShowRemoveStudentTeamConfirmModalFlg(false);
+  };
+
+  const handleShowCreateStudentTeamModal = () => {
+    setShowCreateStudentTeamModalFlg(true);
+  };
+
+  const handleHideCreateStudentTeamModal = () => {
+    setShowCreateStudentTeamModalFlg(false);
+  };
 
   React.useEffect(() => {
     setMeta(meta => ({
@@ -214,7 +248,7 @@ export default function CustomersCard() {
             type="button"
             className="btn btn-danger font-weight-bold"
             disabled={Array.isArray(selected) && selected.length === 0}
-            // onClick={}
+            onClick={handleShowRemoveStudentTeamModal}
           >
             <i class="fas fa-trash mr-2"></i>
             Remove ({(Array.isArray(selected) && selected.length) || 0})
@@ -223,7 +257,7 @@ export default function CustomersCard() {
           <button
             type="button"
             className="btn btn-primary font-weight-bold"
-            // onClick={}
+            onClick={handleShowCreateStudentTeamModal}
           >
             <i class="fas fa-plus mr-2"></i>
             New
@@ -252,6 +286,18 @@ export default function CustomersCard() {
           selectable
         />
       </CardBody>
+      <ConfirmRemoveModal
+        title="Confirm on remove"
+        body={<h5>Are you sure you want to remove selected student teams?</h5>}
+        isShowFlg={showRemoveStudentTeamConfirmModalFlg}
+        onHide={handleHideRemoveStudentTeamModal}
+        onConfirm={() => {}}
+      />
+      <CreateTeamStudentModal
+        isShowFlg={showCreateStudentTeamModalFlg}
+        onHide={handleHideCreateStudentTeamModal}
+        onCreate={() => {}}
+      />
     </Card>
   );
 }

@@ -13,6 +13,9 @@ import Filters from './Filters';
 import { Link } from 'react-router-dom';
 
 import { useParams } from 'react-router-dom';
+import CreateTopicModal from 'components/CreateTopicModal/CreateTopicModal';
+import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
+import UpdateTopicModal from 'components/UpdateTopicModal/UpdateTopicModal';
 
 export const statusClasses = ['danger', 'success', 'info', ''];
 export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
@@ -126,29 +129,41 @@ const mockData = [
   },
 ];
 
-function ActionsColumnFormatter(
-  cellContent,
-  row,
-  rowIndex,
-  { openEditCustomerDialog, openDeleteCustomerDialog }
-) {
+function ActionsColumnFormatter(cellContent, row, rowIndex) {
+  // const [isShowUpdateModalFlg, setShowUpdateModalFlg] = React.useState(false); deo dc du ma no
+
+  const onHideUpdateModal = () => {};
+  const openEditCustomerDialog = id => {};
+  const openDeleteCustomerDialog = id => {};
+
   return (
-    <span className="text-nowrap">
-      <a
-        title="Edit"
-        className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-        onClick={() => openEditCustomerDialog(row.id)}
-      >
-        <i class="fas fa-pencil-alt mx-2"></i>
-      </a>
-      <a
-        title="Remove"
-        className="btn btn-icon btn-light btn-hover-primary btn-sm"
-        onClick={() => openDeleteCustomerDialog(row.id)}
-      >
-        <i class="fas fa-trash mx-2"></i>
-      </a>
-    </span>
+    <>
+      <span className="text-nowrap">
+        <a
+          href="/"
+          title="Edit"
+          className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
+          onClick={event => {
+            event.preventDefault();
+            openEditCustomerDialog(row.id);
+          }}
+        >
+          <i className="fas fa-pencil-alt mx-2"></i>
+        </a>
+        <a
+          href="/"
+          title="Remove"
+          className="btn btn-icon btn-light btn-hover-primary btn-sm"
+          onClick={event => {
+            event.preventDefault();
+            openDeleteCustomerDialog(row.id);
+          }}
+        >
+          <i className="fas fa-trash mx-2"></i>
+        </a>
+      </span>
+      <UpdateTopicModal onHide={onHideUpdateModal} />
+    </>
   );
 }
 
@@ -216,11 +231,14 @@ const columns = [
     formatter: function StatusColumnFormatter(cellContent, row) {
       return (
         <a
+          href="null"
           title="Download"
           className="btn btn-icon btn-light btn-hover-primary btn-sm"
-          onClick={() => {}}
+          onClick={event => {
+            event.preventDefault();
+          }}
         >
-          <i class="fas fa-download my-2"></i>
+          <i className="fas fa-download my-2"></i>
         </a>
       );
     },
@@ -293,10 +311,7 @@ const columns = [
     dataField: 'action',
     text: 'Actions',
     formatter: ActionsColumnFormatter,
-    formatExtraData: {
-      openEditCustomerDialog: () => {},
-      openDeleteCustomerDialog: () => {},
-    },
+    formatExtraData: {},
     classes: 'text-right pr-0',
     headerClasses: 'text-right pr-3',
     style: {
@@ -315,6 +330,7 @@ export default function CustomersCard() {
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [showedNewModal, setShowedNewModal] = React.useState(false);
 
   const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
@@ -336,6 +352,27 @@ export default function CustomersCard() {
     setTotal(100);
   }, []);
 
+  const showNewModal = React.useCallback(() => {
+    setShowedNewModal(true);
+  });
+
+  const hideNewModal = React.useCallback(() => {
+    setShowedNewModal(false);
+  });
+
+  const [
+    showedConfirmRemoveSelectedTopicModal,
+    setShowedConfirmRemoveSelectedTopicModal,
+  ] = React.useState(false);
+
+  const onShowConfirmRemoveSelectedTopicModal = React.useCallback(() => {
+    setShowedConfirmRemoveSelectedTopicModal(true);
+  });
+
+  const onHideConfirmRemoveSelectedTopicModal = React.useCallback(() => {
+    setShowedConfirmRemoveSelectedTopicModal(false);
+  });
+
   return (
     <Card>
       <CardHeader title="All topics">
@@ -344,18 +381,18 @@ export default function CustomersCard() {
             type="button"
             className="btn btn-danger font-weight-bold"
             disabled={Array.isArray(selected) && selected.length === 0}
-            // onClick={}
+            onClick={onShowConfirmRemoveSelectedTopicModal}
           >
-            <i class="fas fa-trash mr-2"></i>
+            <i className="fas fa-trash mr-2"></i>
             Remove ({(Array.isArray(selected) && selected.length) || 0})
           </button>
           &nbsp;
           <button
             type="button"
             className="btn btn-primary font-weight-bold"
-            // onClick={}
+            onClick={showNewModal}
           >
-            <i class="fas fa-plus mr2"></i>
+            <i className="fas fa-plus mr2"></i>
             New
           </button>
         </CardHeaderToolbar>
@@ -382,6 +419,13 @@ export default function CustomersCard() {
           selectable
         />
       </CardBody>
+      <CreateTopicModal onHide={hideNewModal} isShowFlg={showedNewModal} />
+      <ConfirmRemoveModal
+        onHide={onHideConfirmRemoveSelectedTopicModal}
+        isShowFlg={showedConfirmRemoveSelectedTopicModal}
+        title="Confirm on removal"
+        body={<h5>Are you sure you want to remove selected topics?</h5>}
+      />
     </Card>
   );
 }
