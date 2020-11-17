@@ -88,6 +88,11 @@ const Private = React.memo(function Private() {
               path="/select-semester"
               component={lazy(() => import('views/user/SelectSemester'))}
             />
+            <Route.SemesterSelected
+              path="/dashboard"
+              component={lazy(() => import('views/user'))}
+            />
+            <Route.RedirectRoute to="/dashboard" />
           </Switch>
         )}
         {role === 'lecturer' && <>Hello lecturer</>}

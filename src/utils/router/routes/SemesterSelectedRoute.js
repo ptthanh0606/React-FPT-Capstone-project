@@ -10,7 +10,7 @@ export default function PrivateRoute({ ...rest }) {
   const config = {
     ...rest,
     condition: semester.id !== 0,
-    redirectTo: 'auth',
+    redirectTo: 'select-semester',
     reason: 'You must select a semester before continuing.',
   };
 
