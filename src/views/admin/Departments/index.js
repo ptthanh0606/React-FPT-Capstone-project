@@ -66,7 +66,7 @@ function ActionsColumnFormatter(
           openEditCustomerDialog(row.id);
         }}
       >
-        <i class="fas fa-pencil-alt mx-2"></i>
+        <i className="fas fa-pencil-alt mx-2"></i>
       </a>
       <a
         href="/"
@@ -77,7 +77,7 @@ function ActionsColumnFormatter(
           openDeleteCustomerDialog(row.id);
         }}
       >
-        <i class="fas fa-trash mx-2"></i>
+        <i className="fas fa-trash mx-2"></i>
       </a>
     </span>
   );
@@ -189,7 +189,7 @@ export default function CustomersCard() {
           className="btn btn-primary font-weight-bold btn-sm"
           onClick={handleShowCreateDepartmentModal}
         >
-          <i class="fas fa-plus mr-2"></i>
+          <i className="fas fa-plus mr-2"></i>
           New
         </button>
       ),

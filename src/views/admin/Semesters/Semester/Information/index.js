@@ -40,7 +40,7 @@ const Infomation = () => {
               className="btn btn-primary font-weight-bold"
               // onClick={}
             >
-              <i class="fas fa-save mr-2"></i>
+              <i className="fas fa-save mr-2"></i>
               Save
             </button>
           </CardHeaderToolbar>
@@ -110,7 +110,7 @@ const Infomation = () => {
               className="btn btn-primary font-weight-bold"
               // onClick={}
             >
-              <i class="fas fa-save mr-2"></i>
+              <i className="fas fa-save mr-2"></i>
               Save
             </button>
           </CardHeaderToolbar>

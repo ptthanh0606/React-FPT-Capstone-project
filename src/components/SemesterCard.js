@@ -8,7 +8,7 @@ const SemesterCard = props => {
     <div
       className={'col bg-' + props.color + ' px-6 py-8 rounded-xl mr-7 mb-7'}
     >
-      <i class="fas fa-archway text-light d-block my-2 font-size-h1"></i>
+      <i className="fas fa-archway text-light d-block my-2 font-size-h1"></i>
       <Link to={'/semester/' + props.id}>
         <span className="text-white font-size-h2" style={{ fontWeight: 700 }}>
           {props.name}

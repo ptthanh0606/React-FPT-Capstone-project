@@ -1,9 +1,10 @@
 import { atom } from 'recoil';
+import LocalStorage from 'utils/localStorage';
 
 const semester = atom({
   key: 'semester',
   default: {
-    id: 0,
+    id: LocalStorage.get('semester_id', 0),
     name: '',
     status: 0,
   },

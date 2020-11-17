@@ -68,7 +68,7 @@ export default React.memo(function DashboardPage() {
           className="btn btn-primary font-weight-bold btn-sm"
           onClick={showNewModal}
         >
-          <i class="fas fa-plus mr-2"></i>
+          <i className="fas fa-plus mr-2"></i>
           New
         </button>
       ),

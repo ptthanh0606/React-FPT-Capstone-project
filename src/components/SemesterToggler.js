@@ -1,6 +1,7 @@
 import React from 'react';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useRecoilValue } from 'recoil';
+import { Link } from 'react-router-dom';
 
 import roleSelector from 'auth/recoil/selectors/role';
 import semesterAtom from 'store/semester';
@@ -18,7 +19,7 @@ export function SemesterToggler() {
         >
           <div className="topbar-item">
             <div className="btn btn-icon w-auto btn-clean d-flex align-items-center btn-lg px-2">
-              <>
+              <Link to="/select-semester">
                 <span
                   className="symbol rounded bg-primary text-white"
                   style={{
@@ -30,7 +31,7 @@ export function SemesterToggler() {
                 >
                   {semester.name}
                 </span>
-              </>
+              </Link>
             </div>
           </div>
         </OverlayTrigger>
