@@ -13,10 +13,28 @@ import ActiveStudents from './ActiveStudents';
 import Councils from './Councils';
 import Teams from './Teams';
 import Checkpoints from './Checkpoints';
+import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
 
 const Semester = () => {
   const setMeta = useSetRecoilState(metaAtom);
   const { id } = useParams();
+
+  const [
+    isShowConfirmRemoveSemesterModalFlg,
+    setShowConfirmRemoveSemsterModalFlg,
+  ] = React.useState(false);
+
+  const onShowConfirmRemoveSemesterModal = React.useCallback(() => {
+    setShowConfirmRemoveSemsterModalFlg(true);
+  });
+
+  const onHideConfirmRemoveSemesterModal = React.useCallback(() => {
+    setShowConfirmRemoveSemsterModalFlg(false);
+  });
+
+  const onConfirmRemoveSemester = React.useCallback(() => {
+    // Handle remove
+  });
 
   React.useEffect(() => {
     setMeta(meta => ({
@@ -26,15 +44,15 @@ const Semester = () => {
           <button
             type="button"
             className="btn btn-danger font-weight-bold btn-sm"
-            // onClick={}
+            onClick={onShowConfirmRemoveSemesterModal}
           >
-            <i class="fas fa-trash mr-2"></i>
+            <i className="fas fa-trash mr-2"></i>
             Remove
           </button>
         </>
       ),
     }));
-  }, [setMeta, id]);
+  }, [setMeta, id, onShowConfirmRemoveSemesterModal]);
 
   return (
     <Tab.Container id="left-tabs-example" defaultActiveKey="first">
@@ -107,6 +125,13 @@ const Semester = () => {
           </Switch>
         </Col>
       </Row>
+      <ConfirmRemoveModal
+        title="Confirm on remove"
+        body={<h5>Are you sure you want to remove this semester?</h5>}
+        isShowFlg={isShowConfirmRemoveSemesterModalFlg}
+        onHide={onHideConfirmRemoveSemesterModal}
+        onConfirm={onConfirmRemoveSemester}
+      />
     </Tab.Container>
   );
 };

@@ -13,6 +13,8 @@ import Filters from './Filters';
 import { Link } from 'react-router-dom';
 
 import { useParams } from 'react-router-dom';
+import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
+import AddActiveStudentModal from 'components/AddActiveStudentModal/AddActiveStudentModal';
 
 export const statusClasses = ['danger', 'info', 'success', ''];
 export const statusTitles = ['Not in a team', 'Matching', 'Matched', ''];
@@ -45,16 +47,24 @@ function ActionsColumnFormatter(
   return (
     <span className="text-nowrap">
       <a
+        href="/"
         title="Edit"
         className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-        onClick={() => openEditCustomerDialog(row.id)}
+        onClick={event => {
+          event.preventDefault();
+          openEditCustomerDialog(row.id);
+        }}
       >
         <i class="fas fa-pencil-alt mx-2"></i>
       </a>
       <a
+        href="/"
         title="Remove"
         className="btn btn-icon btn-light btn-hover-primary btn-sm"
-        onClick={() => openDeleteCustomerDialog(row.id)}
+        onClick={event => {
+          event.preventDefault();
+          openDeleteCustomerDialog(row.id);
+        }}
       >
         <i class="fas fa-trash mx-2"></i>
       </a>
@@ -150,9 +160,39 @@ export default function CustomersCard() {
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [
+    showConfirmRemovelSelectedModalFlg,
+    setShowConfirmRemovelSelectedModalFlg,
+  ] = React.useState(false);
+  const [
+    showAddActiveStudentModalFlg,
+    setShowAddActiveStudentModalFlg,
+  ] = React.useState(false);
 
   const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
+
+  const handleShowRemoveSelectedConfirmModal = () => {
+    setShowConfirmRemovelSelectedModalFlg(true);
+  };
+
+  const handleHideRemoveSelectedConfirmModal = () => {
+    setShowConfirmRemovelSelectedModalFlg(false);
+  };
+
+  const handleShowAddActiveStudentModal = () => {
+    setShowAddActiveStudentModalFlg(true);
+  };
+
+  const handleHideAddActiveStudentModal = () => {
+    setShowAddActiveStudentModalFlg(false);
+    setShowAddActiveStudentModalFlg(false);
+  };
+
+  const handleAddSelectedStudents = () => {
+    // API call ?
+    setShowAddActiveStudentModalFlg(false);
+  };
 
   React.useEffect(() => {
     setMeta(meta => ({
@@ -182,7 +222,7 @@ export default function CustomersCard() {
             type="button"
             className="btn btn-danger font-weight-bold"
             disabled={Array.isArray(selected) && selected.length === 0}
-            // onClick={}
+            onClick={handleShowRemoveSelectedConfirmModal}
           >
             <i class="fas fa-trash mr-2"></i>
             Remove ({(Array.isArray(selected) && selected.length) || 0})
@@ -191,7 +231,7 @@ export default function CustomersCard() {
           <button
             type="button"
             className="btn btn-primary font-weight-bold"
-            // onClick={}
+            onClick={handleShowAddActiveStudentModal}
           >
             <i class="fas fa-plus mr-2"></i>
             Add
@@ -220,6 +260,17 @@ export default function CustomersCard() {
           selectable
         />
       </CardBody>
+      <ConfirmRemoveModal
+        isShowFlg={showConfirmRemovelSelectedModalFlg}
+        onHide={handleHideRemoveSelectedConfirmModal}
+        body={<h5>Are you sure you want to remove selected students?</h5>}
+        // onConfirm={() => {}}
+      />
+      <AddActiveStudentModal
+        isShowFlg={showAddActiveStudentModalFlg}
+        onHide={handleHideAddActiveStudentModal}
+        onAdd={handleAddSelectedStudents}
+      />
     </Card>
   );
 }
