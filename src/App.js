@@ -1,7 +1,7 @@
 import React, { lazy } from 'react';
 import { Switch, BrowserRouter, Route as DefaultRoute } from 'react-router-dom';
 
-import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import roleSelector from 'auth/recoil/selectors/role';
 import userAtom from 'store/user';
@@ -13,6 +13,28 @@ import { LayoutSplashScreen } from '_metronic/layout/_core/MetronicSplashScreen'
 
 import AuthGuard from 'auth/AuthGuard';
 import { Layout } from '_metronic/layout';
+
+function fetchMe(setRole, setUser) {
+  setRole('student');
+  setUser({
+    id: 0,
+    email: 'duyhdse130491@fpt.edu.vn',
+    name: 'Huynh Duc Duy',
+    role: 'student',
+    department: ['SE'],
+  });
+}
+
+function fetchSemester(semester, setSemester, lastSemester, setLastSemester) {
+  if (semester.id !== lastSemester) {
+    setSemester({
+      id: semester.id,
+      name: 'Fall 2020',
+      status: 1,
+    });
+    setLastSemester(semester.id);
+  }
+}
 
 const RoleBasedLayout = React.memo(({ role }) => {
   return (
@@ -72,7 +94,7 @@ const RoleBasedLayout = React.memo(({ role }) => {
           />
           <Route.SemesterSelected
             path="/dashboard"
-            component={lazy(() => import('views/user'))}
+            component={lazy(() => import('views/user/Dashboard'))}
           />
           <Route.NormalRoute
             path="/semester/:id(\d+)"
@@ -93,25 +115,12 @@ const Private = React.memo(function Private() {
   const [lastSemester, setLastSemester] = React.useState(0);
 
   React.useEffect(() => {
-    setRole('student');
-    setUser({
-      id: 0,
-      email: 'duyhdse130491@fpt.edu.vn',
-      name: 'Huynh Duc Duy',
-      department: ['SE'],
-    });
+    fetchMe(setRole, setUser);
   }, [setRole, setUser]);
 
   React.useEffect(() => {
     if (role !== 'admin') {
-      if (semester.id !== lastSemester) {
-        setSemester({
-          id: semester.id,
-          name: 'Fall 2020',
-          status: 1,
-        });
-        setLastSemester(semester.id);
-      }
+      fetchSemester(semester, setSemester, lastSemester, setLastSemester);
     }
   }, [lastSemester, role, semester, setSemester]);
 
