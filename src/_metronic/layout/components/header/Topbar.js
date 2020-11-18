@@ -10,6 +10,7 @@ import { QuickActionsDropdown } from '../extras/dropdowns/QuickActionsDropdown';
 import { MyCartDropdown } from '../extras/dropdowns/MyCartDropdown';
 import { LanguageSelectorDropdown } from '../extras/dropdowns/LanguageSelectorDropdown';
 import { QuickUserToggler } from '../extras/QuiclUserToggler';
+import { SemesterToggler } from 'components/SemesterToggler';
 
 export function Topbar() {
   const uiService = useHtmlClassService();
@@ -79,6 +80,8 @@ export function Topbar() {
       )}
 
       {layoutProps.viewLanguagesDisplay && <LanguageSelectorDropdown />}
+
+      <SemesterToggler />
 
       {layoutProps.viewUserDisplay && <QuickUserToggler />}
     </div>
