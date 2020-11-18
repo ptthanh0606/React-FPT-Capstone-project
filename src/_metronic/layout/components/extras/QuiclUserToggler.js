@@ -39,7 +39,7 @@ export function QuickUserToggler() {
                 </span>
                 <span className="symbol symbol-35 symbol-light-primary">
                   <span className="symbol-label font-size-h5 font-weight-bold">
-                    {user.name[0]}
+                    {user.name && user.name[0]}
                   </span>
                 </span>
               </>

@@ -14,6 +14,9 @@ import { LayoutSplashScreen } from '_metronic/layout/_core/MetronicSplashScreen'
 import AuthGuard from 'auth/AuthGuard';
 import { Layout } from '_metronic/layout';
 
+import User from 'views/user';
+import Admin from 'views/admin';
+
 function fetchMe(setRole, setUser) {
   setRole('student');
   setUser({
@@ -39,71 +42,8 @@ function fetchSemester(semester, setSemester, lastSemester, setLastSemester) {
 const RoleBasedLayout = React.memo(({ role }) => {
   return (
     <>
-      {role === 'admin' && (
-        <Switch>
-          <Route.NormalRoute
-            path={'/dashboard'}
-            exact
-            component={lazy(() =>
-              import(
-                'views/admin/Dashboard' /* webpackChunkName: "dashboard" */
-              )
-            )}
-          />
-          <DefaultRoute path={'/user'}>User</DefaultRoute>
-          <Route.NormalRoute
-            path={'/semester'}
-            component={lazy(() =>
-              import('views/admin/Semesters' /* webpackChunkName: "semester" */)
-            )}
-          />
-          <Route.NormalRoute
-            path={'/department'}
-            component={lazy(() =>
-              import(
-                'views/admin/Departments' /* webpackChunkName: "department" */
-              )
-            )}
-          />
-          <Route.NormalRoute
-            path={'/lecturer'}
-            component={lazy(() =>
-              import('views/admin/Lecturers' /* webpackChunkName: "lecturer" */)
-            )}
-          />
-          <Route.NormalRoute
-            path={'/student'}
-            component={lazy(() =>
-              import('views/admin/Students' /* webpackChunkName: "student" */)
-            )}
-          />
-          <Route.NormalRoute
-            path={'/admin'}
-            component={lazy(() =>
-              import('views/admin/Admins' /* webpackChunkName: "admin" */)
-            )}
-          />
-          <Route.RedirectRoute to="/dashboard" />
-        </Switch>
-      )}
-      {role === 'student' && (
-        <Switch>
-          <Route.NormalRoute
-            path="/select-semester"
-            component={lazy(() => import('views/user/SelectSemester'))}
-          />
-          <Route.SemesterSelected
-            path="/dashboard"
-            component={lazy(() => import('views/user/Dashboard'))}
-          />
-          <Route.NormalRoute
-            path="/semester/:id(\d+)"
-            component={lazy(() => import('views/user/SetSemester'))}
-          />
-          <Route.RedirectRoute to="/dashboard" />
-        </Switch>
-      )}
-      {role === 'lecturer' && <>Hello lecturer</>}
+      {role === 'admin' && <Admin />}
+      {['student', 'lecturer'].includes(role) && <User />}
     </>
   );
 });

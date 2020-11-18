@@ -16,18 +16,6 @@ const menusOfAdmin = [
   {
     path: '/semester',
     title: 'Semester',
-    // children: [
-    //   {
-    //     path: '/semester',
-    //     title: 'List semester',
-    //     icon: '/media/svg/icons/Design/PenAndRuller.svg',
-    //   },
-    //   {
-    //     path: '/semester/create',
-    //     title: 'Create semester',
-    //     icon: '/media/svg/icons/Design/PenAndRuller.svg',
-    //   },
-    // ],
   },
   {
     path: '/checkpoint-template',
@@ -63,6 +51,10 @@ const menusOfUser = [
   {
     path: '/team',
     title: 'Team',
+  },
+  {
+    path: '/my-team',
+    title: 'My',
   },
 ];
 
