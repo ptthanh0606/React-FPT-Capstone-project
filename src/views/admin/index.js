@@ -11,7 +11,6 @@ const Admin = () => {
           import('views/admin/Dashboard' /* webpackChunkName: "dashboard" */)
         )}
       />
-      <Route path={'/user'}>User</Route>
       <Route
         path={'/semester'}
         component={lazy(() =>

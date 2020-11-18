@@ -24,7 +24,7 @@ const login = async function (
     })
       .then(res => {
         helpers.setAccessToken(res.data.resource.accessToken);
-        helpers.setAccessTokenExpiresAt(res.data.resource.expiredAt);
+        helpers.setAccessTokenExpiresAt(res.data.resource.expiresAt);
         switch (res.data.resource.information.role) {
           case 0:
             setRole('admin');
@@ -33,7 +33,7 @@ const login = async function (
             setRole('student');
             break;
           case 2:
-            setRole('lectutrer');
+            setRole('lecturer');
             break;
           default:
         }
@@ -41,7 +41,7 @@ const login = async function (
         return res.data;
       })
       .catch(({ response }) => {
-        throw new Error(response.data.messages[0]);
+        throw new Error('Internal Server Error');
       });
   } else if (email === 'admin@de.mo' && password === 'demo') {
     return {

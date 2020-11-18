@@ -1,31 +1,40 @@
 import React, { lazy } from 'react';
 
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
+import * as Route from 'utils/router/routes';
 
 const User = () => {
   return (
     <Switch>
-      <Route
+      <Route.NormalRoute
         path="/select-semester"
         component={lazy(() => import('views/user/SelectSemester'))}
       />
-      <Route
+      <Route.SemesterSelected
         path="/dashboard"
         component={lazy(() => import('views/user/Dashboard'))}
       />
-      <Route
+      <Route.NormalRoute
         path="/semester/:id(\d+)"
         component={lazy(() => import('views/user/SetSemester'))}
       />
-      <Route
+      <Route.SemesterSelected
+        path="/topic/:id(\d+)"
+        component={lazy(() => import('views/user/Topics/Topic'))}
+      />
+      <Route.SemesterSelected
         path="/topic"
         component={lazy(() => import('views/user/Topics'))}
       />
-
-      <Route path="/team" component={lazy(() => import('views/user/Teams'))} />
-      <Route>
-        <Redirect to="/dashboard" />
-      </Route>
+      <Route.SemesterSelected
+        path="/team/:id(\d+)"
+        component={lazy(() => import('views/user/Teams/Team'))}
+      />
+      <Route.SemesterSelected
+        path="/team"
+        component={lazy(() => import('views/user/Teams'))}
+      />
+      <Route.RedirectRoute to="/dashboard" />
     </Switch>
   );
 };

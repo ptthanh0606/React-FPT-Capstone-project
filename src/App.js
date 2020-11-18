@@ -1,5 +1,5 @@
 import React, { lazy } from 'react';
-import { Switch, BrowserRouter, Route as DefaultRoute } from 'react-router-dom';
+import { Switch, BrowserRouter } from 'react-router-dom';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
@@ -17,14 +17,39 @@ import { Layout } from '_metronic/layout';
 import User from 'views/user';
 import Admin from 'views/admin';
 
+import { ME } from 'endpoints';
+import request from 'utils/request';
+
 function fetchMe(setRole, setUser) {
-  setRole('student');
-  setUser({
-    id: 0,
-    email: 'duyhdse130491@fpt.edu.vn',
-    name: 'Huynh Duc Duy',
-    role: 'student',
-    department: ['SE'],
+  request({
+    to: ME.url,
+    method: ME.method,
+  }).then(({ data }) => {
+    let role;
+
+    switch (data.resource.role) {
+      case 0:
+        role = 'admin';
+        break;
+      case 1:
+        role = 'student';
+        break;
+      case 2:
+        role = 'lecturer';
+        break;
+      default:
+    }
+
+    setRole(role);
+
+    setUser({
+      id: data.resource.id,
+      code: data.resource.code,
+      email: data.resource.email,
+      name: data.resource.name,
+      department: data.resource.department,
+      role: role,
+    });
   });
 }
 

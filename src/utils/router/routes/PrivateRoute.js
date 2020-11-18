@@ -6,7 +6,7 @@ export default function PrivateRoute({ ...rest }) {
   const config = {
     ...rest,
     condition: isAuthenticated,
-    redirectTo: 'auth',
+    redirectTo: '/auth',
     reason: 'You must login before continuing.',
   };
 
