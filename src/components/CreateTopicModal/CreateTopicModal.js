@@ -43,11 +43,7 @@ const CreateTopicModal = ({ isShowFlg, onHide, onCreate }) => {
               Topic code
             </Form.Label>
             <Col sm={9}>
-              <Form.Control
-                type="text"
-                placeholder="Topic code"
-                defaultValue="FA20SE13"
-              />
+              <Form.Control type="text" placeholder="Topic code" />
             </Col>
           </Form.Group>
           <Form.Group as={Row} controlId="formHorizontalEmail">
@@ -55,11 +51,7 @@ const CreateTopicModal = ({ isShowFlg, onHide, onCreate }) => {
               Name
             </Form.Label>
             <Col sm={9}>
-              <Form.Control
-                type="text"
-                placeholder="Name"
-                defaultValue="Capstone Management System"
-              />
+              <Form.Control type="text" placeholder="Name" />
             </Col>
           </Form.Group>
           <Form.Group as={Row} controlId="formHorizontalEmail">
@@ -67,11 +59,7 @@ const CreateTopicModal = ({ isShowFlg, onHide, onCreate }) => {
               Description
             </Form.Label>
             <Col sm={9}>
-              <Form.Control
-                type="text"
-                placeholder="Topic description..."
-                defaultValue="Lorem ipsum dolor hihi"
-              />
+              <Form.Control type="text" placeholder="Topic description..." />
               <small className="form-text text-muted">
                 Brief description for this topic
               </small>
@@ -82,11 +70,7 @@ const CreateTopicModal = ({ isShowFlg, onHide, onCreate }) => {
               Note
             </Form.Label>
             <Col sm={9}>
-              <Form.Control
-                type="text"
-                placeholder="Note..."
-                defaultValue="Note?"
-              />
+              <Form.Control type="text" placeholder="Note..." />
               <small className="form-text text-muted">Note</small>
             </Col>
           </Form.Group>
@@ -98,7 +82,6 @@ const CreateTopicModal = ({ isShowFlg, onHide, onCreate }) => {
               <Form.Control
                 type="number"
                 placeholder="Minimum team member..."
-                defaultValue="1"
               />
               <small className="form-text text-muted">
                 Minimum team member for this topic
@@ -113,7 +96,6 @@ const CreateTopicModal = ({ isShowFlg, onHide, onCreate }) => {
               <Form.Control
                 type="number"
                 placeholder="Maximum team member..."
-                defaultValue="4"
               />
               <small className="form-text text-muted">
                 Maximum team member for this topic

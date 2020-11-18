@@ -1,10 +1,10 @@
 import React from 'react';
 
-const ToggleSwitch = ({ onChange = function () {}, name }) => {
+const ToggleSwitch = ({ onChange, isActive }) => {
   return (
     <span className="switch switch-success switch-sm">
       <label>
-        <input type="checkbox" onChange={onChange} name={name} />
+        <input type="checkbox" checked={isActive} onChange={onChange} />
         <span></span>
       </label>
     </span>

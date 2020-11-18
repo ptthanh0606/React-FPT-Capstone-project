@@ -1,25 +1,57 @@
 import SelectBox from 'components/SelectBox/SelectBox';
 import SelectTagInput from 'components/TagInput/SelectTagInput';
-import ToggleSwitch from 'components/ToggleSwitch/ToggleSwitch';
 import React from 'react';
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
 
-const departmentOptions = [
-  {
-    label: 'SE',
-    value: '',
-  },
-  {
-    label: 'GD',
-    value: '',
-  },
-  {
-    label: 'CC',
-    value: '',
-  },
-];
-
 const CreateCouncilModal = ({ isShowFlg, onHide, onCreate }) => {
+  const [departmentOptions, setDepartmentOptions] = React.useState([]);
+  const [mentorGroup, setMentorGroup] = React.useState();
+
+  React.useEffect(() => {
+    setDepartmentOptions([
+      {
+        label: 'SE',
+        value: 'se',
+      },
+      {
+        label: 'GD',
+        value: 'gd',
+      },
+      {
+        label: 'CC',
+        value: 'cc',
+      },
+    ]);
+  }, []);
+
+  const handleLoadMentorList = React.useCallback((mentorMail, callback) => {
+    setTimeout(() => {
+      callback([
+        // Load all lecturer in DB
+        {
+          value: 'haidnse130123@fpt.edu.vn',
+          label: 'haidnse130123@fpt.edu.vn',
+        },
+        {
+          value: 'thuanntmse130124@fpt.edu.vn',
+          label: 'thuanntmse130124@fpt.edu.vn',
+        },
+        {
+          value: 'dungnh130125@fpt.edu.vn',
+          label: 'dungnh130125@fpt.edu.vn',
+        },
+        {
+          value: 'nganlhse130126@fpt.edu.vn',
+          label: 'nganlhse130126@fpt.edu.vn',
+        },
+      ]);
+    }, 2000);
+  }, []);
+
+  const handleOnMentorSelectChange = React.useCallback(value => {
+    setMentorGroup(value);
+  }, []);
+
   return (
     <Modal
       size="xl"
@@ -70,6 +102,9 @@ const CreateCouncilModal = ({ isShowFlg, onHide, onCreate }) => {
             <Col sm={9}>
               <SelectTagInput
                 placeholder="Enter user/lecturer fptu mail"
+                load={handleLoadMentorList}
+                onChange={handleOnMentorSelectChange}
+                value={mentorGroup}
                 isMulti
               />
               <small className="form-text text-muted">

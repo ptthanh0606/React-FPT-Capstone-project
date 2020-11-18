@@ -16,6 +16,7 @@ import { useSetRecoilState } from 'recoil';
 import { useParams } from 'react-router-dom';
 import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
 import CreateCouncilModal from 'components/CreateCouncilModal/CreateCouncilModal';
+import UpdateCouncilModal from 'components/UpdateCouncilModal/UpdateCouncilModal';
 
 export const statusClasses = ['danger', 'success', 'info', ''];
 export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
@@ -36,107 +37,6 @@ const mockData = [
   },
 ];
 
-function ActionsColumnFormatter(
-  cellContent,
-  row,
-  rowIndex,
-  { openEditCustomerDialog, openDeleteCustomerDialog }
-) {
-  return (
-    <span className="text-nowrap">
-      <a
-        href="/"
-        title="Edit"
-        className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-        onClick={event => {
-          event.preventDefault();
-          openEditCustomerDialog(row.id);
-        }}
-      >
-        <i class="fas fa-pencil-alt mx-2"></i>
-      </a>
-      <a
-        href="/"
-        title="Remove"
-        className="btn btn-icon btn-light btn-hover-primary btn-sm"
-        onClick={event => {
-          event.preventDefault();
-          openDeleteCustomerDialog(row.id);
-        }}
-      >
-        <i class="fas fa-trash mx-2"></i>
-      </a>
-    </span>
-  );
-}
-
-// function StatusColumnFormatter(cellContent, row) {
-//   const getLabelCssClasses = () => {
-//     return `label label-lg label-light-${
-//       statusClasses[row.status]
-//     } label-inline text-nowrap`;
-//   };
-//   return (
-//     <span className={getLabelCssClasses()}>{statusTitles[row.status]}</span>
-//   );
-// }
-
-const columns = [
-  {
-    dataField: 'department',
-    text: 'DEP',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'name',
-    text: 'Name',
-    sort: true,
-    sortCaret: sortCaret,
-    formatter: function StatusColumnFormatter(cellContent, row) {
-      return (
-        <Link className="text-dark font-weight-bold" to={'/semester/' + row.id}>
-          {cellContent}
-        </Link>
-      );
-    },
-    headerSortingClasses,
-  },
-  {
-    dataField: 'leader',
-    text: 'Leader',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'members',
-    text: 'Members',
-    formatter: function StatusColumnFormatter(cellContent, row) {
-      return (
-        <Link className="text-dark font-weight-bold" to={'/semester/' + row.id}>
-          {cellContent.join(', ')}
-        </Link>
-      );
-    },
-  },
-  {
-    dataField: 'action',
-    text: 'Actions',
-    formatter: ActionsColumnFormatter,
-    formatExtraData: {
-      openEditCustomerDialog: () => {},
-      openDeleteCustomerDialog: () => {},
-    },
-    classes: 'text-right pr-0',
-    headerClasses: 'text-right pr-3',
-    style: {
-      minWidth: '100px',
-    },
-  },
-];
-
 export default function CustomersCard() {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
@@ -148,23 +48,40 @@ export default function CustomersCard() {
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
   const [
-    showRemoveCouncilsConfirmModalFlg,
-    setShowRemoveCouncilsConfirmModalFlg,
+    showRemoveAllSelectedCouncilsConfirmModalFlg,
+    setShowRemoveAllSelectedCouncilsConfirmModalFlg,
+  ] = React.useState(false);
+  const [
+    showRemoveSelectedCouncilsConfirmModalFlg,
+    setShowRemoveSelectedCouncilsConfirmModalFlg,
   ] = React.useState(false);
   const [
     showCreateCouncilsModalFlg,
     setShowCreateCouncilsModalFlg,
   ] = React.useState(false);
+  const [
+    showUpdateCouncilsModalFlg,
+    setShowUpdateCouncilsModalFlg,
+  ] = React.useState(false);
+  const [selectedId, setSelectedId] = React.useState();
 
   const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
 
   const handleShowRemoveCouncilsModal = () => {
-    setShowRemoveCouncilsConfirmModalFlg(true);
+    setShowRemoveAllSelectedCouncilsConfirmModalFlg(true);
   };
 
   const handleHideRemoveCouncilsModal = () => {
-    setShowRemoveCouncilsConfirmModalFlg(false);
+    setShowRemoveAllSelectedCouncilsConfirmModalFlg(false);
+  };
+
+  const handleShowRemoveSelectedCouncilsModal = () => {
+    setShowRemoveSelectedCouncilsConfirmModalFlg(true);
+  };
+
+  const handleHideRemoveSelectedCouncilsModal = () => {
+    setShowRemoveSelectedCouncilsConfirmModalFlg(false);
   };
 
   const handleShowCreateCouncilsModal = () => {
@@ -173,6 +90,14 @@ export default function CustomersCard() {
 
   const handleHideCreateCouncilsModal = () => {
     setShowCreateCouncilsModalFlg(false);
+  };
+
+  const handleShowUpdateCouncilsModal = () => {
+    setShowUpdateCouncilsModalFlg(true);
+  };
+
+  const handleHideUpdateCouncilsModal = () => {
+    setShowUpdateCouncilsModalFlg(false);
   };
 
   React.useEffect(() => {
@@ -191,6 +116,99 @@ export default function CustomersCard() {
     setData(mockData);
     setTotal(100);
   }, []);
+
+  function ActionsColumnFormatter(cellContent, row, rowIndex) {
+    return (
+      <span className="text-nowrap">
+        <a
+          href="/"
+          title="Edit"
+          className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
+          onClick={event => {
+            event.preventDefault();
+            setSelectedId(row.id);
+            handleShowUpdateCouncilsModal();
+          }}
+        >
+          <i class="fas fa-pencil-alt mx-2"></i>
+        </a>
+        <a
+          href="/"
+          title="Remove"
+          className="btn btn-icon btn-light btn-hover-primary btn-sm"
+          onClick={event => {
+            event.preventDefault();
+            setSelectedId(row.id);
+            handleShowRemoveSelectedCouncilsModal();
+          }}
+        >
+          <i class="fas fa-trash mx-2"></i>
+        </a>
+      </span>
+    );
+  }
+
+  const columns = [
+    {
+      dataField: 'department',
+      text: 'DEP',
+      sort: true,
+      sortCaret: sortCaret,
+      headerSortingClasses,
+    },
+    {
+      dataField: 'name',
+      text: 'Name',
+      sort: true,
+      sortCaret: sortCaret,
+      formatter: function StatusColumnFormatter(cellContent, row) {
+        return (
+          <Link
+            className="text-dark font-weight-bold"
+            to={'/semester/' + row.id}
+          >
+            {cellContent}
+          </Link>
+        );
+      },
+      headerSortingClasses,
+    },
+    {
+      dataField: 'leader',
+      text: 'Leader',
+      sort: true,
+      sortCaret: sortCaret,
+      headerSortingClasses,
+    },
+    {
+      dataField: 'members',
+      text: 'Members',
+      formatter: function StatusColumnFormatter(cellContent, row) {
+        return (
+          <Link
+            className="text-dark font-weight-bold"
+            to={'/semester/' + row.id}
+          >
+            {cellContent.join(', ')}
+          </Link>
+        );
+      },
+    },
+    {
+      dataField: 'action',
+      text: 'Actions',
+      formatter: ActionsColumnFormatter,
+      formatExtraData: {
+        openEditCustomerDialog: () => {},
+        openDeleteCustomerDialog: () => {},
+      },
+      classes: 'text-right pr-0',
+      headerClasses: 'text-right pr-3',
+      style: {
+        minWidth: '100px',
+      },
+    },
+  ];
 
   return (
     <Card>
@@ -240,15 +258,27 @@ export default function CustomersCard() {
       </CardBody>
       <ConfirmRemoveModal
         title="Confirm on remove"
-        body={<h5>Are you sure you want to remove selected councils?</h5>}
-        isShowFlg={showRemoveCouncilsConfirmModalFlg}
+        body={<h5>Are you sure you want to remove all selected councils?</h5>}
+        isShowFlg={showRemoveAllSelectedCouncilsConfirmModalFlg}
         onHide={handleHideRemoveCouncilsModal}
+        onConfirm={() => {}}
+      />
+      <ConfirmRemoveModal
+        title="Confirm on remove"
+        body={<h5>Are you sure you want to remove selected councils?</h5>}
+        isShowFlg={showRemoveSelectedCouncilsConfirmModalFlg}
+        onHide={handleHideRemoveSelectedCouncilsModal}
         onConfirm={() => {}}
       />
       <CreateCouncilModal
         isShowFlg={showCreateCouncilsModalFlg}
         onHide={handleHideCreateCouncilsModal}
         onCreate={() => {}}
+      />
+      <UpdateCouncilModal
+        isShowFlg={showUpdateCouncilsModalFlg}
+        onHide={handleHideUpdateCouncilsModal}
+        selectedId={selectedId}
       />
     </Card>
   );
