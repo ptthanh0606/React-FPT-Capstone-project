@@ -2,7 +2,6 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 import objectPath from 'object-path';
-import { QuickActions } from './components/QuickActions';
 import { BreadCrumbs } from './components/BreadCrumbs';
 import { useHtmlClassService } from '../../_core/MetronicLayout';
 import metaAtom from 'store/meta';

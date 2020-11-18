@@ -129,44 +129,6 @@ const mockData = [
   },
 ];
 
-function ActionsColumnFormatter(cellContent, row, rowIndex) {
-  // const [isShowUpdateModalFlg, setShowUpdateModalFlg] = React.useState(false); deo dc du ma no
-
-  const onHideUpdateModal = () => {};
-  const openEditCustomerDialog = id => {};
-  const openDeleteCustomerDialog = id => {};
-
-  return (
-    <>
-      <span className="text-nowrap">
-        <a
-          href="/"
-          title="Edit"
-          className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-          onClick={event => {
-            event.preventDefault();
-            openEditCustomerDialog(row.id);
-          }}
-        >
-          <i className="fas fa-pencil-alt mx-2"></i>
-        </a>
-        <a
-          href="/"
-          title="Remove"
-          className="btn btn-icon btn-light btn-hover-primary btn-sm"
-          onClick={event => {
-            event.preventDefault();
-            openDeleteCustomerDialog(row.id);
-          }}
-        >
-          <i className="fas fa-trash mx-2"></i>
-        </a>
-      </span>
-      <UpdateTopicModal onHide={onHideUpdateModal} />
-    </>
-  );
-}
-
 const classes = ['warning', 'danger', 'success', 'primary', 'info'];
 const titles = ['Pending', 'Rejected', 'Approved', 'Ready', 'Matched'];
 
@@ -179,147 +141,6 @@ function StatusColumnFormatter(cellContent, row) {
   return <span className={getLabelCssClasses()}>{titles[row.status]}</span>;
 }
 
-const columns = [
-  {
-    dataField: 'department',
-    text: 'Dep',
-    sort: true,
-    sortCaret: sortCaret,
-    formatter: function StatusColumnFormatter(cellContent, row) {
-      return (
-        <Link
-          className="text-dark font-weight-bold"
-          style={{ minWidth: '50px', display: 'block' }}
-          to={'/semester/' + row.id + '/department/' + cellContent[0]}
-        >
-          {cellContent[1]}
-        </Link>
-      );
-    },
-    headerSortingClasses,
-  },
-  {
-    dataField: 'code',
-    text: 'Code',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    text: 'Information',
-    sort: true,
-    sortCaret: sortCaret,
-    formatter: function StatusColumnFormatter(cellContent, row) {
-      return (
-        <Link className="text-dark font-weight-bold" to={'/semester/' + row.id}>
-          <div>
-            <div className="text-nowrap text-dark-75 font-weight-bolder font-size-lg mb-0">
-              {row.name}
-            </div>
-            <span className="text-muted font-weight-bold text-hover-primary">
-              {row.description}
-            </span>
-          </div>
-        </Link>
-      );
-    },
-    headerSortingClasses,
-  },
-  {
-    dataField: 'attachment',
-    text: 'Detail',
-    formatter: function StatusColumnFormatter(cellContent, row) {
-      return (
-        <a
-          href="null"
-          title="Download"
-          className="btn btn-icon btn-light btn-hover-primary btn-sm"
-          onClick={event => {
-            event.preventDefault();
-          }}
-        >
-          <i className="fas fa-download my-2"></i>
-        </a>
-      );
-    },
-  },
-  {
-    dataField: 'owner',
-    text: 'Owner',
-    formatter: function StatusColumnFormatter(cellContent, row) {
-      return (
-        <Link
-          className="text-dark font-weight-bold text-nowrap"
-          to={'/semester/' + row.semester_id + '/user/' + cellContent[0]}
-        >
-          {cellContent[1]}
-        </Link>
-      );
-    },
-  },
-  {
-    dataField: 'status',
-    text: 'Status',
-    sort: true,
-    sortCaret: sortCaret,
-    formatter: StatusColumnFormatter,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'members',
-    text: 'Members',
-    formatter: function StatusColumnFormatter(cellContent, row) {
-      return (
-        <>
-          {cellContent.map(i => (
-            <>
-              <Link
-                className="text-dark font-weight-bold text-nowrap"
-                to={'/semester/' + row.semester_id + '/user/' + i[0]}
-              >
-                {i[1]}
-              </Link>
-              <br />
-            </>
-          ))}
-        </>
-      );
-    },
-  },
-  {
-    dataField: 'mentors',
-    text: 'Mentors',
-    formatter: function StatusColumnFormatter(cellContent, row) {
-      return (
-        <>
-          {cellContent.map(i => (
-            <>
-              <Link
-                className="text-dark font-weight-bold text-nowrap"
-                to={'/semester/' + row.semester_id + '/user/' + i[0]}
-              >
-                {i[1]}
-              </Link>
-              <br />
-            </>
-          ))}
-        </>
-      );
-    },
-  },
-  {
-    dataField: 'action',
-    text: 'Actions',
-    formatter: ActionsColumnFormatter,
-    formatExtraData: {},
-    classes: 'text-right pr-0',
-    headerClasses: 'text-right pr-3',
-    style: {
-      minWidth: '100px',
-    },
-  },
-];
-
 export default function CustomersCard() {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
@@ -330,7 +151,17 @@ export default function CustomersCard() {
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
-  const [showedNewModal, setShowedNewModal] = React.useState(false);
+  const [showedNewModalFlg, setShowedNewModalFlg] = React.useState(false);
+  const [showUpdateModalFlg, setShowUpdateModalFlg] = React.useState(false);
+  const [
+    showedConfirmRemoveAllSelectedTopicModalFlg,
+    setShowConfirmRemoveAllSelectedTopicModalFlg,
+  ] = React.useState(false);
+  const [
+    showedConfirmRemoveSelectedTopicModalFlg,
+    setShowConfirmRemoveSelectedTopicModalFlg,
+  ] = React.useState(false);
+  const [selectedId, setSelectedId] = React.useState('');
 
   const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
@@ -352,26 +183,225 @@ export default function CustomersCard() {
     setTotal(100);
   }, []);
 
-  const showNewModal = React.useCallback(() => {
-    setShowedNewModal(true);
-  });
+  const handleShowNewModal = React.useCallback(() => {
+    setShowedNewModalFlg(true);
+  }, []);
 
-  const hideNewModal = React.useCallback(() => {
-    setShowedNewModal(false);
-  });
+  const handleHideNewModal = React.useCallback(() => {
+    setShowedNewModalFlg(false);
+  }, []);
 
-  const [
-    showedConfirmRemoveSelectedTopicModal,
-    setShowedConfirmRemoveSelectedTopicModal,
-  ] = React.useState(false);
+  const handleShowUpdateModal = React.useCallback(() => {
+    setShowUpdateModalFlg(true);
+  }, []);
 
-  const onShowConfirmRemoveSelectedTopicModal = React.useCallback(() => {
-    setShowedConfirmRemoveSelectedTopicModal(true);
-  });
+  const handleHideUpdateModal = React.useCallback(() => {
+    setShowUpdateModalFlg(false);
+  }, []);
 
-  const onHideConfirmRemoveSelectedTopicModal = React.useCallback(() => {
-    setShowedConfirmRemoveSelectedTopicModal(false);
-  });
+  const handleShowConfirmRemoveAllSelectedTopicModal = React.useCallback(() => {
+    setShowConfirmRemoveAllSelectedTopicModalFlg(true);
+  }, []);
+
+  const handleHideConfirmRemoveAllSelectedTopicModal = React.useCallback(() => {
+    setShowConfirmRemoveAllSelectedTopicModalFlg(false);
+  }, []);
+
+  const handleShowConfirmRemoveSelectedTopicModal = React.useCallback(() => {
+    setShowConfirmRemoveSelectedTopicModalFlg(true);
+  }, []);
+
+  const handleHideConfirmRemoveSelectedTopicModal = React.useCallback(() => {
+    setShowConfirmRemoveSelectedTopicModalFlg(false);
+  }, []);
+
+  const handleConfirmRemoveAllTopics = React.useCallback(() => {
+    alert('Remove all selected!');
+  }, []);
+
+  const handleConfirmRemoveSelectedTopic = React.useCallback(() => {
+    alert('Remove selected!');
+  }, []);
+
+  const ActionsColumnFormatter = React.useCallback(
+    (cellContent, row, rowIndex) => {
+      return (
+        <>
+          <span className="text-nowrap">
+            <a
+              href="/"
+              title="Edit"
+              className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
+              onClick={event => {
+                event.preventDefault();
+                setSelectedId(row.id);
+                handleShowUpdateModal();
+              }}
+            >
+              <i className="fas fa-pencil-alt mx-2"></i>
+            </a>
+            <a
+              href="/"
+              title="Remove"
+              className="btn btn-icon btn-light btn-hover-primary btn-sm"
+              onClick={event => {
+                event.preventDefault();
+                setSelectedId(row.id);
+                handleShowConfirmRemoveSelectedTopicModal();
+              }}
+            >
+              <i className="fas fa-trash mx-2"></i>
+            </a>
+          </span>
+        </>
+      );
+    },
+    [handleShowConfirmRemoveSelectedTopicModal, handleShowUpdateModal]
+  );
+
+  const columns = [
+    {
+      dataField: 'department',
+      text: 'Dep',
+      sort: true,
+      sortCaret: sortCaret,
+      formatter: function StatusColumnFormatter(cellContent, row) {
+        return (
+          <Link
+            className="text-dark font-weight-bold"
+            style={{ minWidth: '50px', display: 'block' }}
+            to={'/semester/' + row.id + '/department/' + cellContent[0]}
+          >
+            {cellContent[1]}
+          </Link>
+        );
+      },
+      headerSortingClasses,
+    },
+    {
+      dataField: 'code',
+      text: 'Code',
+      sort: true,
+      sortCaret: sortCaret,
+      headerSortingClasses,
+    },
+    {
+      text: 'Information',
+      sort: true,
+      sortCaret: sortCaret,
+      formatter: function StatusColumnFormatter(cellContent, row) {
+        return (
+          <Link
+            className="text-dark font-weight-bold"
+            to={'/semester/' + row.id}
+          >
+            <div>
+              <div className="text-nowrap text-dark-75 font-weight-bolder font-size-lg mb-0">
+                {row.name}
+              </div>
+              <span className="text-muted font-weight-bold text-hover-primary">
+                {row.description}
+              </span>
+            </div>
+          </Link>
+        );
+      },
+      headerSortingClasses,
+    },
+    {
+      dataField: 'attachment',
+      text: 'Detail',
+      formatter: function StatusColumnFormatter(cellContent, row) {
+        return (
+          <a
+            href="null"
+            title="Download"
+            className="btn btn-icon btn-light btn-hover-primary btn-sm"
+            onClick={event => {
+              event.preventDefault();
+            }}
+          >
+            <i className="fas fa-download my-2"></i>
+          </a>
+        );
+      },
+    },
+    {
+      dataField: 'owner',
+      text: 'Owner',
+      formatter: function StatusColumnFormatter(cellContent, row) {
+        return (
+          <Link
+            className="text-dark font-weight-bold text-nowrap"
+            to={'/semester/' + row.semester_id + '/user/' + cellContent[0]}
+          >
+            {cellContent[1]}
+          </Link>
+        );
+      },
+    },
+    {
+      dataField: 'status',
+      text: 'Status',
+      sort: true,
+      sortCaret: sortCaret,
+      formatter: StatusColumnFormatter,
+      headerSortingClasses,
+    },
+    {
+      dataField: 'members',
+      text: 'Members',
+      formatter: function StatusColumnFormatter(cellContent, row) {
+        return (
+          <>
+            {cellContent.map(i => (
+              <>
+                <Link
+                  className="text-dark font-weight-bold text-nowrap"
+                  to={'/semester/' + row.semester_id + '/user/' + i[0]}
+                >
+                  {i[1]}
+                </Link>
+                <br />
+              </>
+            ))}
+          </>
+        );
+      },
+    },
+    {
+      dataField: 'mentors',
+      text: 'Mentors',
+      formatter: function StatusColumnFormatter(cellContent, row) {
+        return (
+          <>
+            {cellContent.map(i => (
+              <>
+                <Link
+                  className="text-dark font-weight-bold text-nowrap"
+                  to={'/semester/' + row.semester_id + '/user/' + i[0]}
+                >
+                  {i[1]}
+                </Link>
+                <br />
+              </>
+            ))}
+          </>
+        );
+      },
+    },
+    {
+      dataField: 'action',
+      text: 'Actions',
+      formatter: ActionsColumnFormatter,
+      formatExtraData: {},
+      classes: 'text-right pr-0',
+      headerClasses: 'text-right pr-3',
+      style: {
+        minWidth: '100px',
+      },
+    },
+  ];
 
   return (
     <Card>
@@ -381,7 +411,7 @@ export default function CustomersCard() {
             type="button"
             className="btn btn-danger font-weight-bold"
             disabled={Array.isArray(selected) && selected.length === 0}
-            onClick={onShowConfirmRemoveSelectedTopicModal}
+            onClick={handleShowConfirmRemoveAllSelectedTopicModal}
           >
             <i className="fas fa-trash mr-2"></i>
             Remove ({(Array.isArray(selected) && selected.length) || 0})
@@ -390,7 +420,7 @@ export default function CustomersCard() {
           <button
             type="button"
             className="btn btn-primary font-weight-bold"
-            onClick={showNewModal}
+            onClick={handleShowNewModal}
           >
             <i className="fas fa-plus mr2"></i>
             New
@@ -419,12 +449,26 @@ export default function CustomersCard() {
           selectable
         />
       </CardBody>
-      <CreateTopicModal onHide={hideNewModal} isShowFlg={showedNewModal} />
+      <CreateTopicModal
+        onHide={handleHideNewModal}
+        isShowFlg={showedNewModalFlg}
+      />
+      <UpdateTopicModal
+        onHide={handleHideUpdateModal}
+        isShowFlg={showUpdateModalFlg}
+        selectedId={selectedId}
+      />
       <ConfirmRemoveModal
-        onHide={onHideConfirmRemoveSelectedTopicModal}
-        isShowFlg={showedConfirmRemoveSelectedTopicModal}
-        title="Confirm on removal"
+        onHide={handleHideConfirmRemoveAllSelectedTopicModal}
+        isShowFlg={showedConfirmRemoveAllSelectedTopicModalFlg}
+        body={<h5>Are you sure you want to remove all selected topics?</h5>}
+        onConfirm={handleConfirmRemoveAllTopics}
+      />
+      <ConfirmRemoveModal
+        onHide={handleHideConfirmRemoveSelectedTopicModal}
+        isShowFlg={showedConfirmRemoveSelectedTopicModalFlg}
         body={<h5>Are you sure you want to remove selected topics?</h5>}
+        onConfirm={handleConfirmRemoveSelectedTopic}
       />
     </Card>
   );

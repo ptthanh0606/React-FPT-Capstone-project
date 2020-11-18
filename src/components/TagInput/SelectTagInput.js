@@ -12,7 +12,7 @@ const colourStyles = {
     ...styles,
     backgroundColor: '#edf2f7',
     border: 'none',
-    boxShadow: isFocused ? '0 0 0 2px #ffbb00' : 'none',
+    boxShadow: isFocused ? '0 0 0 2px #69b3ff' : 'none',
   }),
   option: (styles, { isDisabled, isFocused, isSelected }) => {
     return {
@@ -20,7 +20,7 @@ const colourStyles = {
       backgroundColor: isDisabled
         ? null
         : isSelected
-        ? '#ffbb00'
+        ? '#69b3ff'
         : isFocused
         ? '#edf2f7'
         : null,
@@ -35,21 +35,21 @@ const colourStyles = {
   multiValue: styles => {
     return {
       ...styles,
-      backgroundColor: '#00003b',
+      backgroundColor: 'rgba(0, 184, 217, 0.1)',
       marginRight: 3,
       borderRadius: 3,
     };
   },
   multiValueLabel: styles => ({
     ...styles,
-    color: '#ffbb00',
-    padding: '0 6px 0 6px',
+    color: 'rgb(0, 184, 217)',
+    padding: '5px 6px 5px 6px',
   }),
   multiValueRemove: styles => ({
     ...styles,
-    color: '#ffbb00',
+    color: 'rgb(0, 184, 217)',
     ':hover': {
-      backgroundColor: '#ffbb00',
+      backgroundColor: '#69b3ff',
       color: '#00003b',
     },
   }),
@@ -67,7 +67,7 @@ const SelectTagInput = ({
   name = '',
   autofocus = false,
   error = '',
-  load = function () {},
+  load,
   isClearable = true,
   placeholder,
   isMulti,

@@ -1,6 +1,4 @@
-import SelectBox from 'components/SelectBox/SelectBox';
 import SelectTagInput from 'components/TagInput/SelectTagInput';
-import ToggleSwitch from 'components/ToggleSwitch/ToggleSwitch';
 import React from 'react';
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
 
