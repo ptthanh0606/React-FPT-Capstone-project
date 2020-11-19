@@ -33,14 +33,41 @@ export default function CustomersFilter({ filters, setFilters }) {
                   value={values.status}
                 >
                   <option value="">All</option>
-                  <option value="0">Deactivated</option>
-                  <option value="1">Activated</option>
+                  <option value="0">SE</option>
+                  <option value="1">BA</option>
+                  <option value="2">SS</option>
+                  <option value="2">JP</option>
+                </select>
+                <small className="form-text text-muted">
+                  Filter by <b>department</b>
+                </small>
+              </div>
+              <div className="col-lg-3">
+                <select
+                  className="form-control form-control-solid"
+                  name="status"
+                  placeholder="Filter by Department"
+                  onChange={e => {
+                    setFieldValue('status', e.target.value);
+                    handleSubmit();
+                  }}
+                  onBlur={handleBlur}
+                  value={values.status}
+                >
+                  <option value="">All</option>
+                  <option value="0">Pending</option>
+                  <option value="1">Rejected</option>
+                  <option value="2">Approved</option>
+                  <option value="2">Ready</option>
+                  <option value="2">Matched</option>
+                  <option value="2">Passed</option>
+                  <option value="2">Failed</option>
                 </select>
                 <small className="form-text text-muted">
                   Filter by <b>status</b>
                 </small>
               </div>
-              <div className="col-lg-9">
+              <div className="col-lg-6">
                 <div className="input-icon">
                   <input
                     type="text"

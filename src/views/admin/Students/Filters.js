@@ -41,7 +41,7 @@ export default function CustomersFilter({ filters, setFilters }) {
                 </small>
               </div>
               <div className="col-lg-10">
-                <div class="input-icon">
+                <div className="input-icon">
                   <input
                     type="text"
                     className="form-control form-control-solid"
@@ -55,7 +55,7 @@ export default function CustomersFilter({ filters, setFilters }) {
                     }}
                   />
                   <span>
-                    <i class="flaticon2-search-1 text-muted"></i>
+                    <i className="flaticon2-search-1 text-muted"></i>
                   </span>
                 </div>
                 <small className="form-text text-muted">

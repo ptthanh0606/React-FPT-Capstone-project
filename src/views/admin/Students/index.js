@@ -179,7 +179,7 @@ export default function CustomersCard() {
             className="btn btn-primary font-weight-bold btn-sm"
             // onClick={}
           >
-            <i class="fas fa-file-import mr-2"></i>
+            <i className="fas fa-file-import mr-2"></i>
             Import
           </button>
           &nbsp;
@@ -188,7 +188,7 @@ export default function CustomersCard() {
             className="btn btn-primary font-weight-bold btn-sm"
             onClick={handleShowCreateStudentsModal}
           >
-            <i class="fas fa-plus mr-2"></i>
+            <i className="fas fa-plus mr-2"></i>
             New
           </button>
         </>

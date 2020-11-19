@@ -5,11 +5,11 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import objectPath from 'object-path';
 import { useHtmlClassService } from '../../_core/MetronicLayout';
 import { UserProfileDropdown } from './dropdowns/UserProfileDropdown';
+import userStore from 'store/user';
+import { useRecoilValue } from 'recoil';
 
 export function QuickUserToggler() {
-  const user = {
-    fullname: 'Huynh Duc Duy',
-  };
+  const user = useRecoilValue(userStore);
   const uiService = useHtmlClassService();
   const layoutProps = useMemo(() => {
     return {
@@ -31,15 +31,15 @@ export function QuickUserToggler() {
               id="kt_quick_user_toggle"
             >
               <>
-                <span className="text-muted font-weight-bold font-size-base d-none d-md-inline mr-1">
-                  Hi,
+                <span className="text-muted font-weight-bold font-size-base d-none d-md-inline mr-1 text-capitalize">
+                  {user.role}&nbsp;
                 </span>
                 <span className="text-dark-50 font-weight-bolder font-size-base d-none d-md-inline mr-3">
-                  {user.fullname}
+                  {user.name}
                 </span>
-                <span className="symbol symbol-35 symbol-light-success">
+                <span className="symbol symbol-35 symbol-light-primary">
                   <span className="symbol-label font-size-h5 font-weight-bold">
-                    {user.fullname[0]}
+                    {user.name && user.name[0]}
                   </span>
                 </span>
               </>

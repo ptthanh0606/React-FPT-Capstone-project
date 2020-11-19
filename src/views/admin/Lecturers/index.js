@@ -206,7 +206,7 @@ export default function CustomersCard() {
           className="btn btn-primary font-weight-bold btn-sm"
           onClick={handleShowCreateLecturersModal}
         >
-          <i class="fas fa-plus mr-2"></i>
+          <i className="fas fa-plus mr-2"></i>
           New
         </button>
       ),
