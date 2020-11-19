@@ -15,7 +15,7 @@ const Team = () => {
 
   React.useEffect(() => {
     setMeta({
-      title: 'Information of team SKT T1',
+      title: 'Team SKT T1',
       breadcrumb: [
         { title: 'Dashboard', path: '/dashboard' },
         { title: 'Team', path: '/team' },
@@ -46,7 +46,7 @@ const Team = () => {
             className="btn btn-primary font-weight-bold btn-sm"
             onClick={() => {}}
           >
-            <i className="fas fa-cogs mr-2"></i>
+            <i className="fas fa-cog mr-2"></i>
             Settings
           </button>
         </>
@@ -206,6 +206,25 @@ const Team = () => {
               <span className="float-right">
                 <i
                   className="fas fa-lock text-white"
+                  style={{
+                    fontSize: '2.5rem',
+                  }}
+                ></i>
+              </span>
+            </h2>
+          </div>
+          <div className="card card-custom p-8 bg-warning text-white mt-8">
+            <h2
+              style={{
+                marginBottom: 0,
+                fontSize: '2rem',
+                fontWeight: 800,
+              }}
+            >
+              Settings
+              <span className="float-right">
+                <i
+                  className="fas fa-cogs text-white"
                   style={{
                     fontSize: '2.5rem',
                   }}
