@@ -16,6 +16,7 @@ import { useSetRecoilState } from 'recoil';
 import { useParams } from 'react-router-dom';
 import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
 import CreateTeamStudentModal from 'components/CreateTeamStudentModal/CreateTeamStudentModal';
+import UpdateTeamStudentModal from 'components/UpdateTeamStudentModal/UpdateTeamStudentModal';
 
 export const statusClasses = ['danger', 'info', 'success', ''];
 export const statusTitles = ['Not in a team', 'Matching', 'Matched', ''];
@@ -46,145 +47,6 @@ const mockData = [
   },
 ];
 
-function ActionsColumnFormatter(
-  cellContent,
-  row,
-  rowIndex,
-  { openEditCustomerDialog, openDeleteCustomerDialog }
-) {
-  return (
-    <span className="text-nowrap">
-      <a
-        href="/"
-        title="Edit"
-        className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-        onClick={event => {
-          event.preventDefault();
-          openEditCustomerDialog(row.id);
-        }}
-      >
-        <i className="fas fa-pencil-alt mx-2"></i>
-      </a>
-      <a
-        href="/"
-        title="Remove"
-        className="btn btn-icon btn-light btn-hover-primary btn-sm"
-        onClick={event => {
-          event.preventDefault();
-          openDeleteCustomerDialog(row.id);
-        }}
-      >
-        <i className="fas fa-trash mx-2"></i>
-      </a>
-    </span>
-  );
-}
-
-function ColumnFormatter(classes, titles) {
-  return function (cellContent, row) {
-    const getLabelCssClasses = () => {
-      return `label label-lg label-light-${
-        classes[row.status]
-      } label-inline text-nowrap text-nowrap`;
-    };
-    return <span className={getLabelCssClasses()}>{titles[row.status]}</span>;
-  };
-}
-
-const columns = [
-  {
-    dataField: 'department',
-    text: 'DEP',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'code',
-    text: 'Code',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'name',
-    text: 'Name',
-    sort: true,
-    sortCaret: sortCaret,
-    formatter: function StatusColumnFormatter(cellContent, row) {
-      return (
-        <Link className="text-dark font-weight-bold" to={'/semester/' + row.id}>
-          {cellContent}
-        </Link>
-      );
-    },
-    headerSortingClasses,
-  },
-  {
-    dataField: 'leader',
-    text: 'Leader',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'members',
-    text: 'Members',
-    formatter: function StatusColumnFormatter(cellContent, row) {
-      return (
-        <Link className="text-dark font-weight-bold" to={'/semester/' + row.id}>
-          {cellContent.join(', ')}
-        </Link>
-      );
-    },
-  },
-  {
-    dataField: 'topic',
-    text: 'Topic',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'status',
-    text: 'Status',
-    sort: true,
-    sortCaret: sortCaret,
-    formatter: ColumnFormatter(statusClasses, statusTitles),
-    headerSortingClasses,
-  },
-  {
-    dataField: 'lock',
-    text: 'Lock',
-    sort: true,
-    sortCaret: sortCaret,
-    formatter: ColumnFormatter(lockClasses, lockTitles),
-    headerSortingClasses,
-  },
-  {
-    dataField: 'private',
-    text: 'Private',
-    sort: true,
-    sortCaret: sortCaret,
-    formatter: ColumnFormatter(privateClasses, privateTitles),
-    headerSortingClasses,
-  },
-  {
-    dataField: 'action',
-    text: 'Actions',
-    formatter: ActionsColumnFormatter,
-    formatExtraData: {
-      openEditCustomerDialog: () => {},
-      openDeleteCustomerDialog: () => {},
-    },
-    classes: 'text-right pr-0',
-    headerClasses: 'text-right pr-3',
-    style: {
-      minWidth: '100px',
-    },
-  },
-];
-
 export default function CustomersCard() {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
@@ -196,23 +58,40 @@ export default function CustomersCard() {
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
   const [
-    showRemoveStudentTeamConfirmModalFlg,
-    setShowRemoveStudentTeamConfirmModalFlg,
+    showRemoveAllSelectedStudentTeamConfirmModalFlg,
+    setShowRemoveAllSelectedStudentTeamConfirmModalFlg,
+  ] = React.useState(false);
+  const [
+    showRemoveSelectedStudentTeamConfirmModalFlg,
+    setShowRemoveSelectedStudentTeamConfirmModalFlg,
   ] = React.useState(false);
   const [
     showCreateStudentTeamModalFlg,
     setShowCreateStudentTeamModalFlg,
   ] = React.useState(false);
+  const [
+    showUpdateStudentTeamModalFlg,
+    setShowUpdateStudentTeamModalFlg,
+  ] = React.useState(false);
+  const [selectedId, setSelectedId] = React.useState();
 
   const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
 
-  const handleShowRemoveStudentTeamModal = () => {
-    setShowRemoveStudentTeamConfirmModalFlg(true);
+  const handleShowRemoveAllSelectedStudentTeamModal = () => {
+    setShowRemoveAllSelectedStudentTeamConfirmModalFlg(true);
   };
 
-  const handleHideRemoveStudentTeamModal = () => {
-    setShowRemoveStudentTeamConfirmModalFlg(false);
+  const handleHideRemoveAllSelectedStudentTeamModal = () => {
+    setShowRemoveAllSelectedStudentTeamConfirmModalFlg(false);
+  };
+
+  const handleShowRemoveSelectedStudentTeamModal = () => {
+    setShowRemoveSelectedStudentTeamConfirmModalFlg(true);
+  };
+
+  const handleHideRemoveSelectedStudentTeamModal = () => {
+    setShowRemoveSelectedStudentTeamConfirmModalFlg(false);
   };
 
   const handleShowCreateStudentTeamModal = () => {
@@ -221,6 +100,14 @@ export default function CustomersCard() {
 
   const handleHideCreateStudentTeamModal = () => {
     setShowCreateStudentTeamModalFlg(false);
+  };
+
+  const handleShowUpdateStudentTeamModal = () => {
+    setShowUpdateStudentTeamModalFlg(true);
+  };
+
+  const handleHideUpdateStudentTeamModal = () => {
+    setShowUpdateStudentTeamModalFlg(false);
   };
 
   React.useEffect(() => {
@@ -240,6 +127,148 @@ export default function CustomersCard() {
     setTotal(100);
   }, []);
 
+  function ActionsColumnFormatter(cellContent, row, rowIndex) {
+    return (
+      <span className="text-nowrap">
+        <a
+          href="/"
+          title="Edit"
+          className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
+          onClick={event => {
+            event.preventDefault();
+            setSelectedId(row.id);
+            handleShowUpdateStudentTeamModal();
+          }}
+        >
+          <i class="fas fa-pencil-alt mx-2"></i>
+        </a>
+        <a
+          href="/"
+          title="Remove"
+          className="btn btn-icon btn-light btn-hover-primary btn-sm"
+          onClick={event => {
+            event.preventDefault();
+            setSelectedId(row.id);
+            handleShowRemoveSelectedStudentTeamModal();
+          }}
+        >
+          <i class="fas fa-trash mx-2"></i>
+        </a>
+      </span>
+    );
+  }
+
+  function ColumnFormatter(classes, titles) {
+    return function (cellContent, row) {
+      const getLabelCssClasses = () => {
+        return `label label-lg label-light-${
+          classes[row.status]
+        } label-inline text-nowrap text-nowrap`;
+      };
+      return <span className={getLabelCssClasses()}>{titles[row.status]}</span>;
+    };
+  }
+
+  const columns = [
+    {
+      dataField: 'department',
+      text: 'DEP',
+      sort: true,
+      sortCaret: sortCaret,
+      headerSortingClasses,
+    },
+    {
+      dataField: 'code',
+      text: 'Code',
+      sort: true,
+      sortCaret: sortCaret,
+      headerSortingClasses,
+    },
+    {
+      dataField: 'name',
+      text: 'Name',
+      sort: true,
+      sortCaret: sortCaret,
+      formatter: function StatusColumnFormatter(cellContent, row) {
+        return (
+          <Link
+            className="text-dark font-weight-bold"
+            to={'/semester/' + row.id}
+          >
+            {cellContent}
+          </Link>
+        );
+      },
+      headerSortingClasses,
+    },
+    {
+      dataField: 'leader',
+      text: 'Leader',
+      sort: true,
+      sortCaret: sortCaret,
+      headerSortingClasses,
+    },
+    {
+      dataField: 'members',
+      text: 'Members',
+      formatter: function StatusColumnFormatter(cellContent, row) {
+        return (
+          <Link
+            className="text-dark font-weight-bold"
+            to={'/semester/' + row.id}
+          >
+            {cellContent.join(', ')}
+          </Link>
+        );
+      },
+    },
+    {
+      dataField: 'topic',
+      text: 'Topic',
+      sort: true,
+      sortCaret: sortCaret,
+      headerSortingClasses,
+    },
+    {
+      dataField: 'status',
+      text: 'Status',
+      sort: true,
+      sortCaret: sortCaret,
+      formatter: ColumnFormatter(statusClasses, statusTitles),
+      headerSortingClasses,
+    },
+    {
+      dataField: 'lock',
+      text: 'Lock',
+      sort: true,
+      sortCaret: sortCaret,
+      formatter: ColumnFormatter(lockClasses, lockTitles),
+      headerSortingClasses,
+    },
+    {
+      dataField: 'private',
+      text: 'Private',
+      sort: true,
+      sortCaret: sortCaret,
+      formatter: ColumnFormatter(privateClasses, privateTitles),
+      headerSortingClasses,
+    },
+    {
+      dataField: 'action',
+      text: 'Actions',
+      formatter: ActionsColumnFormatter,
+      formatExtraData: {
+        openEditCustomerDialog: () => {},
+        openDeleteCustomerDialog: () => {},
+      },
+      classes: 'text-right pr-0',
+      headerClasses: 'text-right pr-3',
+      style: {
+        minWidth: '100px',
+      },
+    },
+  ];
+
   return (
     <Card>
       <CardHeader title="All teams">
@@ -248,7 +277,7 @@ export default function CustomersCard() {
             type="button"
             className="btn btn-danger font-weight-bold"
             disabled={Array.isArray(selected) && selected.length === 0}
-            onClick={handleShowRemoveStudentTeamModal}
+            onClick={handleShowRemoveAllSelectedStudentTeamModal}
           >
             <i className="fas fa-trash mr-2"></i>
             Remove ({(Array.isArray(selected) && selected.length) || 0})
@@ -288,15 +317,30 @@ export default function CustomersCard() {
       </CardBody>
       <ConfirmRemoveModal
         title="Confirm on remove"
+        body={
+          <h5>Are you sure you want to remove all selected student teams?</h5>
+        }
+        isShowFlg={showRemoveAllSelectedStudentTeamConfirmModalFlg}
+        onHide={handleHideRemoveAllSelectedStudentTeamModal}
+        onConfirm={() => {}}
+      />
+      <ConfirmRemoveModal
+        title="Confirm on remove"
         body={<h5>Are you sure you want to remove selected student teams?</h5>}
-        isShowFlg={showRemoveStudentTeamConfirmModalFlg}
-        onHide={handleHideRemoveStudentTeamModal}
+        isShowFlg={showRemoveSelectedStudentTeamConfirmModalFlg}
+        onHide={handleHideRemoveSelectedStudentTeamModal}
         onConfirm={() => {}}
       />
       <CreateTeamStudentModal
         isShowFlg={showCreateStudentTeamModalFlg}
         onHide={handleHideCreateStudentTeamModal}
         onCreate={() => {}}
+      />
+      <UpdateTeamStudentModal
+        isShowFlg={showUpdateStudentTeamModalFlg}
+        onHide={handleHideUpdateStudentTeamModal}
+        onCreate={() => {}}
+        selectedId={selectedId}
       />
     </Card>
   );

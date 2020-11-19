@@ -4,8 +4,14 @@ import SVG from 'react-inlinesvg';
 import { useHistory } from 'react-router-dom';
 import { toAbsoluteUrl } from '../../../../_helpers';
 
+import { useRecoilValue } from 'recoil';
+import userStore from 'store/user';
+
 export function QuickUser() {
   const history = useHistory();
+  const user = useRecoilValue(userStore);
+
+  console.log(user);
 
   const logoutClick = () => {
     const toggle = document.getElementById('kt_quick_user_toggle');
@@ -23,7 +29,7 @@ export function QuickUser() {
       <div className="offcanvas-header d-flex align-items-center justify-content-between pb-5">
         <h3 className="font-weight-bold m-0">
           User Profile
-          <small className="text-muted font-size-sm ml-2">12 messages</small>
+          {/* <small className="text-muted font-size-sm ml-2">12 messages</small> */}
         </h3>
         <a
           href="#"
@@ -52,9 +58,12 @@ export function QuickUser() {
               href="#"
               className="font-weight-bold font-size-h5 text-dark-75 text-hover-primary"
             >
-              James Jones
+              {user.name}
             </a>
-            <div className="text-muted mt-1">Application Developer</div>
+            <div className="text-muted mt-1 text-capitalize">{user.role}</div>
+            {user.department && (
+              <div className="text-muted mt-1">{user.department[0].name}</div>
+            )}
             <div className="navi mt-2">
               <a href="#" className="navi-item">
                 <span className="navi-link p-0 pb-2">
@@ -68,7 +77,7 @@ export function QuickUser() {
                     </span>
                   </span>
                   <span className="navi-text text-muted text-hover-primary">
-                    jm@softplus.com
+                    {user.email}
                   </span>
                 </span>
               </a>

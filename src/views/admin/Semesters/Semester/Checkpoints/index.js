@@ -15,6 +15,7 @@ import { useSetRecoilState } from 'recoil';
 import { useParams } from 'react-router-dom';
 import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
 import CreateCheckpointModal from 'components/CreateCheckpointModal/CreateCheckpointModal';
+import UpdateCheckpointModal from 'components/UpdateCheckpointModal/UpdateCheckpointModal';
 
 export const statusClasses = ['danger', 'success', 'info', ''];
 export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
@@ -78,19 +79,62 @@ export default function CustomersCard() {
     setShowRemoveCheckpointConfirmModalFlg,
   ] = React.useState(false);
   const [
+    showRemoveSelectedCheckpointModalFlg,
+    setShowRemoveSelectedCheckpointModalFlg,
+  ] = React.useState(false);
+  const [
     showCreateCheckpointModalFlg,
     setShowCreateCheckpointModalFlg,
   ] = React.useState(false);
-
   const [
     showUpdateCheckpointModalFlg,
     setShowUpdateCheckpointModalFlg,
   ] = React.useState(false);
 
-  const [editId, setEditId] = React.useState(0);
+  const [selectedId, setSelectedId] = React.useState(0);
 
   const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
+
+  // Remove all selected checkpoints handlers
+  const handleShowRemoveCheckpointModal = React.useCallback(() => {
+    setShowRemoveCheckpointConfirmModalFlg(true);
+  }, []);
+
+  const handleHideRemoveCheckpointModal = React.useCallback(() => {
+    setShowRemoveCheckpointConfirmModalFlg(false);
+  }, []);
+  // --------------------------------------------
+
+  // Remove selected checkpoint handlers
+  const handleShowRemoveSelectedCheckpointModal = React.useCallback(() => {
+    setShowRemoveSelectedCheckpointModalFlg(true);
+  }, []);
+
+  const handleHideSelectedCheckpointModal = React.useCallback(() => {
+    setShowRemoveSelectedCheckpointModalFlg(false);
+  }, []);
+  // ---------------------------------------------
+
+  // Create checkpoints handlers
+  const handleShowCreateCheckpointModal = React.useCallback(() => {
+    setShowCreateCheckpointModalFlg(true);
+  }, []);
+
+  const handleHideCreateCheckpointModal = React.useCallback(() => {
+    setShowCreateCheckpointModalFlg(false);
+  }, []);
+  // --------------------------------------------
+
+  // Update checkpoints handlers
+  const handleShowUpdateCheckpointModal = React.useCallback(() => {
+    setShowUpdateCheckpointModalFlg(true);
+  }, []);
+
+  const handleHideUpdateCheckpointModal = React.useCallback(() => {
+    setShowUpdateCheckpointModalFlg(false);
+  }, []);
+  // ---------------------------------------------
 
   React.useEffect(() => {
     setMeta(meta => ({
@@ -109,15 +153,8 @@ export default function CustomersCard() {
     setTotal(100);
   }, []);
 
-  //----------------------------------------------------------------------------
-
   const ActionsColumnFormatter = React.useCallback(
-    (
-      cellContent,
-      row,
-      rowIndex,
-      { openEditCustomerDialog, openDeleteCustomerDialog }
-    ) => {
+    (cellContent, row, rowIndex) => {
       return (
         <span className="text-nowrap">
           <a
@@ -126,8 +163,8 @@ export default function CustomersCard() {
             className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
             onClick={event => {
               event.preventDefault();
-              setShowUpdateCheckpointModalFlg(true);
-              setEditId(row.id);
+              handleShowUpdateCheckpointModal();
+              setSelectedId(row.id);
             }}
           >
             <i className="fas fa-pencil-alt mx-2"></i>
@@ -138,7 +175,8 @@ export default function CustomersCard() {
             className="btn btn-icon btn-light btn-hover-primary btn-sm"
             onClick={event => {
               event.preventDefault();
-              openDeleteCustomerDialog(row.id);
+              handleShowRemoveSelectedCheckpointModal();
+              setSelectedId(row.id);
             }}
           >
             <i className="fas fa-trash mx-2"></i>
@@ -146,7 +184,7 @@ export default function CustomersCard() {
         </span>
       );
     },
-    []
+    [handleShowRemoveSelectedCheckpointModal, handleShowUpdateCheckpointModal]
   );
 
   const columns = React.useMemo(
@@ -214,26 +252,6 @@ export default function CustomersCard() {
     [ActionsColumnFormatter]
   );
 
-  const handleShowRemoveCheckpointModal = () => {
-    setShowRemoveCheckpointConfirmModalFlg(true);
-  };
-
-  const handleHideRemoveCheckpointModal = () => {
-    setShowRemoveCheckpointConfirmModalFlg(false);
-  };
-
-  const handleShowCreateCheckpointModal = () => {
-    setShowCreateCheckpointModalFlg(true);
-  };
-
-  const handleHideCreateCheckpointModal = () => {
-    setShowCreateCheckpointModalFlg(false);
-  };
-
-  const handleHideUpdateCheckpointModal = React.useCallback(() => {
-    setShowUpdateCheckpointModalFlg(false);
-  }, [setShowUpdateCheckpointModalFlg]);
-
   return (
     <Card>
       <CardHeader title="All checkpoints">
@@ -280,21 +298,34 @@ export default function CustomersCard() {
           selectable
         />
       </CardBody>
+      {/* Remove all selected */}
       <ConfirmRemoveModal
         title="Confirm on remove"
-        body={<h5>Are you sure you want to remove selected checkpoints?</h5>}
+        body={
+          <h5>Are you sure you want to remove all selected checkpoints?</h5>
+        }
         isShowFlg={showRemoveCheckpointConfirmModalFlg}
         onHide={handleHideRemoveCheckpointModal}
         onConfirm={() => {}}
       />
+      {/* Remove selected checkpoints modal */}
+      <ConfirmRemoveModal
+        title="Confirm on remove"
+        body={<h5>Are you sure you want to remove selected checkpoints?</h5>}
+        isShowFlg={showRemoveSelectedCheckpointModalFlg}
+        onHide={handleHideSelectedCheckpointModal}
+        onConfirm={() => {}}
+      />
+      {/* Create checkpoint modal */}
       <CreateCheckpointModal
         isShowFlg={showCreateCheckpointModalFlg}
         onHide={handleHideCreateCheckpointModal}
       />
-      <CreateCheckpointModal
+      {/* Update selected checkpoint modal */}
+      <UpdateCheckpointModal
         isShowFlg={showUpdateCheckpointModalFlg}
         onHide={handleHideUpdateCheckpointModal}
-        editId={editId}
+        selectedId={selectedId}
       />
     </Card>
   );

@@ -15,6 +15,7 @@ import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
 import AddActiveStudentModal from 'components/AddActiveStudentModal/AddActiveStudentModal';
+import UpdateActiveStudentModal from 'components/UpdateActiveStudentModal/UpdateActiveStudentModal';
 
 export const statusClasses = ['danger', 'info', 'success', ''];
 export const statusTitles = ['Not in a team', 'Matching', 'Matched', ''];
@@ -38,118 +39,6 @@ const mockData = [
   },
 ];
 
-function ActionsColumnFormatter(
-  cellContent,
-  row,
-  rowIndex,
-  { openEditCustomerDialog, openDeleteCustomerDialog }
-) {
-  return (
-    <span className="text-nowrap">
-      <a
-        href="/"
-        title="Edit"
-        className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-        onClick={event => {
-          event.preventDefault();
-          openEditCustomerDialog(row.id);
-        }}
-      >
-        <i className="fas fa-pencil-alt mx-2"></i>
-      </a>
-      <a
-        href="/"
-        title="Remove"
-        className="btn btn-icon btn-light btn-hover-primary btn-sm"
-        onClick={event => {
-          event.preventDefault();
-          openDeleteCustomerDialog(row.id);
-        }}
-      >
-        <i className="fas fa-trash mx-2"></i>
-      </a>
-    </span>
-  );
-}
-
-function StatusColumnFormatter(cellContent, row) {
-  const getLabelCssClasses = () => {
-    return `label label-lg label-light-${
-      statusClasses[row.status]
-    } label-inline text-nowrap`;
-  };
-  return (
-    <span className={getLabelCssClasses()}>{statusTitles[row.status]}</span>
-  );
-}
-
-const columns = [
-  {
-    dataField: 'code',
-    text: 'Code',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'department',
-    text: 'DEP',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'name',
-    text: 'Name',
-    sort: true,
-    sortCaret: sortCaret,
-    formatter: function StatusColumnFormatter(cellContent, row) {
-      return (
-        <Link className="text-dark font-weight-bold" to={'/semester/' + row.id}>
-          {cellContent}
-        </Link>
-      );
-    },
-    headerSortingClasses,
-  },
-  {
-    dataField: 'team',
-    text: 'Team',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'status',
-    text: 'Status',
-    sort: true,
-    sortCaret: sortCaret,
-    formatter: StatusColumnFormatter,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'added_at',
-    text: 'Added at',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'action',
-    text: 'Actions',
-    formatter: ActionsColumnFormatter,
-    formatExtraData: {
-      openEditCustomerDialog: () => {},
-      openDeleteCustomerDialog: () => {},
-    },
-    classes: 'text-right pr-0',
-    headerClasses: 'text-right pr-3',
-    style: {
-      minWidth: '100px',
-    },
-  },
-];
-
 export default function CustomersCard() {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
@@ -161,23 +50,40 @@ export default function CustomersCard() {
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
   const [
-    showConfirmRemovelSelectedModalFlg,
-    setShowConfirmRemovelSelectedModalFlg,
+    showConfirmRemoveAllSelectedModalFlg,
+    setShowConfirmRemoveAllSelectedModalFlg,
+  ] = React.useState(false);
+  const [
+    showConfirmRemoveSelectedModalFlg,
+    setShowConfirmRemoveSelectedModalFlg,
   ] = React.useState(false);
   const [
     showAddActiveStudentModalFlg,
     setShowAddActiveStudentModalFlg,
   ] = React.useState(false);
+  const [
+    showUpdateActiveStudentModalFlg,
+    setShowUpdateActiveStudentModalFlg,
+  ] = React.useState(false);
+  const [selectedId, setSelectedId] = React.useState();
 
   const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
 
+  const handleShowRemoveAllSelectedConfirmModal = () => {
+    setShowConfirmRemoveAllSelectedModalFlg(true);
+  };
+
+  const handleHideRemoveAllSelectedConfirmModal = () => {
+    setShowConfirmRemoveAllSelectedModalFlg(false);
+  };
+
   const handleShowRemoveSelectedConfirmModal = () => {
-    setShowConfirmRemovelSelectedModalFlg(true);
+    setShowConfirmRemoveSelectedModalFlg(true);
   };
 
   const handleHideRemoveSelectedConfirmModal = () => {
-    setShowConfirmRemovelSelectedModalFlg(false);
+    setShowConfirmRemoveSelectedModalFlg(false);
   };
 
   const handleShowAddActiveStudentModal = () => {
@@ -186,7 +92,14 @@ export default function CustomersCard() {
 
   const handleHideAddActiveStudentModal = () => {
     setShowAddActiveStudentModalFlg(false);
-    setShowAddActiveStudentModalFlg(false);
+  };
+
+  const handleShowUpdateActiveStudentModal = () => {
+    setShowUpdateActiveStudentModalFlg(true);
+  };
+
+  const handleHideUpdateActiveStudentModal = () => {
+    setShowUpdateActiveStudentModalFlg(false);
   };
 
   const handleAddSelectedStudents = () => {
@@ -214,6 +127,118 @@ export default function CustomersCard() {
     setTotal(100);
   }, []);
 
+  function ActionsColumnFormatter(cellContent, row, rowIndex) {
+    return (
+      <span className="text-nowrap">
+        <a
+          href="/"
+          title="Edit"
+          className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
+          onClick={event => {
+            event.preventDefault();
+            setSelectedId(row.id);
+            handleShowUpdateActiveStudentModal();
+          }}
+        >
+          <i class="fas fa-pencil-alt mx-2"></i>
+        </a>
+        <a
+          href="/"
+          title="Remove"
+          className="btn btn-icon btn-light btn-hover-primary btn-sm"
+          onClick={event => {
+            event.preventDefault();
+            setSelectedId(row.id);
+            handleShowRemoveSelectedConfirmModal();
+          }}
+        >
+          <i class="fas fa-trash mx-2"></i>
+        </a>
+      </span>
+    );
+  }
+
+  function StatusColumnFormatter(cellContent, row) {
+    const getLabelCssClasses = () => {
+      return `label label-lg label-light-${
+        statusClasses[row.status]
+      } label-inline text-nowrap`;
+    };
+    return (
+      <span className={getLabelCssClasses()}>{statusTitles[row.status]}</span>
+    );
+  }
+
+  const columns = [
+    {
+      dataField: 'code',
+      text: 'Code',
+      sort: true,
+      sortCaret: sortCaret,
+      headerSortingClasses,
+    },
+    {
+      dataField: 'department',
+      text: 'DEP',
+      sort: true,
+      sortCaret: sortCaret,
+      headerSortingClasses,
+    },
+    {
+      dataField: 'name',
+      text: 'Name',
+      sort: true,
+      sortCaret: sortCaret,
+      formatter: function StatusColumnFormatter(cellContent, row) {
+        return (
+          <Link
+            className="text-dark font-weight-bold"
+            to={'/semester/' + row.id}
+          >
+            {cellContent}
+          </Link>
+        );
+      },
+      headerSortingClasses,
+    },
+    {
+      dataField: 'team',
+      text: 'Team',
+      sort: true,
+      sortCaret: sortCaret,
+      headerSortingClasses,
+    },
+    {
+      dataField: 'status',
+      text: 'Status',
+      sort: true,
+      sortCaret: sortCaret,
+      formatter: StatusColumnFormatter,
+      headerSortingClasses,
+    },
+    {
+      dataField: 'added_at',
+      text: 'Added at',
+      sort: true,
+      sortCaret: sortCaret,
+      headerSortingClasses,
+    },
+    {
+      dataField: 'action',
+      text: 'Actions',
+      formatter: ActionsColumnFormatter,
+      formatExtraData: {
+        openEditCustomerDialog: () => {},
+        openDeleteCustomerDialog: () => {},
+      },
+      classes: 'text-right pr-0',
+      headerClasses: 'text-right pr-3',
+      style: {
+        minWidth: '100px',
+      },
+    },
+  ];
+
   return (
     <Card>
       <CardHeader title="All active students">
@@ -222,7 +247,7 @@ export default function CustomersCard() {
             type="button"
             className="btn btn-danger font-weight-bold"
             disabled={Array.isArray(selected) && selected.length === 0}
-            onClick={handleShowRemoveSelectedConfirmModal}
+            onClick={handleShowRemoveAllSelectedConfirmModal}
           >
             <i className="fas fa-trash mr-2"></i>
             Remove ({(Array.isArray(selected) && selected.length) || 0})
@@ -261,7 +286,13 @@ export default function CustomersCard() {
         />
       </CardBody>
       <ConfirmRemoveModal
-        isShowFlg={showConfirmRemovelSelectedModalFlg}
+        isShowFlg={showConfirmRemoveAllSelectedModalFlg}
+        onHide={handleHideRemoveAllSelectedConfirmModal}
+        body={<h5>Are you sure you want to remove all selected students?</h5>}
+        // onConfirm={() => {}}
+      />
+      <ConfirmRemoveModal
+        isShowFlg={showConfirmRemoveSelectedModalFlg}
         onHide={handleHideRemoveSelectedConfirmModal}
         body={<h5>Are you sure you want to remove selected students?</h5>}
         // onConfirm={() => {}}
@@ -270,6 +301,12 @@ export default function CustomersCard() {
         isShowFlg={showAddActiveStudentModalFlg}
         onHide={handleHideAddActiveStudentModal}
         onAdd={handleAddSelectedStudents}
+      />
+      <UpdateActiveStudentModal
+        isShowFlg={showUpdateActiveStudentModalFlg}
+        onHide={handleHideUpdateActiveStudentModal}
+        onAdd={handleAddSelectedStudents}
+        selectedId={selectedId}
       />
     </Card>
   );
