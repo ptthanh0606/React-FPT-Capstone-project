@@ -43,7 +43,7 @@ const login = async function (
       })
       .catch(({ response }) => {
         throw new Error(
-          Array.isArray(response.data.messages)
+          response.data && Array.isArray(response.data.messages)
             ? response.data.messages[0]
             : 'Internal Server Error'
         );
