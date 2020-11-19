@@ -11,8 +11,6 @@ export function QuickUser() {
   const history = useHistory();
   const user = useRecoilValue(userStore);
 
-  console.log(user);
-
   const logoutClick = () => {
     const toggle = document.getElementById('kt_quick_user_toggle');
     if (toggle) {
