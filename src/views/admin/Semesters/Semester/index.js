@@ -26,15 +26,15 @@ const Semester = () => {
 
   const onShowConfirmRemoveSemesterModal = React.useCallback(() => {
     setShowConfirmRemoveSemsterModalFlg(true);
-  });
+  }, []);
 
   const onHideConfirmRemoveSemesterModal = React.useCallback(() => {
     setShowConfirmRemoveSemsterModalFlg(false);
-  });
+  }, []);
 
   const onConfirmRemoveSemester = React.useCallback(() => {
     // Handle remove
-  });
+  }, []);
 
   React.useEffect(() => {
     setMeta(meta => ({
