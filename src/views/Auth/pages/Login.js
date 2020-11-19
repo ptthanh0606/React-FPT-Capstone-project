@@ -12,8 +12,24 @@ import config from 'config';
 
 import { role } from 'auth/recoil/selectors';
 import userStore from 'store/user';
+import SelectBox from 'components/SelectBox/SelectBox.js';
 
 import './login.scss';
+
+const roles = [
+  {
+    label: 'Admin',
+    value: 0,
+  },
+  {
+    label: 'Lecturer',
+    value: 2,
+  },
+  {
+    label: 'Student',
+    value: 1,
+  },
+];
 
 const initialValues = {
   email: '',
@@ -24,6 +40,7 @@ function Login({ state = {} }) {
   const setMetaTitle = useSetRecoilState(title);
   const setRole = useSetRecoilState(role);
   const setUser = useSetRecoilState(userStore);
+  const [selectedRole, setSelectedRole] = React.useState(0);
 
   React.useEffect(() => {
     setMetaTitle('Login');
@@ -39,7 +56,11 @@ function Login({ state = {} }) {
 
   const loginWithGoogle = React.useCallback(() => {
     signIn().then(googleUser => {
-      login({ google_token: googleUser.tokenId }, setUser, setRole)
+      login(
+        { google_token: googleUser.tokenId, role: selectedRole },
+        setUser,
+        setRole
+      )
         .then(() => {
           disableLoading();
           if (state?.from)
@@ -52,7 +73,7 @@ function Login({ state = {} }) {
           setStatus(message);
         });
     });
-  }, [history, setRole, setUser, signIn, state.from]);
+  }, [history, selectedRole, setRole, setUser, signIn, state.from]);
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string()
@@ -96,6 +117,7 @@ function Login({ state = {} }) {
           {
             email: values.email,
             password: values.password,
+            role: selectedRole,
           },
           setUser,
           setRole
@@ -121,8 +143,25 @@ function Login({ state = {} }) {
 
   return (
     <div className="login-form login-signin" id="kt_login_signin_form">
-      <div className="text-center mb-10 mb-lg-20">
-        <h3 className="font-size-h1">Login</h3>
+      <div className="text-center mb-10 mb-lg-15">
+        <h3
+          style={{
+            fontSize: '2.5rem',
+          }}
+        >
+          Login as{' '}
+          <SelectBox
+            options={roles}
+            onChange={value => setSelectedRole(value)}
+            placeholder="Select a role"
+            value={selectedRole}
+            style={{
+              display: 'inline-block',
+              width: 'auto',
+              verticalAlign: 'text-bottom',
+            }}
+          />
+        </h3>
         <p className="text-muted font-weight-bold">
           Enter your username and password
         </p>

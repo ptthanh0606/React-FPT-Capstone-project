@@ -10,7 +10,7 @@ const result = {
 };
 
 const login = async function (
-  { email, password, google_token },
+  { email, password, google_token, role },
   setRole,
   setUser
 ) {
@@ -20,6 +20,7 @@ const login = async function (
       method: LOGIN.method,
       params: {
         googleToken: google_token,
+        role: role,
       },
     })
       .then(res => {
@@ -41,7 +42,11 @@ const login = async function (
         return res.data;
       })
       .catch(({ response }) => {
-        throw new Error('Internal Server Error');
+        throw new Error(
+          Array.isArray(response.data.messages)
+            ? response.data.messages[0]
+            : 'Internal Server Error'
+        );
       });
   } else if (email === 'admin@de.mo' && password === 'demo') {
     return {

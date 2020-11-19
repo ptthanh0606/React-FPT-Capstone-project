@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SelectBox = ({ placeholder, options, onChange, value }) => {
+const SelectBox = ({ placeholder, options, onChange, value, ...rest }) => {
   return (
     <select
       className="form-control form-control-solid"
@@ -10,6 +10,7 @@ const SelectBox = ({ placeholder, options, onChange, value }) => {
         onChange(e.target.value);
       }}
       value={value}
+      {...rest}
     >
       {options.length &&
         options.map(option => (
