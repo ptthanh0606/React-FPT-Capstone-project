@@ -5,14 +5,71 @@ import { useSetRecoilState } from 'recoil';
 import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from 'views/admin/Semesters/SemesterFilters';
-import customers from 'utils/request/mocks/customer/customers';
 import { Link } from 'react-router-dom';
 import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
 import CreateSemesterModal from 'components/CreateSemesterModal/CreateSemesterModal';
 import UpdateSemesterModal from 'components/UpdateSemesterModal/UpdateSemesterModal';
 
-export const statusClasses = ['danger', 'success', 'info', ''];
-export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
+const semesters = [
+  {
+    id: 1,
+    name: 'Spring 2021',
+    status: 2,
+  },
+  {
+    id: 2,
+    name: 'Fall 2020',
+    status: 1,
+  },
+  {
+    id: 3,
+    name: 'Summer 2020',
+    status: 1,
+  },
+  {
+    id: 3,
+    name: 'Spring 2020',
+    status: 0,
+  },
+  {
+    id: 4,
+    name: 'Fall 2019',
+    status: 0,
+  },
+  {
+    id: 5,
+    name: 'Summer 2019',
+    status: 0,
+  },
+  {
+    id: 6,
+    name: 'Spring 2019',
+    status: 0,
+  },
+  {
+    id: 7,
+    name: 'Fall 2018',
+    status: 0,
+  },
+  {
+    id: 8,
+    name: 'Summer 2018',
+    status: 0,
+  },
+  {
+    id: 9,
+    name: 'Spring 2018',
+    status: 0,
+  },
+];
+
+export const statusClasses = ['info', 'primary', 'warning', 'danger'];
+export const statusTitles = [
+  'Preparing',
+  'Matching',
+  'In-progress',
+  'Finished',
+];
 export const defaultSorted = [{ dataField: 'id', order: 'asc' }];
 export const sizePerPageList = [
   { text: '10', value: 10 },
@@ -82,7 +139,7 @@ export default function CustomersCard() {
           className="btn btn-primary font-weight-bold btn-sm"
           onClick={handleShowCreateSelectedSemester}
         >
-          <i class="fas fa-plus mr-2"></i>
+          <i className="fas fa-plus mr-2"></i>
           New
         </button>
       ),
@@ -90,7 +147,7 @@ export default function CustomersCard() {
   }, [handleShowCreateSelectedSemester, setMeta]);
 
   React.useEffect(() => {
-    setData(customers);
+    setData(semesters);
     setTotal(100);
   }, []);
 

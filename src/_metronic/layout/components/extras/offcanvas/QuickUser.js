@@ -4,8 +4,14 @@ import SVG from 'react-inlinesvg';
 import { useHistory } from 'react-router-dom';
 import { toAbsoluteUrl } from '../../../../_helpers';
 
+import { useRecoilValue } from 'recoil';
+import userStore from 'store/user';
+
 export function QuickUser() {
   const history = useHistory();
+  const user = useRecoilValue(userStore);
+
+  console.log(user);
 
   const logoutClick = () => {
     const toggle = document.getElementById('kt_quick_user_toggle');
@@ -23,7 +29,7 @@ export function QuickUser() {
       <div className="offcanvas-header d-flex align-items-center justify-content-between pb-5">
         <h3 className="font-weight-bold m-0">
           User Profile
-          <small className="text-muted font-size-sm ml-2">12 messages</small>
+          {/* <small className="text-muted font-size-sm ml-2">12 messages</small> */}
         </h3>
         <a
           href="#"
@@ -52,9 +58,12 @@ export function QuickUser() {
               href="#"
               className="font-weight-bold font-size-h5 text-dark-75 text-hover-primary"
             >
-              James Jones
+              {user.name}
             </a>
-            <div className="text-muted mt-1">Application Developer</div>
+            <div className="text-muted mt-1 text-capitalize">{user.role}</div>
+            {user.department && (
+              <div className="text-muted mt-1">{user.department[0].name}</div>
+            )}
             <div className="navi mt-2">
               <a href="#" className="navi-item">
                 <span className="navi-link p-0 pb-2">
@@ -68,7 +77,7 @@ export function QuickUser() {
                     </span>
                   </span>
                   <span className="navi-text text-muted text-hover-primary">
-                    jm@softplus.com
+                    {user.email}
                   </span>
                 </span>
               </a>
@@ -172,104 +181,6 @@ export function QuickUser() {
               </div>
             </div>
           </a>
-        </div>
-
-        <div className="separator separator-dashed my-7"></div>
-
-        <div>
-          <h5 className="mb-5">Recent Notifications</h5>
-
-          <div className="d-flex align-items-center bg-light-warning rounded p-5 gutter-b">
-            <span className="svg-icon svg-icon-warning mr-5">
-              <SVG
-                src={toAbsoluteUrl('/media/svg/icons/Home/Library.svg')}
-                className="svg-icon svg-icon-lg"
-              ></SVG>
-            </span>
-
-            <div className="d-flex flex-column flex-grow-1 mr-2">
-              <a
-                href="#"
-                className="font-weight-normal text-dark-75 text-hover-primary font-size-lg mb-1"
-              >
-                Another purpose persuade
-              </a>
-              <span className="text-muted font-size-sm">Due in 2 Days</span>
-            </div>
-
-            <span className="font-weight-bolder text-warning py-1 font-size-lg">
-              +28%
-            </span>
-          </div>
-
-          <div className="d-flex align-items-center bg-light-success rounded p-5 gutter-b">
-            <span className="svg-icon svg-icon-success mr-5">
-              <SVG
-                src={toAbsoluteUrl('/media/svg/icons/Communication/Write.svg')}
-                className="svg-icon svg-icon-lg"
-              ></SVG>
-            </span>
-            <div className="d-flex flex-column flex-grow-1 mr-2">
-              <a
-                href="#"
-                className="font-weight-normal text-dark-75 text-hover-primary font-size-lg mb-1"
-              >
-                Would be to people
-              </a>
-              <span className="text-muted font-size-sm">Due in 2 Days</span>
-            </div>
-
-            <span className="font-weight-bolder text-success py-1 font-size-lg">
-              +50%
-            </span>
-          </div>
-
-          <div className="d-flex align-items-center bg-light-danger rounded p-5 gutter-b">
-            <span className="svg-icon svg-icon-danger mr-5">
-              <SVG
-                src={toAbsoluteUrl(
-                  '/media/svg/icons/Communication/Group-chat.svg'
-                )}
-                className="svg-icon svg-icon-lg"
-              ></SVG>
-            </span>
-            <div className="d-flex flex-column flex-grow-1 mr-2">
-              <a
-                href="#"
-                className="font-weight-normel text-dark-75 text-hover-primary font-size-lg mb-1"
-              >
-                Purpose would be to persuade
-              </a>
-              <span className="text-muted font-size-sm">Due in 2 Days</span>
-            </div>
-
-            <span className="font-weight-bolder text-danger py-1 font-size-lg">
-              -27%
-            </span>
-          </div>
-
-          <div className="d-flex align-items-center bg-light-info rounded p-5">
-            <span className="svg-icon svg-icon-info mr-5">
-              <SVG
-                src={toAbsoluteUrl('/media/svg/icons/General/Attachment2.svg')}
-                className="svg-icon svg-icon-lg"
-              ></SVG>
-            </span>
-
-            <div className="d-flex flex-column flex-grow-1 mr-2">
-              <a
-                href="#"
-                className="font-weight-normel text-dark-75 text-hover-primary font-size-lg mb-1"
-              >
-                The best product
-              </a>
-              <span className="text-muted font-size-sm">Due in 2 Days</span>
-            </div>
-
-            <span className="font-weight-bolder text-info py-1 font-size-lg">
-              +8%
-            </span>
-          </div>
         </div>
       </div>
     </div>

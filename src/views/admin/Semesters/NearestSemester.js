@@ -4,40 +4,40 @@ import { Link } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import metaAtom from 'store/meta';
 
-import SemesterCard from './SemesterCard';
+import SemesterCard from '../../../components/SemesterCard';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import styles from './NearestSemester.module.scss';
 import CreateSemesterModal from 'components/CreateSemesterModal/CreateSemesterModal';
 
 const semesters = [
   {
-    title: 'Fall 2021',
+    name: 'Fall 2021',
     id: 1,
-    status: 'Preparing',
+    status: 0,
     color: 'danger',
   },
   {
-    title: 'Summer 2021',
+    name: 'Summer 2021',
     id: 2,
-    status: 'Preparing',
+    status: 0,
     color: 'warning',
   },
   {
-    title: 'Spring 2021',
+    name: 'Spring 2021',
     id: 3,
-    status: 'In progress',
+    status: 2,
     color: 'success',
   },
   {
-    title: 'Fall 2020',
+    name: 'Fall 2020',
     id: 3,
-    status: 'Finished',
+    status: 3,
     color: 'primary',
   },
   {
-    title: 'Summer 2020',
+    name: 'Summer 2020',
     id: 3,
-    status: 'Finished',
+    status: 3,
     color: 'info',
   },
 ];
@@ -67,7 +67,7 @@ export default React.memo(function DashboardPage() {
           className="btn btn-primary font-weight-bold btn-sm"
           onClick={showNewModal}
         >
-          <i class="fas fa-plus mr-2"></i>
+          <i className="fas fa-plus mr-2"></i>
           New
         </button>
       ),

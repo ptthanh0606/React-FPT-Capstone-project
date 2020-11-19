@@ -249,7 +249,7 @@ export default function CustomersCard() {
             disabled={Array.isArray(selected) && selected.length === 0}
             onClick={handleShowRemoveAllSelectedConfirmModal}
           >
-            <i class="fas fa-trash mr-2"></i>
+            <i className="fas fa-trash mr-2"></i>
             Remove ({(Array.isArray(selected) && selected.length) || 0})
           </button>
           &nbsp;
@@ -258,7 +258,7 @@ export default function CustomersCard() {
             className="btn btn-primary font-weight-bold"
             onClick={handleShowAddActiveStudentModal}
           >
-            <i class="fas fa-plus mr-2"></i>
+            <i className="fas fa-plus mr-2"></i>
             Add
           </button>
         </CardHeaderToolbar>

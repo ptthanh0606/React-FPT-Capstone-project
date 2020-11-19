@@ -1,5 +1,5 @@
 import React, { lazy } from 'react';
-import { Switch, BrowserRouter, Route as DefaultRoute } from 'react-router-dom';
+import { Switch, BrowserRouter } from 'react-router-dom';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
@@ -11,80 +11,67 @@ import * as Route from 'utils/router/routes';
 import { LayoutSplashScreen } from '_metronic/layout/_core/MetronicSplashScreen';
 
 import AuthGuard from 'auth/AuthGuard';
-import { Layout } from '_metronic/layout';
+
+import User from 'views/user';
+import Admin from 'views/admin';
+
+import { ME } from 'endpoints';
+import request from 'utils/request';
+
+function fetchMe(setRole, setUser) {
+  request({
+    to: ME.url,
+    method: ME.method,
+  }).then(({ data }) => {
+    let role;
+
+    switch (data.resource.role) {
+      case 0:
+        role = 'admin';
+        break;
+      case 1:
+        role = 'student';
+        break;
+      case 2:
+        role = 'lecturer';
+        break;
+      default:
+    }
+
+    setRole(role);
+
+    setUser({
+      id: data.resource.id,
+      code: data.resource.code,
+      email: data.resource.email,
+      name: data.resource.name,
+      department: data.resource.department,
+      role: role,
+    });
+  });
+}
+
+const RoleBasedLayout = React.memo(({ role }) => {
+  return (
+    <>
+      {role === 'admin' && <Admin />}
+      {['student', 'lecturer'].includes(role) && <User />}
+    </>
+  );
+});
 
 const Private = React.memo(function Private() {
   const [role, setRole] = useRecoilState(roleSelector);
   const setUser = useSetRecoilState(userAtom);
 
   React.useEffect(() => {
-    setRole('admin');
-    setUser({
-      id: 0,
-      email: 'duyhdse130491@fpt.edu.vn',
-      name: 'Huynh Duc Duy',
-      department: ['SE'],
-    });
+    fetchMe(setRole, setUser);
   }, [setRole, setUser]);
 
   return (
     <>
       <AuthGuard />
-      {role === 'admin' && (
-        <Layout>
-          <Switch>
-            <Route.NormalRoute
-              path={'/dashboard'}
-              exact
-              component={lazy(() =>
-                import(
-                  'views/admin/Dashboard' /* webpackChunkName: "dashboard" */
-                )
-              )}
-            />
-            <DefaultRoute path={'/user'}>User</DefaultRoute>
-            <Route.NormalRoute
-              path={'/semester'}
-              component={lazy(() =>
-                import(
-                  'views/admin/Semesters' /* webpackChunkName: "semester" */
-                )
-              )}
-            />
-            <Route.NormalRoute
-              path={'/department'}
-              component={lazy(() =>
-                import(
-                  'views/admin/Departments' /* webpackChunkName: "department" */
-                )
-              )}
-            />
-            <Route.NormalRoute
-              path={'/lecturer'}
-              component={lazy(() =>
-                import(
-                  'views/admin/Lecturers' /* webpackChunkName: "lecturer" */
-                )
-              )}
-            />
-            <Route.NormalRoute
-              path={'/student'}
-              component={lazy(() =>
-                import('views/admin/Students' /* webpackChunkName: "student" */)
-              )}
-            />
-            <Route.NormalRoute
-              path={'/admin'}
-              component={lazy(() =>
-                import('views/admin/Admins' /* webpackChunkName: "admin" */)
-              )}
-            />
-            <Route.RedirectRoute to="/dashboard" />
-          </Switch>
-        </Layout>
-      )}
-      {role === 'student' && <>Hello student</>}
-      {role === 'lecturer' && <>Hello lecturer</>}
+      <RoleBasedLayout role={role} />
     </>
   );
 });
