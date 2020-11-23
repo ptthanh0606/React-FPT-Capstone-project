@@ -48,21 +48,6 @@ const login = async function (
             : 'Internal Server Error'
         );
       });
-  } else if (email === 'admin@de.mo' && password === 'demo') {
-    return {
-      ...result,
-      role: 'admin',
-    };
-  } else if (email === 'student@de.mo' && password === 'demo') {
-    return {
-      ...result,
-      role: 'student',
-    };
-  } else if (email === 'lecturer@de.mo' && password === 'demo') {
-    return {
-      ...result,
-      role: 'lecturer',
-    };
   }
   throw new Error(404);
 };
