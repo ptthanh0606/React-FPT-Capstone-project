@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
 import AddActiveStudentModal from 'components/AddActiveStudentModal/AddActiveStudentModal';
-import UpdateActiveStudentModal from 'components/UpdateActiveStudentModal/UpdateActiveStudentModal';
+import CMSModal from 'components/CMSModal/CMSModal';
 
 export const statusClasses = ['danger', 'info', 'success', ''];
 export const statusTitles = ['Not in a team', 'Matching', 'Matched', ''];
@@ -42,13 +42,15 @@ const mockData = [
 export default function CustomersCard() {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [filters, setFilters] = React.useState({});
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
+  const [modalConfigs, setModalConfigs] = React.useState([]);
   const [
     showConfirmRemoveAllSelectedModalFlg,
     setShowConfirmRemoveAllSelectedModalFlg,
@@ -95,6 +97,9 @@ export default function CustomersCard() {
   };
 
   const handleShowUpdateActiveStudentModal = () => {
+    setUpdateFieldTemplate({
+      code: 'N6CJ9D',
+    });
     setShowUpdateActiveStudentModalFlg(true);
   };
 
@@ -103,9 +108,12 @@ export default function CustomersCard() {
   };
 
   const handleAddSelectedStudents = () => {
-    // API call ?
     setShowAddActiveStudentModalFlg(false);
   };
+
+  const handleOnUpdateStudent = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
 
   React.useEffect(() => {
     setMeta(meta => ({
@@ -125,6 +133,18 @@ export default function CustomersCard() {
   React.useEffect(() => {
     setData(mockData);
     setTotal(100);
+  }, []);
+
+  React.useEffect(() => {
+    setModalConfigs([
+      {
+        name: 'code',
+        type: 'text',
+        label: 'Team code',
+        smallLabel: 'Assign this student to a team by changing team code',
+        placeholder: 'Team code...',
+      },
+    ]);
   }, []);
 
   function ActionsColumnFormatter(cellContent, row, rowIndex) {
@@ -302,11 +322,14 @@ export default function CustomersCard() {
         onHide={handleHideAddActiveStudentModal}
         onAdd={handleAddSelectedStudents}
       />
-      <UpdateActiveStudentModal
+      <CMSModal
         isShowFlg={showUpdateActiveStudentModalFlg}
         onHide={handleHideUpdateActiveStudentModal}
-        onAdd={handleAddSelectedStudents}
-        selectedId={selectedId}
+        configs={modalConfigs}
+        title="Create new checkpoint"
+        subTitle="Add a checkpoint to this semester"
+        onConfirmForm={handleOnUpdateStudent}
+        fieldTemplate={updateFieldTemplate}
       />
     </Card>
   );

@@ -6,9 +6,8 @@ import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from './Filters';
 import { Link } from 'react-router-dom';
-import AddLecturerModal from 'components/AddLecturerModal/AddLecturerModal';
 import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
-import UpdateLecturerModal from 'components/UpdateLecturerModal/UpdateLecturerModal';
+import CMSModal from 'components/CMSModal/CMSModal';
 
 const defaultSorted = [{ dataField: 'id', order: 'asc' }];
 
@@ -34,13 +33,16 @@ const mockData = [
 export default function CustomersCard() {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [filters, setFilters] = React.useState({});
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [fieldTemplate, setFieldTemplate] = React.useState({});
+  const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
+  const [modalConfigs, setModalConfigs] = React.useState([]);
   const [
     showRemoveLecturersConfirmModalFlg,
     setShowRemoveLecturersConfirmModalFlg,
@@ -74,12 +76,38 @@ export default function CustomersCard() {
   };
 
   const handleShowUpdateLecturersModal = () => {
+    setUpdateFieldTemplate({
+      name: 'Huynh Duc Duy',
+      email: {
+        label: 'duyhdse130491@fpt.edu.vn',
+        value: 'duyhdse130491@fpt.edu.vn',
+      },
+      department: [
+        {
+          label: 'SE',
+          value: 'SE',
+        },
+        {
+          label: 'BA',
+          value: 'BA',
+        },
+      ],
+      isActive: true,
+    });
     setShowUpdateLecturersModalFlg(true);
   };
 
   const handleHideUpdateLecturersModal = () => {
     setShowUpdateLecturersModalFlg(false);
   };
+
+  const handleOnCreateLecturer = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
+
+  const handleOnUpdateLecturer = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
 
   function ActionsColumnFormatter(
     cellContent,
@@ -218,6 +246,86 @@ export default function CustomersCard() {
     setTotal(100);
   }, []);
 
+  React.useEffect(() => {
+    setModalConfigs([
+      {
+        name: 'name',
+        type: 'text',
+        label: 'Lecturer full name',
+        placeholder: 'Full name...',
+      },
+      {
+        name: 'email',
+        type: 'selectBoxAsync',
+        label: 'Lecturer email',
+        load: (departmentInput, callback) => {
+          setTimeout(() => {
+            callback([
+              {
+                label: 'thanhptse130359@fpt.edu.vn',
+                value: 'thanhptse130359@fpt.edu.vn',
+              },
+              {
+                label: 'duyhdse130491@fpt.edu.vn',
+                value: 'duyhdse130491@fpt.edu.vn',
+              },
+              {
+                label: 'helpmeplease@fpt.edu.vn',
+                value: 'helpmeplease@fpt.edu.vn',
+              },
+              {
+                label: 'beggingforhelp@fpt.edu.vn',
+                value: 'beggingforhelp@fpt.edu.vn',
+              },
+            ]);
+          }, 2000);
+        },
+        isMulti: false,
+      },
+      {
+        name: 'department',
+        type: 'selectBoxAsync',
+        label: 'Department',
+        smallLabel: 'Departments for this lecturer',
+        load: (departmentInput, callback) => {
+          setTimeout(() => {
+            callback([
+              {
+                label: 'SE',
+                value: 'SE',
+              },
+              {
+                label: 'GD',
+                value: 'GD',
+              },
+              {
+                label: 'CC',
+                value: 'CC',
+              },
+              {
+                label: 'IA',
+                value: 'IA',
+              },
+            ]);
+          }, 2000);
+        },
+        isMulti: true,
+      },
+      {
+        name: 'isActive',
+        type: 'toggle',
+        label: 'Active state',
+        smallLabel: 'Is this lecturer active',
+      },
+    ]);
+    setFieldTemplate({
+      name: '',
+      email: {},
+      department: [],
+      isActive: false,
+    });
+  }, []);
+
   return (
     <Card>
       <CardBody>
@@ -241,22 +349,29 @@ export default function CustomersCard() {
           pageSizeList={sizePerPageList}
         />
       </CardBody>
-      <AddLecturerModal
-        isShowFlg={showCreateLecturersModalFlg}
-        onHide={handleHideCreateLecturersModal}
-        onCreate={() => {}}
-      />
-      <UpdateLecturerModal
-        isShowFlg={showUpdateLecturersModalFlg}
-        onHide={handleHideUpdateLecturersModal}
-        onCreate={() => {}}
-        selectedId={selectedId}
-      />
       <ConfirmRemoveModal
         isShowFlg={showRemoveLecturersConfirmModalFlg}
         onHide={handleHideRemoveLecturersModal}
         body={<h5>Are you sure you want to remove selected students?</h5>}
         // onConfirm={() => {}}
+      />
+      <CMSModal
+        isShowFlg={showCreateLecturersModalFlg}
+        onHide={handleHideCreateLecturersModal}
+        configs={modalConfigs}
+        title="Add new lecturer"
+        subTitle="Assign lecturer to the system"
+        onConfirmForm={handleOnCreateLecturer}
+        fieldTemplate={fieldTemplate}
+      />
+      <CMSModal
+        isShowFlg={showUpdateLecturersModalFlg}
+        onHide={handleHideUpdateLecturersModal}
+        configs={modalConfigs}
+        title="Update this lecturer"
+        subTitle="Change this lecturer info"
+        onConfirmForm={handleOnUpdateLecturer}
+        fieldTemplate={updateFieldTemplate}
       />
     </Card>
   );

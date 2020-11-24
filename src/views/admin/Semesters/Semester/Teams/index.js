@@ -15,8 +15,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { useParams } from 'react-router-dom';
 import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
-import CreateTeamStudentModal from 'components/CreateTeamStudentModal/CreateTeamStudentModal';
-import UpdateTeamStudentModal from 'components/UpdateTeamStudentModal/UpdateTeamStudentModal';
+import CMSModal from 'components/CMSModal/CMSModal';
 
 export const statusClasses = ['danger', 'info', 'success', ''];
 export const statusTitles = ['Not in a team', 'Matching', 'Matched', ''];
@@ -50,13 +49,16 @@ const mockData = [
 export default function CustomersCard() {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [filters, setFilters] = React.useState({});
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [fieldTemplate, setFieldTemplate] = React.useState({});
+  const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
+  const [modalConfigs, setModalConfigs] = React.useState([]);
   const [
     showRemoveAllSelectedStudentTeamConfirmModalFlg,
     setShowRemoveAllSelectedStudentTeamConfirmModalFlg,
@@ -103,12 +105,40 @@ export default function CustomersCard() {
   };
 
   const handleShowUpdateStudentTeamModal = () => {
+    setUpdateFieldTemplate({
+      name: 'FUTEAM',
+      department: 'se',
+      studentMember: [
+        {
+          label: 'Huynh Duc Duy',
+          value: 'Huynh Duc Duy',
+        },
+        {
+          label: 'Phan Thong Thanh',
+          value: 'Phan Thong Thanh',
+        },
+      ],
+      topic: {
+        label: 'Capstone management system',
+        value: 'Capstone management system',
+      },
+      isPrivate: true,
+      isLocked: true,
+    });
     setShowUpdateStudentTeamModalFlg(true);
   };
 
   const handleHideUpdateStudentTeamModal = () => {
     setShowUpdateStudentTeamModalFlg(false);
   };
+
+  const handleOnCreateTeam = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
+
+  const handleOnUpdateTeam = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
 
   React.useEffect(() => {
     setMeta(meta => ({
@@ -125,6 +155,112 @@ export default function CustomersCard() {
   React.useEffect(() => {
     setData(mockData);
     setTotal(100);
+  }, []);
+
+  React.useEffect(() => {
+    const response = [
+      {
+        label: 'SE',
+        value: 'se',
+      },
+      {
+        label: 'GD',
+        value: 'gd',
+      },
+      {
+        label: 'CC',
+        value: 'cc',
+      },
+    ];
+    setModalConfigs([
+      {
+        name: 'name',
+        type: 'text',
+        label: 'Team name',
+        placeholder: 'Give this team a name...',
+      },
+      {
+        name: 'department',
+        type: 'selectBox',
+        label: 'Department',
+        smallLabel: 'This team belong to which department',
+        options: response,
+      },
+      {
+        name: 'studentMember',
+        type: 'selectBoxAsync',
+        label: 'Student members',
+        smallLabel: 'First added user will be leader',
+        load: (memberInput, callback) => {
+          setTimeout(() => {
+            callback([
+              {
+                label: 'Huynh Duc Duy',
+                value: 'Huynh Duc Duy',
+              },
+              {
+                label: 'Phan Thong Thanh',
+                value: 'Phan Thong Thanh',
+              },
+              {
+                label: 'Dinh Ngoc Hai',
+                value: 'Dinh Ngoc Hai',
+              },
+              {
+                label: 'Ly Phuoc Hiep',
+                value: 'Ly Phuoc Hiep',
+              },
+            ]);
+          }, 2000);
+        },
+        isMulti: true,
+      },
+      {
+        name: 'topic',
+        type: 'selectBoxAsync',
+        label: 'Topic taken',
+        smallLabel: 'Select a topic to assign to this student team',
+        load: (memberInput, callback) => {
+          setTimeout(() => {
+            callback([
+              {
+                label: 'Capstone management system',
+                value: 'Capstone management system',
+              },
+              {
+                label: 'Traffic tracking',
+                value: 'Traffic tracking',
+              },
+              {
+                label: 'Web checker system',
+                value: 'Web checker system',
+              },
+            ]);
+          }, 2000);
+        },
+        isMulti: false,
+      },
+      {
+        name: 'isPrivate',
+        type: 'toggle',
+        label: 'Private team',
+        smallLabel: 'Is this team private',
+      },
+      {
+        name: 'isLocked',
+        type: 'toggle',
+        label: 'Lock team',
+        smallLabel: 'Lock this team',
+      },
+    ]);
+    setFieldTemplate({
+      name: '',
+      department: '',
+      studentMember: [],
+      topic: '',
+      isPrivate: false,
+      isLocked: false,
+    });
   }, []);
 
   function ActionsColumnFormatter(cellContent, row, rowIndex) {
@@ -331,16 +467,23 @@ export default function CustomersCard() {
         onHide={handleHideRemoveSelectedStudentTeamModal}
         onConfirm={() => {}}
       />
-      <CreateTeamStudentModal
+      <CMSModal
         isShowFlg={showCreateStudentTeamModalFlg}
         onHide={handleHideCreateStudentTeamModal}
-        onCreate={() => {}}
+        configs={modalConfigs}
+        title="Create student team"
+        subTitle="Add a student team to this semester"
+        onConfirmForm={handleOnCreateTeam}
+        fieldTemplate={fieldTemplate}
       />
-      <UpdateTeamStudentModal
+      <CMSModal
         isShowFlg={showUpdateStudentTeamModalFlg}
         onHide={handleHideUpdateStudentTeamModal}
-        onCreate={() => {}}
-        selectedId={selectedId}
+        configs={modalConfigs}
+        title="Update student team"
+        subTitle="Change this team info"
+        onConfirmForm={handleOnUpdateTeam}
+        fieldTemplate={updateFieldTemplate}
       />
     </Card>
   );

@@ -6,9 +6,8 @@ import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from './Filters';
 import { Link } from 'react-router-dom';
-import AddStudentModal from 'components/AddStudentModal/AddStudentModal';
 import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
-import UpdateStudentModal from 'components/UpdateStudentModal/UpdateStudentModal';
+import CMSModal from 'components/CMSModal/CMSModal';
 
 export const statusClasses = ['danger', 'success', 'info', ''];
 export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
@@ -32,13 +31,16 @@ const mockData = [
 export default function CustomersCard() {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [filters, setFilters] = React.useState({});
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [fieldTemplate, setFieldTemplate] = React.useState({});
+  const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
+  const [modalConfigs, setModalConfigs] = React.useState([]);
   const [
     showRemoveStudentsConfirmModalFlg,
     setShowRemoveStudentsConfirmModalFlg,
@@ -51,6 +53,7 @@ export default function CustomersCard() {
     showUpdateStudentsModalFlg,
     setShowUpdateStudentsModalFlg,
   ] = React.useState(false);
+  const [showTestModalFlg, setShowTestModalFlg] = React.useState(true);
   const [selectedId, setSelectedId] = React.useState();
 
   const setMeta = useSetRecoilState(metaAtom);
@@ -72,12 +75,29 @@ export default function CustomersCard() {
   };
 
   const handleShowUpdateStudentsModal = () => {
+    setUpdateFieldTemplate({
+      name: 'Huynh Duc Duy',
+      email: 'duyhdse130491@fpt.edu.vn',
+      code: 'SE130491',
+      department: {
+        label: 'SE',
+        value: 'SE',
+      },
+    });
     setShowUpdateStudentsModalFlg(true);
   };
 
   const handleHideUpdateStudentsModal = () => {
     setShowUpdateStudentsModalFlg(false);
   };
+
+  const handleOnCreateStudent = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
+
+  const handleOnUpdateStudent = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
 
   function ActionsColumnFormatter(cellContent, row, rowIndex) {
     return (
@@ -92,7 +112,7 @@ export default function CustomersCard() {
             handleShowUpdateStudentsModal();
           }}
         >
-          <i class="fas fa-pencil-alt mx-2"></i>
+          <i className="fas fa-pencil-alt mx-2"></i>
         </a>
         <a
           href="/"
@@ -104,7 +124,7 @@ export default function CustomersCard() {
             handleShowRemoveStudentsModal();
           }}
         >
-          <i class="fas fa-trash mx-2"></i>
+          <i className="fas fa-trash mx-2"></i>
         </a>
       </span>
     );
@@ -177,7 +197,7 @@ export default function CustomersCard() {
           <button
             type="button"
             className="btn btn-primary font-weight-bold btn-sm"
-            // onClick={}
+            onClick={() => setShowTestModalFlg(true)}
           >
             <i className="fas fa-file-import mr-2"></i>
             Import
@@ -194,11 +214,69 @@ export default function CustomersCard() {
         </>
       ),
     });
-  }, [setMeta]);
+  }, [setMeta, showTestModalFlg]);
 
   React.useEffect(() => {
     setData(mockData);
     setTotal(100);
+  }, []);
+
+  React.useEffect(() => {
+    setModalConfigs([
+      {
+        name: 'name',
+        type: 'text',
+        label: 'Student full name',
+        placeholder: 'Full name...',
+      },
+      {
+        name: 'code',
+        type: 'text',
+        label: 'Student code',
+        placeholder: 'Enter student code...',
+      },
+      {
+        name: 'email',
+        type: 'text',
+        label: 'Student email',
+        placeholder: 'Enter student @fpt.edu.vn email...',
+      },
+      {
+        name: 'department',
+        type: 'selectBoxAsync',
+        label: 'Department',
+        smallLabel: 'Departments for this lecturer',
+        load: (departmentInput, callback) => {
+          setTimeout(() => {
+            callback([
+              {
+                label: 'SE',
+                value: 'SE',
+              },
+              {
+                label: 'GD',
+                value: 'GD',
+              },
+              {
+                label: 'CC',
+                value: 'CC',
+              },
+              {
+                label: 'IA',
+                value: 'IA',
+              },
+            ]);
+          }, 2000);
+        },
+        isMulti: false,
+      },
+    ]);
+    setFieldTemplate({
+      name: '',
+      code: '',
+      email: '',
+      department: [],
+    });
   }, []);
 
   return (
@@ -224,22 +302,29 @@ export default function CustomersCard() {
           pageSizeList={sizePerPageList}
         />
       </CardBody>
-      <AddStudentModal
-        isShowFlg={showCreateStudentsModalFlg}
-        onHide={handleHideCreateStudentsModal}
-        onCreate={() => {}}
-      />
-      <UpdateStudentModal
-        isShowFlg={showUpdateStudentsModalFlg}
-        onHide={handleHideUpdateStudentsModal}
-        onCreate={() => {}}
-        selectedId={selectedId}
-      />
       <ConfirmRemoveModal
         isShowFlg={showRemoveStudentsConfirmModalFlg}
         onHide={handleHideRemoveStudentsModal}
         body={<h5>Are you sure you want to remove selected students?</h5>}
         // onConfirm={() => {}}
+      />
+      <CMSModal
+        isShowFlg={showCreateStudentsModalFlg}
+        onHide={handleHideCreateStudentsModal}
+        configs={modalConfigs}
+        title="Add new student"
+        subTitle="Add student to the system"
+        onConfirmForm={handleOnCreateStudent}
+        fieldTemplate={fieldTemplate}
+      />
+      <CMSModal
+        isShowFlg={showUpdateStudentsModalFlg}
+        onHide={handleHideUpdateStudentsModal}
+        configs={modalConfigs}
+        title="Update this student"
+        subTitle="Change this student info"
+        onConfirmForm={handleOnUpdateStudent}
+        fieldTemplate={updateFieldTemplate}
       />
     </Card>
   );
