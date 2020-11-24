@@ -7,7 +7,7 @@ import metaAtom from 'store/meta';
 import SemesterCard from '../../../components/SemesterCard';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import styles from './NearestSemester.module.scss';
-import CreateSemesterModal from 'components/CreateSemesterModal/CreateSemesterModal';
+import CMSModal from 'components/CMSModal/CMSModal';
 
 const semesters = [
   {
@@ -45,6 +45,58 @@ const semesters = [
 export default React.memo(function DashboardPage() {
   const setMeta = useSetRecoilState(metaAtom);
   const [showedNewModal, setShowedNewModal] = React.useState(false);
+  const [modalConfigs] = React.useState([
+    {
+      name: 'name',
+      type: 'text',
+      label: 'Semester name',
+      placeholder: 'Semester name...',
+    },
+    {
+      name: 'maxTopic',
+      type: 'number',
+      label: 'Maximum topic per mentor',
+      smallLabel: 'Maximun number of topic that a lecturer can supervise',
+      placeholder: '10',
+    },
+    {
+      name: 'maxMentor',
+      type: 'number',
+      label: 'Maximum mentor per topic',
+      smallLabel: 'Maximum number of lecturer to supervise a topic',
+      placeholder: '10',
+    },
+    {
+      name: 'maxApplications',
+      type: 'number',
+      label: 'Maximum applications per team',
+      smallLabel:
+        'Maximum number of application that a team can send at any-time',
+      placeholder: '10',
+    },
+    {
+      name: 'matchingDate',
+      type: 'date',
+      label: 'Matching',
+      smallLabel:
+        'Ending date of Matching-phase, all team must matched with a topic before this day',
+    },
+    {
+      name: 'inprogressDate',
+      type: 'date',
+      label: 'In progress',
+      smallLabel:
+        'Ending date of In-progress-phase, all team must have done the capstone project and waiting for final evaluation',
+    },
+    {
+      name: 'finishDate',
+      type: 'date',
+      label: 'Finished',
+      smallLabel:
+        'Ending date of Finished-phase (and semester as well), all evaluation is published.',
+    },
+  ]);
+  const [fieldTemplate, setFieldTemplate] = React.useState({});
 
   const hideNewModal = React.useCallback(() => {
     setShowedNewModal(false);
@@ -52,6 +104,10 @@ export default React.memo(function DashboardPage() {
 
   const showNewModal = React.useCallback(() => {
     setShowedNewModal(true);
+  }, []);
+
+  const handleOnCreateSemester = React.useCallback(fieldData => {
+    console.log(fieldData);
   }, []);
 
   React.useEffect(() => {
@@ -74,6 +130,18 @@ export default React.memo(function DashboardPage() {
     });
   }, [setMeta, showNewModal]);
 
+  React.useEffect(() => {
+    setFieldTemplate({
+      name: '',
+      maxTopic: 0,
+      maxMentor: 0,
+      maxApplications: 0,
+      matchingDate: '2020-06-06',
+      inprogressDate: '2020-06-06',
+      finishDate: '2020-06-06',
+    });
+  }, []);
+
   return (
     <>
       <ScrollContainer
@@ -86,7 +154,16 @@ export default React.memo(function DashboardPage() {
       <div className={styles['nav-box']}>
         <Link to="/semester/all">View all semesters</Link>
       </div>
-      <CreateSemesterModal isShowFlg={showedNewModal} onHide={hideNewModal} />
+      <CMSModal
+        isShowFlg={showedNewModal}
+        onHide={hideNewModal}
+        configs={modalConfigs}
+        primaryButtonLabel="Create"
+        title="Create new semester"
+        subTitle="Start a new capstone semester"
+        onConfirmForm={handleOnCreateSemester}
+        fieldTemplate={fieldTemplate}
+      />
     </>
   );
 });

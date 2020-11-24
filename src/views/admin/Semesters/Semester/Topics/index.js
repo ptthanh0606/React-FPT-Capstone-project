@@ -13,9 +13,8 @@ import Filters from './Filters';
 import { Link } from 'react-router-dom';
 
 import { useParams } from 'react-router-dom';
-import CreateTopicModal from 'components/CreateTopicModal/CreateTopicModal';
 import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
-import UpdateTopicModal from 'components/UpdateTopicModal/UpdateTopicModal';
+import CMSModal from 'components/CMSModal/CMSModal';
 
 export const statusClasses = ['danger', 'success', 'info', ''];
 export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
@@ -144,13 +143,16 @@ function StatusColumnFormatter(cellContent, row) {
 export default function CustomersCard() {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [filters, setFilters] = React.useState({});
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [modalConfigs, setModalConfigs] = React.useState([]);
+  const [fieldTemplate, setFieldTemplate] = React.useState({});
+  const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
   const [showedNewModalFlg, setShowedNewModalFlg] = React.useState(false);
   const [showUpdateModalFlg, setShowUpdateModalFlg] = React.useState(false);
   const [
@@ -183,6 +185,182 @@ export default function CustomersCard() {
     setTotal(100);
   }, []);
 
+  React.useEffect(() => {
+    setModalConfigs([
+      {
+        name: 'topicCode',
+        type: 'text',
+        label: 'Topic Code',
+        smallLabel: 'Specify a code for this topic',
+        placeholder: 'Code...',
+      },
+      {
+        name: 'name',
+        type: 'text',
+        label: 'Name',
+        smallLabel: 'Give this topic a name',
+        placeholder: 'Name...',
+      },
+      {
+        name: 'description',
+        type: 'text',
+        label: 'Description',
+        smallLabel: 'Brief description for this topic',
+        placeholder: 'Description...',
+      },
+      {
+        name: 'note',
+        type: 'text',
+        label: 'Note',
+        smallLabel: 'Special note for this topic',
+        placeholder: 'Note...',
+      },
+      {
+        name: 'minMem',
+        type: 'number',
+        label: 'Minimum team members',
+        smallLabel: 'Minimum team member for this topic',
+        placeholder: '0',
+      },
+      {
+        name: 'maxMem',
+        type: 'number',
+        label: 'Maximum team members',
+        smallLabel: 'Maximum team member for this topic',
+        placeholder: '4',
+      },
+      {
+        name: 'department',
+        type: 'selectBox',
+        label: 'From department',
+        smallLabel: 'Topic in which department',
+        placeholder: 'Select a department',
+        options: [
+          {
+            label: 'SE',
+            value: 'se',
+          },
+          {
+            label: 'GD',
+            value: 'gd',
+          },
+          {
+            label: 'CC',
+            value: 'cc',
+          },
+        ],
+      },
+      {
+        name: 'isByStudent',
+        type: 'toggle',
+        label: 'By student',
+        smallLabel: 'Is this topic from student',
+        isChecked: false,
+      },
+      {
+        name: 'studentTeam',
+        type: 'selectBoxAsync',
+        label: 'Student team',
+        smallLabel: 'Student team taking this topic',
+        load: (studentInput, callback) => {
+          setTimeout(() => {
+            callback([
+              {
+                label: 'Phan Thong Thanh',
+                value: 'Phan Thong Thanh',
+              },
+              {
+                label: 'Tran Thai Trung',
+                value: 'Tran Thai Trung',
+              },
+              {
+                label: 'Nguyen Hoang Dung',
+                value: 'Nguyen Hoang Dung',
+              },
+              {
+                label: 'Le Huu Mon',
+                value: 'Le Huu Mon',
+              },
+            ]);
+          }, 2000);
+        },
+        isMulti: true,
+      },
+      {
+        name: 'mentorGroup',
+        type: 'selectBoxAsync',
+        label: 'Mentor Group',
+        smallLabel: 'Mentor group for this topic',
+        load: (mentorInput, callback) => {
+          setTimeout(() => {
+            callback([
+              {
+                label: 'Huynh Duc Duy',
+                value: 'Huynh Duc Duy',
+              },
+              {
+                label: 'Tran Tuan Anh',
+                value: 'Tran Tuan Anh',
+              },
+              {
+                label: 'Dinh Ngoc Hai',
+                value: 'Dinh Ngoc Hai',
+              },
+              {
+                label: 'Ly Phuoc Hiep',
+                value: 'Ly Phuoc Hiep',
+              },
+            ]);
+          }, 2000);
+        },
+        isMulti: true,
+      },
+      {
+        name: 'keywords',
+        type: 'creatableSelectBoxAsync',
+        label: 'Keywords',
+        smallLabel: 'Some keywords for this topic',
+        load: (keyword, callback) => {
+          setTimeout(() => {
+            callback([
+              {
+                label: 'capstone',
+                value: 'capstone',
+              },
+              {
+                label: 'management',
+                value: 'management',
+              },
+              {
+                label: 'system',
+                value: 'system',
+              },
+            ]);
+          }, 2000);
+        },
+      },
+      {
+        name: 'attachment',
+        type: 'file',
+        label: 'Attachment',
+        smallLabel: '.pdf, .docx',
+      },
+    ]);
+    setFieldTemplate({
+      topicCode: '',
+      name: '',
+      description: '',
+      note: '',
+      maxMem: '',
+      minMem: '',
+      department: 'gd',
+      isByStudent: true,
+      mentorGroup: [],
+      keywords: [],
+      attachment: {},
+    });
+  }, []);
+
   const handleShowNewModal = React.useCallback(() => {
     setShowedNewModalFlg(true);
   }, []);
@@ -192,6 +370,51 @@ export default function CustomersCard() {
   }, []);
 
   const handleShowUpdateModal = React.useCallback(() => {
+    setUpdateFieldTemplate({
+      topicCode: 'FA20SE13',
+      name: 'Capstone Management System for FPT University',
+      description: 'Lorem ipsum dolor description',
+      note: 'Lorem ipsum note dolor note',
+      maxMem: 4,
+      minMem: 0,
+      department: 'se',
+      isByStudent: false,
+      mentorGroup: [
+        {
+          label: 'Huynh Duc Duy',
+          value: 'Huynh Duc Duy',
+        },
+        {
+          label: 'Tran Tuan Anh',
+          value: 'Tran Tuan Anh',
+        },
+      ],
+      studentTeam: [
+        {
+          label: 'Phan Thong Thanh',
+          value: 'Phan Thong Thanh',
+        },
+        {
+          label: 'Tran Thai Trung',
+          value: 'Tran Thai Trung',
+        },
+      ],
+      keywords: [
+        {
+          label: 'capstone',
+          value: 'capstone',
+        },
+        {
+          label: 'management',
+          value: 'management',
+        },
+        {
+          label: 'system',
+          value: 'system',
+        },
+      ],
+      attachment: {},
+    });
     setShowUpdateModalFlg(true);
   }, []);
 
@@ -221,6 +444,14 @@ export default function CustomersCard() {
 
   const handleConfirmRemoveSelectedTopic = React.useCallback(() => {
     alert('Remove selected!');
+  }, []);
+
+  const handleOnCreateTopic = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
+
+  const handleOnUpdateTopic = React.useCallback(fieldData => {
+    console.log(fieldData);
   }, []);
 
   const ActionsColumnFormatter = React.useCallback(
@@ -449,14 +680,23 @@ export default function CustomersCard() {
           selectable
         />
       </CardBody>
-      <CreateTopicModal
-        onHide={handleHideNewModal}
+      <CMSModal
         isShowFlg={showedNewModalFlg}
+        onHide={handleHideNewModal}
+        configs={modalConfigs}
+        title="Create new topic"
+        subTitle="Submit new topic to this capstone semester"
+        onConfirmForm={handleOnCreateTopic}
+        fieldTemplate={fieldTemplate}
       />
-      <UpdateTopicModal
-        onHide={handleHideUpdateModal}
+      <CMSModal
         isShowFlg={showUpdateModalFlg}
-        selectedId={selectedId}
+        onHide={handleHideUpdateModal}
+        configs={modalConfigs}
+        title="Update topic"
+        subTitle="Change this topic info"
+        onConfirmForm={handleOnUpdateTopic}
+        fieldTemplate={updateFieldTemplate}
       />
       <ConfirmRemoveModal
         onHide={handleHideConfirmRemoveAllSelectedTopicModal}

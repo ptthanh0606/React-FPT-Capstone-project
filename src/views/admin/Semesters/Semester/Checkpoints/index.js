@@ -14,8 +14,7 @@ import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
 import { useParams } from 'react-router-dom';
 import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
-import CreateCheckpointModal from 'components/CreateCheckpointModal/CreateCheckpointModal';
-import UpdateCheckpointModal from 'components/UpdateCheckpointModal/UpdateCheckpointModal';
+import CMSModal from 'components/CMSModal/CMSModal';
 
 export const statusClasses = ['danger', 'success', 'info', ''];
 export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
@@ -53,27 +52,19 @@ const mockData = [
   },
 ];
 
-// function StatusColumnFormatter(cellContent, row) {
-//   const getLabelCssClasses = () => {
-//     return `label label-lg label-light-${
-//       statusClasses[row.status]
-//     } label-inline text-nowrap`;
-//   };
-//   return (
-//     <span className={getLabelCssClasses()}>{statusTitles[row.status]}</span>
-//   );
-// }
-
 export default function CustomersCard() {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [filters, setFilters] = React.useState({});
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [fieldTemplate, setFieldTemplate] = React.useState({});
+  const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
+  const [modalConfigs, setModalConfigs] = React.useState([]);
   const [
     showRemoveCheckpointConfirmModalFlg,
     setShowRemoveCheckpointConfirmModalFlg,
@@ -96,7 +87,6 @@ export default function CustomersCard() {
   const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
 
-  // Remove all selected checkpoints handlers
   const handleShowRemoveCheckpointModal = React.useCallback(() => {
     setShowRemoveCheckpointConfirmModalFlg(true);
   }, []);
@@ -104,9 +94,7 @@ export default function CustomersCard() {
   const handleHideRemoveCheckpointModal = React.useCallback(() => {
     setShowRemoveCheckpointConfirmModalFlg(false);
   }, []);
-  // --------------------------------------------
 
-  // Remove selected checkpoint handlers
   const handleShowRemoveSelectedCheckpointModal = React.useCallback(() => {
     setShowRemoveSelectedCheckpointModalFlg(true);
   }, []);
@@ -114,9 +102,7 @@ export default function CustomersCard() {
   const handleHideSelectedCheckpointModal = React.useCallback(() => {
     setShowRemoveSelectedCheckpointModalFlg(false);
   }, []);
-  // ---------------------------------------------
 
-  // Create checkpoints handlers
   const handleShowCreateCheckpointModal = React.useCallback(() => {
     setShowCreateCheckpointModalFlg(true);
   }, []);
@@ -124,17 +110,33 @@ export default function CustomersCard() {
   const handleHideCreateCheckpointModal = React.useCallback(() => {
     setShowCreateCheckpointModalFlg(false);
   }, []);
-  // --------------------------------------------
 
-  // Update checkpoints handlers
   const handleShowUpdateCheckpointModal = React.useCallback(() => {
+    const response = {
+      name: 'Checkpoint1',
+      description: 'Lorem ipsum dolor description',
+      weight: '30',
+      dueDate: '2020-06-06',
+      attachment: '',
+      marginPass: '10',
+      marginFail: '4',
+      department: 'se',
+    };
+    setUpdateFieldTemplate(response);
     setShowUpdateCheckpointModalFlg(true);
   }, []);
 
   const handleHideUpdateCheckpointModal = React.useCallback(() => {
     setShowUpdateCheckpointModalFlg(false);
   }, []);
-  // ---------------------------------------------
+
+  const handleOnCreateCheckpoint = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
+
+  const handleOnUpdateCheckpoint = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
 
   React.useEffect(() => {
     setMeta(meta => ({
@@ -151,6 +153,86 @@ export default function CustomersCard() {
   React.useEffect(() => {
     setData(mockData);
     setTotal(100);
+  }, []);
+
+  React.useEffect(() => {
+    const response = [
+      {
+        label: 'SE',
+        value: 'se',
+      },
+      {
+        label: 'GD',
+        value: 'gd',
+      },
+      {
+        label: 'CC',
+        value: 'cc',
+      },
+    ];
+    setModalConfigs([
+      {
+        name: 'name',
+        type: 'text',
+        label: 'Checkpoint name',
+        placeholder: 'Give this checkpoint a name...',
+      },
+      {
+        name: 'description',
+        type: 'text',
+        label: 'Description',
+        smallLabel: 'Brief description for this checkpoint',
+        placeholder: 'Description...',
+      },
+      {
+        name: 'weight',
+        type: 'number',
+        label: 'Weight',
+        smallLabel: 'Ex: Enter 30 for 30%',
+        placeholder: '30',
+      },
+      {
+        name: 'dueDate',
+        type: 'date',
+        label: 'Due date',
+        smallLabel: 'Pick a due date for this checkpoint',
+      },
+      {
+        name: 'attachment',
+        type: 'file',
+        label: 'Attachment',
+        smallLabel: '.zip, .rar file',
+      },
+      {
+        name: 'marginPass',
+        type: 'number',
+        label: 'Margin pass',
+        smallLabel: 'Ceil value for passing this checkpoint',
+      },
+      {
+        name: 'marginFail',
+        type: 'number',
+        label: 'Margin fail',
+        smallLabel: 'Floor value for failing this checkpoint',
+      },
+      {
+        name: 'department',
+        type: 'selectBox',
+        label: 'Department',
+        smallLabel: 'Checkpoint for which department',
+        options: response,
+      },
+    ]);
+    setFieldTemplate({
+      name: '',
+      description: '',
+      weight: '',
+      dueDate: '',
+      attachment: '',
+      marginPass: '',
+      marginFail: '',
+      department: '',
+    });
   }, []);
 
   const ActionsColumnFormatter = React.useCallback(
@@ -298,7 +380,6 @@ export default function CustomersCard() {
           selectable
         />
       </CardBody>
-      {/* Remove all selected */}
       <ConfirmRemoveModal
         title="Confirm on remove"
         body={
@@ -308,7 +389,6 @@ export default function CustomersCard() {
         onHide={handleHideRemoveCheckpointModal}
         onConfirm={() => {}}
       />
-      {/* Remove selected checkpoints modal */}
       <ConfirmRemoveModal
         title="Confirm on remove"
         body={<h5>Are you sure you want to remove selected checkpoints?</h5>}
@@ -316,16 +396,23 @@ export default function CustomersCard() {
         onHide={handleHideSelectedCheckpointModal}
         onConfirm={() => {}}
       />
-      {/* Create checkpoint modal */}
-      <CreateCheckpointModal
+      <CMSModal
         isShowFlg={showCreateCheckpointModalFlg}
         onHide={handleHideCreateCheckpointModal}
+        configs={modalConfigs}
+        title="Create new checkpoint"
+        subTitle="Add a checkpoint to this semester"
+        onConfirmForm={handleOnCreateCheckpoint}
+        fieldTemplate={fieldTemplate}
       />
-      {/* Update selected checkpoint modal */}
-      <UpdateCheckpointModal
+      <CMSModal
         isShowFlg={showUpdateCheckpointModalFlg}
         onHide={handleHideUpdateCheckpointModal}
-        selectedId={selectedId}
+        configs={modalConfigs}
+        title="Update checkpoint"
+        subTitle="Change this checkpoint info"
+        onConfirmForm={handleOnUpdateCheckpoint}
+        fieldTemplate={updateFieldTemplate}
       />
     </Card>
   );

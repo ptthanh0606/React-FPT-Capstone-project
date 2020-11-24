@@ -15,8 +15,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { useParams } from 'react-router-dom';
 import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
-import CreateCouncilModal from 'components/CreateCouncilModal/CreateCouncilModal';
-import UpdateCouncilModal from 'components/UpdateCouncilModal/UpdateCouncilModal';
+import CMSModal from 'components/CMSModal/CMSModal';
 
 export const statusClasses = ['danger', 'success', 'info', ''];
 export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
@@ -40,13 +39,16 @@ const mockData = [
 export default function CustomersCard() {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [filters, setFilters] = React.useState({});
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [fieldTemplate, setFieldTemplate] = React.useState({});
+  const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
+  const [modalConfigs, setModalConfigs] = React.useState([]);
   const [
     showRemoveAllSelectedCouncilsConfirmModalFlg,
     setShowRemoveAllSelectedCouncilsConfirmModalFlg,
@@ -93,12 +95,34 @@ export default function CustomersCard() {
   };
 
   const handleShowUpdateCouncilsModal = () => {
+    setUpdateFieldTemplate({
+      name: 'HKT',
+      department: 'gd',
+      councilMembers: [
+        {
+          label: 'Huynh Duc Duy',
+          value: 'Huynh Duc Duy',
+        },
+        {
+          label: 'Phan Thong Thanh',
+          value: 'Phan Thong Thanh',
+        },
+      ],
+    });
     setShowUpdateCouncilsModalFlg(true);
   };
 
   const handleHideUpdateCouncilsModal = () => {
     setShowUpdateCouncilsModalFlg(false);
   };
+
+  const handleOnCreateCouncil = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
+
+  const handleOnUpdateCouncil = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
 
   React.useEffect(() => {
     setMeta(meta => ({
@@ -115,6 +139,72 @@ export default function CustomersCard() {
   React.useEffect(() => {
     setData(mockData);
     setTotal(100);
+  }, []);
+
+  React.useEffect(() => {
+    const response = [
+      {
+        label: 'SE',
+        value: 'se',
+      },
+      {
+        label: 'GD',
+        value: 'gd',
+      },
+      {
+        label: 'CC',
+        value: 'cc',
+      },
+    ];
+    setModalConfigs([
+      {
+        name: 'name',
+        type: 'text',
+        label: 'Council name',
+        placeholder: 'Give this council a name...',
+      },
+      {
+        name: 'department',
+        type: 'selectBox',
+        label: 'Department',
+        smallLabel: 'This council belong to which department',
+        options: response,
+      },
+      {
+        name: 'councilMembers',
+        type: 'selectBoxAsync',
+        label: 'Council members',
+        smallLabel: 'Member in this council',
+        load: (memberInput, callback) => {
+          setTimeout(() => {
+            callback([
+              {
+                label: 'Huynh Duc Duy',
+                value: 'Huynh Duc Duy',
+              },
+              {
+                label: 'Tran Tuan Anh',
+                value: 'Tran Tuan Anh',
+              },
+              {
+                label: 'Dinh Ngoc Hai',
+                value: 'Dinh Ngoc Hai',
+              },
+              {
+                label: 'Ly Phuoc Hiep',
+                value: 'Ly Phuoc Hiep',
+              },
+            ]);
+          }, 2000);
+        },
+        isMulti: true,
+      },
+    ]);
+    setFieldTemplate({
+      name: '',
+      department: '',
+      councilMembers: [],
+    });
   }, []);
 
   function ActionsColumnFormatter(cellContent, row, rowIndex) {
@@ -270,15 +360,23 @@ export default function CustomersCard() {
         onHide={handleHideRemoveSelectedCouncilsModal}
         onConfirm={() => {}}
       />
-      <CreateCouncilModal
+      <CMSModal
         isShowFlg={showCreateCouncilsModalFlg}
         onHide={handleHideCreateCouncilsModal}
-        onCreate={() => {}}
+        configs={modalConfigs}
+        title="Create council"
+        subTitle="Assign council to this semester"
+        onConfirmForm={handleOnCreateCouncil}
+        fieldTemplate={fieldTemplate}
       />
-      <UpdateCouncilModal
+      <CMSModal
         isShowFlg={showUpdateCouncilsModalFlg}
         onHide={handleHideUpdateCouncilsModal}
-        selectedId={selectedId}
+        configs={modalConfigs}
+        title="Update council"
+        subTitle="Change this council info"
+        onConfirmForm={handleOnUpdateCouncil}
+        fieldTemplate={updateFieldTemplate}
       />
     </Card>
   );

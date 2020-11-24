@@ -7,9 +7,8 @@ import { Link } from 'react-router-dom';
 
 import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
-import CreateDepartmentModal from 'components/CreateDepartmentModal/CreateDepartmentModal';
-import UpdateDepartmentModal from 'components/UpdateDepartmentModal/UpdateDepartmentModal';
 import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
+import CMSModal from 'components/CMSModal/CMSModal';
 
 const defaultSorted = [{ dataField: 'id', order: 'asc' }];
 
@@ -49,13 +48,16 @@ const mockData = [
 export default function CustomersCard() {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [filters, setFilters] = React.useState({});
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [fieldTemplate, setFieldTemplate] = React.useState({});
+  const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
+  const [modalConfigs, setModalConfigs] = React.useState([]);
   const [
     showCreateDepartmentModal,
     setShowCreateDepartmentModal,
@@ -81,6 +83,11 @@ export default function CustomersCard() {
   }, [setShowCreateDepartmentModal]);
 
   const handleShowUpdateDepartmentModal = React.useCallback(() => {
+    setUpdateFieldTemplate({
+      name: 'Software Engineer',
+      code: 'SE',
+      isActive: true,
+    });
     setShowUpdateDepartmentModal(true);
   }, [setShowUpdateDepartmentModal]);
 
@@ -95,6 +102,14 @@ export default function CustomersCard() {
   const handleHideRemoveSelectedDepartmentModal = React.useCallback(() => {
     setShowRemoveSelectedDepartmentModal(false);
   }, [setShowRemoveSelectedDepartmentModal]);
+
+  const handleOnCreateDepartment = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
+
+  const handleOnUpdateDepartment = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
 
   function ActionsColumnFormatter(cellContent, row, rowIndex) {
     return (
@@ -226,6 +241,34 @@ export default function CustomersCard() {
     setTotal(100);
   }, []);
 
+  React.useEffect(() => {
+    setModalConfigs([
+      {
+        name: 'name',
+        type: 'text',
+        label: 'Team name',
+        placeholder: 'Give this department a name...',
+      },
+      {
+        name: 'code',
+        type: 'text',
+        label: 'Department code',
+        smallLabel: 'Ex: Software Engineer to be "SE"',
+      },
+      {
+        name: 'isActive',
+        type: 'toggle',
+        label: 'Active state',
+        smallLabel: 'Is this department active',
+      },
+    ]);
+    setFieldTemplate({
+      name: '',
+      code: '',
+      isActive: false,
+    });
+  }, []);
+
   return (
     <Card>
       <CardBody>
@@ -249,20 +292,29 @@ export default function CustomersCard() {
           pageSizeList={sizePerPageList}
         />
       </CardBody>
-      <CreateDepartmentModal
-        isShowFlg={showCreateDepartmentModal}
-        onHide={handleHideCreateDepartmentModal}
-      />
-      <UpdateDepartmentModal
-        isShowFlg={showUpdateDepartmentModal}
-        onHide={handleHideUpdateDepartmentModal}
-        selectedId={selectedId}
-      />
       <ConfirmRemoveModal
         isShowFlg={showRemoveSelectedDepartmentModal}
         onHide={handleHideRemoveSelectedDepartmentModal}
         body={<h5>Are you sure you want to remove all selected department?</h5>}
         // onConfirm={() => {}}
+      />
+      <CMSModal
+        isShowFlg={showCreateDepartmentModal}
+        onHide={handleHideCreateDepartmentModal}
+        configs={modalConfigs}
+        title="Create department"
+        subTitle="Add new department to this system"
+        onConfirmForm={handleOnCreateDepartment}
+        fieldTemplate={fieldTemplate}
+      />
+      <CMSModal
+        isShowFlg={showUpdateDepartmentModal}
+        onHide={handleHideUpdateDepartmentModal}
+        configs={modalConfigs}
+        title="Update this department"
+        subTitle="Change this department info"
+        onConfirmForm={handleOnUpdateDepartment}
+        fieldTemplate={updateFieldTemplate}
       />
     </Card>
   );
