@@ -49,7 +49,7 @@ const CMSModal = ({
           <small className="form-text text-muted">{subTitle}</small>
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body style={{ maxHeight: '77vh', overflow: 'auto' }}>
         <Form id="test-form" onSubmit={handleOnSubmitForm}>
           {configs.map(config => {
             switch (config.type) {
