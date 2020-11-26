@@ -7,7 +7,12 @@ export function down(i) {
         name: i.name,
         email: i.email,
         departments:
-          (i.departments && i.departments.map(j => [j.departmentID, j.code])) ||
+          (i.departments &&
+            i.departments.map(j => ({
+              value: j.departmentID,
+              label: j.code,
+              isApprover: j.isApprover,
+            }))) ||
           [],
       }
     : {};

@@ -64,7 +64,7 @@ const modalConfigs = [
     isMulti: true,
   },
   {
-    name: 'isActive',
+    name: 'status',
     type: 'toggle',
     label: 'Active state',
     smallLabel: 'Is this lecturer active',
@@ -112,8 +112,7 @@ export default function Lecturers() {
       },
     })
       .then(res => {
-        // setData(res.data.data?.map(transformers.down));
-        setData(res.data.map(transformers.down));
+        setData(res.data.data?.map(transformers.down));
         setTotal(res.data.totalRecords);
         setPage(res.data.pageNumber);
         setPageSize(res.data.pageSize);
@@ -148,6 +147,7 @@ export default function Lecturers() {
         toast.success('Create department successfully');
         setShowCreate(false);
         forceReload();
+        setFieldTemplate({});
       })
       .catch(handleErrors)
       .finally(() => setIsProcessing(false));
@@ -189,10 +189,9 @@ export default function Lecturers() {
       .then(res => {
         setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
         setShowUpdate(true);
+        console.log(transformers.down(res.data?.data));
       })
-      .catch(err => {
-        toast.error(err.response.data.data?.message || 'Internal server error');
-      });
+      .catch(handleErrors);
   }, []);
 
   const handleRemove = React.useCallback(
@@ -263,15 +262,16 @@ export default function Lecturers() {
         headerSortingClasses,
       },
       {
-        dataField: 'department',
+        dataField: 'departments',
         text: 'Department',
         sort: true,
         formatter: function (cellContent, row) {
           return (
             <>
-              {cellContent &&
-                Array.isArray(cellContent) &&
-                cellContent.join(', ')}
+              {cellContent.length > 0 &&
+                cellContent
+                  .map(i => (i.isApprover ? <u>{i.label}</u> : <>{i.label}</>))
+                  .reduce((prev, curr) => [prev, ', ', curr])}
             </>
           );
         },
@@ -357,16 +357,6 @@ export default function Lecturers() {
   React.useEffect(() => {
     loadData();
   }, [loadData, f]);
-
-  React.useEffect(() => {
-    setFieldTemplate({
-      name: '',
-      email: '',
-      code: '',
-      departments: [],
-      status: false,
-    });
-  }, []);
 
   return (
     <Card>
