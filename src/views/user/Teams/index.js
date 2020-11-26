@@ -14,11 +14,11 @@ import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
 
 import { useParams } from 'react-router-dom';
-import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
+import ConfirmRemoveModal from 'components/ConfirmModal/ConfirmModal';
 import CreateTeamStudentModal from 'components/CreateTeamStudentModal/CreateTeamStudentModal';
 
-export const statusClasses = ['danger', 'info', 'success', ''];
-export const statusTitles = ['Not in a team', 'Matching', 'Matched', ''];
+export const statusClasses = ['info', 'success', ''];
+export const statusTitles = ['Matching', 'Matched', ''];
 export const lockClasses = ['success', 'danger'];
 export const lockTitles = ['Unlocked', 'Locked'];
 export const privateClasses = ['success', 'danger'];

@@ -1,3 +1,5 @@
+import './wdyr';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { HelmetProvider } from 'react-helmet-async';
@@ -25,6 +27,8 @@ import '_metronic/_assets/plugins/flaticon/flaticon.css';
 import '_metronic/_assets/plugins/flaticon2/flaticon.css';
 
 import AuthUpdater from 'auth/AuthUpdater';
+import { Container as ToastifyContainer } from 'utils/toast';
+import { Container as ConfirmContainer } from 'utils/confirm';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import {
@@ -61,6 +65,8 @@ function render(Component) {
         <RecoilLogger />
         <AuthUpdater />
         <MetaData />
+        <ToastifyContainer />
+        <ConfirmContainer />
         <Component />
       </Providers>
     </React.StrictMode>,

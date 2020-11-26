@@ -13,7 +13,7 @@ import ActiveStudents from './ActiveStudents';
 import Councils from './Councils';
 import Teams from './Teams';
 import Checkpoints from './Checkpoints';
-import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
+import ConfirmRemoveModal from 'components/ConfirmModal/ConfirmModal';
 
 const Semester = () => {
   const setMeta = useSetRecoilState(metaAtom);

@@ -26,7 +26,7 @@ function fetchMe(setRole, setUser, history) {
     .then(({ data }) => {
       let role;
 
-      switch (data.resource.role) {
+      switch (data.data.role) {
         case 0:
           role = 'admin';
           break;
@@ -42,11 +42,11 @@ function fetchMe(setRole, setUser, history) {
       setRole(role);
 
       setUser({
-        id: data.resource.id,
-        code: data.resource.code,
-        email: data.resource.email,
-        name: data.resource.name,
-        department: data.resource.department,
+        id: data.data.id,
+        code: data.data.code,
+        email: data.data.email,
+        name: data.data.name,
+        department: data.data.department,
         role: role,
       });
     })

@@ -24,9 +24,9 @@ const login = async function (
       },
     })
       .then(res => {
-        helpers.setAccessToken(res.data.resource.accessToken);
-        helpers.setAccessTokenExpiresAt(res.data.resource.expiresAt);
-        switch (res.data.resource.information.role) {
+        helpers.setAccessToken(res.data.data.accessToken);
+        helpers.setAccessTokenExpiresAt(res.data.data.expiresAt);
+        switch (res.data.data.information.role) {
           case 0:
             setRole('admin');
             break;
@@ -38,12 +38,12 @@ const login = async function (
             break;
           default:
         }
-        setUser(res.data.resource.information);
+        setUser(res.data.data.information);
         return res.data;
       })
       .catch(({ response }) => {
         throw new Error(
-          response.data && Array.isArray(response.data.messages)
+          response && response.data && Array.isArray(response.data.messages)
             ? response.data.messages[0]
             : 'Internal Server Error'
         );

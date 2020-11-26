@@ -7,48 +7,23 @@ import { Link } from 'react-router-dom';
 
 import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
-import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
+import useConfirm from 'utils/confirm';
+import toast from 'utils/toast';
 import CMSModal from 'components/CMSModal/CMSModal';
 
-const defaultSorted = [{ dataField: 'id', order: 'asc' }];
+import request from 'utils/request';
+import * as endpoints from 'endpoints';
 
-const sizePerPageList = [
-  { text: '10', value: 10 },
-  { text: '20', value: 20 },
-  { text: '50', value: 50 },
-];
+import * as transformer from './transformer';
+import * as constants from './constants';
 
-const statusClasses = ['danger', 'success'];
-const statusTitles = ['Deactivated', 'Activated'];
+export default function Departments() {
+  const confirm = useConfirm();
+  const setMeta = useSetRecoilState(metaAtom);
 
-const mockData = [
-  {
-    id: 0,
-    code: 'SE',
-    name: 'Software Engineering',
-    status: 1,
-    approvers: ['Huynh Duc Duy', 'Phan Thong Thanh'],
-  },
-  {
-    id: 1,
-    code: 'SE',
-    name: 'Software Engineering',
-    status: 1,
-    approvers: ['Huynh Duc Duy', 'Phan Thong Thanh'],
-  },
-  {
-    id: 3,
-    code: 'SE',
-    name: 'Software Engineering',
-    status: 0,
-    approvers: ['Huynh Duc Duy', 'Phan Thong Thanh'],
-  },
-];
-
-export default function CustomersCard() {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
-  const [isLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [filters, setFilters] = React.useState({});
   const [page, setPage] = React.useState(1);
@@ -58,29 +33,35 @@ export default function CustomersCard() {
   const [fieldTemplate, setFieldTemplate] = React.useState({});
   const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
   const [modalConfigs, setModalConfigs] = React.useState([]);
-  const [
-    showCreateDepartmentModal,
-    setShowCreateDepartmentModal,
-  ] = React.useState(false);
-  const [
-    showUpdateDepartmentModal,
-    setShowUpdateDepartmentModal,
-  ] = React.useState(false);
-  const [
-    showRemoveSelectedDepartmentModal,
-    setShowRemoveSelectedDepartmentModal,
-  ] = React.useState(false);
-  const [selectedId, setSelectedId] = React.useState(false);
+  const [showCreate, setShowCreate] = React.useState(false);
+  const [showUpdate, setShowUpdate] = React.useState(false);
 
-  const setMeta = useSetRecoilState(metaAtom);
+  // ---------------------------------------------------------------------------
+
+  const loadData = React.useCallback(() => {
+    setIsLoading(true);
+    request({
+      to: endpoints.LIST_DEPARTMENT.url,
+      method: endpoints.LIST_DEPARTMENT.method,
+    })
+      .then(res => {
+        setData(res.data.data.map(transformer.down));
+      })
+      .catch(err => {
+        console.log(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
 
   const handleShowCreateDepartmentModal = React.useCallback(() => {
-    setShowCreateDepartmentModal(true);
-  }, [setShowCreateDepartmentModal]);
+    setShowCreate(true);
+  }, [setShowCreate]);
 
   const handleHideCreateDepartmentModal = React.useCallback(() => {
-    setShowCreateDepartmentModal(false);
-  }, [setShowCreateDepartmentModal]);
+    setShowCreate(false);
+  }, [setShowCreate]);
 
   const handleShowUpdateDepartmentModal = React.useCallback(() => {
     setUpdateFieldTemplate({
@@ -88,20 +69,12 @@ export default function CustomersCard() {
       code: 'SE',
       isActive: true,
     });
-    setShowUpdateDepartmentModal(true);
-  }, [setShowUpdateDepartmentModal]);
+    setShowUpdate(true);
+  }, [setShowUpdate]);
 
   const handleHideUpdateDepartmentModal = React.useCallback(() => {
-    setShowUpdateDepartmentModal(false);
-  }, [setShowUpdateDepartmentModal]);
-
-  const handleShowRemoveSelectedDepartmentModal = React.useCallback(() => {
-    setShowRemoveSelectedDepartmentModal(true);
-  }, [setShowRemoveSelectedDepartmentModal]);
-
-  const handleHideRemoveSelectedDepartmentModal = React.useCallback(() => {
-    setShowRemoveSelectedDepartmentModal(false);
-  }, [setShowRemoveSelectedDepartmentModal]);
+    setShowUpdate(false);
+  }, [setShowUpdate]);
 
   const handleOnCreateDepartment = React.useCallback(fieldData => {
     console.log(fieldData);
@@ -111,110 +84,142 @@ export default function CustomersCard() {
     console.log(fieldData);
   }, []);
 
-  function ActionsColumnFormatter(cellContent, row, rowIndex) {
-    return (
-      <span className="text-nowrap">
-        <a
-          href="/"
-          title="Edit"
-          className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-          onClick={event => {
-            event.preventDefault();
-            setSelectedId(row.id);
-            handleShowUpdateDepartmentModal();
-          }}
-        >
-          <i class="fas fa-pencil-alt mx-2"></i>
-        </a>
-        <a
-          href="/"
-          title="Remove"
-          className="btn btn-icon btn-light btn-hover-primary btn-sm"
-          onClick={event => {
-            event.preventDefault();
-            setSelectedId(row.id);
-            handleShowRemoveSelectedDepartmentModal();
-          }}
-        >
-          <i class="fas fa-trash mx-2"></i>
-        </a>
-      </span>
-    );
-  }
+  const handleRemove = React.useCallback(
+    e => {
+      e.preventDefault();
+      const id = e.currentTarget.getAttribute('data-id');
+      confirm({
+        title: 'Removal Confirmation',
+        body: (
+          <>
+            Do you wanna remove this department?
+            <br />
+            The status of this department will be changed to "Deactivated" and
+            can not be use for future semester'
+          </>
+        ),
+      }).then(() => {
+        request({
+          to: endpoints.DELETE_DEPARTMENT(id).url,
+          method: endpoints.DELETE_DEPARTMENT(id).method,
+        })
+          .then(res => {
+            loadData();
+            toast.success('Successfully remove department');
+          })
+          .catch(err => {
+            console.log(err);
+            toast.error('Cannot remove this department');
+          });
+      });
+    },
+    [confirm, loadData]
+  );
 
-  function StatusColumnFormatter(cellContent, row) {
-    const getLabelCssClasses = () => {
-      return `label label-lg label-light-${
-        statusClasses[row.status]
-      } label-inline text-nowrap`;
-    };
-    return (
-      <span className={getLabelCssClasses()}>{statusTitles[row.status]}</span>
-    );
-  }
+  const handleEdit = React.useCallback(
+    e => {
+      e.preventDefault();
+      const id = e.currentTarget.getAttribute('data-id');
+      handleShowUpdateDepartmentModal();
+    },
+    [handleShowUpdateDepartmentModal]
+  );
 
-  const columns = [
-    {
-      dataField: 'code',
-      text: 'Code',
-      sort: true,
-      sortCaret: sortCaret,
-      headerSortingClasses,
-    },
-    {
-      dataField: 'name',
-      text: 'Name',
-      sort: true,
-      sortCaret: sortCaret,
-      formatter: function StatusColumnFormatter(cellContent, row) {
-        return (
-          <Link
-            className="text-dark font-weight-bold"
-            to={'/semester/' + row.id}
-          >
-            {cellContent}
-          </Link>
-        );
+  const columns = React.useMemo(
+    () => [
+      {
+        dataField: 'code',
+        text: 'Code',
+        sort: true,
+        sortCaret: sortCaret,
+        headerSortingClasses,
       },
-      headerSortingClasses,
-    },
-    {
-      dataField: 'status',
-      text: 'Status',
-      sort: true,
-      sortCaret: sortCaret,
-      formatter: StatusColumnFormatter,
-      headerSortingClasses,
-    },
-    {
-      dataField: 'approvers',
-      text: 'Approvers',
-      formatter: function StatusColumnFormatter(cellContent, row) {
-        return (
-          <Link
-            className="text-dark font-weight-bold"
-            to={'/semester/' + row.id}
-          >
-            {cellContent.join(', ')}
-          </Link>
-        );
+      {
+        dataField: 'name',
+        text: 'Name',
+        sort: true,
+        sortCaret: sortCaret,
+        formatter: function (cellContent, row) {
+          return (
+            <Link
+              className="text-dark font-weight-bold"
+              to={'/semester/' + row.id}
+            >
+              {cellContent}
+            </Link>
+          );
+        },
+        headerSortingClasses,
       },
-    },
-    {
-      dataField: 'action',
-      text: 'Actions',
-      formatter: ActionsColumnFormatter,
-      formatExtraData: {
-        openEditCustomerDialog: () => {},
-        openDeleteCustomerDialog: () => {},
+      {
+        dataField: 'status',
+        text: 'Status',
+        sort: true,
+        sortCaret: sortCaret,
+        formatter: (cellContent, row) => {
+          const getLabelCssClasses = () => {
+            return `label label-lg label-light-${
+              constants.statusClasses[row.status]
+            } label-inline text-nowrap`;
+          };
+          return (
+            <span className={getLabelCssClasses()}>
+              {constants.statusTitles[row.status]}
+            </span>
+          );
+        },
+        headerSortingClasses,
       },
-      classes: 'text-right pr-0',
-      headerClasses: 'text-right pr-3',
-      style: {
-        minWidth: '100px',
+      {
+        dataField: 'approvers',
+        text: 'Approvers',
+        formatter: function (cellContent, row) {
+          return (
+            <Link
+              className="text-dark font-weight-bold"
+              to={'/semester/' + row.id}
+            >
+              {cellContent.join(', ')}
+            </Link>
+          );
+        },
       },
-    },
-  ];
+      {
+        dataField: 'action',
+        text: 'Actions',
+        formatter: (cellContent, row, rowIndex) => {
+          return (
+            <span className="text-nowrap">
+              <a
+                href="/"
+                title="Edit"
+                className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
+                data-id={row.id}
+                onClick={handleEdit}
+              >
+                <i class="fas fa-pencil-alt mx-2"></i>
+              </a>
+              <a
+                href="/"
+                title="Disable"
+                className="btn btn-icon btn-light btn-hover-primary btn-sm"
+                data-id={row.id}
+                onClick={handleRemove}
+              >
+                <i class="fas fa-ban mx-2"></i>
+              </a>
+            </span>
+          );
+        },
+        classes: 'text-right pr-0',
+        headerClasses: 'text-right pr-3',
+        style: {
+          minWidth: '100px',
+        },
+      },
+    ],
+    [handleEdit, handleRemove]
+  );
 
   React.useEffect(() => {
     setMeta({
@@ -237,9 +242,9 @@ export default function CustomersCard() {
   }, [handleShowCreateDepartmentModal, setMeta]);
 
   React.useEffect(() => {
-    setData(mockData);
+    loadData();
     setTotal(100);
-  }, []);
+  }, [loadData]);
 
   React.useEffect(() => {
     setModalConfigs([
@@ -269,6 +274,10 @@ export default function CustomersCard() {
     });
   }, []);
 
+  React.useEffect(() => {
+    console.log('confirm changed');
+  }, [confirm]);
+
   return (
     <Card>
       <CardBody>
@@ -288,18 +297,12 @@ export default function CustomersCard() {
           setSortField={setSortField}
           sortOrder={sortOrder}
           setSortOrder={setSortOrder}
-          defaultSorted={defaultSorted}
-          pageSizeList={sizePerPageList}
+          defaultSorted={constants.defaultSorted}
+          pageSizeList={constants.sizePerPageList}
         />
       </CardBody>
-      <ConfirmRemoveModal
-        isShowFlg={showRemoveSelectedDepartmentModal}
-        onHide={handleHideRemoveSelectedDepartmentModal}
-        body={<h5>Are you sure you want to remove all selected department?</h5>}
-        // onConfirm={() => {}}
-      />
       <CMSModal
-        isShowFlg={showCreateDepartmentModal}
+        isShowFlg={showCreate}
         onHide={handleHideCreateDepartmentModal}
         configs={modalConfigs}
         title="Create department"
@@ -308,7 +311,7 @@ export default function CustomersCard() {
         fieldTemplate={fieldTemplate}
       />
       <CMSModal
-        isShowFlg={showUpdateDepartmentModal}
+        isShowFlg={showUpdate}
         onHide={handleHideUpdateDepartmentModal}
         configs={modalConfigs}
         title="Update this department"

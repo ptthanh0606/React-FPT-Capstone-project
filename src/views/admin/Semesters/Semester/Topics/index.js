@@ -13,7 +13,7 @@ import Filters from './Filters';
 import { Link } from 'react-router-dom';
 
 import { useParams } from 'react-router-dom';
-import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
+import ConfirmRemoveModal from 'components/ConfirmModal/ConfirmModal';
 import CMSModal from 'components/CMSModal/CMSModal';
 
 export const statusClasses = ['danger', 'success', 'info', ''];

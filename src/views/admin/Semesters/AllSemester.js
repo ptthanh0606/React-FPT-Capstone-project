@@ -6,7 +6,7 @@ import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from 'views/admin/Semesters/SemesterFilters';
 import { Link } from 'react-router-dom';
-import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
+import ConfirmRemoveModal from 'components/ConfirmModal/ConfirmModal';
 import CMSModal from 'components/CMSModal/CMSModal';
 
 const semesters = [

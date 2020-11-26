@@ -1,6 +1,7 @@
 // 3rd-party Plugins
 @import '~highlight.js/styles/googlecode.css';
 @import '~perfect-scrollbar/css/perfect-scrollbar.css';
+@import '~react-toastify/dist/ReactToastify.css';
 
 // Theme Styles
 @import './_metronic/_assets/sass/style.react.scss';
@@ -102,4 +103,78 @@
 
 .cursor-default {
   cursor: default !important;
+}
+
+/** Used to define container behavior: width, position: fixed etc... **/
+.Toastify__toast-container {
+}
+
+/** Used to define the position of the ToastContainer **/
+.Toastify__toast-container--top-left {
+}
+.Toastify__toast-container--top-center {
+}
+.Toastify__toast-container--top-right {
+}
+.Toastify__toast-container--bottom-left {
+}
+.Toastify__toast-container--bottom-center {
+}
+.Toastify__toast-container--bottom-right {
+}
+
+/** Classes for the displayed toast **/
+.Toastify__toast {
+  border-radius: 3px;
+  padding: 1rem 1rem 1.5rem 1rem;
+  font-family: Noto Sans, Helvetica, 'sans-serif';
+  font-weight: 600;
+  margin-bottom: 0;
+  margin-top: 1rem;
+  .fa {
+    color: white;
+    vertical-align: text-bottom;
+  }
+}
+.Toastify__toast--rtl {
+}
+.Toastify__toast--dark {
+}
+.Toastify__toast--default {
+}
+.Toastify__toast--info {
+}
+.Toastify__toast--success {
+}
+.Toastify__toast--warning {
+}
+.Toastify__toast--error {
+}
+.Toastify__toast-body {
+}
+
+/** Classes for the close button. Better use your own closeButton **/
+.Toastify__close-button {
+  padding: 0.25rem;
+}
+.Toastify__close-button--default {
+}
+.Toastify__close-button > svg {
+}
+.Toastify__close-button:hover,
+.Toastify__close-button:focus {
+}
+
+/** Classes for the progress bar **/
+.Toastify__progress-bar {
+}
+.Toastify__progress-bar--animated {
+}
+.Toastify__progress-bar--controlled {
+}
+.Toastify__progress-bar--rtl {
+}
+.Toastify__progress-bar--default {
+}
+.Toastify__progress-bar--dark {
 }

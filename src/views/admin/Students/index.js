@@ -6,7 +6,7 @@ import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from './Filters';
 import { Link } from 'react-router-dom';
-import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
+import ConfirmRemoveModal from 'components/ConfirmModal/ConfirmModal';
 import CMSModal from 'components/CMSModal/CMSModal';
 
 export const statusClasses = ['danger', 'success', 'info', ''];

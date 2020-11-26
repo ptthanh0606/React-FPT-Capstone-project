@@ -28,7 +28,7 @@ export default React.memo(function DashboardPage() {
 
   return (
     <>
-      <div className="row">
+      {/* <div className="row">
         <div className="col-lg-6 col-xxl-4">
           <MixedWidget1 className="card-stretch gutter-b" />
         </div>
@@ -64,7 +64,7 @@ export default React.memo(function DashboardPage() {
         <div className="col-lg-8">
           <AdvanceTablesWidget4 className="card-stretch gutter-b" />
         </div>
-      </div>
+      </div> */}
     </>
   );
 });

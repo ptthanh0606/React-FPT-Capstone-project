@@ -7,6 +7,7 @@ import { toAbsoluteUrl } from '../../../../_helpers';
 import { useRecoilValue } from 'recoil';
 import userStore from 'store/user';
 
+import md5 from 'utils/md5';
 export function QuickUser() {
   const history = useHistory();
   const user = useRecoilValue(userStore);
@@ -44,8 +45,8 @@ export function QuickUser() {
             <div
               className="symbol-label"
               style={{
-                backgroundImage: `url(${toAbsoluteUrl(
-                  '/media/users/300_21.jpg'
+                backgroundImage: `url(https://www.gravatar.com/avatar/${md5(
+                  user.email.toLowerCase()
                 )})`,
               }}
             />
@@ -120,7 +121,7 @@ export function QuickUser() {
             </div>
           </a>
 
-          <a href="/user/profile" className="navi-item">
+          {/* <a href="/user/profile" className="navi-item">
             <div className="navi-link">
               <div className="symbol symbol-40 bg-light mr-3">
                 <div className="symbol-label">
@@ -178,7 +179,7 @@ export function QuickUser() {
                 <div className="text-muted">latest tasks and projects</div>
               </div>
             </div>
-          </a>
+          </a> */}
         </div>
       </div>
     </div>
