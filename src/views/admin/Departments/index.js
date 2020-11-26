@@ -8,15 +8,15 @@ import { Link } from 'react-router-dom';
 import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
 import useConfirm from 'utils/confirm';
-import toast from 'utils/toast';
 import CMSModal from 'components/CMSModal/CMSModal';
 
+import toast from 'utils/toast';
 import { useDebounce } from 'use-debounce';
 import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 
-import * as transformer from './transformer';
+import * as transformers from './transformers';
 import * as constants from './constants';
 
 export default function Departments() {
@@ -43,6 +43,7 @@ export default function Departments() {
   const [showCreate, setShowCreate] = React.useState(false);
   const [showUpdate, setShowUpdate] = React.useState(false);
   const [editId, setEditId] = React.useState(0);
+  const [isProcessing, setIsProcessing] = React.useState(false);
 
   // ---------------------------------------------------------------------------
 
@@ -60,7 +61,7 @@ export default function Departments() {
       },
     })
       .then(res => {
-        setData(res.data.data?.map(transformer.down));
+        setData(res.data.data?.map(transformers.down));
         setTotal(res.data.totalRecords);
         setPage(res.data.pageNumber);
         setPageSize(res.data.pageSize);
@@ -84,17 +85,19 @@ export default function Departments() {
   }, [setShowCreate]);
 
   const handleCreate = React.useCallback(fieldData => {
+    setIsProcessing(true);
     request({
       to: endpoints.CREATE_DEPARTMENT.url,
       method: endpoints.CREATE_DEPARTMENT.method,
-      data: transformer.up(fieldData),
+      data: transformers.up(fieldData),
     })
       .then(res => {
         toast.success('Create department successfully');
         setShowCreate(false);
         forceReload();
       })
-      .catch(handleErrors);
+      .catch(handleErrors)
+      .finally(() => setIsProcessing(false));
   }, []);
 
   // ---------------------------------------------------------------------------
@@ -105,17 +108,19 @@ export default function Departments() {
 
   const edit = React.useCallback(
     fieldData => {
+      setIsProcessing(true);
       request({
         to: endpoints.UPDATE_DEPARTMENT(editId).url,
         method: endpoints.UPDATE_DEPARTMENT(editId).method,
-        data: transformer.up(fieldData),
+        data: transformers.up(fieldData),
       })
         .then(res => {
           toast.success('Update department successfully');
           setShowUpdate(false);
           forceReload();
         })
-        .catch(handleErrors);
+        .catch(handleErrors)
+        .finally(() => setIsProcessing(false));
     },
     [editId]
   );
@@ -129,7 +134,7 @@ export default function Departments() {
       method: endpoints.READ_DEPARTMENT(id).method,
     })
       .then(res => {
-        setUpdateFieldTemplate(transformer.down(res.data.data));
+        setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
         setShowUpdate(true);
       })
       .catch(err => {
@@ -356,6 +361,7 @@ export default function Departments() {
         subTitle="Add new department to this system"
         onConfirmForm={handleCreate}
         fieldTemplate={fieldTemplate}
+        isProcessing={isProcessing}
       />
       <CMSModal
         isShowFlg={showUpdate}
@@ -366,6 +372,7 @@ export default function Departments() {
         onConfirmForm={edit}
         fieldTemplate={updateFieldTemplate}
         primaryButtonLabel="Update"
+        isProcessing={isProcessing}
       />
     </Card>
   );

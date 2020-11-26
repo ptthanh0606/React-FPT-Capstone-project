@@ -1,9 +1,3 @@
-export const mapping = {
-  Code: 'code',
-  Name: 'name',
-  isDisabled: 'status',
-};
-
 export function down(i) {
   return {
     id: i.departmentID,
@@ -16,7 +10,6 @@ export function down(i) {
 }
 
 export function up(i) {
-  console.log(i);
   return {
     code: i.code,
     name: i.name,
