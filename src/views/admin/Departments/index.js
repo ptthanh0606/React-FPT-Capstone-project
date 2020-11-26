@@ -145,8 +145,8 @@ export default function Departments() {
           <>
             Do you wanna remove this department?
             <br />
-            The status of this department will be changed to "Deactivated" and
-            can not be use for future semester'
+            This department will be <b>permanently removed</b>, and all
+            historical data belong to this department too.
           </>
         ),
       }).then(() => {
@@ -245,12 +245,12 @@ export default function Departments() {
               </a>
               <a
                 href="/"
-                title="Disable"
+                title="Remove"
                 className="btn btn-icon btn-light btn-hover-primary btn-sm"
                 data-id={row.id}
                 onClick={handleRemove}
               >
-                <i class="fas fa-ban mx-2"></i>
+                <i class="fas fa-trash mx-2"></i>
               </a>
             </span>
           );
