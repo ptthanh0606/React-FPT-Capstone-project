@@ -11,7 +11,9 @@ import useConfirm from 'utils/confirm';
 import toast from 'utils/toast';
 import CMSModal from 'components/CMSModal/CMSModal';
 
+import { useDebounce } from 'use-debounce';
 import request from 'utils/request';
+import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 
 import * as transformer from './transformer';
@@ -26,15 +28,21 @@ export default function Departments() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [filters, setFilters] = React.useState({});
+  const [f, forceReload] = React.useReducer(() => ({}), {});
+  const [debouncedFilters] = useDebounce(filters, 500);
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+
+  //----------------------------------------------------------------------------
+
   const [fieldTemplate, setFieldTemplate] = React.useState({});
   const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
   const [modalConfigs, setModalConfigs] = React.useState([]);
   const [showCreate, setShowCreate] = React.useState(false);
   const [showUpdate, setShowUpdate] = React.useState(false);
+  const [editId, setEditId] = React.useState(0);
 
   // ---------------------------------------------------------------------------
 
@@ -43,9 +51,17 @@ export default function Departments() {
     request({
       to: endpoints.LIST_DEPARTMENT.url,
       method: endpoints.LIST_DEPARTMENT.method,
+      params: {
+        ...debouncedFilters,
+        pageNumber: page,
+        pageSize: pageSize,
+        sortField: sortField,
+        sortOrder: sortOrder,
+      },
     })
       .then(res => {
-        setData(res.data.data.map(transformer.down));
+        setData(res.data.data?.map(transformer.down));
+        setTotal(res.data.totalRecords);
       })
       .catch(err => {
         console.log(err);
@@ -53,35 +69,70 @@ export default function Departments() {
       .finally(() => {
         setIsLoading(false);
       });
-  }, []);
+  }, [debouncedFilters, page, pageSize, sortField, sortOrder]);
 
-  const handleShowCreateDepartmentModal = React.useCallback(() => {
+  // ---------------------------------------------------------------------------
+
+  const showCreateModal = React.useCallback(() => {
     setShowCreate(true);
   }, [setShowCreate]);
 
-  const handleHideCreateDepartmentModal = React.useCallback(() => {
+  const hideCreateModal = React.useCallback(() => {
     setShowCreate(false);
   }, [setShowCreate]);
 
-  const handleShowUpdateDepartmentModal = React.useCallback(() => {
-    setUpdateFieldTemplate({
-      name: 'Software Engineer',
-      code: 'SE',
-      isActive: true,
-    });
-    setShowUpdate(true);
-  }, [setShowUpdate]);
+  const handleCreate = React.useCallback(fieldData => {
+    request({
+      to: endpoints.CREATE_DEPARTMENT.url,
+      method: endpoints.CREATE_DEPARTMENT.method,
+      data: transformer.up(fieldData),
+    })
+      .then(res => {
+        toast.success('Create department successfully');
+        setShowCreate(false);
+        forceReload();
+      })
+      .catch(handleErrors);
+  }, []);
 
-  const handleHideUpdateDepartmentModal = React.useCallback(() => {
+  // ---------------------------------------------------------------------------
+
+  const hideUpdateModal = React.useCallback(() => {
     setShowUpdate(false);
   }, [setShowUpdate]);
 
-  const handleOnCreateDepartment = React.useCallback(fieldData => {
-    console.log(fieldData);
-  }, []);
+  const edit = React.useCallback(
+    fieldData => {
+      request({
+        to: endpoints.UPDATE_DEPARTMENT(editId).url,
+        method: endpoints.UPDATE_DEPARTMENT(editId).method,
+        data: transformer.up(fieldData),
+      })
+        .then(res => {
+          toast.success('Update department successfully');
+          setShowUpdate(false);
+          forceReload();
+        })
+        .catch(handleErrors);
+    },
+    [editId]
+  );
 
-  const handleOnUpdateDepartment = React.useCallback(fieldData => {
-    console.log(fieldData);
+  const handleEdit = React.useCallback(e => {
+    e.preventDefault();
+    const id = e.currentTarget.getAttribute('data-id');
+    setEditId(id);
+    request({
+      to: endpoints.READ_DEPARTMENT(id).url,
+      method: endpoints.READ_DEPARTMENT(id).method,
+    })
+      .then(res => {
+        setUpdateFieldTemplate(transformer.down(res.data.data));
+        setShowUpdate(true);
+      })
+      .catch(err => {
+        toast.error(err.response.data.data?.message || 'Internal server error');
+      });
   }, []);
 
   const handleRemove = React.useCallback(
@@ -116,14 +167,7 @@ export default function Departments() {
     [confirm, loadData]
   );
 
-  const handleEdit = React.useCallback(
-    e => {
-      e.preventDefault();
-      const id = e.currentTarget.getAttribute('data-id');
-      handleShowUpdateDepartmentModal();
-    },
-    [handleShowUpdateDepartmentModal]
-  );
+  // ---------------------------------------------------------------------------
 
   const columns = React.useMemo(
     () => [
@@ -159,12 +203,12 @@ export default function Departments() {
         formatter: (cellContent, row) => {
           const getLabelCssClasses = () => {
             return `label label-lg label-light-${
-              constants.statusClasses[row.status]
+              constants.statusClasses[row.status === true ? 1 : 0]
             } label-inline text-nowrap`;
           };
           return (
             <span className={getLabelCssClasses()}>
-              {constants.statusTitles[row.status]}
+              {constants.statusTitles[row.status === true ? 1 : 0]}
             </span>
           );
         },
@@ -232,19 +276,14 @@ export default function Departments() {
         <button
           type="button"
           className="btn btn-primary font-weight-bold btn-sm"
-          onClick={handleShowCreateDepartmentModal}
+          onClick={showCreateModal}
         >
           <i className="fas fa-plus mr-2"></i>
           New
         </button>
       ),
     });
-  }, [handleShowCreateDepartmentModal, setMeta]);
-
-  React.useEffect(() => {
-    loadData();
-    setTotal(100);
-  }, [loadData]);
+  }, [showCreateModal, setMeta]);
 
   React.useEffect(() => {
     setModalConfigs([
@@ -261,7 +300,7 @@ export default function Departments() {
         smallLabel: 'Ex: Software Engineer to be "SE"',
       },
       {
-        name: 'isActive',
+        name: 'status',
         type: 'toggle',
         label: 'Active state',
         smallLabel: 'Is this department active',
@@ -270,14 +309,13 @@ export default function Departments() {
     setFieldTemplate({
       name: '',
       code: '',
-      isActive: false,
+      status: false,
     });
   }, []);
 
   React.useEffect(() => {
-    console.log('confirm changed');
-  }, [confirm]);
-
+    loadData();
+  }, [loadData, f]);
   return (
     <Card>
       <CardBody>
@@ -303,21 +341,22 @@ export default function Departments() {
       </CardBody>
       <CMSModal
         isShowFlg={showCreate}
-        onHide={handleHideCreateDepartmentModal}
+        onHide={hideCreateModal}
         configs={modalConfigs}
         title="Create department"
         subTitle="Add new department to this system"
-        onConfirmForm={handleOnCreateDepartment}
+        onConfirmForm={handleCreate}
         fieldTemplate={fieldTemplate}
       />
       <CMSModal
         isShowFlg={showUpdate}
-        onHide={handleHideUpdateDepartmentModal}
+        onHide={hideUpdateModal}
         configs={modalConfigs}
         title="Update this department"
         subTitle="Change this department info"
-        onConfirmForm={handleOnUpdateDepartment}
+        onConfirmForm={edit}
         fieldTemplate={updateFieldTemplate}
+        primaryButtonLabel="Update"
       />
     </Card>
   );

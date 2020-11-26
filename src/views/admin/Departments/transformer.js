@@ -1,9 +1,24 @@
+export const mapping = {
+  Code: 'code',
+  Name: 'name',
+  isDisabled: 'status',
+};
+
 export function down(i) {
   return {
     id: i.departmentID,
     code: i.code,
-    status: i.isDisabled === true ? 0 : 1,
+    status: !i.isDisabled,
     name: i.name,
     approvers: i.approvers || [],
+  };
+}
+
+export function up(i) {
+  console.log(i);
+  return {
+    code: i.code,
+    name: i.name,
+    isDisabled: !i.status,
   };
 }

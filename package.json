@@ -67,6 +67,7 @@
     "recoil": "^0.1.2",
     "recoil-logger": "^1.1.1",
     "source-map-explorer": "^2.5.0",
+    "use-debounce": "^5.1.0",
     "yup": "^0.29.3"
   },
   "scripts": {
