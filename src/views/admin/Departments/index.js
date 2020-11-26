@@ -62,6 +62,8 @@ export default function Departments() {
       .then(res => {
         setData(res.data.data?.map(transformer.down));
         setTotal(res.data.totalRecords);
+        setPage(res.data.pageNumber);
+        setPageSize(res.data.pageSize);
       })
       .catch(err => {
         console.log(err);
