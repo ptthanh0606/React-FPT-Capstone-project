@@ -8,7 +8,7 @@ export function down(i) {
       (i.approvers &&
         i.approvers.map(j => ({
           value: j.lecturerID,
-          label: j.name,
+          label: j.code,
         }))) ||
       [],
   };

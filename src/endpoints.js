@@ -11,13 +11,15 @@ export const ME = {
   method: METHOD.GET,
 };
 
+//------------------------------------------------------------------------------
+
 export const LIST_DEPARTMENT = {
-  url: config.api + 'departments',
+  url: config.api + 'departments/viewAll',
   method: METHOD.GET,
 };
 
 export const CREATE_DEPARTMENT = {
-  url: LIST_DEPARTMENT.url,
+  url: config.api + 'departments',
   method: METHOD.POST,
 };
 
@@ -109,3 +111,5 @@ export const DELETE_SEMESTER = id => ({
   url: READ_SEMESTER(id).url,
   method: METHOD.DELETE,
 });
+
+//------------------------------------------------------------------------------

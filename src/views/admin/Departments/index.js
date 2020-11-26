@@ -49,7 +49,7 @@ const modalConfigs = [
         .then(res => {
           callback(
             res.data.data?.map(i => ({
-              label: i.name,
+              label: i.code,
               value: i.lecturerID,
             })) || []
           );
@@ -78,7 +78,9 @@ export default function Departments() {
   const [f, forceReload] = React.useReducer(() => ({}), {});
   const [debouncedFilters] = useDebounce(filters, 500);
   const [page, setPage] = React.useState(1);
-  const [pageSize, setPageSize] = React.useState(10);
+  const [pageSize, setPageSize] = React.useState(
+    constants.sizePerPageList[0].value
+  );
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
 
