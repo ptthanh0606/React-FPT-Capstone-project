@@ -55,7 +55,7 @@ const modalConfigs = [
           callback(
             res.data.data?.map(i => ({
               label: i.code,
-              value: i.departmentID,
+              value: i.id,
             })) || []
           );
         })
@@ -146,7 +146,7 @@ export default function Lecturers() {
       data: transformers.up(fieldData),
     })
       .then(res => {
-        toast.success('Create department successfully');
+        toast.success('Create lecturer successfully');
         setShowCreate(false);
         forceReload();
         setFieldTemplate({});
@@ -170,7 +170,7 @@ export default function Lecturers() {
         data: transformers.up(fieldData),
       })
         .then(res => {
-          toast.success('Update department successfully');
+          toast.success('Update lecturer successfully');
           setShowUpdate(false);
           forceReload();
         })
@@ -217,11 +217,11 @@ export default function Lecturers() {
         })
           .then(res => {
             loadData();
-            toast.success('Successfully remove department');
+            toast.success('Successfully remove lecturer');
           })
           .catch(err => {
             console.log(err);
-            toast.error('Cannot remove this department');
+            toast.error('Cannot remove this lecturer');
           });
       });
     },

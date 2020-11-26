@@ -112,4 +112,29 @@ export const DELETE_SEMESTER = id => ({
   method: METHOD.DELETE,
 });
 
-//------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+export const LIST_STUDENT = {
+  url: config.api + 'students',
+  method: METHOD.GET,
+};
+
+export const CREATE_STUDENT = {
+  url: LIST_STUDENT.url,
+  method: METHOD.POST,
+};
+
+export const READ_STUDENT = id => ({
+  url: LIST_STUDENT.url + '/' + id,
+  method: METHOD.GET,
+});
+
+export const UPDATE_STUDENT = id => ({
+  url: READ_STUDENT(id).url,
+  method: METHOD.PUT,
+});
+
+export const DELETE_STUDENT = id => ({
+  url: READ_STUDENT(id).url,
+  method: METHOD.DELETE,
+});
