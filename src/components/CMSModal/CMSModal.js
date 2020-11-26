@@ -5,6 +5,7 @@ import React from 'react';
 import { Col, Form, Modal, Row } from 'react-bootstrap';
 import Button from 'components/Button';
 import SelectTagInput from '../TagInput/SelectTagInput';
+import FormGroup from './FormGroup';
 
 const CMSModal = ({
   isShowFlg = false,
@@ -57,29 +58,34 @@ const CMSModal = ({
             switch (config.type) {
               case 'text':
                 return (
-                  <Form.Group as={Row} key={config.label}>
-                    <Form.Label column sm={3}>
-                      {config.label}
-                    </Form.Label>
-                    <Col sm={9}>
-                      <Form.Control
-                        type="text"
-                        placeholder={config.placeholder}
-                        value={modalFieldData[config.name]}
-                        defaultValue={config.defaultValue}
-                        name={config.name}
-                        onChange={event =>
-                          handleOnChangeFields(
-                            event.currentTarget.value,
-                            config.name
-                          )
-                        }
-                      />
-                      <small className="form-text text-muted">
-                        {config.smallLabel}
-                      </small>
-                    </Col>
-                  </Form.Group>
+                  // <Form.Group as={Row} key={config.label}>
+                  //   <Form.Label column sm={3}>
+                  //     {config.label}
+                  //   </Form.Label>
+                  //   <Col sm={9}>
+                  //     <Form.Control
+                  //       type="text"
+                  //       placeholder={config.placeholder}
+                  //       value={modalFieldData[config.name]}
+                  //       defaultValue={config.defaultValue}
+                  //       name={config.name}
+                  //       onChange={event =>
+                  //         handleOnChangeFields(
+                  //           event.currentTarget.value,
+                  //           config.name
+                  //         )
+                  //       }
+                  //     />
+                  //     <small className="form-text text-muted">
+                  //       {config.smallLabel}
+                  //     </small>
+                  //   </Col>
+                  // </Form.Group>
+                  <FormGroup
+                    config={config}
+                    value={modalFieldData[config.name]}
+                    handleChangeFields={handleOnChangeFields}
+                  />
                 );
               case 'email':
                 return (
