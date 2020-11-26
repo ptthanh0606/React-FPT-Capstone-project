@@ -10,7 +10,8 @@ export function down(i) {
     code: i.code,
     status: !i.isDisabled,
     name: i.name,
-    approvers: i.approvers || [],
+    approvers:
+      (i.approvers && i.approvers.map(j => [j.lecturerID, j.name])) || [],
   };
 }
 

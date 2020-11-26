@@ -219,12 +219,19 @@ export default function Departments() {
         text: 'Approvers',
         formatter: function (cellContent, row) {
           return (
-            <Link
-              className="text-dark font-weight-bold"
-              to={'/semester/' + row.id}
-            >
-              {cellContent.join(', ')}
-            </Link>
+            <>
+              {cellContent.length > 0 &&
+                cellContent
+                  .map(i => (
+                    <Link
+                      className="text-dark font-weight-bold"
+                      to={'/profile/lecturer/' + i[0]}
+                    >
+                      {i[1]}
+                    </Link>
+                  ))
+                  .reduce((prev, curr) => [prev, ', ', curr])}
+            </>
           );
         },
       },
