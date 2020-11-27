@@ -56,6 +56,8 @@ function Login({ state = {} }) {
 
   const loginWithGoogle = React.useCallback(() => {
     signIn().then(googleUser => {
+      if (!googleUser) return;
+
       login(
         { google_token: googleUser.tokenId, role: selectedRole },
         setUser,
