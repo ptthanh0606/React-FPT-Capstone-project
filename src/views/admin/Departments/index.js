@@ -232,16 +232,6 @@ export default function Departments() {
         text: 'Name',
         sort: true,
         sortCaret: sortCaret,
-        formatter: function (cellContent, row) {
-          return (
-            <Link
-              className="text-dark font-weight-bold"
-              to={'/semester/' + row.id}
-            >
-              {cellContent}
-            </Link>
-          );
-        },
         headerSortingClasses,
       },
       {

@@ -318,7 +318,7 @@ export default function Lecturers() {
                 data-id={row.id}
                 onClick={handleRemove}
               >
-                <i class="fas fa-trash mx-2"></i>
+                <i className="fas fa-trash mx-2"></i>
               </a>
             </span>
           );

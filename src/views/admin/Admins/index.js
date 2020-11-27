@@ -125,7 +125,7 @@ export default function CustomersCard() {
             handleShowRemoveAdminModal();
           }}
         >
-          <i class="fas fa-trash mx-2"></i>
+          <i className="fas fa-trash mx-2"></i>
         </a>
       </span>
     );

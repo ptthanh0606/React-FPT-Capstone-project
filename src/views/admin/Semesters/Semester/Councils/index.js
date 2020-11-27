@@ -233,7 +233,7 @@ export default function CustomersCard() {
             handleShowRemoveSelectedCouncilsModal();
           }}
         >
-          <i class="fas fa-trash mx-2"></i>
+          <i className="fas fa-trash mx-2"></i>
         </a>
       </span>
     );
