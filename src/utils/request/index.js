@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { helpers as authHelpers } from 'auth';
 
+const CancelToken = axios.CancelToken;
+export const getSource = CancelToken.source;
+
 const config = {
   timeout: 0,
 };
@@ -24,6 +27,7 @@ async function request({
   params = {},
   headers = {},
   r = true,
+  source = {},
   ...rest
 }) {
   if (authHelpers.tokenIsAlmostExpired() || !authHelpers.getAccessToken()) {
@@ -41,6 +45,10 @@ async function request({
     //     });
   }
 
+  const s = getSource();
+  source.cancel = s.cancel;
+  source.token = s.token;
+
   return axios({
     headers: { ...defaultHeaders(), ...headers },
     url: to,
@@ -48,8 +56,9 @@ async function request({
     data,
     params,
     config,
+    cancelToken: s.token,
     ...rest,
-  });
+  }).catch();
 }
 
 function Get(props) {
