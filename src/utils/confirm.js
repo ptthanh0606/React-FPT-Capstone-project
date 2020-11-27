@@ -17,21 +17,26 @@ const confirmAtom = atom({
 export const Container = React.memo(function () {
   const confirmData = useRecoilValue(confirmAtom);
   const setConfirmData = useSetRecoilState(confirmAtom);
+  const [isProcessing, setIsProcessing] = React.useState(false);
 
   const onConfirm = React.useCallback(() => {
-    confirmData.onConfirm();
-    setConfirmData(data => ({
-      ...data,
-      show: false,
-    }));
+    setIsProcessing(true);
+    Promise.resolve(confirmData.onConfirm()).finally(() => {
+      setConfirmData(data => ({
+        ...data,
+        show: false,
+      }));
+      setIsProcessing(false);
+    });
   }, [confirmData, setConfirmData]);
 
   const onHide = React.useCallback(() => {
-    confirmData.onHide();
-    setConfirmData(data => ({
-      ...data,
-      show: false,
-    }));
+    Promise.resolve(confirmData.onHide()).finally(() => {
+      setConfirmData(data => ({
+        ...data,
+        show: false,
+      }));
+    });
   }, [confirmData, setConfirmData]);
 
   return (
@@ -41,6 +46,7 @@ export const Container = React.memo(function () {
       body={confirmData.body}
       onConfirm={onConfirm}
       onHide={onHide}
+      isProcessing={isProcessing}
     />
   );
 });
@@ -48,16 +54,29 @@ export const Container = React.memo(function () {
 const useConfirm = function () {
   const setConfirmData = useSetRecoilState(confirmAtom);
 
-  function confirm({ title, body }) {
+  function confirm({
+    title = '',
+    body = '',
+    onConfirm = function () {},
+    onCancel = function () {},
+  }) {
     return new Promise((res, rej) => {
       setConfirmData({
         show: true,
         title,
         body,
-        onConfirm: res,
-        onHide: rej,
+        onConfirm: function () {
+          res();
+          return onConfirm();
+        },
+        onHide: function () {
+          rej();
+          return onCancel();
+        },
       });
-    });
+    })
+      .then(() => {})
+      .catch(() => {});
   }
 
   return React.useCallback(confirm, []);

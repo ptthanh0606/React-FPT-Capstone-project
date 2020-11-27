@@ -11,3 +11,7 @@ export function handleErrors(err) {
     toast.error('Internal Server Error');
   }
 }
+
+export function handleResponse(res) {}
+
+export function columnsTransformer(col) {}

@@ -114,9 +114,7 @@ export default function Departments() {
         setPage(res.data.pageNumber);
         setPageSize(res.data.pageSize);
       })
-      .catch(err => {
-        console.log(err);
-      })
+      .catch(handleErrors)
       .finally(() => {
         setIsLoading(false);
       });
@@ -203,19 +201,16 @@ export default function Departments() {
             historical data belong to this department too.
           </>
         ),
-      }).then(() => {
-        request({
-          to: endpoints.DELETE_DEPARTMENT(id).url,
-          method: endpoints.DELETE_DEPARTMENT(id).method,
-        })
-          .then(res => {
-            loadData();
-            toast.success('Successfully remove department');
+        onConfirm: () =>
+          request({
+            to: endpoints.DELETE_DEPARTMENT(id).url,
+            method: endpoints.DELETE_DEPARTMENT(id).method,
           })
-          .catch(err => {
-            console.log(err);
-            toast.error('Cannot remove this department');
-          });
+            .then(res => {
+              loadData();
+              toast.success('Successfully remove department');
+            })
+            .catch(handleErrors),
       });
     },
     [confirm, loadData]
@@ -237,16 +232,6 @@ export default function Departments() {
         text: 'Name',
         sort: true,
         sortCaret: sortCaret,
-        formatter: function (cellContent, row) {
-          return (
-            <Link
-              className="text-dark font-weight-bold"
-              to={'/semester/' + row.id}
-            >
-              {cellContent}
-            </Link>
-          );
-        },
         headerSortingClasses,
       },
       {
@@ -302,7 +287,7 @@ export default function Departments() {
                 data-id={row.id}
                 onClick={handleEdit}
               >
-                <i class="fas fa-pencil-alt mx-2"></i>
+                <i className="fas fa-pencil-alt mx-2"></i>
               </a>
               <a
                 href="/"
@@ -311,7 +296,7 @@ export default function Departments() {
                 data-id={row.id}
                 onClick={handleRemove}
               >
-                <i class="fas fa-trash mx-2"></i>
+                <i className="fas fa-trash mx-2"></i>
               </a>
             </span>
           );

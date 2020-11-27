@@ -210,19 +210,16 @@ export default function Lecturers() {
             data belong to this lecturer too.
           </>
         ),
-      }).then(() => {
-        request({
-          to: endpoints.DELETE_LECTURER(id).url,
-          method: endpoints.DELETE_LECTURER(id).method,
-        })
-          .then(res => {
-            loadData();
-            toast.success('Successfully remove lecturer');
+        onConfirm: () =>
+          request({
+            to: endpoints.DELETE_LECTURER(id).url,
+            method: endpoints.DELETE_LECTURER(id).method,
           })
-          .catch(err => {
-            console.log(err);
-            toast.error('Cannot remove this lecturer');
-          });
+            .then(res => {
+              loadData();
+              toast.success('Successfully remove lecturer');
+            })
+            .catch(handleErrors),
       });
     },
     [confirm, loadData]
@@ -312,7 +309,7 @@ export default function Lecturers() {
                 data-id={row.id}
                 onClick={handleEdit}
               >
-                <i class="fas fa-pencil-alt mx-2"></i>
+                <i className="fas fa-pencil-alt mx-2"></i>
               </a>
               <a
                 href="/"
@@ -321,7 +318,7 @@ export default function Lecturers() {
                 data-id={row.id}
                 onClick={handleRemove}
               >
-                <i class="fas fa-trash mx-2"></i>
+                <i className="fas fa-trash mx-2"></i>
               </a>
             </span>
           );

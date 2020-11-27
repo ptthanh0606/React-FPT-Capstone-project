@@ -161,7 +161,7 @@ export default function CustomersCard() {
             handleShowUpdateActiveStudentModal();
           }}
         >
-          <i class="fas fa-pencil-alt mx-2"></i>
+          <i className="fas fa-pencil-alt mx-2"></i>
         </a>
         <a
           href="/"
@@ -173,7 +173,7 @@ export default function CustomersCard() {
             handleShowRemoveSelectedConfirmModal();
           }}
         >
-          <i class="fas fa-trash mx-2"></i>
+          <i className="fas fa-trash mx-2"></i>
         </a>
       </span>
     );

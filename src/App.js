@@ -58,6 +58,7 @@ function fetchMe(setRole, setUser, history) {
 const RoleBasedLayout = React.memo(({ role }) => {
   return (
     <>
+      {/* Need loading */}
       {role === 'admin' && <Admin />}
       {['student', 'lecturer'].includes(role) && <User />}
     </>

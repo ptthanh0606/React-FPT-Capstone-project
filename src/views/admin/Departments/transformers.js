@@ -1,6 +1,6 @@
 export function down(i) {
   return {
-    id: i.departmentID,
+    id: i.id,
     code: i.code,
     status: !i.isDisabled,
     name: i.name,
@@ -22,3 +22,8 @@ export function up(i) {
     approverIDs: (i.approvers && i.approvers.map(j => j.value)) || [],
   };
 }
+
+// Down for list
+// Down for read
+// Up for update
+// Up for create

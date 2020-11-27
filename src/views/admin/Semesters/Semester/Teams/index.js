@@ -277,7 +277,7 @@ export default function CustomersCard() {
             handleShowUpdateStudentTeamModal();
           }}
         >
-          <i class="fas fa-pencil-alt mx-2"></i>
+          <i className="fas fa-pencil-alt mx-2"></i>
         </a>
         <a
           href="/"
@@ -289,7 +289,7 @@ export default function CustomersCard() {
             handleShowRemoveSelectedStudentTeamModal();
           }}
         >
-          <i class="fas fa-trash mx-2"></i>
+          <i className="fas fa-trash mx-2"></i>
         </a>
       </span>
     );
