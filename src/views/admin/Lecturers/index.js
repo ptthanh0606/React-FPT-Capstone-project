@@ -55,7 +55,7 @@ const modalConfigs = [
           callback(
             res.data.data?.map(i => ({
               label: i.code,
-              value: i.departmentID,
+              value: i.id,
             })) || []
           );
         })
@@ -64,7 +64,7 @@ const modalConfigs = [
     isMulti: true,
   },
   {
-    name: 'isActive',
+    name: 'status',
     type: 'toggle',
     label: 'Active state',
     smallLabel: 'Is this lecturer active',
@@ -83,7 +83,9 @@ export default function Lecturers() {
   const [f, forceReload] = React.useReducer(() => ({}), {});
   const [debouncedFilters] = useDebounce(filters, 500);
   const [page, setPage] = React.useState(1);
-  const [pageSize, setPageSize] = React.useState(10);
+  const [pageSize, setPageSize] = React.useState(
+    constants.sizePerPageList[0].value
+  );
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
 
@@ -112,8 +114,7 @@ export default function Lecturers() {
       },
     })
       .then(res => {
-        // setData(res.data.data?.map(transformers.down));
-        setData(res.data.map(transformers.down));
+        setData(res.data.data?.map(transformers.down));
         setTotal(res.data.totalRecords);
         setPage(res.data.pageNumber);
         setPageSize(res.data.pageSize);
@@ -145,9 +146,10 @@ export default function Lecturers() {
       data: transformers.up(fieldData),
     })
       .then(res => {
-        toast.success('Create department successfully');
+        toast.success('Create lecturer successfully');
         setShowCreate(false);
         forceReload();
+        setFieldTemplate({});
       })
       .catch(handleErrors)
       .finally(() => setIsProcessing(false));
@@ -168,7 +170,7 @@ export default function Lecturers() {
         data: transformers.up(fieldData),
       })
         .then(res => {
-          toast.success('Update department successfully');
+          toast.success('Update lecturer successfully');
           setShowUpdate(false);
           forceReload();
         })
@@ -189,10 +191,9 @@ export default function Lecturers() {
       .then(res => {
         setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
         setShowUpdate(true);
+        console.log(transformers.down(res.data?.data));
       })
-      .catch(err => {
-        toast.error(err.response.data.data?.message || 'Internal server error');
-      });
+      .catch(handleErrors);
   }, []);
 
   const handleRemove = React.useCallback(
@@ -216,11 +217,11 @@ export default function Lecturers() {
         })
           .then(res => {
             loadData();
-            toast.success('Successfully remove department');
+            toast.success('Successfully remove lecturer');
           })
           .catch(err => {
             console.log(err);
-            toast.error('Cannot remove this department');
+            toast.error('Cannot remove this lecturer');
           });
       });
     },
@@ -263,15 +264,16 @@ export default function Lecturers() {
         headerSortingClasses,
       },
       {
-        dataField: 'department',
+        dataField: 'departments',
         text: 'Department',
         sort: true,
         formatter: function (cellContent, row) {
           return (
             <>
-              {cellContent &&
-                Array.isArray(cellContent) &&
-                cellContent.join(', ')}
+              {cellContent.length > 0 &&
+                cellContent
+                  .map(i => (i.isApprover ? <u>{i.label}</u> : <>{i.label}</>))
+                  .reduce((prev, curr) => [prev, ', ', curr])}
             </>
           );
         },
@@ -357,16 +359,6 @@ export default function Lecturers() {
   React.useEffect(() => {
     loadData();
   }, [loadData, f]);
-
-  React.useEffect(() => {
-    setFieldTemplate({
-      name: '',
-      email: '',
-      code: '',
-      departments: [],
-      status: false,
-    });
-  }, []);
 
   return (
     <Card>

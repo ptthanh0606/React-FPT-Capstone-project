@@ -19,6 +19,53 @@ import * as endpoints from 'endpoints';
 import * as transformers from './transformers';
 import * as constants from './constants';
 
+const modalConfigs = [
+  {
+    name: 'name',
+    type: 'text',
+    label: 'Department name',
+    placeholder: 'Give this department a name...',
+  },
+  {
+    name: 'code',
+    type: 'text',
+    label: 'Department code',
+    smallLabel: 'Ex: Software Engineer to be "SE"',
+  },
+  {
+    name: 'approvers',
+    type: 'selectBoxAsync',
+    label: 'Approver',
+    smallLabel: 'Approvers for this department',
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_LECTURER.url,
+        method: endpoints.LIST_LECTURER.method,
+        params: {
+          q: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(
+            res.data.data?.map(i => ({
+              label: i.code,
+              value: i.lecturerID,
+            })) || []
+          );
+        })
+        .catch(() => callback([]));
+    },
+    isMulti: true,
+  },
+  {
+    name: 'status',
+    type: 'toggle',
+    label: 'Active state',
+    smallLabel: 'Is this department active',
+  },
+];
+
 export default function Departments() {
   const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
@@ -31,7 +78,9 @@ export default function Departments() {
   const [f, forceReload] = React.useReducer(() => ({}), {});
   const [debouncedFilters] = useDebounce(filters, 500);
   const [page, setPage] = React.useState(1);
-  const [pageSize, setPageSize] = React.useState(10);
+  const [pageSize, setPageSize] = React.useState(
+    constants.sizePerPageList[0].value
+  );
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
 
@@ -39,7 +88,6 @@ export default function Departments() {
 
   const [fieldTemplate, setFieldTemplate] = React.useState({});
   const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
-  const [modalConfigs, setModalConfigs] = React.useState([]);
   const [showCreate, setShowCreate] = React.useState(false);
   const [showUpdate, setShowUpdate] = React.useState(false);
   const [editId, setEditId] = React.useState(0);
@@ -95,6 +143,7 @@ export default function Departments() {
         toast.success('Create department successfully');
         setShowCreate(false);
         forceReload();
+        setFieldTemplate({});
       })
       .catch(handleErrors)
       .finally(() => setIsProcessing(false));
@@ -137,9 +186,7 @@ export default function Departments() {
         setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
         setShowUpdate(true);
       })
-      .catch(err => {
-        toast.error(err.response.data.data?.message || 'Internal server error');
-      });
+      .catch(handleErrors);
   }, []);
 
   const handleRemove = React.useCallback(
@@ -232,9 +279,9 @@ export default function Departments() {
                   .map(i => (
                     <Link
                       className="text-dark font-weight-bold"
-                      to={'/profile/lecturer/' + i[0]}
+                      to={'/profile/lecturer/' + i.value}
                     >
-                      {i[1]}
+                      {i.label}
                     </Link>
                   ))
                   .reduce((prev, curr) => [prev, ', ', curr])}
@@ -298,34 +345,6 @@ export default function Departments() {
       ),
     });
   }, [showCreateModal, setMeta]);
-
-  React.useEffect(() => {
-    setModalConfigs([
-      {
-        name: 'name',
-        type: 'text',
-        label: 'Team name',
-        placeholder: 'Give this department a name...',
-      },
-      {
-        name: 'code',
-        type: 'text',
-        label: 'Department code',
-        smallLabel: 'Ex: Software Engineer to be "SE"',
-      },
-      {
-        name: 'status',
-        type: 'toggle',
-        label: 'Active state',
-        smallLabel: 'Is this department active',
-      },
-    ]);
-    setFieldTemplate({
-      name: '',
-      code: '',
-      status: false,
-    });
-  }, []);
 
   React.useEffect(() => {
     loadData();
