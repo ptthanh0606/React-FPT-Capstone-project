@@ -1,6 +1,6 @@
 export function down(i) {
   return {
-    id: i.departmentID,
+    id: i.id,
     code: i.code,
     status: !i.isDisabled,
     name: i.name,
