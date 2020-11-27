@@ -1,8 +1,7 @@
 import toast from 'utils/toast';
-import axios from 'axios';
 
 export function handleErrors(err) {
-  if (!axios.isCancel(err))
+  if (!err.isCancel)
     if (err?.response?.data?.data?.message) {
       toast.error(err.response.data.data.message);
     } else if (err?.response?.data?.errors) {

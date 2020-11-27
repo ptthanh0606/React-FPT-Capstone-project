@@ -12,7 +12,7 @@ import CMSModal from 'components/CMSModal/CMSModal';
 
 import toast from 'utils/toast';
 import { useDebounce } from 'use-debounce';
-import request from 'utils/request';
+import request, { isCancel } from 'utils/request';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 
@@ -70,12 +70,13 @@ export default function Departments() {
   const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
 
+  const [l, loadData] = React.useReducer(() => ({}), {});
+
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [filters, setFilters] = React.useState({});
-  const [f, forceReload] = React.useReducer(() => ({}), {});
   const [debouncedFilters] = useDebounce(filters, 500);
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(
@@ -95,40 +96,13 @@ export default function Departments() {
 
   // ---------------------------------------------------------------------------
 
-  const loadData = React.useCallback(() => {
-    setIsLoading(true);
-    request({
-      to: endpoints.LIST_DEPARTMENT.url,
-      method: endpoints.LIST_DEPARTMENT.method,
-      params: {
-        ...debouncedFilters,
-        pageNumber: page,
-        pageSize: pageSize,
-        sortField: sortField,
-        sortOrder: sortOrder,
-      },
-    })
-      .then(res => {
-        setData(res.data.data?.map(transformers.down));
-        setTotal(res.data.totalRecords);
-        setPage(res.data.pageNumber);
-        setPageSize(res.data.pageSize);
-      })
-      .catch(handleErrors)
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [debouncedFilters, page, pageSize, sortField, sortOrder]);
-
-  // ---------------------------------------------------------------------------
-
   const showCreateModal = React.useCallback(() => {
     setShowCreate(true);
-  }, [setShowCreate]);
+  }, []);
 
   const hideCreateModal = React.useCallback(() => {
     setShowCreate(false);
-  }, [setShowCreate]);
+  }, []);
 
   const handleCreate = React.useCallback(fieldData => {
     setIsProcessing(true);
@@ -140,7 +114,7 @@ export default function Departments() {
       .then(res => {
         toast.success('Create department successfully');
         setShowCreate(false);
-        forceReload();
+        loadData();
         setFieldTemplate({});
       })
       .catch(handleErrors)
@@ -151,7 +125,7 @@ export default function Departments() {
 
   const hideUpdateModal = React.useCallback(() => {
     setShowUpdate(false);
-  }, [setShowUpdate]);
+  }, []);
 
   const edit = React.useCallback(
     fieldData => {
@@ -164,7 +138,7 @@ export default function Departments() {
         .then(res => {
           toast.success('Update department successfully');
           setShowUpdate(false);
-          forceReload();
+          loadData();
         })
         .catch(handleErrors)
         .finally(() => setIsProcessing(false));
@@ -175,12 +149,12 @@ export default function Departments() {
   const handleEdit = React.useCallback(e => {
     e.preventDefault();
     const id = e.currentTarget.getAttribute('data-id');
-    setEditId(id);
     request({
       to: endpoints.READ_DEPARTMENT(id).url,
       method: endpoints.READ_DEPARTMENT(id).method,
     })
       .then(res => {
+        setEditId(id);
         setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
         setShowUpdate(true);
       })
@@ -213,7 +187,7 @@ export default function Departments() {
             .catch(handleErrors),
       });
     },
-    [confirm, loadData]
+    [confirm]
   );
 
   // ---------------------------------------------------------------------------
@@ -329,11 +303,41 @@ export default function Departments() {
         </button>
       ),
     });
-  }, [showCreateModal, setMeta]);
+  }, [setMeta, showCreateModal]);
 
   React.useEffect(() => {
-    loadData();
-  }, [loadData, f]);
+    setIsLoading(true);
+    const source = {};
+
+    request({
+      to: endpoints.LIST_DEPARTMENT.url,
+      method: endpoints.LIST_DEPARTMENT.method,
+      params: {
+        ...debouncedFilters,
+        pageNumber: page,
+        pageSize: pageSize,
+        sortField: sortField,
+        sortOrder: sortOrder,
+      },
+      source,
+    })
+      .then(res => {
+        setData(res.data?.data?.map(transformers.down));
+        setTotal(res.data?.totalRecords);
+        setPage(res.data?.pageNumber);
+        setPageSize(res.data?.pageSize);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        handleErrors(err);
+        if (!err.isCancel) setIsLoading(false);
+      });
+
+    return () => {
+      source.cancel();
+    };
+  }, [l, debouncedFilters, page, pageSize, sortField, sortOrder]);
+
   return (
     <Card>
       <CardBody>
