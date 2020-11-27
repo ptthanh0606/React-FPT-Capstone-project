@@ -1,5 +1,5 @@
 import React, { lazy } from 'react';
-import { Switch, BrowserRouter } from 'react-router-dom';
+import { Switch, BrowserRouter, useHistory } from 'react-router-dom';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
@@ -18,37 +18,41 @@ import Admin from 'views/admin';
 import { ME } from 'endpoints';
 import request from 'utils/request';
 
-function fetchMe(setRole, setUser) {
+function fetchMe(setRole, setUser, history) {
   request({
     to: ME.url,
     method: ME.method,
-  }).then(({ data }) => {
-    let role;
+  })
+    .then(({ data }) => {
+      let role;
 
-    switch (data.resource.role) {
-      case 0:
-        role = 'admin';
-        break;
-      case 1:
-        role = 'student';
-        break;
-      case 2:
-        role = 'lecturer';
-        break;
-      default:
-    }
+      switch (data.data.role) {
+        case 0:
+          role = 'admin';
+          break;
+        case 1:
+          role = 'student';
+          break;
+        case 2:
+          role = 'lecturer';
+          break;
+        default:
+      }
 
-    setRole(role);
+      setRole(role);
 
-    setUser({
-      id: data.resource.id,
-      code: data.resource.code,
-      email: data.resource.email,
-      name: data.resource.name,
-      department: data.resource.department,
-      role: role,
+      setUser({
+        id: data.data.id,
+        code: data.data.code,
+        email: data.data.email,
+        name: data.data.name,
+        department: data.data.department,
+        role: role,
+      });
+    })
+    .catch(err => {
+      history.push('/logout');
     });
-  });
 }
 
 const RoleBasedLayout = React.memo(({ role }) => {
@@ -63,10 +67,11 @@ const RoleBasedLayout = React.memo(({ role }) => {
 const Private = React.memo(function Private() {
   const [role, setRole] = useRecoilState(roleSelector);
   const setUser = useSetRecoilState(userAtom);
+  const history = useHistory();
 
   React.useEffect(() => {
-    fetchMe(setRole, setUser);
-  }, [setRole, setUser]);
+    fetchMe(setRole, setUser, history);
+  }, [history, setRole, setUser]);
 
   return (
     <>

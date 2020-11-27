@@ -22,11 +22,14 @@ const Application = () => {
         <span className="text-muted font-weight-500">1/11/1111</span>
       </td>
       <td className="text-left pl-0">
+        <span className="text-muted font-weight-500">1/11/1111</span>
+      </td>
+      <td className="text-left pl-0">
         <span className="label label-lg label-light-primary label-inline">
           Approved
         </span>
       </td>
-      <td className="text-left pl-0">
+      <td className="text-left p-0">
         <a href="#" className="btn btn-icon btn-light btn-sm">
           <span className="svg-icon svg-icon-md svg-icon-primary">
             <SVG

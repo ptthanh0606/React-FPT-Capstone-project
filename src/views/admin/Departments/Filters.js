@@ -1,7 +1,7 @@
 import React from 'react';
 import { Formik } from 'formik';
 
-export default function CustomersFilter({ filters, setFilters }) {
+const Filters = React.memo(({ filters, setFilters }) => {
   return (
     <>
       <Formik
@@ -68,4 +68,6 @@ export default function CustomersFilter({ filters, setFilters }) {
       </Formik>
     </>
   );
-}
+});
+
+export default Filters;

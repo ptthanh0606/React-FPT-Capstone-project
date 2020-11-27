@@ -11,6 +11,7 @@ export const sizePerPageList = [
   { text: '10', value: 10 },
   { text: '20', value: 20 },
   { text: '50', value: 50 },
+  { text: '100', value: 100 },
 ];
 
 const mockData = [
@@ -116,7 +117,7 @@ const columns = [
 const AddActiveStudentModal = ({ isShowFlg, onHide, onAdd }) => {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);

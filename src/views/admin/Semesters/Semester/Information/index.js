@@ -59,7 +59,7 @@ const Infomation = () => {
                 />
               </Col>
             </Form.Group>
-            <Form.Group as={Row} controlId="formHorizontalEmail">
+            {/* <Form.Group as={Row} controlId="formHorizontalEmail">
               <Form.Label column sm={3}>
                 Maximum topic per mentor
               </Form.Label>
@@ -82,7 +82,7 @@ const Infomation = () => {
                   defaultValue="3"
                 />
               </Col>
-            </Form.Group>
+            </Form.Group> */}
             <Form.Group
               as={Row}
               controlId="formHorizontalEmail"

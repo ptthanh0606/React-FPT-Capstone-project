@@ -6,9 +6,8 @@ import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from './Filters';
 import { Link } from 'react-router-dom';
-import AddAdminModal from 'components/AddAdminModal/AddAdminModal';
-import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
-import UpdateAdminModal from 'components/UpdateAdminModal/UpdateAdminModal';
+import ConfirmRemoveModal from 'components/ConfirmModal/ConfirmModal';
+import CMSModal from 'components/CMSModal/CMSModal';
 
 const defaultSorted = [{ dataField: 'id', order: 'asc' }];
 
@@ -16,6 +15,7 @@ const sizePerPageList = [
   { text: '10', value: 10 },
   { text: '20', value: 20 },
   { text: '50', value: 50 },
+  { text: '100', value: 100 },
 ];
 
 const statusClasses = ['danger', 'success'];
@@ -34,13 +34,16 @@ const mockData = [
 export default function CustomersCard() {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [filters, setFilters] = React.useState({});
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [fieldTemplate, setFieldTemplate] = React.useState({});
+  const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
+  const [modalConfigs, setModalConfigs] = React.useState([]);
   const [
     showRemoveAdminConfirmModalFlg,
     setShowRemoveAdminConfirmModalFlg,
@@ -72,12 +75,25 @@ export default function CustomersCard() {
   };
 
   const handleShowUpdateAdminModal = () => {
+    setUpdateFieldTemplate({
+      name: 'Huynh Duc Duy',
+      email: 'duyhdse130491@fpt.edu.vn',
+      isActive: false,
+    });
     setShowUpdateAdminModalFlg(true);
   };
 
   const handleHideUpdateAdminModal = () => {
     setShowUpdateAdminModalFlg(false);
   };
+
+  const handleOnCreateAdmin = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
+
+  const handleOnUpdateAdmin = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
 
   function ActionsColumnFormatter(
     cellContent,
@@ -207,6 +223,34 @@ export default function CustomersCard() {
     setTotal(100);
   }, []);
 
+  React.useEffect(() => {
+    setModalConfigs([
+      {
+        name: 'name',
+        type: 'text',
+        label: 'Admin full name',
+        placeholder: 'Full name...',
+      },
+      {
+        name: 'email',
+        type: 'text',
+        label: 'Admin email',
+        placeholder: 'Enter admin @fpt.edu.vn email...',
+      },
+      {
+        name: 'isActive',
+        type: 'toggle',
+        label: 'Active state',
+        smallLabel: 'Is this admin active',
+      },
+    ]);
+    setFieldTemplate({
+      name: '',
+      email: '',
+      isActive: false,
+    });
+  }, []);
+
   return (
     <Card>
       <CardBody>
@@ -231,22 +275,29 @@ export default function CustomersCard() {
           selectable
         />
       </CardBody>
-      <AddAdminModal
-        isShowFlg={showCreateAdminModalFlg}
-        onHide={handleHideCreateAdminModal}
-        onCreate={() => {}}
-      />
-      <UpdateAdminModal
-        isShowFlg={showUpdateAdminModalFlg}
-        onHide={handleHideUpdateAdminModal}
-        onCreate={() => {}}
-        selectedId={selectedId}
-      />
       <ConfirmRemoveModal
         isShowFlg={showRemoveAdminConfirmModalFlg}
         onHide={handleHideRemoveAdminModal}
         body={<h5>Are you sure you want to remove selected admin?</h5>}
         // onConfirm={() => {}}
+      />
+      <CMSModal
+        isShowFlg={showCreateAdminModalFlg}
+        onHide={handleHideCreateAdminModal}
+        configs={modalConfigs}
+        title="Add new student"
+        subTitle="Add student to the system"
+        onConfirmForm={handleOnCreateAdmin}
+        fieldTemplate={fieldTemplate}
+      />
+      <CMSModal
+        isShowFlg={showUpdateAdminModalFlg}
+        onHide={handleHideUpdateAdminModal}
+        configs={modalConfigs}
+        title="Update this student"
+        subTitle="Change this student info"
+        onConfirmForm={handleOnUpdateAdmin}
+        fieldTemplate={updateFieldTemplate}
       />
     </Card>
   );

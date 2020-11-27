@@ -7,7 +7,7 @@ import { getSelectRow, getHandlerTableChange } from '_metronic/_helpers';
 
 import { Pagination } from '_metronic/_partials/controls';
 
-const Table = React.memo(function ({
+export default React.memo(function Table({
   columns,
   data,
   total,
@@ -79,5 +79,3 @@ const Table = React.memo(function ({
     </>
   );
 });
-
-export default Table;

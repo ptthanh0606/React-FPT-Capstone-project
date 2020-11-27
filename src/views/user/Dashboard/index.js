@@ -15,6 +15,11 @@ import {
 
 import { useSetRecoilState } from 'recoil';
 import metaAtom from 'store/meta';
+import TopicTeamPreview from 'components/CMSWidgets/TopicTeamPreview';
+import Reports from 'components/CMSWidgets/Reports';
+import Timeline from 'components/CMSWidgets/Timeline';
+import Anouncement from 'components/CMSWidgets/Anouncement';
+import CheckpointProgress from 'components/CMSWidgets/CheckpointProgress';
 
 export default React.memo(function DashboardPage() {
   const setMeta = useSetRecoilState(metaAtom);
@@ -28,7 +33,7 @@ export default React.memo(function DashboardPage() {
 
   return (
     <>
-      <div className="row">
+      {/* <div className="row">
         <div className="col-lg-6 col-xxl-4">
           <MixedWidget1 className="card-stretch gutter-b" />
         </div>
@@ -63,6 +68,34 @@ export default React.memo(function DashboardPage() {
         </div>
         <div className="col-lg-8">
           <AdvanceTablesWidget4 className="card-stretch gutter-b" />
+        </div>
+      </div> */}
+      <div className="row">
+        <div className="col-lg-6 col-xxl-4">
+          {/* Have team, have topic */}
+          <TopicTeamPreview />
+          <Reports />
+
+          {/* Have team */}
+          {/* <NumberOfTopic /> */}
+
+          {/* No team */}
+          {/* <QuickAction /> */}
+        </div>
+        <div className="col-lg-6 col-xxl-4">
+          {/* Have team, have topic */}
+          <Timeline className="card-stretch gutter-b" />
+
+          {/* Have team || No team */}
+          {/* <TopicPreviewList
+            title={'Available public team'}
+            expandbuttonlabel={'View all team'}
+          /> */}
+        </div>
+        <div className="col-lg-6 col-xxl-4">
+          {/* Have team, have topic */}
+          <Anouncement />
+          <CheckpointProgress />
         </div>
       </div>
     </>

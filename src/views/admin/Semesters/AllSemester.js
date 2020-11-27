@@ -6,9 +6,8 @@ import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from 'views/admin/Semesters/SemesterFilters';
 import { Link } from 'react-router-dom';
-import ConfirmRemoveModal from 'components/ConfirmRemoveModal/ConfirmRemoveModal';
-import CreateSemesterModal from 'components/CreateSemesterModal/CreateSemesterModal';
-import UpdateSemesterModal from 'components/UpdateSemesterModal/UpdateSemesterModal';
+import ConfirmRemoveModal from 'components/ConfirmModal/ConfirmModal';
+import CMSModal from 'components/CMSModal/CMSModal';
 
 const semesters = [
   {
@@ -75,18 +74,72 @@ export const sizePerPageList = [
   { text: '10', value: 10 },
   { text: '20', value: 20 },
   { text: '50', value: 50 },
+  { text: '100', value: 100 },
 ];
 
 export default function CustomersCard() {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [filters, setFilters] = React.useState({});
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [modalConfigs] = React.useState([
+    {
+      name: 'name',
+      type: 'text',
+      label: 'Semester name',
+      placeholder: 'Semester name...',
+    },
+    {
+      name: 'maxTopic',
+      type: 'number',
+      label: 'Maximum topic per mentor',
+      smallLabel: 'Maximun number of topic that a lecturer can supervise',
+      placeholder: '10',
+    },
+    {
+      name: 'maxMentor',
+      type: 'number',
+      label: 'Maximum mentor per topic',
+      smallLabel: 'Maximum number of lecturer to supervise a topic',
+      placeholder: '10',
+    },
+    {
+      name: 'maxApplications',
+      type: 'number',
+      label: 'Maximum applications per team',
+      smallLabel:
+        'Maximum number of application that a team can send at any-time',
+      placeholder: '10',
+    },
+    {
+      name: 'matchingDate',
+      type: 'date',
+      label: 'Matching',
+      smallLabel:
+        'Ending date of Matching-phase, all team must matched with a topic before this day',
+    },
+    {
+      name: 'inprogressDate',
+      type: 'date',
+      label: 'In progress',
+      smallLabel:
+        'Ending date of In-progress-phase, all team must have done the capstone project and waiting for final evaluation',
+    },
+    {
+      name: 'finishDate',
+      type: 'date',
+      label: 'Finished',
+      smallLabel:
+        'Ending date of Finished-phase (and semester as well), all evaluation is published.',
+    },
+  ]);
+  const [fieldTemplate, setFieldTemplate] = React.useState({});
+  const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
   const [
     showedConfirmRemoveSelectedSemesterModalFlg,
     setShowedConfirmRemoveSelectedSemesterModalFlg,
@@ -119,11 +172,29 @@ export default function CustomersCard() {
   }, []);
 
   const handleShowUpdateSelectedSemester = React.useCallback(() => {
+    const response = {
+      name: 'Fall2020',
+      maxTopic: 10,
+      maxMentor: 20,
+      maxApplications: 100,
+      matchingDate: '2020-06-06',
+      inprogressDate: '2020-06-06',
+      finishDate: '2020-06-06',
+    };
+    setUpdateFieldTemplate(response);
     setIsShowUpdateSemesterModal(true);
   }, []);
 
   const handleHideUpdateSelectedSemester = React.useCallback(() => {
     setIsShowUpdateSemesterModal(false);
+  }, []);
+
+  const handleOnCreateSemester = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
+
+  const handleOnUpdateSemester = React.useCallback(fieldData => {
+    console.log(fieldData);
   }, []);
 
   React.useEffect(() => {
@@ -149,6 +220,18 @@ export default function CustomersCard() {
   React.useEffect(() => {
     setData(semesters);
     setTotal(100);
+  }, []);
+
+  React.useEffect(() => {
+    setFieldTemplate({
+      name: '',
+      maxTopic: 0,
+      maxMentor: 0,
+      maxApplications: 0,
+      matchingDate: '2020-06-06',
+      inprogressDate: '2020-06-06',
+      finishDate: '2020-06-06',
+    });
   }, []);
 
   function ActionsColumnFormatter(
@@ -267,13 +350,25 @@ export default function CustomersCard() {
         body={<h5>Are you sure you want to remove selected semester?</h5>}
         onConfirm={() => {}}
       />
-      <UpdateSemesterModal
-        onHide={handleHideUpdateSelectedSemester}
+      <CMSModal
         isShowFlg={isShowUpdateSemesterModal}
+        onHide={handleHideUpdateSelectedSemester}
+        configs={modalConfigs}
+        primaryButtonLabel="Confirm changes"
+        title="Update this semester"
+        subTitle="Change this semester info"
+        onConfirmForm={handleOnUpdateSemester}
+        fieldTemplate={updateFieldTemplate}
       />
-      <CreateSemesterModal
-        onHide={handleHideCreateSelectedSemester}
+      <CMSModal
         isShowFlg={isShowCreateSemesterModal}
+        onHide={handleHideCreateSelectedSemester}
+        configs={modalConfigs}
+        primaryButtonLabel="Create"
+        title="Create new semester"
+        subTitle="Start a new capstone semester"
+        onConfirmForm={handleOnCreateSemester}
+        fieldTemplate={fieldTemplate}
       />
     </Card>
   );

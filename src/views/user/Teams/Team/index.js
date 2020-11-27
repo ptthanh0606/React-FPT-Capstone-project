@@ -82,6 +82,28 @@ const Team = () => {
                     href="#"
                     className="text-dark-75 text-hover-primary font-weight-bolder font-size-h5"
                   >
+                    Topic: Capstone Management System
+                  </a>
+                  <span className="text-muted font-weight-bold mt-2">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Etiam pellentesque, magna eu dignissim ullamcorper, augue
+                    elit consectetur quam, vitae molestie odio neque id purus.
+                    Suspendisse suscipit elementum quam eget dictum. In
+                    pellentesque magna vel lorem aliquet, eget cursus ipsum
+                    hendrerit.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={`card card-custom gutter-b`}>
+            <div className="card-body d-flex flex-column p-0">
+              <div className="d-flex justify-content-between card-spacer flex-grow-1">
+                <div className="d-flex flex-column mr-2">
+                  <a
+                    href="#"
+                    className="text-dark-75 text-hover-primary font-weight-bolder font-size-h5"
+                  >
                     Members
                   </a>
                   <span className="text-muted font-weight-bold mt-2">
@@ -131,12 +153,12 @@ const Team = () => {
                         <th className="pl-4">
                           <span className="text-dark-75">Topic</span>
                         </th>
-                        <th>Time</th>
+                        <th>Sent at</th>
+                        <th>Updated at</th>
                         <th>Status</th>
                         <th width="1%"></th>
                       </tr>
                     </thead>
-
                     <tbody>
                       {applications.map(i => (
                         <Application />
