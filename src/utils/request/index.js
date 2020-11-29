@@ -1,10 +1,6 @@
 import axios from 'axios';
 import { helpers as authHelpers } from 'auth';
 
-const CancelToken = axios.CancelToken;
-export const getSource = CancelToken.source;
-export const isCancel = axios.isCancel;
-
 const config = {
   timeout: 0,
 };
@@ -46,7 +42,7 @@ async function request({
     //     });
   }
 
-  const s = getSource();
+  const s = axios.CancelToken.source();
   source.cancel = s.cancel;
   source.token = s.token;
 

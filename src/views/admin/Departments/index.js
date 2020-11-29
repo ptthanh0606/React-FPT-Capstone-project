@@ -12,7 +12,7 @@ import CMSModal from 'components/CMSModal/CMSModal';
 
 import toast from 'utils/toast';
 import { useDebounce } from 'use-debounce';
-import request, { isCancel } from 'utils/request';
+import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 
