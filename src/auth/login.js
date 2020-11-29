@@ -2,13 +2,6 @@ import request from 'utils/request';
 import { LOGIN } from 'endpoints';
 import * as helpers from 'auth/helpers';
 
-const result = {
-  accessToken: 'some.random.token',
-  refreshToken: 'some.random.refreshToken',
-  accessTokenExpiresAt: 1702277966,
-  role: '',
-};
-
 const login = async function (
   { email, password, google_token, role },
   setRole,

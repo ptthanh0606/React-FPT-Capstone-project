@@ -55,26 +55,31 @@ function Login({ state = {} }) {
   });
 
   const loginWithGoogle = React.useCallback(() => {
-    signIn().then(googleUser => {
-      if (!googleUser) return;
+    setStatus();
 
-      login(
-        { google_token: googleUser.tokenId, role: selectedRole },
-        setUser,
-        setRole
-      )
-        .then(() => {
-          disableLoading();
-          if (state?.from)
-            history.push(
-              state?.from.pathname + state?.from.search + state?.from.hash
-            );
-          else history.push(constants.LOGIN_REDIRECT_TO);
-        })
-        .catch(({ message }) => {
-          setStatus(message);
-        });
-    });
+    signIn()
+      .then(googleUser => {
+        if (!googleUser) return;
+
+        login(
+          { google_token: googleUser.tokenId, role: selectedRole },
+          setUser,
+          setRole
+        )
+          .then(() => {
+            if (state?.from)
+              history.push(
+                state?.from.pathname + state?.from.search + state?.from.hash
+              );
+            else history.push(constants.LOGIN_REDIRECT_TO);
+          })
+          .catch(({ message }) => {
+            setStatus(message);
+          });
+      })
+      .catch(err => {
+        setStatus('Internal Server Error');
+      });
   }, [history, selectedRole, setRole, setUser, signIn, state.from]);
 
   const LoginSchema = Yup.object().shape({
@@ -88,14 +93,6 @@ function Login({ state = {} }) {
       .max(50, 'Maximum 50 symbols')
       .required('Required field'),
   });
-
-  const enableLoading = () => {
-    setLoading(true);
-  };
-
-  const disableLoading = () => {
-    setLoading(false);
-  };
 
   const getInputClasses = fieldName => {
     if (formik.touched[fieldName] && formik.errors[fieldName]) {
@@ -113,7 +110,7 @@ function Login({ state = {} }) {
     initialValues,
     validationSchema: LoginSchema,
     onSubmit: (values, { setStatus, setSubmitting }) => {
-      enableLoading();
+      setLoading(true);
       setTimeout(() => {
         login(
           {
@@ -125,7 +122,7 @@ function Login({ state = {} }) {
           setRole
         )
           .then(() => {
-            disableLoading();
+            setLoading(false);
             if (state?.from)
               history.push(
                 state?.from.pathname + state?.from.search + state?.from.hash
@@ -133,7 +130,7 @@ function Login({ state = {} }) {
             else history.push(constants.LOGIN_REDIRECT_TO);
           })
           .catch(() => {
-            disableLoading();
+            setLoading(false);
             setStatus('The login detail is incorrect');
           })
           .finally(() => {

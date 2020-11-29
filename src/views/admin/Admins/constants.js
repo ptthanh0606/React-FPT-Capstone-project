@@ -1,10 +1,6 @@
 import React from 'react';
 
-import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
-import request from 'utils/request';
-import * as endpoints from 'endpoints';
-import { mDown as depTrans } from '../Departments/transformers';
 
 //------------------------------------------------------------------------------
 
@@ -17,8 +13,8 @@ export const sizePerPageList = [
   { text: '100', value: 100 },
 ];
 
-export const statusClasses = ['danger', 'success', 'info', ''];
-export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
+export const statusClasses = ['danger', 'success'];
+export const statusTitles = ['Deactivated', 'Activated'];
 
 export const createColumns = ({ handleEdit, handleRemove }) =>
   columnsTransformer([
@@ -28,32 +24,14 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       sort: true,
     },
     {
-      dataField: 'email',
-      text: 'Email',
-      sort: true,
-    },
-    {
       dataField: 'name',
       text: 'Name',
       sort: true,
-      formatter: function (cellContent, row) {
-        return (
-          <Link
-            className="text-dark font-weight-bold"
-            to={'/semester/' + row.id}
-          >
-            {cellContent}
-          </Link>
-        );
-      },
     },
     {
-      dataField: 'department',
-      text: 'Department',
+      dataField: 'email',
+      text: 'Email',
       sort: true,
-      formatter: function (cellContent, row) {
-        return cellContent?.value;
-      },
     },
     {
       dataField: 'action',
@@ -89,44 +67,24 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       },
     },
   ]);
+
 export const modalConfigs = [
   {
     name: 'name',
     type: 'text',
-    label: 'Student full name',
+    label: 'Admin full name',
     placeholder: 'Full name...',
-  },
-  {
-    name: 'code',
-    type: 'text',
-    label: 'Student code',
-    placeholder: 'Enter student code...',
   },
   {
     name: 'email',
     type: 'text',
-    label: 'Student email',
-    placeholder: 'Enter student @fpt.edu.vn email...',
+    label: 'Admin email',
+    placeholder: 'Enter admin @fpt.edu.vn email...',
   },
   {
-    name: 'department',
-    type: 'selectBoxAsync',
-    label: 'Department',
-    smallLabel: 'Departments for this lecturer',
-    load: (input, callback) => {
-      request({
-        to: endpoints.LIST_DEPARTMENT.url,
-        method: endpoints.LIST_DEPARTMENT.method,
-        params: {
-          q: input,
-          pageSize: 10,
-        },
-      })
-        .then(res => {
-          callback(res?.data?.data?.map(depTrans) || []);
-        })
-        .catch(() => callback([]));
-    },
-    isMulti: false,
+    name: 'isActive',
+    type: 'toggle',
+    label: 'Active state',
+    smallLabel: 'Is this admin active',
   },
 ];
