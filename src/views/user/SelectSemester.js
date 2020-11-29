@@ -21,7 +21,7 @@ import styles from 'views/admin/Semesters/nearest.module.scss';
 export default function CustomersCard() {
   const setMeta = useSetRecoilState(metaAtom);
 
-  const [l, loadData] = React.useReducer(() => ({}), {});
+  const [l] = React.useReducer(() => ({}), {});
 
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
