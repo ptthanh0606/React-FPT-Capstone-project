@@ -87,6 +87,33 @@ export const DELETE_LECTURER = id => ({
 
 // -----------------------------------------------------------------------------
 
+export const LIST_ADMIN = {
+  url: config.api + 'admins',
+  method: METHOD.GET,
+};
+
+export const CREATE_ADMIN = {
+  url: LIST_ADMIN.url,
+  method: METHOD.POST,
+};
+
+export const READ_ADMIN = id => ({
+  url: LIST_ADMIN.url + '/' + id,
+  method: METHOD.GET,
+});
+
+export const UPDATE_ADMIN = id => ({
+  url: READ_ADMIN(id).url,
+  method: METHOD.PUT,
+});
+
+export const DELETE_ADMIN = id => ({
+  url: READ_LECTURER(id).url,
+  method: METHOD.DELETE,
+});
+
+// -----------------------------------------------------------------------------
+
 export const LIST_SEMESTER = {
   url: config.api + 'semesters',
   method: METHOD.GET,
