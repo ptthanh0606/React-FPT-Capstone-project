@@ -99,7 +99,7 @@ export default function CustomersCard() {
 
   const handleEdit = React.useCallback(e => {
     e.preventDefault();
-    const id = e.currentTarget.getAttribute('data-id');
+    const id = Number(e.currentTarget.getAttribute('data-id'));
     if (!Number.isInteger(id)) {
       toast.error('Internal Server Error');
       return;
@@ -120,7 +120,7 @@ export default function CustomersCard() {
   const handleRemove = React.useCallback(
     e => {
       e.preventDefault();
-      const id = e.currentTarget.getAttribute('data-id');
+      const id = Number(e.currentTarget.getAttribute('data-id'));
       if (!Number.isInteger(id)) {
         toast.error('Internal Server Error');
         return;
