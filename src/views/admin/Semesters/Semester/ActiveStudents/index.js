@@ -161,6 +161,42 @@ export default function CustomersCard() {
     [confirm, semId]
   );
 
+  const handleRemoveAllSelected = React.useCallback(
+    e => {
+      e.preventDefault();
+      const id = Number(e.currentTarget.getAttribute('data-id'));
+      console.log(id);
+      if (!Number.isInteger(id)) {
+        toast.error('Internal Server Error');
+        return;
+      }
+      confirm({
+        title: 'Removal Confirmation',
+        body: (
+          <>
+            Do you wanna remove all selected students?
+            <br />
+            All students will be <b>permanently removed from this semester</b>.
+          </>
+        ),
+        onConfirm: () =>
+          request({
+            to: endpoints.DELETE_ACTIVE_STUDENTS(semId).url,
+            method: endpoints.DELETE_ACTIVE_STUDENTS(semId).method,
+            data: {
+              studentIDs: selected,
+            },
+          })
+            .then(res => {
+              loadData();
+              toast.success('Successfully remove department');
+            })
+            .catch(handleErrors),
+      });
+    },
+    [confirm, selected, semId]
+  );
+
   // ---------------------------------------------------------------------------
 
   const columns = React.useMemo(
@@ -226,7 +262,7 @@ export default function CustomersCard() {
             type="button"
             className="btn btn-danger font-weight-bold"
             disabled={Array.isArray(selected) && selected.length === 0}
-            // onClick={handleShowRemoveAllSelectedConfirmModal}
+            onClick={handleRemoveAllSelected}
           >
             <i className="fas fa-trash mr-2"></i>
             Remove ({(Array.isArray(selected) && selected.length) || 0})
