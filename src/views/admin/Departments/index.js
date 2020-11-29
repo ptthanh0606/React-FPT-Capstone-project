@@ -1,9 +1,7 @@
 import React from 'react';
 import { Card, CardBody } from '_metronic/_partials/controls';
-import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from './Filters';
-import { Link } from 'react-router-dom';
 
 import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
@@ -193,97 +191,11 @@ export default function Departments() {
   // ---------------------------------------------------------------------------
 
   const columns = React.useMemo(
-    () => [
-      {
-        dataField: 'code',
-        text: 'Code',
-        sort: true,
-        sortCaret: sortCaret,
-        headerSortingClasses,
-      },
-      {
-        dataField: 'name',
-        text: 'Name',
-        sort: true,
-        sortCaret: sortCaret,
-        headerSortingClasses,
-      },
-      {
-        dataField: 'status',
-        text: 'Status',
-        sort: true,
-        sortCaret: sortCaret,
-        formatter: (cellContent, row) => {
-          const getLabelCssClasses = () => {
-            return `label label-lg label-light-${
-              constants.statusClasses[row.status === true ? 1 : 0]
-            } label-inline text-nowrap`;
-          };
-          return (
-            <span className={getLabelCssClasses()}>
-              {constants.statusTitles[row.status === true ? 1 : 0]}
-            </span>
-          );
-        },
-        headerSortingClasses,
-      },
-      {
-        dataField: 'approvers',
-        text: 'Approvers',
-        formatter: function (cellContent, row) {
-          return (
-            <>
-              {cellContent.length > 0 &&
-                cellContent
-                  .map(i => (
-                    <Link
-                      className="text-dark font-weight-bold"
-                      to={'/profile/lecturer/' + i.value}
-                    >
-                      {i.label}
-                    </Link>
-                  ))
-                  .reduce((prev, curr) => [prev, ', ', curr])}
-            </>
-          );
-        },
-      },
-      {
-        dataField: 'action',
-        text: 'Actions',
-        formatter: (cellContent, row, rowIndex) => {
-          return (
-            <span className="text-nowrap">
-              <a
-                href="/"
-                title="Edit"
-                className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-                data-id={row.id}
-                onClick={handleEdit}
-              >
-                <i className="fas fa-pencil-alt mx-2"></i>
-              </a>
-              <a
-                href="/"
-                title="Remove"
-                className="btn btn-icon btn-light btn-hover-primary btn-sm"
-                data-id={row.id}
-                onClick={handleRemove}
-              >
-                <i className="fas fa-trash mx-2"></i>
-              </a>
-            </span>
-          );
-        },
-        classes: 'text-right pr-0',
-        headerClasses: 'text-right pr-3',
-        style: {
-          minWidth: '100px',
-        },
-      },
-    ],
+    () => constants.createColumns({ handleEdit, handleRemove }),
     [handleEdit, handleRemove]
   );
+
+  // ---------------------------------------------------------------------------
 
   React.useEffect(() => {
     setMeta({

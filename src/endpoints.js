@@ -14,7 +14,7 @@ export const ME = {
 //------------------------------------------------------------------------------
 
 export const LIST_DEPARTMENT = {
-  url: config.api + 'departments/viewAll',
+  url: config.api + 'departments',
   method: METHOD.GET,
 };
 
