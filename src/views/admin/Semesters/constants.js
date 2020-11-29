@@ -29,8 +29,10 @@ export const statusClasses = [
   'primary',
 ];
 
-export const createColumns = ({ handleEdit, handleRemove }) =>
-  columnsTransformer([
+export const createColumns = (props = {}) => {
+  const { handleEdit, handleRemove } = props;
+
+  const newCols = [
     {
       dataField: 'name',
       text: 'Name',
@@ -63,7 +65,10 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
         );
       },
     },
-    {
+  ];
+
+  if (handleEdit && handleRemove) {
+    newCols.push({
       dataField: 'action',
       text: 'Actions',
       formatter: (cellContent, row, rowIndex) => {
@@ -95,8 +100,11 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       style: {
         minWidth: '100px',
       },
-    },
-  ]);
+    });
+  }
+
+  return columnsTransformer(newCols);
+};
 
 export const modalConfigs = [
   {
