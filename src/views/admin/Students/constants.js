@@ -4,25 +4,21 @@ import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
+import { mDown as depTrans } from '../Departments/transformers';
 
 //------------------------------------------------------------------------------
 
 export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 
 export const sizePerPageList = [
-  { text: '5', value: 5 },
   { text: '10', value: 10 },
   { text: '20', value: 20 },
   { text: '50', value: 50 },
   { text: '100', value: 100 },
 ];
 
-export const statusClasses = ['danger', 'success'];
-export const statusTitles = ['Deactivated', 'Activated'];
-
-// export const createColumns = ({ handleEdit, handleRemove }) =>
-//   columnsTransformer();
-// xóa caret, sortheader, constant.
+export const statusClasses = ['danger', 'success', 'info', ''];
+export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
 
 export const createColumns = ({ handleEdit, handleRemove }) =>
   columnsTransformer([
@@ -32,46 +28,31 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       sort: true,
     },
     {
-      dataField: 'name',
-      text: 'Name',
+      dataField: 'email',
+      text: 'Email',
       sort: true,
     },
     {
-      dataField: 'status',
-      text: 'Status',
+      dataField: 'name',
+      text: 'Name',
       sort: true,
-      formatter: (cellContent, row) => {
-        const getLabelCssClasses = () => {
-          return `label label-lg label-light-${
-            statusClasses[row.status === true ? 1 : 0]
-          } label-inline text-nowrap`;
-        };
+      formatter: function (cellContent, row) {
         return (
-          <span className={getLabelCssClasses()}>
-            {statusTitles[row.status === true ? 1 : 0]}
-          </span>
+          <Link
+            className="text-dark font-weight-bold"
+            to={'/semester/' + row.id}
+          >
+            {cellContent}
+          </Link>
         );
       },
     },
     {
-      dataField: 'approvers',
-      text: 'Approvers',
+      dataField: 'department',
+      text: 'Department',
+      sort: true,
       formatter: function (cellContent, row) {
-        return (
-          <>
-            {cellContent?.length > 0 &&
-              cellContent
-                .map(i => (
-                  <Link
-                    className="text-dark font-weight-bold"
-                    to={'/profile/lecturer/' + i.value}
-                  >
-                    {i.label}
-                  </Link>
-                ))
-                .reduce((prev, curr) => [prev, ', ', curr])}
-          </>
-        );
+        return cellContent?.value;
       },
     },
     {
@@ -108,50 +89,44 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       },
     },
   ]);
-
 export const modalConfigs = [
   {
     name: 'name',
     type: 'text',
-    label: 'Department name',
-    placeholder: 'Give this department a name...',
+    label: 'Student full name',
+    placeholder: 'Full name...',
   },
   {
     name: 'code',
     type: 'text',
-    label: 'Department code',
-    smallLabel: 'Ex: Software Engineer to be "SE"',
+    label: 'Student code',
+    placeholder: 'Enter student code...',
   },
   {
-    name: 'approvers',
+    name: 'email',
+    type: 'text',
+    label: 'Student email',
+    placeholder: 'Enter student @fpt.edu.vn email...',
+  },
+  {
+    name: 'department',
     type: 'selectBoxAsync',
-    label: 'Approver',
-    smallLabel: 'Approvers for this department',
+    label: 'Department',
+    smallLabel: 'Departments for this lecturer',
     load: (input, callback) => {
       request({
-        to: endpoints.LIST_LECTURER.url,
-        method: endpoints.LIST_LECTURER.method,
+        to: endpoints.LIST_DEPARTMENT.url,
+        method: endpoints.LIST_DEPARTMENT.method,
         params: {
           q: input,
           pageSize: 10,
         },
       })
         .then(res => {
-          callback(
-            res.data.data?.map(i => ({
-              label: i.code,
-              value: i.lecturerID,
-            })) || []
-          );
+          callback(res?.data?.data?.map(depTrans) || []);
         })
         .catch(() => callback([]));
     },
-    isMulti: true,
-  },
-  {
-    name: 'status',
-    type: 'toggle',
-    label: 'Active state',
-    smallLabel: 'Is this department active',
+    isMulti: false,
   },
 ];

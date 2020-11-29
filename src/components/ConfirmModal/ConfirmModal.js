@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
+import Button from 'components/Button';
 
 const ConfirmRemoveModal = ({
   title = 'Confirm on removal',
@@ -7,6 +8,7 @@ const ConfirmRemoveModal = ({
   isShowFlg,
   onHide,
   onConfirm,
+  isProcessing = false,
 }) => {
   return (
     <Modal
@@ -24,7 +26,7 @@ const ConfirmRemoveModal = ({
         <Button variant="secondary" onClick={onHide}>
           I changed my mind
         </Button>
-        <Button variant="primary" onClick={onConfirm}>
+        <Button variant="primary" onClick={onConfirm} isLoading={isProcessing}>
           Sure
         </Button>
       </Modal.Footer>

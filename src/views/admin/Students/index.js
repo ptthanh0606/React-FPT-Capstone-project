@@ -2,283 +2,213 @@ import React from 'react';
 import { Card, CardBody } from '_metronic/_partials/controls';
 import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
-import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from './Filters';
-import { Link } from 'react-router-dom';
-import ConfirmRemoveModal from 'components/ConfirmModal/ConfirmModal';
 import CMSModal from 'components/CMSModal/CMSModal';
 
-export const statusClasses = ['danger', 'success', 'info', ''];
-export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
-export const defaultSorted = [{ dataField: 'id', order: 'asc' }];
-export const sizePerPageList = [
-  { text: '10', value: 10 },
-  { text: '20', value: 20 },
-  { text: '50', value: 50 },
-  { text: '100', value: 100 },
-];
+import useConfirm from 'utils/confirm';
+import toast from 'utils/toast';
+import { useDebounce } from 'use-debounce';
+import request from 'utils/request';
+import { handleErrors } from 'utils/common';
+import * as endpoints from 'endpoints';
 
-const mockData = [
-  {
-    id: 0,
-    code: 'SE130491',
-    department: 'SE',
-    email: 'duyhdse130491@fpt.edu.vn',
-    name: 'Huynh Duc Duy',
-  },
-];
+import * as transformers from './transformers';
+import * as constants from './constants';
 
-export default function CustomersCard() {
-  const [data, setData] = React.useState([]);
-  const [total, setTotal] = React.useState(0);
-  const [isLoading] = React.useState(false);
-  const [selected, setSelected] = React.useState([]);
-  const [filters, setFilters] = React.useState({});
-  const [page, setPage] = React.useState(1);
-  const [pageSize, setPageSize] = React.useState(10);
-  const [sortField, setSortField] = React.useState(null);
-  const [sortOrder, setSortOrder] = React.useState(null);
-  const [fieldTemplate, setFieldTemplate] = React.useState({});
-  const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
-  const [modalConfigs, setModalConfigs] = React.useState([]);
-  const [
-    showRemoveStudentsConfirmModalFlg,
-    setShowRemoveStudentsConfirmModalFlg,
-  ] = React.useState(false);
-  const [
-    showCreateStudentsModalFlg,
-    setShowCreateStudentsModalFlg,
-  ] = React.useState(false);
-  const [
-    showUpdateStudentsModalFlg,
-    setShowUpdateStudentsModalFlg,
-  ] = React.useState(false);
-  const [showTestModalFlg, setShowTestModalFlg] = React.useState(true);
-  const [selectedId, setSelectedId] = React.useState();
-
+export default function Lecturers() {
+  const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
 
-  const handleShowRemoveStudentsModal = () => {
-    setShowRemoveStudentsConfirmModalFlg(true);
-  };
+  const [l, loadData] = React.useReducer(() => ({}), {});
 
-  const handleHideRemoveStudentsModal = () => {
-    setShowRemoveStudentsConfirmModalFlg(false);
-  };
+  const [data, setData] = React.useState([]);
+  const [total, setTotal] = React.useState(0);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [selected, setSelected] = React.useState([]);
+  const [filters, setFilters] = React.useState({});
+  const [debouncedFilters] = useDebounce(filters, 500);
+  const [page, setPage] = React.useState(1);
+  const [pageSize, setPageSize] = React.useState(
+    constants.sizePerPageList[0].value
+  );
+  const [sortField, setSortField] = React.useState(null);
+  const [sortOrder, setSortOrder] = React.useState(null);
 
-  const handleShowCreateStudentsModal = () => {
-    setShowCreateStudentsModalFlg(true);
-  };
+  //----------------------------------------------------------------------------
 
-  const handleHideCreateStudentsModal = () => {
-    setShowCreateStudentsModalFlg(false);
-  };
+  const [fieldTemplate, setFieldTemplate] = React.useState({});
+  const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
+  const [showCreate, setShowCreate] = React.useState(false);
+  const [showUpdate, setShowUpdate] = React.useState(false);
+  const [editId, setEditId] = React.useState(0);
+  const [isProcessing, setIsProcessing] = React.useState(false);
 
-  const handleShowUpdateStudentsModal = () => {
-    setUpdateFieldTemplate({
-      name: 'Huynh Duc Duy',
-      email: 'duyhdse130491@fpt.edu.vn',
-      code: 'SE130491',
-      department: {
-        label: 'SE',
-        value: 'SE',
-      },
-    });
-    setShowUpdateStudentsModalFlg(true);
-  };
+  // ---------------------------------------------------------------------------
 
-  const handleHideUpdateStudentsModal = () => {
-    setShowUpdateStudentsModalFlg(false);
-  };
-
-  const handleOnCreateStudent = React.useCallback(fieldData => {
-    console.log(fieldData);
+  const showCreateModal = React.useCallback(() => {
+    setShowCreate(true);
   }, []);
 
-  const handleOnUpdateStudent = React.useCallback(fieldData => {
-    console.log(fieldData);
+  const hideCreateModal = React.useCallback(() => {
+    setShowCreate(false);
   }, []);
 
-  function ActionsColumnFormatter(cellContent, row, rowIndex) {
-    return (
-      <span className="text-nowrap">
-        <a
-          href="/"
-          title="Edit"
-          className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-          onClick={event => {
-            event.preventDefault();
-            setSelectedId(row.id);
-            handleShowUpdateStudentsModal();
-          }}
-        >
-          <i className="fas fa-pencil-alt mx-2"></i>
-        </a>
-        <a
-          href="/"
-          title="Remove"
-          className="btn btn-icon btn-light btn-hover-primary btn-sm"
-          onClick={event => {
-            event.preventDefault();
-            setSelectedId(row.id);
-            handleShowRemoveStudentsModal();
-          }}
-        >
-          <i className="fas fa-trash mx-2"></i>
-        </a>
-      </span>
-    );
-  }
+  const handleCreate = React.useCallback(fieldData => {
+    setIsProcessing(true);
+    request({
+      to: endpoints.CREATE_STUDENT.url,
+      method: endpoints.CREATE_STUDENT.method,
+      data: transformers.up(fieldData),
+    })
+      .then(res => {
+        toast.success('Create student successfully');
+        setShowCreate(false);
+        loadData();
+        setFieldTemplate({});
+      })
+      .catch(handleErrors)
+      .finally(() => setIsProcessing(false));
+  }, []);
 
-  const columns = [
-    {
-      dataField: 'code',
-      text: 'Code',
-      sort: true,
-      sortCaret: sortCaret,
-      headerSortingClasses,
+  // ---------------------------------------------------------------------------
+
+  const hideUpdateModal = React.useCallback(() => {
+    setShowUpdate(false);
+  }, []);
+
+  const edit = React.useCallback(
+    fieldData => {
+      setIsProcessing(true);
+      request({
+        to: endpoints.UPDATE_STUDENT(editId).url,
+        method: endpoints.UPDATE_STUDENT(editId).method,
+        data: transformers.up(fieldData),
+      })
+        .then(res => {
+          toast.success('Update student successfully');
+          setShowUpdate(false);
+          loadData();
+        })
+        .catch(handleErrors)
+        .finally(() => setIsProcessing(false));
     },
-    {
-      dataField: 'email',
-      text: 'Email',
-      sort: true,
-      sortCaret: sortCaret,
-      headerSortingClasses,
+    [editId]
+  );
+
+  const handleEdit = React.useCallback(e => {
+    e.preventDefault();
+    const id = e.currentTarget.getAttribute('data-id');
+    if (!Number.isInteger(id)) {
+      toast.error('Internal Server Error');
+      return;
+    }
+    request({
+      to: endpoints.READ_STUDENT(id).url,
+      method: endpoints.READ_STUDENT(id).method,
+    })
+      .then(res => {
+        setEditId(id);
+        setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
+        setShowUpdate(true);
+      })
+      .catch(handleErrors);
+  }, []);
+
+  const handleRemove = React.useCallback(
+    e => {
+      e.preventDefault();
+      const id = e.currentTarget.getAttribute('data-id');
+      if (!Number.isInteger(id)) {
+        toast.error('Internal Server Error');
+        return;
+      }
+      confirm({
+        title: 'Removal Confirmation',
+        body: (
+          <>
+            Do you wanna remove this student?
+            <br />
+            This student will be <b>permanently removed</b>, and all historical
+            data belong to this student too.
+          </>
+        ),
+        onConfirm: () =>
+          request({
+            to: endpoints.DELETE_STUDENT(id).url,
+            method: endpoints.DELETE_STUDENT(id).method,
+          })
+            .then(res => {
+              loadData();
+              toast.success('Successfully remove student');
+            })
+            .catch(handleErrors),
+      });
     },
-    {
-      dataField: 'name',
-      text: 'Name',
-      sort: true,
-      sortCaret: sortCaret,
-      formatter: function StatusColumnFormatter(cellContent, row) {
-        return (
-          <Link
-            className="text-dark font-weight-bold"
-            to={'/semester/' + row.id}
-          >
-            {cellContent}
-          </Link>
-        );
-      },
-      headerSortingClasses,
-    },
-    {
-      dataField: 'department',
-      text: 'Department',
-      sort: true,
-      sortCaret: sortCaret,
-      headerSortingClasses,
-    },
-    {
-      dataField: 'action',
-      text: 'Actions',
-      formatter: ActionsColumnFormatter,
-      formatExtraData: {
-        openEditCustomerDialog: () => {},
-        openDeleteCustomerDialog: () => {},
-      },
-      classes: 'text-right pr-0',
-      headerClasses: 'text-right pr-3',
-      style: {
-        minWidth: '100px',
-      },
-    },
-  ];
+    [confirm]
+  );
+
+  // ---------------------------------------------------------------------------
+
+  const columns = React.useMemo(
+    () => constants.createColumns({ handleEdit, handleRemove }),
+    [handleEdit, handleRemove]
+  );
+
+  // ---------------------------------------------------------------------------
 
   React.useEffect(() => {
     setMeta({
       title: 'All students',
       breadcrumb: [
-        { title: 'Student', path: '/student' },
+        { title: 'Department', path: '/student' },
         { title: 'All students', path: '/student/all' },
       ],
       toolbar: (
-        <>
-          <button
-            type="button"
-            className="btn btn-primary font-weight-bold btn-sm"
-            onClick={() => setShowTestModalFlg(true)}
-          >
-            <i className="fas fa-file-import mr-2"></i>
-            Import
-          </button>
-          &nbsp;
-          <button
-            type="button"
-            className="btn btn-primary font-weight-bold btn-sm"
-            onClick={handleShowCreateStudentsModal}
-          >
-            <i className="fas fa-plus mr-2"></i>
-            New
-          </button>
-        </>
+        <button
+          type="button"
+          className="btn btn-primary font-weight-bold btn-sm"
+          onClick={showCreateModal}
+        >
+          <i className="fas fa-plus mr-2"></i>
+          New
+        </button>
       ),
     });
-  }, [setMeta, showTestModalFlg]);
+  }, [setMeta, showCreateModal]);
 
   React.useEffect(() => {
-    setData(mockData);
-    setTotal(100);
-  }, []);
+    setIsLoading(true);
+    const source = {};
 
-  React.useEffect(() => {
-    setModalConfigs([
-      {
-        name: 'name',
-        type: 'text',
-        label: 'Student full name',
-        placeholder: 'Full name...',
+    request({
+      to: endpoints.LIST_STUDENT.url,
+      method: endpoints.LIST_STUDENT.method,
+      params: {
+        ...debouncedFilters,
+        pageNumber: page,
+        pageSize: pageSize,
+        sortField: sortField,
+        sortOrder: sortOrder,
       },
-      {
-        name: 'code',
-        type: 'text',
-        label: 'Student code',
-        placeholder: 'Enter student code...',
-      },
-      {
-        name: 'email',
-        type: 'text',
-        label: 'Student email',
-        placeholder: 'Enter student @fpt.edu.vn email...',
-      },
-      {
-        name: 'department',
-        type: 'selectBoxAsync',
-        label: 'Department',
-        smallLabel: 'Departments for this lecturer',
-        load: (departmentInput, callback) => {
-          setTimeout(() => {
-            callback([
-              {
-                label: 'SE',
-                value: 'SE',
-              },
-              {
-                label: 'GD',
-                value: 'GD',
-              },
-              {
-                label: 'CC',
-                value: 'CC',
-              },
-              {
-                label: 'IA',
-                value: 'IA',
-              },
-            ]);
-          }, 2000);
-        },
-        isMulti: false,
-      },
-    ]);
-    setFieldTemplate({
-      name: '',
-      code: '',
-      email: '',
-      department: [],
-    });
-  }, []);
+      source,
+    })
+      .then(res => {
+        setData(res.data?.data?.map(transformers.down));
+        setTotal(res.data?.totalRecords);
+        setPage(res.data?.pageNumber);
+        setPageSize(res.data?.pageSize);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        handleErrors(err);
+        if (!err.isCancel) setIsLoading(false);
+      });
+
+    return () => {
+      source.cancel();
+    };
+  }, [l, debouncedFilters, page, pageSize, sortField, sortOrder]);
 
   return (
     <Card>
@@ -299,33 +229,30 @@ export default function CustomersCard() {
           setSortField={setSortField}
           sortOrder={sortOrder}
           setSortOrder={setSortOrder}
-          defaultSorted={defaultSorted}
-          pageSizeList={sizePerPageList}
+          defaultSorted={constants.defaultSorted}
+          pageSizeList={constants.sizePerPageList}
         />
       </CardBody>
-      <ConfirmRemoveModal
-        isShowFlg={showRemoveStudentsConfirmModalFlg}
-        onHide={handleHideRemoveStudentsModal}
-        body={<h5>Are you sure you want to remove selected students?</h5>}
-        // onConfirm={() => {}}
-      />
       <CMSModal
-        isShowFlg={showCreateStudentsModalFlg}
-        onHide={handleHideCreateStudentsModal}
-        configs={modalConfigs}
+        isShowFlg={showCreate}
+        onHide={hideCreateModal}
+        configs={constants.modalConfigs}
         title="Add new student"
         subTitle="Add student to the system"
-        onConfirmForm={handleOnCreateStudent}
+        onConfirmForm={handleCreate}
         fieldTemplate={fieldTemplate}
+        isProcessing={isProcessing}
       />
       <CMSModal
-        isShowFlg={showUpdateStudentsModalFlg}
-        onHide={handleHideUpdateStudentsModal}
-        configs={modalConfigs}
+        isShowFlg={showUpdate}
+        onHide={hideUpdateModal}
+        configs={constants.modalConfigs}
         title="Update this student"
         subTitle="Change this student info"
-        onConfirmForm={handleOnUpdateStudent}
+        onConfirmForm={edit}
         fieldTemplate={updateFieldTemplate}
+        primaryButtonLabel="Update"
+        isProcessing={isProcessing}
       />
     </Card>
   );

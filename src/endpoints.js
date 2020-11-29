@@ -11,13 +11,15 @@ export const ME = {
   method: METHOD.GET,
 };
 
+//------------------------------------------------------------------------------
+
 export const LIST_DEPARTMENT = {
   url: config.api + 'departments',
   method: METHOD.GET,
 };
 
 export const CREATE_DEPARTMENT = {
-  url: LIST_DEPARTMENT.url,
+  url: config.api + 'departments',
   method: METHOD.POST,
 };
 
@@ -85,6 +87,33 @@ export const DELETE_LECTURER = id => ({
 
 // -----------------------------------------------------------------------------
 
+export const LIST_ADMIN = {
+  url: config.api + 'admins',
+  method: METHOD.GET,
+};
+
+export const CREATE_ADMIN = {
+  url: LIST_ADMIN.url,
+  method: METHOD.POST,
+};
+
+export const READ_ADMIN = id => ({
+  url: LIST_ADMIN.url + '/' + id,
+  method: METHOD.GET,
+});
+
+export const UPDATE_ADMIN = id => ({
+  url: READ_ADMIN(id).url,
+  method: METHOD.PUT,
+});
+
+export const DELETE_ADMIN = id => ({
+  url: READ_LECTURER(id).url,
+  method: METHOD.DELETE,
+});
+
+// -----------------------------------------------------------------------------
+
 export const LIST_SEMESTER = {
   url: config.api + 'semesters',
   method: METHOD.GET,
@@ -107,5 +136,32 @@ export const UPDATE_SEMESTER = id => ({
 
 export const DELETE_SEMESTER = id => ({
   url: READ_SEMESTER(id).url,
+  method: METHOD.DELETE,
+});
+
+// -----------------------------------------------------------------------------
+
+export const LIST_STUDENT = {
+  url: config.api + 'students',
+  method: METHOD.GET,
+};
+
+export const CREATE_STUDENT = {
+  url: LIST_STUDENT.url,
+  method: METHOD.POST,
+};
+
+export const READ_STUDENT = id => ({
+  url: LIST_STUDENT.url + '/' + id,
+  method: METHOD.GET,
+});
+
+export const UPDATE_STUDENT = id => ({
+  url: READ_STUDENT(id).url,
+  method: METHOD.PUT,
+});
+
+export const DELETE_STUDENT = id => ({
+  url: READ_STUDENT(id).url,
   method: METHOD.DELETE,
 });

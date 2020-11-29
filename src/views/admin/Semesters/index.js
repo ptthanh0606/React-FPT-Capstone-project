@@ -1,8 +1,8 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
-import NearestSemester from './NearestSemester';
-import AllSemester from './AllSemester';
+import NearestSemester from './nearest';
+import AllSemester from './all';
 import Semester from './Semester';
 
 export default React.memo(function Semesters() {

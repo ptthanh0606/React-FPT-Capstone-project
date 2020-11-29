@@ -2,61 +2,49 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
-import request from 'utils/request';
-import * as endpoints from 'endpoints';
 
 //------------------------------------------------------------------------------
+
 export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 
 export const sizePerPageList = [
+  { text: '5', value: 5 },
   { text: '10', value: 10 },
   { text: '20', value: 20 },
   { text: '50', value: 50 },
   { text: '100', value: 100 },
 ];
 
-export const statusClasses = ['danger', 'success'];
-export const statusTitles = ['Deactivated', 'Activated'];
+export const statusTitles = [
+  'Preparing',
+  'Matching',
+  'In-progress',
+  'Finished',
+];
+export const statusClasses = [
+  'danger',
+  'warning',
+  'info',
+  'success',
+  'primary',
+];
 
-export const createColumns = ({ handleEdit, handleRemove }) =>
-  columnsTransformer([
-    {
-      dataField: 'code',
-      text: 'Code',
-      sort: true,
-    },
+export const createColumns = (props = {}) => {
+  const { handleEdit, handleRemove } = props;
+
+  const newCols = [
     {
       dataField: 'name',
       text: 'Name',
       sort: true,
-      formatter: function (cellContent, row) {
+      formatter: function StatusColumnFormatter(cellContent, row) {
         return (
           <Link
             className="text-dark font-weight-bold"
-            to={'/profile/lecturer/' + row.id}
+            to={'/semester/' + row.id}
           >
             {cellContent}
           </Link>
-        );
-      },
-    },
-    {
-      dataField: 'email',
-      text: 'Email',
-      sort: true,
-    },
-    {
-      dataField: 'departments',
-      text: 'Department',
-      sort: true,
-      formatter: function (cellContent, row) {
-        return (
-          <>
-            {cellContent?.length > 0 &&
-              cellContent
-                .map(i => (i.isApprover ? <u>{i.label}</u> : <>{i.label}</>))
-                .reduce((prev, curr) => [prev, ', ', curr])}
-          </>
         );
       },
     },
@@ -67,17 +55,20 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       formatter: (cellContent, row) => {
         const getLabelCssClasses = () => {
           return `label label-lg label-light-${
-            statusClasses[row.status ? 1 : 0]
+            statusClasses[row.status]
           } label-inline text-nowrap`;
         };
         return (
           <span className={getLabelCssClasses()}>
-            {statusTitles[row.status ? 1 : 0]}
+            {statusTitles[row.status]}
           </span>
         );
       },
     },
-    {
+  ];
+
+  if (handleEdit && handleRemove) {
+    newCols.push({
       dataField: 'action',
       text: 'Actions',
       formatter: (cellContent, row, rowIndex) => {
@@ -109,58 +100,46 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       style: {
         minWidth: '100px',
       },
-    },
-  ]);
+    });
+  }
+
+  return columnsTransformer(newCols);
+};
 
 export const modalConfigs = [
   {
-    name: 'code',
-    type: 'text',
-    label: 'Lecturer code name',
-    placeholder: 'Code name...',
-  },
-  {
     name: 'name',
     type: 'text',
-    label: 'Lecturer full name',
-    placeholder: 'Full name...',
+    label: 'Semester name',
+    placeholder: 'Semester name...',
   },
   {
-    name: 'email',
-    type: 'email',
-    label: 'Lecturer email',
-    placeholder: 'Email...',
+    name: 'maxApplications',
+    type: 'number',
+    label: 'Maximum applications per team',
+    smallLabel:
+      'Maximum number of application that a team can send at any-time',
+    placeholder: '10',
   },
   {
-    name: 'departments',
-    type: 'selectBoxAsync',
-    label: 'Department',
-    smallLabel: 'Departments for this lecturer',
-    load: (input, callback) => {
-      request({
-        to: endpoints.LIST_DEPARTMENT.url,
-        method: endpoints.LIST_DEPARTMENT.method,
-        params: {
-          q: input,
-          pageSize: 10,
-        },
-      })
-        .then(res => {
-          callback(
-            res.data.data?.map(i => ({
-              label: i.code,
-              value: i.id,
-            })) || []
-          );
-        })
-        .catch(() => callback([]));
-    },
-    isMulti: true,
+    name: 'matchingDate',
+    type: 'date',
+    label: 'Matching',
+    smallLabel:
+      'Ending date of Matching-phase, all team must matched with a topic before this day',
   },
   {
-    name: 'status',
-    type: 'toggle',
-    label: 'Active state',
-    smallLabel: 'Is this lecturer active',
+    name: 'inprogressDate',
+    type: 'date',
+    label: 'In progress',
+    smallLabel:
+      'Ending date of In-progress-phase, all team must have done the capstone project and waiting for final evaluation',
+  },
+  {
+    name: 'finishDate',
+    type: 'date',
+    label: 'Finished',
+    smallLabel:
+      'Ending date of Finished-phase (and semester as well), all evaluation is published.',
   },
 ];
