@@ -98,7 +98,7 @@ export default function Lecturers() {
 
   const handleEdit = React.useCallback(e => {
     e.preventDefault();
-    const id = e.currentTarget.getAttribute('data-id');
+    const id = Number(e.currentTarget.getAttribute('data-id'));
     if (!Number.isInteger(id)) {
       toast.error('Internal Server Error');
       return;
@@ -118,7 +118,7 @@ export default function Lecturers() {
   const handleRemove = React.useCallback(
     e => {
       e.preventDefault();
-      const id = e.currentTarget.getAttribute('data-id');
+      const id = Number(e.currentTarget.getAttribute('data-id'));
       if (!Number.isInteger(id)) {
         toast.error('Internal Server Error');
         return;
