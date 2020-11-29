@@ -22,6 +22,10 @@ export function QuickUser() {
 
   const myprofileClick = e => {
     e.preventDefault();
+    const toggle = document.getElementById('kt_quick_user_toggle');
+    if (toggle) {
+      toggle.click();
+    }
     history.push('/profile/lecturer/1');
   };
 
@@ -66,7 +70,9 @@ export function QuickUser() {
             </a>
             <div className="text-muted mt-1 text-capitalize">{user.role}</div>
             {user.department && (
-              <div className="text-muted mt-1">{user.department[0].name}</div>
+              <div className="text-muted mt-1">
+                {user.department[0]?.name && ''}
+              </div>
             )}
             <div className="navi mt-2">
               <a href="#" className="navi-item">
