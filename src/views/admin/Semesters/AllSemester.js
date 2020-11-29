@@ -69,7 +69,7 @@ export const statusTitles = [
   'In-progress',
   'Finished',
 ];
-export const defaultSorted = [{ dataField: 'id', order: 'asc' }];
+export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 export const sizePerPageList = [
   { text: '10', value: 10 },
   { text: '20', value: 20 },

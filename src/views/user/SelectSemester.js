@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import metaAtom from 'store/meta';
 
-import SemesterCard from 'components/SemesterCard';
+import SemesterCard from 'views/admin/Semesters/SemesterCard';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import styles from './SelectSemester.module.scss';
 
@@ -18,7 +18,7 @@ export const statusTitles = [
   'In-progress',
   'Finished',
 ];
-export const defaultSorted = [{ dataField: 'id', order: 'asc' }];
+export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 export const sizePerPageList = [
   { text: '10', value: 10 },
   { text: '20', value: 20 },

@@ -17,12 +17,19 @@ export const sizePerPageList = [
   { text: '100', value: 100 },
 ];
 
-export const statusClasses = ['danger', 'success'];
-export const statusTitles = ['Deactivated', 'Activated'];
-
-// export const createColumns = ({ handleEdit, handleRemove }) =>
-//   columnsTransformer();
-// xóa caret, sortheader, constant.
+export const statusTitles = [
+  'Preparing',
+  'Matching',
+  'In-progress',
+  'Finished',
+];
+export const statusClasses = [
+  'danger',
+  'warning',
+  'info',
+  'success',
+  'primary',
+];
 
 export const createColumns = ({ handleEdit, handleRemove }) =>
   columnsTransformer([
@@ -113,45 +120,50 @@ export const modalConfigs = [
   {
     name: 'name',
     type: 'text',
-    label: 'Department name',
-    placeholder: 'Give this department a name...',
+    label: 'Semester name',
+    placeholder: 'Semester name...',
   },
   {
-    name: 'code',
-    type: 'text',
-    label: 'Department code',
-    smallLabel: 'Ex: Software Engineer to be "SE"',
+    name: 'maxTopic',
+    type: 'number',
+    label: 'Maximum topic per mentor',
+    smallLabel: 'Maximun number of topic that a lecturer can supervise',
+    placeholder: '10',
   },
   {
-    name: 'approvers',
-    type: 'selectBoxAsync',
-    label: 'Approver',
-    smallLabel: 'Approvers for this department',
-    load: (input, callback) => {
-      request({
-        to: endpoints.LIST_LECTURER.url,
-        method: endpoints.LIST_LECTURER.method,
-        params: {
-          q: input,
-          pageSize: 10,
-        },
-      })
-        .then(res => {
-          callback(
-            res.data.data?.map(i => ({
-              label: i.code,
-              value: i.lecturerID,
-            })) || []
-          );
-        })
-        .catch(() => callback([]));
-    },
-    isMulti: true,
+    name: 'maxMentor',
+    type: 'number',
+    label: 'Maximum mentor per topic',
+    smallLabel: 'Maximum number of lecturer to supervise a topic',
+    placeholder: '10',
   },
   {
-    name: 'status',
-    type: 'toggle',
-    label: 'Active state',
-    smallLabel: 'Is this department active',
+    name: 'maxApplications',
+    type: 'number',
+    label: 'Maximum applications per team',
+    smallLabel:
+      'Maximum number of application that a team can send at any-time',
+    placeholder: '10',
+  },
+  {
+    name: 'matchingDate',
+    type: 'date',
+    label: 'Matching',
+    smallLabel:
+      'Ending date of Matching-phase, all team must matched with a topic before this day',
+  },
+  {
+    name: 'inprogressDate',
+    type: 'date',
+    label: 'In progress',
+    smallLabel:
+      'Ending date of In-progress-phase, all team must have done the capstone project and waiting for final evaluation',
+  },
+  {
+    name: 'finishDate',
+    type: 'date',
+    label: 'Finished',
+    smallLabel:
+      'Ending date of Finished-phase (and semester as well), all evaluation is published.',
   },
 ];

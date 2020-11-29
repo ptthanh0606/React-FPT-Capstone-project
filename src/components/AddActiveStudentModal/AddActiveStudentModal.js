@@ -6,7 +6,7 @@ import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 
 export const statusClasses = ['danger', 'info', 'success', ''];
 export const statusTitles = ['Not in a team', 'Matching', 'Matched', ''];
-export const defaultSorted = [{ dataField: 'id', order: 'asc' }];
+export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 export const sizePerPageList = [
   { text: '10', value: 10 },
   { text: '20', value: 20 },

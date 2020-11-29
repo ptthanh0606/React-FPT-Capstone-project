@@ -19,7 +19,7 @@ import CMSModal from 'components/CMSModal/CMSModal';
 
 export const statusClasses = ['danger', 'success', 'info', ''];
 export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
-export const defaultSorted = [{ dataField: 'id', order: 'asc' }];
+export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 export const sizePerPageList = [
   { text: '10', value: 10 },
   { text: '20', value: 20 },

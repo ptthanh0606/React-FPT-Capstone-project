@@ -4,7 +4,7 @@ import { columnsTransformer } from 'utils/common';
 
 //------------------------------------------------------------------------------
 
-export const defaultSorted = [{ dataField: 'id', order: 'asc' }];
+export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 
 export const sizePerPageList = [
   { text: '10', value: 10 },
