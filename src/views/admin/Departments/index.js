@@ -17,53 +17,6 @@ import * as endpoints from 'endpoints';
 import * as transformers from './transformers';
 import * as constants from './constants';
 
-const modalConfigs = [
-  {
-    name: 'name',
-    type: 'text',
-    label: 'Department name',
-    placeholder: 'Give this department a name...',
-  },
-  {
-    name: 'code',
-    type: 'text',
-    label: 'Department code',
-    smallLabel: 'Ex: Software Engineer to be "SE"',
-  },
-  {
-    name: 'approvers',
-    type: 'selectBoxAsync',
-    label: 'Approver',
-    smallLabel: 'Approvers for this department',
-    load: (input, callback) => {
-      request({
-        to: endpoints.LIST_LECTURER.url,
-        method: endpoints.LIST_LECTURER.method,
-        params: {
-          q: input,
-          pageSize: 10,
-        },
-      })
-        .then(res => {
-          callback(
-            res.data.data?.map(i => ({
-              label: i.code,
-              value: i.lecturerID,
-            })) || []
-          );
-        })
-        .catch(() => callback([]));
-    },
-    isMulti: true,
-  },
-  {
-    name: 'status',
-    type: 'toggle',
-    label: 'Active state',
-    smallLabel: 'Is this department active',
-  },
-];
-
 export default function Departments() {
   const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
@@ -276,7 +229,7 @@ export default function Departments() {
       <CMSModal
         isShowFlg={showCreate}
         onHide={hideCreateModal}
-        configs={modalConfigs}
+        configs={constants.modalConfigs}
         title="Create department"
         subTitle="Add new department to this system"
         onConfirmForm={handleCreate}
@@ -286,7 +239,7 @@ export default function Departments() {
       <CMSModal
         isShowFlg={showUpdate}
         onHide={hideUpdateModal}
-        configs={modalConfigs}
+        configs={constants.modalConfigs}
         title="Update this department"
         subTitle="Change this department info"
         onConfirmForm={edit}

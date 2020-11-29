@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
+import request from 'utils/request';
+import * as endpoints from 'endpoints';
 
 //------------------------------------------------------------------------------
 
@@ -17,6 +19,10 @@ export const sizePerPageList = [
 
 export const statusClasses = ['danger', 'success'];
 export const statusTitles = ['Deactivated', 'Activated'];
+
+// export const createColumns = ({ handleEdit, handleRemove }) =>
+//   columnsTransformer();
+// xóa caret, sortheader, constant.
 
 export const createColumns = ({ handleEdit, handleRemove }) =>
   columnsTransformer([
@@ -102,3 +108,50 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       },
     },
   ]);
+
+export const modalConfigs = [
+  {
+    name: 'name',
+    type: 'text',
+    label: 'Department name',
+    placeholder: 'Give this department a name...',
+  },
+  {
+    name: 'code',
+    type: 'text',
+    label: 'Department code',
+    smallLabel: 'Ex: Software Engineer to be "SE"',
+  },
+  {
+    name: 'approvers',
+    type: 'selectBoxAsync',
+    label: 'Approver',
+    smallLabel: 'Approvers for this department',
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_LECTURER.url,
+        method: endpoints.LIST_LECTURER.method,
+        params: {
+          q: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(
+            res.data.data?.map(i => ({
+              label: i.code,
+              value: i.lecturerID,
+            })) || []
+          );
+        })
+        .catch(() => callback([]));
+    },
+    isMulti: true,
+  },
+  {
+    name: 'status',
+    type: 'toggle',
+    label: 'Active state',
+    smallLabel: 'Is this department active',
+  },
+];
