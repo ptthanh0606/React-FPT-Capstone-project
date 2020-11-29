@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
+import { handleErrors } from 'utils/common';
 
 import {
   Card,
@@ -13,12 +14,36 @@ import {
 } from '_metronic/_partials/controls';
 
 import { Form } from 'react-bootstrap';
+import request from 'utils/request';
+import * as endpoints from 'endpoints';
+import { convertDateDown, convertDateUp } from './transformers';
+import toast from 'utils/toast';
+import FormGroups from 'components/CMSModal/FormGroups';
 
-const Infomation = () => {
+const Information = ({ loadData = function () {} }) => {
+  const [semesterName, setSemesterName] = React.useState('');
+  const [maxApplication, setMaxApplication] = React.useState('');
+  const [matchingDate, setMatchingDate] = React.useState('');
+  const [inprogressDate, setInprogressDate] = React.useState('');
+  const [finishedDate, setFinishedDate] = React.useState('');
+
   const setMeta = useSetRecoilState(metaAtom);
   const { id } = useParams();
 
   React.useEffect(() => {
+    request({
+      to: endpoints.READ_SEMESTER(id).url,
+      method: endpoints.READ_SEMESTER(id).method,
+    })
+      .then(({ data: { data } }) => {
+        setSemesterName(data?.name);
+        setMaxApplication(data?.maxTopicApplication);
+        setMatchingDate(convertDateDown(data?.assigningDate));
+        setInprogressDate(convertDateDown(data?.inProgressDate));
+        setFinishedDate(convertDateDown(data?.finishedDate));
+      })
+      .catch(handleErrors)
+      .finally();
     setMeta(meta => ({
       ...meta,
       title: 'Information of Fall 2020',
@@ -30,6 +55,35 @@ const Infomation = () => {
     }));
   }, [setMeta, id]);
 
+  const handleSave = React.useCallback(() => {
+    const payload = {
+      name: semesterName,
+      assigningDate: convertDateUp(matchingDate),
+      inProgressDate: convertDateUp(inprogressDate),
+      finishedDate: convertDateUp(finishedDate),
+      maxTopicApplication: maxApplication,
+    };
+    request({
+      to: endpoints.UPDATE_SEMESTER(id).url,
+      method: endpoints.UPDATE_SEMESTER(id).method,
+      data: payload,
+    })
+      .then(res => {
+        toast.success('Update successfully!');
+        loadData();
+      })
+      .catch(handleErrors)
+      .finally();
+  }, [
+    finishedDate,
+    id,
+    inprogressDate,
+    loadData,
+    matchingDate,
+    maxApplication,
+    semesterName,
+  ]);
+
   return (
     <>
       <Card>
@@ -38,7 +92,7 @@ const Infomation = () => {
             <button
               type="button"
               className="btn btn-primary font-weight-bold"
-              // onClick={}
+              onClick={handleSave}
             >
               <i className="fas fa-save mr-2"></i>
               Save
@@ -55,34 +109,11 @@ const Infomation = () => {
                 <Form.Control
                   type="text"
                   placeholder="Name"
-                  defaultValue="Fall 2020"
+                  onChange={e => setSemesterName(e.currentTarget.value)}
+                  defaultValue={semesterName}
                 />
               </Col>
             </Form.Group>
-            {/* <Form.Group as={Row} controlId="formHorizontalEmail">
-              <Form.Label column sm={3}>
-                Maximum topic per mentor
-              </Form.Label>
-              <Col sm={9}>
-                <Form.Control
-                  type="number"
-                  placeholder="Maximum topic per mentor"
-                  defaultValue="4"
-                />
-              </Col>
-            </Form.Group>
-            <Form.Group as={Row} controlId="formHorizontalEmail">
-              <Form.Label column sm={3}>
-                Maximum mentor per topic
-              </Form.Label>
-              <Col sm={9}>
-                <Form.Control
-                  type="number"
-                  placeholder="Maximum mentor per topic"
-                  defaultValue="3"
-                />
-              </Col>
-            </Form.Group> */}
             <Form.Group
               as={Row}
               controlId="formHorizontalEmail"
@@ -95,7 +126,8 @@ const Infomation = () => {
                 <Form.Control
                   type="number"
                   placeholder="Maximum applications per team"
-                  defaultValue="3"
+                  onChange={e => setMaxApplication(e.currentTarget.value)}
+                  defaultValue={maxApplication}
                 />
               </Col>
             </Form.Group>
@@ -108,7 +140,7 @@ const Infomation = () => {
             <button
               type="button"
               className="btn btn-primary font-weight-bold"
-              // onClick={}
+              onClick={handleSave}
             >
               <i className="fas fa-save mr-2"></i>
               Save
@@ -123,9 +155,12 @@ const Infomation = () => {
               </Form.Label>
               <Col sm={9}>
                 <Form.Control
-                  type="date"
+                  type="datetime-local"
                   placeholder="Date"
-                  defaultValue="11-11-2011"
+                  onChange={e =>
+                    setMatchingDate(convertDateDown(e.currentTarget.value))
+                  }
+                  value={matchingDate && convertDateUp(matchingDate)}
                 />
               </Col>
             </Form.Group>
@@ -135,9 +170,12 @@ const Infomation = () => {
               </Form.Label>
               <Col sm={9}>
                 <Form.Control
-                  type="date"
+                  type="datetime-local"
                   placeholder="Date"
-                  defaultValue="11-11-2011"
+                  onChange={e =>
+                    setInprogressDate(convertDateDown(e.currentTarget.value))
+                  }
+                  value={inprogressDate && convertDateUp(inprogressDate)}
                 />
               </Col>
             </Form.Group>
@@ -151,9 +189,12 @@ const Infomation = () => {
               </Form.Label>
               <Col sm={9}>
                 <Form.Control
-                  type="date"
+                  type="datetime-local"
                   placeholder="Date"
-                  defaultValue="11-11-2011"
+                  onChange={e =>
+                    setFinishedDate(convertDateDown(e.currentTarget.value))
+                  }
+                  value={finishedDate && convertDateUp(finishedDate)}
                 />
               </Col>
             </Form.Group>
@@ -164,4 +205,4 @@ const Infomation = () => {
   );
 };
 
-export default Infomation;
+export default React.memo(Information);

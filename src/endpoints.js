@@ -141,6 +141,18 @@ export const DELETE_SEMESTER = id => ({
 
 // -----------------------------------------------------------------------------
 
+export const LIST_ACTIVE_STUDENTS = id => ({
+  url: READ_SEMESTER(id).url + '/Students',
+  method: METHOD.GET,
+});
+
+export const DELETE_ACTIVE_STUDENTS = id => ({
+  url: READ_SEMESTER(id).url + '/Students',
+  method: METHOD.DELETE,
+});
+
+// -----------------------------------------------------------------------------
+
 export const LIST_STUDENT = {
   url: config.api + 'students',
   method: METHOD.GET,
