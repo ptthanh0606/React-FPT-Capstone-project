@@ -1,12 +1,13 @@
 import React from 'react';
 import { Card, CardBody } from '_metronic/_partials/controls';
-import metaAtom from 'store/meta';
-import { useSetRecoilState } from 'recoil';
 import Table from 'components/Table';
 import Filters from './Filters';
+
+import metaAtom from 'store/meta';
+import { useSetRecoilState } from 'recoil';
+import useConfirm from 'utils/confirm';
 import CMSModal from 'components/CMSModal/CMSModal';
 
-import useConfirm from 'utils/confirm';
 import toast from 'utils/toast';
 import { useDebounce } from 'use-debounce';
 import request from 'utils/request';
@@ -16,7 +17,7 @@ import * as endpoints from 'endpoints';
 import * as transformers from './transformers';
 import * as constants from './constants';
 
-export default function Lecturers() {
+export default function CustomersCard() {
   const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
 
@@ -57,12 +58,12 @@ export default function Lecturers() {
   const handleCreate = React.useCallback(fieldData => {
     setIsProcessing(true);
     request({
-      to: endpoints.CREATE_LECTURER.url,
-      method: endpoints.CREATE_LECTURER.method,
+      to: endpoints.CREATE_SEMESTER.url,
+      method: endpoints.CREATE_SEMESTER.method,
       data: transformers.up(fieldData),
     })
       .then(res => {
-        toast.success('Create lecturer successfully');
+        toast.success('Create semester successfully');
         setShowCreate(false);
         loadData();
         setFieldTemplate({});
@@ -81,12 +82,12 @@ export default function Lecturers() {
     fieldData => {
       setIsProcessing(true);
       request({
-        to: endpoints.UPDATE_LECTURER(editId).url,
-        method: endpoints.UPDATE_LECTURER(editId).method,
+        to: endpoints.UPDATE_SEMESTER(editId).url,
+        method: endpoints.UPDATE_SEMESTER(editId).method,
         data: transformers.up(fieldData),
       })
         .then(res => {
-          toast.success('Update lecturer successfully');
+          toast.success('Update semester successfully');
           setShowUpdate(false);
           loadData();
         })
@@ -103,9 +104,10 @@ export default function Lecturers() {
       toast.error('Internal Server Error');
       return;
     }
+
     request({
-      to: endpoints.READ_LECTURER(id).url,
-      method: endpoints.READ_LECTURER(id).method,
+      to: endpoints.READ_SEMESTER(id).url,
+      method: endpoints.READ_SEMESTER(id).method,
     })
       .then(res => {
         setEditId(id);
@@ -127,20 +129,20 @@ export default function Lecturers() {
         title: 'Removal Confirmation',
         body: (
           <>
-            Do you wanna remove this lecturer?
+            Do you wanna remove this semester?
             <br />
-            This lecturer will be <b>permanently removed</b>, and all historical
-            data belong to this lecturer too.
+            This semester will be <b>permanently removed</b>, and all historical
+            data belong to this semester too.
           </>
         ),
         onConfirm: () =>
           request({
-            to: endpoints.DELETE_LECTURER(id).url,
-            method: endpoints.DELETE_LECTURER(id).method,
+            to: endpoints.DELETE_SEMESTER(id).url,
+            method: endpoints.DELETE_SEMESTER(id).method,
           })
             .then(res => {
               loadData();
-              toast.success('Successfully remove lecturer');
+              toast.success('Successfully remove semester');
             })
             .catch(handleErrors),
       });
@@ -158,32 +160,12 @@ export default function Lecturers() {
   // ---------------------------------------------------------------------------
 
   React.useEffect(() => {
-    setMeta({
-      title: 'All lecturers',
-      breadcrumb: [
-        { title: 'Department', path: '/lecturer' },
-        { title: 'All lecturers', path: '/lecturer/all' },
-      ],
-      toolbar: (
-        <button
-          type="button"
-          className="btn btn-primary font-weight-bold btn-sm"
-          onClick={showCreateModal}
-        >
-          <i className="fas fa-plus mr-2"></i>
-          New
-        </button>
-      ),
-    });
-  }, [setMeta, showCreateModal]);
-
-  React.useEffect(() => {
     setIsLoading(true);
     const source = {};
 
     request({
-      to: endpoints.LIST_LECTURER.url,
-      method: endpoints.LIST_LECTURER.method,
+      to: endpoints.LIST_SEMESTER.url,
+      method: endpoints.LIST_SEMESTER.method,
       params: {
         ...debouncedFilters,
         pageNumber: page,
@@ -210,8 +192,28 @@ export default function Lecturers() {
     };
   }, [l, debouncedFilters, page, pageSize, sortField, sortOrder]);
 
+  React.useEffect(() => {
+    setMeta({
+      title: 'All semesters',
+      breadcrumb: [
+        { title: 'Semester', path: '/semester' },
+        { title: 'All semesters', path: '/semester/all' },
+      ],
+      toolbar: (
+        <button
+          type="button"
+          className="btn btn-primary font-weight-bold btn-sm"
+          onClick={showCreateModal}
+        >
+          <i className="fas fa-plus mr-2"></i>
+          New
+        </button>
+      ),
+    });
+  }, [setMeta, showCreateModal]);
+
   return (
-    <Card>
+    <Card style={{ marginTop: '1.5rem' }}>
       <CardBody>
         <Filters filters={filters} setFilters={setFilters} />
         <Table
@@ -237,8 +239,9 @@ export default function Lecturers() {
         isShowFlg={showCreate}
         onHide={hideCreateModal}
         configs={constants.modalConfigs}
-        title="Add new lecturer"
-        subTitle="Assign lecturer to the system"
+        primaryButtonLabel="Create"
+        title="Create new semester"
+        subTitle="Start a new capstone semester"
         onConfirmForm={handleCreate}
         fieldTemplate={fieldTemplate}
         isProcessing={isProcessing}
@@ -247,8 +250,8 @@ export default function Lecturers() {
         isShowFlg={showUpdate}
         onHide={hideUpdateModal}
         configs={constants.modalConfigs}
-        title="Update this lecturer"
-        subTitle="Change this lecturer info"
+        title="Update this semester"
+        subTitle="Change this semester info"
         onConfirmForm={edit}
         fieldTemplate={updateFieldTemplate}
         primaryButtonLabel="Update"

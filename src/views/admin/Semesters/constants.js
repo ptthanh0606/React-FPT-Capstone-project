@@ -2,8 +2,6 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
-import request from 'utils/request';
-import * as endpoints from 'endpoints';
 
 //------------------------------------------------------------------------------
 
@@ -34,14 +32,19 @@ export const statusClasses = [
 export const createColumns = ({ handleEdit, handleRemove }) =>
   columnsTransformer([
     {
-      dataField: 'code',
-      text: 'Code',
-      sort: true,
-    },
-    {
       dataField: 'name',
       text: 'Name',
       sort: true,
+      formatter: function StatusColumnFormatter(cellContent, row) {
+        return (
+          <Link
+            className="text-dark font-weight-bold"
+            to={'/semester/' + row.id}
+          >
+            {cellContent}
+          </Link>
+        );
+      },
     },
     {
       dataField: 'status',
@@ -50,34 +53,13 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       formatter: (cellContent, row) => {
         const getLabelCssClasses = () => {
           return `label label-lg label-light-${
-            statusClasses[row.status === true ? 1 : 0]
+            statusClasses[row.status]
           } label-inline text-nowrap`;
         };
         return (
           <span className={getLabelCssClasses()}>
-            {statusTitles[row.status === true ? 1 : 0]}
+            {statusTitles[row.status]}
           </span>
-        );
-      },
-    },
-    {
-      dataField: 'approvers',
-      text: 'Approvers',
-      formatter: function (cellContent, row) {
-        return (
-          <>
-            {cellContent?.length > 0 &&
-              cellContent
-                .map(i => (
-                  <Link
-                    className="text-dark font-weight-bold"
-                    to={'/profile/lecturer/' + i.value}
-                  >
-                    {i.label}
-                  </Link>
-                ))
-                .reduce((prev, curr) => [prev, ', ', curr])}
-          </>
         );
       },
     },
@@ -122,20 +104,6 @@ export const modalConfigs = [
     type: 'text',
     label: 'Semester name',
     placeholder: 'Semester name...',
-  },
-  {
-    name: 'maxTopic',
-    type: 'number',
-    label: 'Maximum topic per mentor',
-    smallLabel: 'Maximun number of topic that a lecturer can supervise',
-    placeholder: '10',
-  },
-  {
-    name: 'maxMentor',
-    type: 'number',
-    label: 'Maximum mentor per topic',
-    smallLabel: 'Maximum number of lecturer to supervise a topic',
-    placeholder: '10',
   },
   {
     name: 'maxApplications',

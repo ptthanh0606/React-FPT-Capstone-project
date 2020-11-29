@@ -9,7 +9,7 @@ import styles from './SelectSemester.module.scss';
 
 import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
-import Filters from 'views/admin/Semesters/SemesterFilters';
+import Filters from 'views/admin/Semesters/Filters';
 
 export const statusClasses = ['info', 'primary', 'warning', 'danger'];
 export const statusTitles = [

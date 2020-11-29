@@ -99,6 +99,10 @@ export default function Lecturers() {
   const handleEdit = React.useCallback(e => {
     e.preventDefault();
     const id = e.currentTarget.getAttribute('data-id');
+    if (!Number.isInteger(id)) {
+      toast.error('Internal Server Error');
+      return;
+    }
     request({
       to: endpoints.READ_STUDENT(id).url,
       method: endpoints.READ_STUDENT(id).method,
@@ -115,6 +119,10 @@ export default function Lecturers() {
     e => {
       e.preventDefault();
       const id = e.currentTarget.getAttribute('data-id');
+      if (!Number.isInteger(id)) {
+        toast.error('Internal Server Error');
+        return;
+      }
       confirm({
         title: 'Removal Confirmation',
         body: (

@@ -15,7 +15,7 @@ import * as constants from './constants';
 
 import SemesterCard from './SemesterCard';
 import ScrollContainer from 'react-indiana-drag-scroll';
-import styles from './NearestSemester.module.scss';
+import styles from './nearest.module.scss';
 
 export default React.memo(function NearestSemester() {
   const setMeta = useSetRecoilState(metaAtom);
@@ -23,6 +23,7 @@ export default React.memo(function NearestSemester() {
   const [l, loadData] = React.useReducer(() => ({}), {});
 
   const [data, setData] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   //----------------------------------------------------------------------------
 
@@ -60,6 +61,7 @@ export default React.memo(function NearestSemester() {
   // ---------------------------------------------------------------------------
 
   React.useEffect(() => {
+    setIsLoading(true);
     const source = {};
 
     request({
@@ -76,7 +78,8 @@ export default React.memo(function NearestSemester() {
       })
       .catch(err => {
         handleErrors(err);
-      });
+      })
+      .finally(() => setIsLoading(false));
 
     return () => {
       source.cancel();
@@ -108,9 +111,11 @@ export default React.memo(function NearestSemester() {
       <ScrollContainer
         className={styles['semester-scroll'] + ' alert-shadow gutter-b'}
       >
-        {data.map(s => (
-          <SemesterCard {...s} key={s.id} />
-        ))}
+        {isLoading ? (
+          <div className="mb-8">Loading...</div>
+        ) : (
+          data.map(s => <SemesterCard {...s} key={s.id} />)
+        )}
       </ScrollContainer>
       <div className={styles['nav-box']}>
         <Link to="/semester/all">View all semesters</Link>

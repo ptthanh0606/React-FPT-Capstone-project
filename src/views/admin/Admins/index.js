@@ -100,6 +100,10 @@ export default function CustomersCard() {
   const handleEdit = React.useCallback(e => {
     e.preventDefault();
     const id = e.currentTarget.getAttribute('data-id');
+    if (!Number.isInteger(id)) {
+      toast.error('Internal Server Error');
+      return;
+    }
     request({
       to: endpoints.READ_ADMIN(id).url,
       method: endpoints.READ_ADMIN(id).method,
@@ -116,6 +120,10 @@ export default function CustomersCard() {
     e => {
       e.preventDefault();
       const id = e.currentTarget.getAttribute('data-id');
+      if (!Number.isInteger(id)) {
+        toast.error('Internal Server Error');
+        return;
+      }
       confirm({
         title: 'Removal Confirmation',
         body: (
