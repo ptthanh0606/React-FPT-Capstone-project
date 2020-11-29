@@ -20,6 +20,11 @@ export function QuickUser() {
     history.push('/logout');
   };
 
+  const myprofileClick = e => {
+    e.preventDefault();
+    history.push('/profile/lecturer/1');
+  };
+
   return (
     <div
       id="kt_quick_user"
@@ -96,7 +101,7 @@ export function QuickUser() {
         <div className="separator separator-dashed mt-8 mb-5" />
 
         <div className="navi navi-spacer-x-0 p-0">
-          <a href="/user/profile" className="navi-item">
+          <a href="/" className="navi-item" onClick={myprofileClick}>
             <div className="navi-link">
               <div className="symbol symbol-40 bg-light mr-3">
                 <div className="symbol-label">

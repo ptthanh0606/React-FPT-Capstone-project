@@ -15,7 +15,6 @@ import React from 'react';
 
 import { useSetRecoilState } from 'recoil';
 import metaAtom from 'store/meta';
-import TestWidgets from 'components/CMSWidgets/TestWidgets';
 
 export default React.memo(function DashboardPage() {
   const setMeta = useSetRecoilState(metaAtom);
