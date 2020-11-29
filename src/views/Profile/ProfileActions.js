@@ -2,9 +2,12 @@ import React from 'react';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 import SVG from 'react-inlinesvg';
 import { useHistory } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { role } from 'auth/recoil/selectors';
 
 const ProfileActions = () => {
   const history = useHistory();
+  const userRole = useRecoilValue(role);
 
   const logoutClick = () => {
     const toggle = document.getElementById('kt_quick_user_toggle');
@@ -32,7 +35,7 @@ const ProfileActions = () => {
             >
               Phan Thong Thanh
             </a>
-            <div className="text-muted">Admin</div>
+            <div className="text-muted">{userRole}</div>
           </div>
         </div>
 
