@@ -39,6 +39,7 @@ const Semester = () => {
     name: '',
     status: 0,
   });
+  const [l, loadData] = React.useReducer(() => ({}), {});
   const history = useHistory();
 
   const handleRemove = React.useCallback(
@@ -108,7 +109,12 @@ const Semester = () => {
       .catch(err => {
         history.push('/semester');
       });
-  }, [history, id]);
+  }, [history, id, l]);
+
+  const WrappedInformation = React.useCallback(
+    () => <Information loadData={loadData} />,
+    [loadData]
+  );
 
   return (
     <Tab.Container id="left-tabs-example" defaultActiveKey="first">
@@ -166,7 +172,10 @@ const Semester = () => {
         </Col>
         <Col sm={9}>
           <Switch>
-            <Route path="/semester/:id/information" component={Information} />
+            <Route
+              path="/semester/:id/information"
+              component={WrappedInformation}
+            />
             <Route path="/semester/:id/topic" component={Topics} />
             <Route
               path="/semester/:id/active-student"
