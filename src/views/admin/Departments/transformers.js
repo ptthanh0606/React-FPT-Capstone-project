@@ -15,6 +15,13 @@ export function down(i) {
   };
 }
 
+export function mDown(i) {
+  return {
+    value: i?.id || console.log('id field not found'),
+    label: i?.code || console.log('code field not found'),
+  };
+}
+
 export function up(i) {
   return {
     code: i?.code,
@@ -25,6 +32,7 @@ export function up(i) {
 }
 
 // Down for list
+// Down for selection
 // Down for read
 // Up for update
 // Up for create
