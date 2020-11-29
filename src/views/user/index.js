@@ -28,6 +28,7 @@ function fetchSemester(
         setSemester({
           id: data.id,
           name: data.name,
+          status: data.status,
         });
         setLastSemester(data.id);
       })
