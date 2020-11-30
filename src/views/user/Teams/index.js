@@ -219,6 +219,7 @@ export default function CustomersCard() {
         { title: 'Fall 2020', path: '/semester/' + id },
         { title: 'Team', path: '/semester/' + id + '/team' },
       ],
+      toolbar: <></>,
     }));
   }, [setMeta, id]);
 
