@@ -7,7 +7,7 @@ const Filters = React.memo(({ filters, setFilters }) => {
       <Formik
         initialValues={{
           status: '',
-          searchText: '',
+          term: '',
         }}
         onSubmit={setFilters}
       >
@@ -45,12 +45,12 @@ const Filters = React.memo(({ filters, setFilters }) => {
                   <input
                     type="text"
                     className="form-control form-control-solid"
-                    name="searchText"
+                    name="term"
                     placeholder="Search"
                     onBlur={handleBlur}
-                    value={values.searchText}
+                    value={values.term}
                     onChange={e => {
-                      setFieldValue('searchText', e.target.value);
+                      setFieldValue('term', e.target.value);
                       handleSubmit();
                     }}
                   />
