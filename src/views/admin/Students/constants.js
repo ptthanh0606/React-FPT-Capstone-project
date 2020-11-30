@@ -118,7 +118,7 @@ export const modalConfigs = [
         to: endpoints.LIST_DEPARTMENT.url,
         method: endpoints.LIST_DEPARTMENT.method,
         params: {
-          q: input,
+          term: input,
           pageSize: 10,
         },
       })

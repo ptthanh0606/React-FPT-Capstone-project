@@ -134,7 +134,7 @@ export const modalConfigs = [
         to: endpoints.LIST_LECTURER.url,
         method: endpoints.LIST_LECTURER.method,
         params: {
-          q: input,
+          term: input,
           pageSize: 10,
         },
       })
