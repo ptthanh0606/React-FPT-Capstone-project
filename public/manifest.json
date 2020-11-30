@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "FPTU CMS",
+  "name": "Capstone Management System for FPT University",
+  "description": "A web application that provides management of capstone for staffs, lecturers, students in FPT University",
   "icons": [
     {
       "src": "favicon.ico",

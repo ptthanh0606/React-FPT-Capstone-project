@@ -41,7 +41,6 @@ export function up1(i) {
 }
 
 export function up2(i) {
-  console.log(i);
   return {
     assigningDate: convertDateUp(i?.matchingDate),
     inProgressDate: convertDateUp(i?.inprogressDate),

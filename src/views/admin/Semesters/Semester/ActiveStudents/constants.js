@@ -72,9 +72,10 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       },
     },
     {
-      dataField: 'added_at',
+      dataField: 'addedAt',
       text: 'Added at',
       sort: true,
+      formatter: (cellContent, row) => new Date(cellContent).toLocaleString(),
     },
     {
       dataField: 'action',

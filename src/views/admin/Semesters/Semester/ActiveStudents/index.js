@@ -310,8 +310,8 @@ export default function CustomersCard() {
         isShowFlg={showUpdate}
         onHide={hideUpdateModal}
         configs={constants.modalConfigs}
-        title="Create new checkpoint"
-        subTitle="Add a checkpoint to this semester"
+        title="Change information of this student"
+        subTitle="Change information of this student"
         onConfirmForm={edit}
         fieldTemplate={updateFieldTemplate}
         primaryButtonLabel="Update"

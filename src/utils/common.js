@@ -13,6 +13,7 @@ export function handleErrors(err) {
       }
     } else {
       toast.error('Internal Server Error');
+      console.log(err);
     }
 }
 

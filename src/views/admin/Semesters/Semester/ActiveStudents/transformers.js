@@ -1,12 +1,21 @@
+import format from 'date-fns/format';
+import subMinutes from 'date-fns/subMinutes';
+
 export function down(i) {
   return {
     id: i?.id || console.log('id field not found'),
     code: i?.code || console.log('code field not found'),
-    department: i?.department.code || console.log('department not found'),
+    department: i?.department?.code || console.log('department not found'),
     name: i?.name || console.log('name field not found'),
-    team: i?.team || console.log('team field not found'),
+    team: i?.team?.code || console.log('team field not found'),
     status: i?.status || console.log('status field not found'),
-    addedAt: i?.addedAt || console.log('addedAt field not found'),
+    addedAt:
+      (i?.addedAt &&
+        format(
+          subMinutes(new Date(i?.addedAt), new Date().getTimezoneOffset()),
+          "yyyy-MM-dd'T'hh:mm:ss.SSS"
+        )) ||
+      console.log('addedAt field not found'),
   };
 }
 
