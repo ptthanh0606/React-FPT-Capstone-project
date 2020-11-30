@@ -222,7 +222,6 @@ export default function CustomersCard() {
       source,
     })
       .then(res => {
-        console.log(res);
         setData(res.data?.data?.map(transformers.down));
         setTotal(res.data?.totalRecords);
         setPage(res.data?.pageNumber);

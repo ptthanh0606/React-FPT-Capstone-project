@@ -18,7 +18,7 @@ import request from 'utils/request';
 import * as endpoints from 'endpoints';
 import { convertDateDown, convertDateUp } from './transformers';
 import toast from 'utils/toast';
-import FormGroups from 'components/CMSModal/FormGroups';
+import { down } from './transformers';
 
 const Information = ({ loadData = function () {} }) => {
   const [semesterName, setSemesterName] = React.useState('');
@@ -36,6 +36,7 @@ const Information = ({ loadData = function () {} }) => {
       method: endpoints.READ_SEMESTER(id).method,
     })
       .then(({ data: { data } }) => {
+        console.log(down(data));
         setSemesterName(data?.name);
         setMaxApplication(data?.maxTopicApplication);
         setMatchingDate(convertDateDown(data?.assigningDate));

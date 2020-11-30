@@ -2,7 +2,7 @@ export function down(i) {
   return {
     id: i?.id || console.log('id field not found'),
     code: i?.code || console.log('code field not found'),
-    department: i?.department || console.log('department not found'),
+    department: i?.department.code || console.log('department not found'),
     name: i?.name || console.log('name field not found'),
     team: i?.team || console.log('team field not found'),
     status: i?.status || console.log('status field not found'),
