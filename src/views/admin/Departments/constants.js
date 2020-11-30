@@ -59,17 +59,18 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       formatter: function (cellContent, row) {
         return (
           <>
-            {cellContent?.length > 0 &&
-              cellContent
-                .map(i => (
-                  <Link
-                    className="text-dark font-weight-bold"
-                    to={'/profile/lecturer/' + i.value}
-                  >
-                    {i.label}
-                  </Link>
-                ))
-                .reduce((prev, curr) => [prev, ', ', curr])}
+            {cellContent?.length > 0
+              ? cellContent
+                  .map(i => (
+                    <Link
+                      className="text-dark font-weight-bold"
+                      to={'/profile/lecturer/' + i.value}
+                    >
+                      {i.label}
+                    </Link>
+                  ))
+                  .reduce((prev, curr) => [prev, ', ', curr])
+              : ''}
           </>
         );
       },
