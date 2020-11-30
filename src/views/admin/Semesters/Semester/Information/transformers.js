@@ -33,15 +33,10 @@ export function down(i) {
   };
 }
 
-export function up1(i) {
+export function up(i) {
   return {
     name: i?.name,
     maxTopicApplication: i?.maxApplication,
-  };
-}
-
-export function up2(i) {
-  return {
     assigningDate: convertDateUp(i?.matchingDate),
     inProgressDate: convertDateUp(i?.inprogressDate),
     finishedDate: convertDateUp(i?.finishedDate),

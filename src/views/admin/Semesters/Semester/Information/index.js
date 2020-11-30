@@ -17,7 +17,7 @@ import { Form } from 'react-bootstrap';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
 import toast from 'utils/toast';
-import { down, up1, up2 } from './transformers';
+import { down, up } from './transformers';
 import Button from 'components/Button';
 
 const Information = ({ loadData = function () {} }) => {
@@ -26,8 +26,7 @@ const Information = ({ loadData = function () {} }) => {
   const [matchingDate, setMatchingDate] = React.useState('');
   const [inprogressDate, setInprogressDate] = React.useState('');
   const [finishedDate, setFinishedDate] = React.useState('');
-  const [isLoading1, setIsLoading1] = React.useState(false);
-  const [isLoading2, setIsLoading2] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const setMeta = useSetRecoilState(metaAtom);
   const { id } = useParams();
@@ -59,32 +58,14 @@ const Information = ({ loadData = function () {} }) => {
     }));
   }, [setMeta, id]);
 
-  const handleSave1 = React.useCallback(() => {
-    setIsLoading1(true);
+  const handleSave = React.useCallback(() => {
+    setIsLoading(true);
     request({
       to: endpoints.UPDATE_SEMESTER(id).url,
       method: endpoints.UPDATE_SEMESTER(id).method,
-      data: up1({
+      data: up({
         name,
         maxApplication,
-      }),
-    })
-      .then(res => {
-        toast.success('Update successfully!');
-        loadData();
-      })
-      .catch(handleErrors)
-      .finally(() => {
-        setIsLoading1(false);
-      });
-  }, [id, loadData, maxApplication, name]);
-
-  const handleSave2 = React.useCallback(() => {
-    setIsLoading2(true);
-    request({
-      to: endpoints.UPDATE_SEMESTER(id).url,
-      method: endpoints.UPDATE_SEMESTER(id).method,
-      data: up2({
         matchingDate,
         inprogressDate,
         finishedDate,
@@ -95,10 +76,18 @@ const Information = ({ loadData = function () {} }) => {
         loadData();
       })
       .catch(handleErrors)
-      .finally(_ => {
-        setIsLoading2(false);
+      .finally(() => {
+        setIsLoading(false);
       });
-  }, [finishedDate, id, inprogressDate, loadData, matchingDate]);
+  }, [
+    finishedDate,
+    id,
+    inprogressDate,
+    loadData,
+    matchingDate,
+    maxApplication,
+    name,
+  ]);
 
   return (
     <>
@@ -108,8 +97,8 @@ const Information = ({ loadData = function () {} }) => {
             <Button
               type="button"
               className="btn btn-primary font-weight-bold"
-              onClick={handleSave1}
-              isLoading={isLoading1}
+              onClick={handleSave}
+              isLoading={isLoading}
             >
               <i className="fas fa-save mr-2"></i>
               Save
@@ -131,11 +120,7 @@ const Information = ({ loadData = function () {} }) => {
                 />
               </Col>
             </Form.Group>
-            <Form.Group
-              as={Row}
-              controlId="formHorizontalEmail"
-              style={{ marginBottom: 0 }}
-            >
+            <Form.Group as={Row} controlId="formHorizontalEmail">
               <Form.Label column sm={3}>
                 Maximum applications per team
               </Form.Label>
@@ -148,25 +133,6 @@ const Information = ({ loadData = function () {} }) => {
                 />
               </Col>
             </Form.Group>
-          </Form>
-        </CardBody>
-      </Card>
-      <Card>
-        <CardHeader title="Phases">
-          <CardHeaderToolbar>
-            <Button
-              type="button"
-              className="btn btn-primary font-weight-bold"
-              onClick={handleSave2}
-              isLoading={isLoading2}
-            >
-              <i className="fas fa-save mr-2"></i>
-              Save
-            </Button>
-          </CardHeaderToolbar>
-        </CardHeader>
-        <CardBody>
-          <Form>
             <Form.Group as={Row} controlId="formHorizontalEmail">
               <Form.Label column sm={3}>
                 Matching
@@ -175,7 +141,7 @@ const Information = ({ loadData = function () {} }) => {
                 <Form.Control
                   type="datetime-local"
                   placeholder="Date"
-                  onChange={e => e.currentTarget.value}
+                  onChange={e => setMatchingDate(e.currentTarget.value)}
                   value={matchingDate}
                 />
               </Col>
@@ -188,7 +154,7 @@ const Information = ({ loadData = function () {} }) => {
                 <Form.Control
                   type="datetime-local"
                   placeholder="Date"
-                  onChange={e => e.currentTarget.value}
+                  onChange={e => setInprogressDate(e.currentTarget.value)}
                   value={inprogressDate}
                 />
               </Col>
@@ -205,7 +171,7 @@ const Information = ({ loadData = function () {} }) => {
                 <Form.Control
                   type="datetime-local"
                   placeholder="Date"
-                  onChange={e => e.currentTarget.value}
+                  onChange={e => setFinishedDate(e.currentTarget.value)}
                   value={finishedDate}
                 />
               </Col>
