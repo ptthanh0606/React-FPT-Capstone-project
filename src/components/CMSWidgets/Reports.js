@@ -17,14 +17,6 @@ const Reports = ({ className }) => {
       {/* Body */}
       <div className="card-body pt-2">
         <div className="d-flex align-items-center mb-10">
-          <div className="symbol symbol-40 symbol-light-success mr-5">
-            <span className="symbol-label">
-              <SVG
-                className="h-75 align-self-end"
-                // src={toAbsoluteUrl('/media/svg/avatars/009-boy-4.svg')}
-              ></SVG>
-            </span>
-          </div>
           <div className="d-flex flex-column flex-grow-1 font-weight-bold">
             <a
               href="/"
@@ -34,16 +26,11 @@ const Reports = ({ className }) => {
             </a>
             <span className="text-muted">At 10:30AM 6 June 2020</span>
           </div>
+          <span class="font-weight-bolder label label-xl label-light-success label-inline px-3 py-5 min-w-45px">
+            3.2
+          </span>
         </div>
         <div className="d-flex align-items-center mb-10">
-          <div className="symbol symbol-40 symbol-light-success mr-5">
-            <span className="symbol-label">
-              <SVG
-                className="h-75 align-self-end"
-                // src={toAbsoluteUrl('/media/svg/avatars/006-girl-3.svg')}
-              ></SVG>
-            </span>
-          </div>
           <div className="d-flex flex-column flex-grow-1 font-weight-bold">
             <a
               href="/"
@@ -53,16 +40,11 @@ const Reports = ({ className }) => {
             </a>
             <span className="text-muted">At 10:30AM 6 June 2020</span>
           </div>
+          <span class="font-weight-bolder label label-xl label-light-success label-inline px-3 py-5 min-w-45px">
+            3.2
+          </span>
         </div>
         <div className="d-flex align-items-center mb-10">
-          <div className="symbol symbol-40 symbol-light-success mr-5">
-            <span className="symbol-label">
-              <SVG
-                className="h-75 align-self-end"
-                // src={toAbsoluteUrl('/media/svg/avatars/011-boy-5.svg')}
-              ></SVG>
-            </span>
-          </div>
           <div className="d-flex flex-column flex-grow-1 font-weight-bold">
             <a
               href="/"
@@ -72,16 +54,11 @@ const Reports = ({ className }) => {
             </a>
             <span className="text-muted">At 10:30AM 6 June 2020</span>
           </div>
+          <span class="font-weight-bolder label label-xl label-light-success label-inline px-3 py-5 min-w-45px">
+            3.2
+          </span>
         </div>
         <div className="d-flex align-items-center">
-          <div className="symbol symbol-40 symbol-light-success mr-5">
-            <span className="symbol-label">
-              <SVG
-                className="h-75 align-self-end"
-                // src={toAbsoluteUrl('/media/svg/avatars/015-boy-6.svg')}
-              ></SVG>
-            </span>
-          </div>
           <div className="d-flex flex-column flex-grow-1 font-weight-bold">
             <a
               href="/"
@@ -91,6 +68,9 @@ const Reports = ({ className }) => {
             </a>
             <span className="text-muted">At 10:30AM 6 June 2020</span>
           </div>
+          <span class="font-weight-bolder label label-xl label-light-success label-inline px-3 py-5 min-w-45px">
+            3.2
+          </span>
         </div>
       </div>
     </div>
