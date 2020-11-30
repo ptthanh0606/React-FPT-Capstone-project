@@ -6,8 +6,7 @@ export default function CustomersFilter({ filters, setFilters }) {
     <>
       <Formik
         initialValues={{
-          status: '',
-          searchText: '',
+          term: '',
         }}
         onSubmit={setFilters}
       >
@@ -20,37 +19,17 @@ export default function CustomersFilter({ filters, setFilters }) {
         }) => (
           <form onSubmit={handleSubmit} className="form form-label-right">
             <div className="form-group row">
-              <div className="col-lg-2">
-                <select
-                  className="form-control form-control-solid"
-                  name="status"
-                  placeholder="Filter by Department"
-                  onChange={e => {
-                    setFieldValue('status', e.target.value);
-                    handleSubmit();
-                  }}
-                  onBlur={handleBlur}
-                  value={values.status}
-                >
-                  <option value="">All</option>
-                  <option value="0">Deactivated</option>
-                  <option value="1">Activated</option>
-                </select>
-                <small className="form-text text-muted">
-                  Filter by <b>status</b>
-                </small>
-              </div>
-              <div className="col-lg-10">
+              <div className="col-12">
                 <div className="input-icon">
                   <input
                     type="text"
                     className="form-control form-control-solid"
-                    name="searchText"
+                    name="term"
                     placeholder="Search"
                     onBlur={handleBlur}
                     value={values.searchText}
                     onChange={e => {
-                      setFieldValue('searchText', e.target.value);
+                      setFieldValue('term', e.target.value);
                       handleSubmit();
                     }}
                   />
