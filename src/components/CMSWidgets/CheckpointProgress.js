@@ -128,12 +128,6 @@ const CheckpointProgress = () => {
             </div>
           </div>
         </div>
-        <div className="resize-triggers">
-          <div className="expand-trigger">
-            <div style={{ width: '415px', height: '448px' }}></div>
-          </div>
-          <div className="contract-trigger"></div>
-        </div>
       </div>
     </div>
   );
