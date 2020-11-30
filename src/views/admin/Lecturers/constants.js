@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
+import { mDown as mDownDep } from '../Departments/transformers';
 
 //------------------------------------------------------------------------------
 export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
@@ -147,12 +148,7 @@ export const modalConfigs = [
         },
       })
         .then(res => {
-          callback(
-            res.data.data?.map(i => ({
-              label: i.code,
-              value: i.id,
-            })) || []
-          );
+          callback(res.data.data?.map(mDownDep) || []);
         })
         .catch(() => callback([]));
     },

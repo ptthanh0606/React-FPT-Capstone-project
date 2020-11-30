@@ -9,7 +9,7 @@ export function down(i) {
     name: i?.name || console.log('name field not found'),
     approvers:
       i?.approvers?.map(j => ({
-        value: j?.lecturerID,
+        value: j?.id,
         label: j?.code,
       })) || (console.log('approvers field not found'), []),
   };

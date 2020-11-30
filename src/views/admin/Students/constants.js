@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
-import { mDown as depTrans } from '../Departments/transformers';
+import { mDown as mDownDep } from '../Departments/transformers';
 
 //------------------------------------------------------------------------------
 
@@ -123,7 +123,7 @@ export const modalConfigs = [
         },
       })
         .then(res => {
-          callback(res?.data?.data?.map(depTrans) || []);
+          callback(res?.data?.data?.map(mDownDep) || []);
         })
         .catch(() => callback([]));
     },

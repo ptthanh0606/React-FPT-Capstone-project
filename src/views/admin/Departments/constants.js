@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
+import { mDown as mDownLec } from 'views/admin/Lecturers/transformers';
 
 //------------------------------------------------------------------------------
 
@@ -138,12 +139,7 @@ export const modalConfigs = [
         },
       })
         .then(res => {
-          callback(
-            res.data.data?.map(i => ({
-              label: i.code,
-              value: i.lecturerID,
-            })) || []
-          );
+          callback(res.data.data?.map(mDownLec) || []);
         })
         .catch(() => callback([]));
     },
