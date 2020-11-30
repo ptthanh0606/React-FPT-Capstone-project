@@ -108,7 +108,7 @@ export const UPDATE_ADMIN = id => ({
 });
 
 export const DELETE_ADMIN = id => ({
-  url: READ_LECTURER(id).url,
+  url: READ_ADMIN(id).url,
   method: METHOD.DELETE,
 });
 
