@@ -165,3 +165,57 @@ export const DELETE_STUDENT = id => ({
   url: READ_STUDENT(id).url,
   method: METHOD.DELETE,
 });
+
+// -----------------------------------------------------------------------------
+
+export const LIST_TEAM = {
+  url: config.api + 'teams',
+  method: METHOD.GET,
+};
+
+export const CREATE_TEAM = {
+  url: LIST_TEAM.url + '/createTeam',
+  method: METHOD.POST,
+};
+
+export const READ_TEAM = {
+  url: LIST_TEAM.url + '/viewTeam',
+  method: METHOD.GET,
+};
+
+export const UPDATE_TEAM = {
+  url: LIST_TEAM.url + '/edit',
+  method: METHOD.PUT,
+};
+
+export const DELETE_TEAM = {
+  url: LIST_TEAM.url + '/',
+  method: METHOD.DELETE,
+};
+
+// -----------------------------------------------------------------------------
+
+export const LIST_COUNCIL = id => ({
+  url: config.api + 'semesters/' + id + '/councils',
+  method: METHOD.GET,
+});
+
+export const CREATE_COUNCIL = id => ({
+  url: LIST_COUNCIL(id).url,
+  method: METHOD.POST,
+});
+
+export const READ_COUNCIL = (id, id2) => ({
+  url: LIST_COUNCIL(id).url + '/' + id2,
+  method: METHOD.GET,
+});
+
+export const UPDATE_COUNCIL = (id, id2) => ({
+  url: READ_COUNCIL(id, id2).url,
+  method: METHOD.PUT,
+});
+
+export const DELETE_COUNCIL = (id, id2) => ({
+  url: READ_COUNCIL(id, id2).url,
+  method: METHOD.DELETE,
+});

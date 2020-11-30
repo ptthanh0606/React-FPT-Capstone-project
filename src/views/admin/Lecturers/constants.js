@@ -52,10 +52,11 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       formatter: function (cellContent, row) {
         return (
           <>
-            {cellContent?.length > 0 &&
-              cellContent
-                .map(i => (i.isApprover ? <u>{i.label}</u> : <>{i.label}</>))
-                .reduce((prev, curr) => [prev, ', ', curr])}
+            {cellContent?.length > 0
+              ? cellContent
+                  .map(i => (i.isApprover ? <u>{i.label}</u> : <>{i.label}</>))
+                  .reduce((prev, curr) => [prev, ', ', curr])
+              : ''}
           </>
         );
       },

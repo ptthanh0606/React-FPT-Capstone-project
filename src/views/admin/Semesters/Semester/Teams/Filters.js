@@ -55,9 +55,8 @@ export default function CustomersFilter({ filters, setFilters }) {
                   value={values.status}
                 >
                   <option value="">All</option>
-                  <option value="0">Not in a team</option>
-                  <option value="1">Matching</option>
-                  <option value="2">Matched</option>
+                  <option value="0">Matching</option>
+                  <option value="1">Matched</option>
                 </select>
                 <small className="form-text text-muted">
                   Filter by <b>status</b>
