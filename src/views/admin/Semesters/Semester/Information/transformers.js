@@ -13,3 +13,11 @@ export function convertDateUp(dateInput) {
     "yyyy-MM-dd'T'hh:mm:ss.SSS"
   );
 }
+
+export function down(i) {
+  return {
+    id: i?.id || console.log('id field not found'),
+    name: i?.name || console.log('name field not found'),
+    status: i?.status || console.log('status field not found'),
+  };
+}

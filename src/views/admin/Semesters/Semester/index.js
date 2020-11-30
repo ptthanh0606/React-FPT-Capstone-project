@@ -140,28 +140,35 @@ const Semester = () => {
                 Checkpoints
               </NavLink>
               <NavLink
-                to={'/semester/' + id + '/topic'}
+                to={'/semester/' + id + '/topic' + '?dep=all&status=all'}
                 activeClassName={styles['active']}
                 className={styles['menu-item']}
               >
                 Topics
               </NavLink>
               <NavLink
-                to={'/semester/' + id + '/active-student'}
+                to={
+                  '/semester/' + id + '/active-student' + '?dep=all&status=all'
+                }
                 activeClassName={styles['active']}
                 className={styles['menu-item']}
               >
                 Active students
               </NavLink>
               <NavLink
-                to={'/semester/' + id + '/council'}
+                to={'/semester/' + id + '/council' + '?dep=all'}
                 activeClassName={styles['active']}
                 className={styles['menu-item']}
               >
                 Councils
               </NavLink>
               <NavLink
-                to={'/semester/' + id + '/team'}
+                to={
+                  '/semester/' +
+                  id +
+                  '/team' +
+                  '?dep=all&status=all&lock=all&private=all'
+                }
                 activeClassName={styles['active']}
                 className={styles['menu-item']}
               >
