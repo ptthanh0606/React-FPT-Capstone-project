@@ -6,7 +6,7 @@ import {
   CardHeaderToolbar,
 } from '_metronic/_partials/controls';
 import metaAtom from 'store/meta';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from './Filters';
@@ -14,6 +14,8 @@ import { Link } from 'react-router-dom';
 
 import { useParams } from 'react-router-dom';
 import CMSModal from 'components/CMSModal/CMSModal';
+import { role } from 'auth/recoil/selectors';
+import ToggleSwitch from 'components/ToggleSwitch/ToggleSwitch';
 
 export const statusClasses = ['danger', 'success', 'info', ''];
 export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
@@ -146,9 +148,134 @@ export default function CustomersCard() {
     false
   );
   const [selectedId, setSelectedId] = React.useState();
+  const currentRole = useRecoilValue(role);
+  const [mineTopicFlg, setMineTopicFlg] = React.useState(true);
 
   const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
+
+  // ------------------------------------------------------------------
+
+  const showNewTopicModal = React.useCallback(() => {
+    setShowedNewTopicModal(true);
+  }, []);
+
+  const hideNewTopicModal = React.useCallback(() => {
+    setShowedNewTopicModal(false);
+  }, []);
+
+  const showUpdateTopicModal = React.useCallback(() => {
+    setUpdateFieldTemplate({
+      topicCode: 'FA20SE13',
+      name: 'Capstone Management System for FPT University',
+      description: 'Lorem ipsum dolor description',
+      note: 'Lorem ipsum note dolor note',
+      maxMem: 4,
+      minMem: 0,
+      department: 'se',
+      isByStudent: false,
+      mentorGroup: [
+        {
+          label: 'Huynh Duc Duy',
+          value: 'Huynh Duc Duy',
+        },
+        {
+          label: 'Tran Tuan Anh',
+          value: 'Tran Tuan Anh',
+        },
+      ],
+      studentTeam: [
+        {
+          label: 'Phan Thong Thanh',
+          value: 'Phan Thong Thanh',
+        },
+        {
+          label: 'Tran Thai Trung',
+          value: 'Tran Thai Trung',
+        },
+      ],
+      keywords: [
+        {
+          label: 'capstone',
+          value: 'capstone',
+        },
+        {
+          label: 'management',
+          value: 'management',
+        },
+        {
+          label: 'system',
+          value: 'system',
+        },
+      ],
+      attachment: {},
+    });
+    setShowedUpdateTopicModal(true);
+  }, []);
+
+  const hideUpdateTopicModal = React.useCallback(() => {
+    setShowedUpdateTopicModal(false);
+  }, []);
+
+  const handleOnCreateTopic = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
+
+  const handleOnUpdateTopic = React.useCallback(fieldData => {
+    console.log(fieldData);
+  }, []);
+
+  const toolBar = React.useCallback(() => {
+    let buttons = <></>;
+    switch (currentRole) {
+      case 'student':
+        buttons = <></>;
+        break;
+
+      case 'admin':
+        buttons = (
+          <>
+            <button
+              type="button"
+              className="btn btn-primary font-weight-bold btn-sm btn-light mr-2"
+            >
+              <i className="fas fa-cog mr-2"></i>
+              Settings
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary font-weight-bold"
+              onClick={showNewTopicModal}
+            >
+              <i className="fas fa-paper-plane mr-2"></i>
+              Submit
+            </button>
+          </>
+        );
+        break;
+
+      case 'lecturer':
+        buttons = (
+          <>
+            <button
+              type="button"
+              className="btn btn-primary font-weight-bold"
+              onClick={showNewTopicModal}
+            >
+              <i className="fas fa-paper-plane mr-2"></i>
+              Submit
+            </button>
+          </>
+        );
+        break;
+
+      default:
+        break;
+    }
+    return buttons;
+  }, [currentRole, showNewTopicModal]);
+
+  // ------------------------------------------------------------------
 
   React.useEffect(() => {
     setMeta(meta => ({
@@ -159,8 +286,9 @@ export default function CustomersCard() {
         { title: 'Fall 2020', path: '/semester/' + id },
         { title: 'Topic', path: '/semester/' + id + '/topic' },
       ],
+      toolbar: toolBar(),
     }));
-  }, [setMeta, id]);
+  }, [setMeta, id, toolBar]);
 
   React.useEffect(() => {
     setData(mockData);
@@ -343,75 +471,6 @@ export default function CustomersCard() {
     });
   }, []);
 
-  const showNewTopicModal = React.useCallback(() => {
-    setShowedNewTopicModal(true);
-  }, []);
-
-  const hideNewTopicModal = React.useCallback(() => {
-    setShowedNewTopicModal(false);
-  }, []);
-
-  const showUpdateTopicModal = React.useCallback(() => {
-    setUpdateFieldTemplate({
-      topicCode: 'FA20SE13',
-      name: 'Capstone Management System for FPT University',
-      description: 'Lorem ipsum dolor description',
-      note: 'Lorem ipsum note dolor note',
-      maxMem: 4,
-      minMem: 0,
-      department: 'se',
-      isByStudent: false,
-      mentorGroup: [
-        {
-          label: 'Huynh Duc Duy',
-          value: 'Huynh Duc Duy',
-        },
-        {
-          label: 'Tran Tuan Anh',
-          value: 'Tran Tuan Anh',
-        },
-      ],
-      studentTeam: [
-        {
-          label: 'Phan Thong Thanh',
-          value: 'Phan Thong Thanh',
-        },
-        {
-          label: 'Tran Thai Trung',
-          value: 'Tran Thai Trung',
-        },
-      ],
-      keywords: [
-        {
-          label: 'capstone',
-          value: 'capstone',
-        },
-        {
-          label: 'management',
-          value: 'management',
-        },
-        {
-          label: 'system',
-          value: 'system',
-        },
-      ],
-      attachment: {},
-    });
-    setShowedUpdateTopicModal(true);
-  }, []);
-
-  const hideUpdateTopicModal = React.useCallback(() => {
-    setShowedUpdateTopicModal(false);
-  }, []);
-
-  const handleOnCreateTopic = React.useCallback(fieldData => {
-    console.log(fieldData);
-  }, []);
-
-  const handleOnUpdateTopic = React.useCallback(fieldData => {
-    console.log(fieldData);
-  }, []);
-
   function ActionsColumnFormatter(cellContent, row, rowIndex) {
     return (
       <>
@@ -426,7 +485,7 @@ export default function CustomersCard() {
               showUpdateTopicModal();
             }}
           >
-            <i className="fas fa-crosshairs mx-2"></i>
+            <i className="fas fa-pencil-alt mx-2"></i>
           </a>
           <a
             href="/"
@@ -437,7 +496,39 @@ export default function CustomersCard() {
               setSelectedId(row.id);
             }}
           >
-            <i className="fas fa-thumbs-up mx-2"></i>
+            <i className="far fa-trash-alt mx-2"></i>
+          </a>
+        </span>
+      </>
+    );
+  }
+
+  function ApprovalColumnFormatter(cellContent, row, rowIndex) {
+    return (
+      <>
+        <span className="text-nowrap">
+          <a
+            href="/"
+            title="Approve selected topic"
+            className="btn btn-icon btn-light btn-hover-success btn-sm mx-3"
+            onClick={event => {
+              event.preventDefault();
+              setSelectedId(row.id);
+              showUpdateTopicModal();
+            }}
+          >
+            <i className="fas far fa-check-circle mx-2"></i>
+          </a>
+          <a
+            href="/"
+            title="Reject selected topic"
+            className="btn btn-icon btn-light btn-hover-danger btn-sm"
+            onClick={event => {
+              event.preventDefault();
+              setSelectedId(row.id);
+            }}
+          >
+            <i className="fas far fa-times-circle mx-2"></i>
           </a>
         </span>
       </>
@@ -587,20 +678,29 @@ export default function CustomersCard() {
         minWidth: '100px',
       },
     },
+    {
+      dataField: 'approval',
+      text: 'Approvals',
+      formatter: ApprovalColumnFormatter,
+      formatExtraData: {},
+      classes: 'text-right pr-0',
+      headerClasses: 'text-right pr-3',
+      style: {
+        minWidth: '100px',
+      },
+    },
   ];
 
   return (
     <Card>
       <CardHeader title="All topics">
         <CardHeaderToolbar className="text-nowrap">
-          <button
-            type="button"
-            className="btn btn-primary font-weight-bold"
-            onClick={showNewTopicModal}
-          >
-            <i className="fas fa-paper-plane mr-2"></i>
-            Submit
-          </button>
+          <span className="mr-2">Show mine only</span>
+          <ToggleSwitch
+            onChange={e => setMineTopicFlg(e.currentTarget.checked)}
+            isActive={mineTopicFlg}
+            className={'switch-primary'}
+          />
         </CardHeaderToolbar>
       </CardHeader>
       <CardBody>
@@ -622,6 +722,7 @@ export default function CustomersCard() {
           setSortOrder={setSortOrder}
           defaultSorted={defaultSorted}
           pageSizeList={sizePerPageList}
+          selectable={false}
         />
       </CardBody>
       <CMSModal
