@@ -118,9 +118,6 @@ export default React.memo(function Teams() {
       request({
         to: endpoints.READ_COUNCIL(semId, id).url,
         method: endpoints.READ_COUNCIL(semId, id).method,
-        params: {
-          councilId: id,
-        },
       })
         .then(res => {
           setEditId(id);

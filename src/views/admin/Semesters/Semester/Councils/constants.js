@@ -2,6 +2,10 @@ import React from 'react';
 
 import { columnsTransformer } from 'utils/common';
 import { Link } from 'react-router-dom';
+import * as endpoints from 'endpoints';
+import { mDown as mDownDep } from 'views/admin/Departments/transformers';
+import { mDown as mDownLec } from 'views/admin/Lecturers/transformers';
+import request from 'utils/request';
 
 //------------------------------------------------------------------------------
 
@@ -96,22 +100,43 @@ export const modalConfigs = [
   },
   {
     name: 'department',
-    type: 'selectBox',
+    type: 'selectBoxAsync',
     label: 'Department',
-    smallLabel: 'This council belong to which department',
-    options: [
-      {
-        label: 'SE',
-        value: 'se',
-      },
-      {
-        label: 'GD',
-        value: 'gd',
-      },
-      {
-        label: 'CC',
-        value: 'cc',
-      },
-    ],
+    smallLabel: 'This team belong to which department',
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_DEPARTMENT.url,
+        method: endpoints.LIST_DEPARTMENT.method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownDep) || []);
+        })
+        .catch(() => callback([]));
+    },
+  },
+  {
+    name: 'members',
+    type: 'selectBoxAsync',
+    label: 'Members',
+    smallLabel: 'Member of this council, first member is leader',
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_LECTURER.url,
+        method: endpoints.LIST_LECTURER.method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownLec) || []);
+        })
+        .catch(() => callback([]));
+    },
+    isMulti: true,
   },
 ];

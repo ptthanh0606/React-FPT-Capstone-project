@@ -72,11 +72,25 @@ const AddActiveStudentModal = ({ isShowFlg, onHide, onAdd }) => {
     onAdd(selected);
   };
 
+  const onHideModal = React.useCallback(() => {
+    setFilters({});
+    setSelected([]);
+    setPage(1);
+    setPageSize(constants.sizePerPageList[0].value);
+    onHide();
+  }, [onHide]);
+
+  React.useEffect(() => {
+    if (isShowFlg) {
+      loadData();
+    }
+  }, [isShowFlg]);
+
   return (
     <Modal
       size="xl"
       show={isShowFlg}
-      onHide={onHide}
+      onHide={onHideModal}
       aria-labelledby="example-modal-sizes-title-lg"
     >
       <Modal.Header closeButton>
@@ -110,11 +124,11 @@ const AddActiveStudentModal = ({ isShowFlg, onHide, onAdd }) => {
         />
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
+        <Button variant="secondary" onClick={onHideModal}>
           Close
         </Button>
         <Button variant="primary" onClick={handleAddStudent}>
-          Add selected
+          Add ({selected.length}) selected
         </Button>
       </Modal.Footer>
     </Modal>

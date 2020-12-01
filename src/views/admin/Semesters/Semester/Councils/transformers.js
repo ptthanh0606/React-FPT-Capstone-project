@@ -31,8 +31,8 @@ export function mDown(i) {
 
 export function up(i) {
   return {
-    code: i?.code,
     name: i?.name,
-    email: i?.email,
+    departmentId: i?.department?.value,
+    lecturerIds: i?.members?.map(j => j.value),
   };
 }
