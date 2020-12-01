@@ -1,4 +1,5 @@
 import toast from 'utils/toast';
+import React from 'react';
 
 import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 
@@ -12,6 +13,7 @@ export function handleErrors(err) {
       }
     } else {
       toast.error('Internal Server Error');
+      console.log(err);
     }
 }
 
@@ -31,4 +33,18 @@ export function columnsTransformer(cols) {
   }
 
   return newCols;
+}
+
+export function columnFormatter(classes, titles) {
+  return function (cellContent, row) {
+    if (cellContent !== undefined) {
+      const getLabelCssClasses = () => {
+        return `label label-lg label-light-${classes[cellContent]} label-inline text-nowrap text-nowrap`;
+      };
+      return (
+        <span className={getLabelCssClasses()}>{titles[cellContent]}</span>
+      );
+    }
+    return '';
+  };
 }

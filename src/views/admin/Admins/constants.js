@@ -70,6 +70,12 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
 
 export const modalConfigs = [
   {
+    name: 'code',
+    type: 'text',
+    label: 'Admin code',
+    placeholder: 'Admin code',
+  },
+  {
     name: 'name',
     type: 'text',
     label: 'Admin full name',
@@ -80,11 +86,5 @@ export const modalConfigs = [
     type: 'text',
     label: 'Admin email',
     placeholder: 'Enter admin @fpt.edu.vn email...',
-  },
-  {
-    name: 'isActive',
-    type: 'toggle',
-    label: 'Active state',
-    smallLabel: 'Is this admin active',
   },
 ];

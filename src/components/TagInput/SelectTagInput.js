@@ -69,8 +69,8 @@ const SelectTagInput = ({
   error = '',
   load = function () {},
   isClearable = true,
-  placeholder,
-  isMulti,
+  placeholder = '',
+  isMulti = false,
 }) => {
   return (
     <>

@@ -8,7 +8,6 @@ import { columnsTransformer } from 'utils/common';
 export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 
 export const sizePerPageList = [
-  { text: '5', value: 5 },
   { text: '10', value: 10 },
   { text: '20', value: 20 },
   { text: '50', value: 50 },
@@ -114,7 +113,7 @@ export const modalConfigs = [
     placeholder: 'Semester name...',
   },
   {
-    name: 'maxApplications',
+    name: 'maxApplication',
     type: 'number',
     label: 'Maximum applications per team',
     smallLabel:
@@ -123,21 +122,21 @@ export const modalConfigs = [
   },
   {
     name: 'matchingDate',
-    type: 'date',
+    type: 'datetime-local',
     label: 'Matching',
     smallLabel:
       'Ending date of Matching-phase, all team must matched with a topic before this day',
   },
   {
     name: 'inprogressDate',
-    type: 'date',
+    type: 'datetime-local',
     label: 'In progress',
     smallLabel:
       'Ending date of In-progress-phase, all team must have done the capstone project and waiting for final evaluation',
   },
   {
-    name: 'finishDate',
-    type: 'date',
+    name: 'finishedDate',
+    type: 'datetime-local',
     label: 'Finished',
     smallLabel:
       'Ending date of Finished-phase (and semester as well), all evaluation is published.',

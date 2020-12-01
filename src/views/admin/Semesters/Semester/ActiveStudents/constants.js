@@ -8,15 +8,14 @@ import { columnsTransformer } from 'utils/common';
 export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 
 export const sizePerPageList = [
-  { text: '5', value: 5 },
   { text: '10', value: 10 },
   { text: '20', value: 20 },
   { text: '50', value: 50 },
   { text: '100', value: 100 },
 ];
 
-export const statusClasses = ['danger', 'success'];
-export const statusTitles = ['Deactivated', 'Activated', 'Deactivated'];
+export const statusClasses = ['danger', 'warning', 'success'];
+export const statusTitles = ['Not in a team', 'Matching', 'Matched'];
 
 // export const createColumns = ({ handleEdit, handleRemove }) =>
 //   columnsTransformer();
@@ -53,6 +52,9 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       dataField: 'team',
       text: 'Team',
       sort: true,
+      formatter: (cellContent, row) => {
+        return cellContent.label;
+      },
     },
     {
       dataField: 'status',
@@ -72,9 +74,10 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       },
     },
     {
-      dataField: 'added_at',
+      dataField: 'addedAt',
       text: 'Added at',
       sort: true,
+      formatter: (cellContent, row) => new Date(cellContent).toLocaleString(),
     },
     {
       dataField: 'action',

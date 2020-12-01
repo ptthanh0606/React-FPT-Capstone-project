@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
+import { mDown as mDownDep } from '../Departments/transformers';
 
 //------------------------------------------------------------------------------
 export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
@@ -52,10 +53,11 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       formatter: function (cellContent, row) {
         return (
           <>
-            {cellContent?.length > 0 &&
-              cellContent
-                .map(i => (i.isApprover ? <u>{i.label}</u> : <>{i.label}</>))
-                .reduce((prev, curr) => [prev, ', ', curr])}
+            {cellContent?.length > 0
+              ? cellContent
+                  .map(i => (i.isApprover ? <u>{i.label}</u> : <>{i.label}</>))
+                  .reduce((prev, curr) => [prev, ', ', curr])
+              : ''}
           </>
         );
       },
@@ -141,17 +143,12 @@ export const modalConfigs = [
         to: endpoints.LIST_DEPARTMENT.url,
         method: endpoints.LIST_DEPARTMENT.method,
         params: {
-          q: input,
+          term: input,
           pageSize: 10,
         },
       })
         .then(res => {
-          callback(
-            res.data.data?.map(i => ({
-              label: i.code,
-              value: i.id,
-            })) || []
-          );
+          callback(res.data.data?.map(mDownDep) || []);
         })
         .catch(() => callback([]));
     },

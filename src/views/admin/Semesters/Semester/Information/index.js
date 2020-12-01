@@ -16,16 +16,17 @@ import {
 import { Form } from 'react-bootstrap';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
-import { convertDateDown, convertDateUp } from './transformers';
 import toast from 'utils/toast';
-import { down } from './transformers';
+import { down, up } from '../../transformers';
+import Button from 'components/Button';
 
 const Information = ({ loadData = function () {} }) => {
-  const [semesterName, setSemesterName] = React.useState('');
+  const [name, setName] = React.useState('');
   const [maxApplication, setMaxApplication] = React.useState('');
   const [matchingDate, setMatchingDate] = React.useState('');
   const [inprogressDate, setInprogressDate] = React.useState('');
   const [finishedDate, setFinishedDate] = React.useState('');
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const setMeta = useSetRecoilState(metaAtom);
   const { id } = useParams();
@@ -36,15 +37,16 @@ const Information = ({ loadData = function () {} }) => {
       method: endpoints.READ_SEMESTER(id).method,
     })
       .then(({ data: { data } }) => {
-        console.log(down(data));
-        setSemesterName(data?.name);
-        setMaxApplication(data?.maxTopicApplication);
-        setMatchingDate(convertDateDown(data?.assigningDate));
-        setInprogressDate(convertDateDown(data?.inProgressDate));
-        setFinishedDate(convertDateDown(data?.finishedDate));
+        const downData = down(data);
+        setName(downData?.name);
+        setMaxApplication(downData?.maxApplication);
+        setMatchingDate(downData?.matchingDate);
+        setInprogressDate(downData?.inprogressDate);
+        setFinishedDate(downData?.finishedDate);
       })
       .catch(handleErrors)
       .finally();
+
     setMeta(meta => ({
       ...meta,
       title: 'Information of Fall 2020',
@@ -57,24 +59,26 @@ const Information = ({ loadData = function () {} }) => {
   }, [setMeta, id]);
 
   const handleSave = React.useCallback(() => {
-    const payload = {
-      name: semesterName,
-      assigningDate: convertDateUp(matchingDate),
-      inProgressDate: convertDateUp(inprogressDate),
-      finishedDate: convertDateUp(finishedDate),
-      maxTopicApplication: maxApplication,
-    };
+    setIsLoading(true);
     request({
       to: endpoints.UPDATE_SEMESTER(id).url,
       method: endpoints.UPDATE_SEMESTER(id).method,
-      data: payload,
+      data: up({
+        name,
+        maxApplication,
+        matchingDate,
+        inprogressDate,
+        finishedDate,
+      }),
     })
       .then(res => {
         toast.success('Update successfully!');
         loadData();
       })
       .catch(handleErrors)
-      .finally();
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, [
     finishedDate,
     id,
@@ -82,7 +86,7 @@ const Information = ({ loadData = function () {} }) => {
     loadData,
     matchingDate,
     maxApplication,
-    semesterName,
+    name,
   ]);
 
   return (
@@ -90,14 +94,15 @@ const Information = ({ loadData = function () {} }) => {
       <Card>
         <CardHeader title="Basic informations">
           <CardHeaderToolbar>
-            <button
+            <Button
               type="button"
               className="btn btn-primary font-weight-bold"
               onClick={handleSave}
+              isLoading={isLoading}
             >
               <i className="fas fa-save mr-2"></i>
               Save
-            </button>
+            </Button>
           </CardHeaderToolbar>
         </CardHeader>
         <CardBody>
@@ -110,16 +115,12 @@ const Information = ({ loadData = function () {} }) => {
                 <Form.Control
                   type="text"
                   placeholder="Name"
-                  onChange={e => setSemesterName(e.currentTarget.value)}
-                  defaultValue={semesterName}
+                  onChange={e => setName(e.currentTarget.value)}
+                  value={name}
                 />
               </Col>
             </Form.Group>
-            <Form.Group
-              as={Row}
-              controlId="formHorizontalEmail"
-              style={{ marginBottom: 0 }}
-            >
+            <Form.Group as={Row} controlId="formHorizontalEmail">
               <Form.Label column sm={3}>
                 Maximum applications per team
               </Form.Label>
@@ -128,28 +129,10 @@ const Information = ({ loadData = function () {} }) => {
                   type="number"
                   placeholder="Maximum applications per team"
                   onChange={e => setMaxApplication(e.currentTarget.value)}
-                  defaultValue={maxApplication}
+                  value={maxApplication}
                 />
               </Col>
             </Form.Group>
-          </Form>
-        </CardBody>
-      </Card>
-      <Card>
-        <CardHeader title="Phases">
-          <CardHeaderToolbar>
-            <button
-              type="button"
-              className="btn btn-primary font-weight-bold"
-              onClick={handleSave}
-            >
-              <i className="fas fa-save mr-2"></i>
-              Save
-            </button>
-          </CardHeaderToolbar>
-        </CardHeader>
-        <CardBody>
-          <Form>
             <Form.Group as={Row} controlId="formHorizontalEmail">
               <Form.Label column sm={3}>
                 Matching
@@ -157,11 +140,8 @@ const Information = ({ loadData = function () {} }) => {
               <Col sm={9}>
                 <Form.Control
                   type="datetime-local"
-                  placeholder="Date"
-                  onChange={e =>
-                    setMatchingDate(convertDateDown(e.currentTarget.value))
-                  }
-                  value={matchingDate && convertDateUp(matchingDate)}
+                  onChange={e => setMatchingDate(e.currentTarget.value)}
+                  value={matchingDate}
                 />
               </Col>
             </Form.Group>
@@ -172,11 +152,8 @@ const Information = ({ loadData = function () {} }) => {
               <Col sm={9}>
                 <Form.Control
                   type="datetime-local"
-                  placeholder="Date"
-                  onChange={e =>
-                    setInprogressDate(convertDateDown(e.currentTarget.value))
-                  }
-                  value={inprogressDate && convertDateUp(inprogressDate)}
+                  onChange={e => setInprogressDate(e.currentTarget.value)}
+                  value={inprogressDate}
                 />
               </Col>
             </Form.Group>
@@ -191,11 +168,8 @@ const Information = ({ loadData = function () {} }) => {
               <Col sm={9}>
                 <Form.Control
                   type="datetime-local"
-                  placeholder="Date"
-                  onChange={e =>
-                    setFinishedDate(convertDateDown(e.currentTarget.value))
-                  }
-                  value={finishedDate && convertDateUp(finishedDate)}
+                  onChange={e => setFinishedDate(e.currentTarget.value)}
+                  value={finishedDate}
                 />
               </Col>
             </Form.Group>
