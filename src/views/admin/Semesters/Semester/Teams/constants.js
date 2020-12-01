@@ -14,8 +14,8 @@ export const sizePerPageList = [
   { text: '100', value: 100 },
 ];
 
-export const statusClasses = ['danger', 'info', 'success', ''];
-export const statusTitles = ['Not in a team', 'Matching', 'Matched', ''];
+export const statusClasses = { true: 'success', false: 'warning' };
+export const statusTitles = { true: 'Matched', false: 'Matching' };
 export const lockClasses = { false: 'success', true: 'danger' };
 export const lockTitles = { false: 'Unlocked', true: 'Locked' };
 export const privacyClasses = { true: 'success', false: 'danger' };
@@ -73,11 +73,11 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       formatter: function (cellContent, row) {
         return (
           <div>
-            <div className="text-nowrap text-dark-75 font-weight-bolder font-size-lg mb-0">
-              {cellContent.name}
+            <div className="text-nowrap text-dark-75 font-weight-bold font-size-lg mb-0">
+              {cellContent.label}
             </div>
             <span className="text-muted font-weight-bold text-hover-primary">
-              {cellContent.shortDescription}
+              {cellContent.abstract}
             </span>
           </div>
         );

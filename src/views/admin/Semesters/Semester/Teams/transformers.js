@@ -30,17 +30,20 @@ export function down(i) {
             i.teamDetail.department.id || console.log('code field not found'),
         }
       : (console.log('department field not found'), {}),
-    topic: i?.topic
-      ? {
-          label:
-            (i.topic.name &&
-              i.topic.code &&
-              '[' + i.topic.code + '] ' + i.topic.name) ||
-            console.log('topic code and name field not found'),
-          value: i.topic.id || console.log('topic id field not found'),
-        }
-      : (console.log('topic field not found'), {}),
-    status: i?.teamDetail?.status || console.log('status field not found'),
+    topic: i?.topic && {
+      label:
+        (i.topic.name &&
+          i.topic.code &&
+          '[' + i.topic.code + '] ' + i.topic.name) ||
+        console.log('topic code and name field not found'),
+      value: i.topic.id || console.log('topic id field not found'),
+      abstract:
+        i.topic.abstract || console.log('topic abstract field not found'),
+    },
+    status:
+      i?.teamDetail?.status !== undefined
+        ? i?.teamDetail?.status
+        : console.log('status field not found'),
     privacy:
       i?.teamDetail?.isPublic !== undefined
         ? !i.teamDetail.isPublic
