@@ -8,7 +8,7 @@ import Anouncement from 'components/CMSWidgets/Anouncement';
 import CheckpointProgress from 'components/CMSWidgets/CheckpointProgress';
 import FlowTimeline from 'components/CMSWidgets/FlowTimeline';
 
-export default React.memo(function DashboardPage() {
+export default React.memo(function LecturerDashboard() {
   const setMeta = useSetRecoilState(metaAtom);
 
   React.useEffect(() => {
