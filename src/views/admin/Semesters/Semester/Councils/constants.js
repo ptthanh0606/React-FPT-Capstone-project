@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { columnsTransformer, columnFormatter } from 'utils/common';
+import { columnsTransformer } from 'utils/common';
 import { Link } from 'react-router-dom';
 
 //------------------------------------------------------------------------------
@@ -26,28 +26,8 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       formatter: (cellContent, row) => cellContent?.label,
     },
     {
-      dataField: 'department',
-      text: 'DEP',
-      sort: true,
-    },
-    {
       dataField: 'name',
       text: 'Name',
-      sort: true,
-      formatter: function StatusColumnFormatter(cellContent, row) {
-        return (
-          <Link
-            className="text-dark font-weight-bold"
-            to={'/semester/' + row.id}
-          >
-            {cellContent}
-          </Link>
-        );
-      },
-    },
-    {
-      dataField: 'leader',
-      text: 'Leader',
       sort: true,
     },
     {
@@ -55,12 +35,20 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       text: 'Members',
       formatter: function StatusColumnFormatter(cellContent, row) {
         return (
-          <Link
-            className="text-dark font-weight-bold"
-            to={'/semester/' + row.id}
-          >
-            {cellContent.join(', ')}
-          </Link>
+          <>
+            {cellContent?.length > 0
+              ? cellContent
+                  .map(i => (
+                    <Link
+                      className={'text-dark font-weight-bold'}
+                      to={'/profile/lecturer/' + i.value}
+                    >
+                      {i.isLeader ? <u>{i.label}</u> : i.label}
+                    </Link>
+                  ))
+                  .reduce((prev, curr) => [prev, ', ', curr])
+              : ''}
+          </>
         );
       },
     },

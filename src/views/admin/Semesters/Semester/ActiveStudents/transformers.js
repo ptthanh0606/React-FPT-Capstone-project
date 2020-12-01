@@ -8,7 +8,9 @@ export function down(i) {
     department: i?.department?.code || console.log('department not found'),
     name: i?.name || console.log('name field not found'),
     team: i?.team?.code || console.log('team field not found'),
-    status: i?.status || console.log('status field not found'),
+    status: Number.isInteger(i?.status)
+      ? i.status
+      : console.log('status field not found'),
     addedAt:
       (i?.addedAt &&
         format(
