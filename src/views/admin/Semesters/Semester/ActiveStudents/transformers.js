@@ -13,7 +13,7 @@ export function down(i) {
       (i?.addedAt &&
         format(
           subMinutes(new Date(i?.addedAt), new Date().getTimezoneOffset()),
-          "yyyy-MM-dd'T'hh:mm:ss.SSS"
+          "yyyy-MM-dd'T'HH:mm:ss.SSS"
         )) ||
       console.log('addedAt field not found'),
   };

@@ -5,7 +5,12 @@ import ToggleSwitch from 'components/ToggleSwitch/ToggleSwitch';
 import React from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 
-const FormGroups = ({ config, value, handleChangeFields, type }) => {
+const FormGroups = ({
+  config = {},
+  value = '',
+  handleChangeFields = function () {},
+  type = '',
+}) => {
   const handleChange = React.useCallback(
     event => {
       handleChangeFields(event.currentTarget.value, config.name);
