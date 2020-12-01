@@ -52,6 +52,9 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       dataField: 'team',
       text: 'Team',
       sort: true,
+      formatter: (cellContent, row) => {
+        return cellContent.label;
+      },
     },
     {
       dataField: 'status',

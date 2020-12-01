@@ -146,6 +146,21 @@ export const LIST_ACTIVE_STUDENTS = id => ({
   method: METHOD.GET,
 });
 
+export const CREATE_ACTIVE_STUDENTS = id => ({
+  url: READ_SEMESTER(id).url + '/Students',
+  method: METHOD.POST,
+});
+
+export const READ_ACTIVE_STUDENTS = (id, id2) => ({
+  url: READ_SEMESTER(id).url + '/Students/' + id2,
+  method: METHOD.GET,
+});
+
+export const UPDATE_ACTIVE_STUDENTS = (id, id2) => ({
+  url: READ_SEMESTER(id).url + '/Students/' + id2,
+  method: METHOD.PATCH,
+});
+
 export const DELETE_ACTIVE_STUDENTS = id => ({
   url: READ_SEMESTER(id).url + '/Students',
   method: METHOD.DELETE,

@@ -20,8 +20,8 @@ export const sizePerPageList = [
 export const statusClasses = ['danger', 'success', 'info', ''];
 export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
 
-export const createColumns = ({ handleEdit, handleRemove }) =>
-  columnsTransformer([
+export const createColumns = ({ handleEdit, handleRemove }) => {
+  const cols = [
     {
       dataField: 'code',
       text: 'Code',
@@ -52,10 +52,13 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       text: 'Department',
       sort: true,
       formatter: function (cellContent, row) {
-        return cellContent?.value;
+        return cellContent?.label;
       },
     },
-    {
+  ];
+
+  if (handleEdit && handleRemove) {
+    cols.push({
       dataField: 'action',
       text: 'Actions',
       formatter: (cellContent, row, rowIndex) => {
@@ -87,8 +90,12 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       style: {
         minWidth: '100px',
       },
-    },
-  ]);
+    });
+  }
+
+  return columnsTransformer(cols);
+};
+
 export const modalConfigs = [
   {
     name: 'name',

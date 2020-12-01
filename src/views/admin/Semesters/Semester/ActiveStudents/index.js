@@ -22,7 +22,7 @@ import * as endpoints from 'endpoints';
 
 import * as transformers from './transformers';
 import * as constants from './constants';
-import AddActiveStudentModal from 'components/AddActiveStudentModal/AddActiveStudentModal';
+import AddActiveStudentModal from './AddActiveStudentModal/AddActiveStudentModal';
 
 export const statusClasses = ['danger', 'info', 'success', ''];
 export const statusTitles = ['Not in a team', 'Matching', 'Matched', ''];
@@ -65,21 +65,24 @@ export default function CustomersCard() {
     setShowCreate(false);
   }, []);
 
-  const handleCreate = React.useCallback(fieldData => {
-    setIsProcessing(true);
-    request({
-      to: endpoints.CREATE_DEPARTMENT.url,
-      method: endpoints.CREATE_DEPARTMENT.method,
-      data: transformers.up(fieldData),
-    })
-      .then(res => {
-        toast.success('Create department successfully');
-        setShowCreate(false);
-        loadData();
+  const handleCreate = React.useCallback(
+    fieldData => {
+      setIsProcessing(true);
+      request({
+        to: endpoints.CREATE_ACTIVE_STUDENTS(semId).url,
+        method: endpoints.CREATE_ACTIVE_STUDENTS(semId).method,
+        data: transformers.cUp(fieldData),
       })
-      .catch(handleErrors)
-      .finally(() => setIsProcessing(false));
-  }, []);
+        .then(res => {
+          toast.success('Add active students successfully');
+          setShowCreate(false);
+          loadData();
+        })
+        .catch(handleErrors)
+        .finally(() => setIsProcessing(false));
+    },
+    [semId]
+  );
 
   // ---------------------------------------------------------------------------
 
@@ -91,45 +94,47 @@ export default function CustomersCard() {
     fieldData => {
       setIsProcessing(true);
       request({
-        to: endpoints.UPDATE_DEPARTMENT(editId).url,
-        method: endpoints.UPDATE_DEPARTMENT(editId).method,
+        to: endpoints.UPDATE_ACTIVE_STUDENTS(semId, editId).url,
+        method: endpoints.UPDATE_ACTIVE_STUDENTS(semId, editId).method,
         data: transformers.up(fieldData),
       })
         .then(res => {
-          toast.success('Update department successfully');
+          toast.success('Update active student successfully');
           setShowUpdate(false);
           loadData();
         })
         .catch(handleErrors)
         .finally(() => setIsProcessing(false));
     },
-    [editId]
+    [editId, semId]
   );
 
-  const handleEdit = React.useCallback(e => {
-    e.preventDefault();
-    const id = Number(e.currentTarget.getAttribute('data-id'));
-    if (!Number.isInteger(id)) {
-      toast.error('Internal Server Error');
-      return;
-    }
-    request({
-      to: endpoints.READ_DEPARTMENT(id).url,
-      method: endpoints.READ_DEPARTMENT(id).method,
-    })
-      .then(res => {
-        setEditId(id);
-        setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
-        setShowUpdate(true);
+  const handleEdit = React.useCallback(
+    e => {
+      e.preventDefault();
+      const id = Number(e.currentTarget.getAttribute('data-id'));
+      if (!Number.isInteger(id)) {
+        toast.error('Internal Server Error');
+        return;
+      }
+      request({
+        to: endpoints.READ_ACTIVE_STUDENTS(semId, id).url,
+        method: endpoints.READ_ACTIVE_STUDENTS(semId, id).method,
       })
-      .catch(handleErrors);
-  }, []);
+        .then(res => {
+          setEditId(id);
+          setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
+          setShowUpdate(true);
+        })
+        .catch(handleErrors);
+    },
+    [semId]
+  );
 
   const handleRemove = React.useCallback(
     e => {
       e.preventDefault();
       const id = Number(e.currentTarget.getAttribute('data-id'));
-      console.log(id);
       if (!Number.isInteger(id)) {
         toast.error('Internal Server Error');
         return;
@@ -153,7 +158,7 @@ export default function CustomersCard() {
           })
             .then(res => {
               loadData();
-              toast.success('Successfully remove department');
+              toast.success('Successfully remove active student');
             })
             .catch(handleErrors),
       });
@@ -165,7 +170,6 @@ export default function CustomersCard() {
     e => {
       e.preventDefault();
       const id = Number(e.currentTarget.getAttribute('data-id'));
-      console.log(id);
       if (!Number.isInteger(id)) {
         toast.error('Internal Server Error');
         return;
@@ -189,7 +193,7 @@ export default function CustomersCard() {
           })
             .then(res => {
               loadData();
-              toast.success('Successfully remove department');
+              toast.success('Successfully remove active student');
             })
             .catch(handleErrors),
       });

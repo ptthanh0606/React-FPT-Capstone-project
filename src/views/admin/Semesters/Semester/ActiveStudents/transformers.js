@@ -7,7 +7,15 @@ export function down(i) {
     code: i?.code || console.log('code field not found'),
     department: i?.department?.code || console.log('department not found'),
     name: i?.name || console.log('name field not found'),
-    team: i?.team?.code || console.log('team field not found'),
+    team: i?.team
+      ? {
+          label:
+            i.team.id && i.team.name
+              ? '[' + i.team.id + '] ' + i.team.name
+              : console.log('team id and name field not found'),
+          value: i.team.id || console.log('team id field not found'),
+        }
+      : undefined,
     status: Number.isInteger(i?.status)
       ? i.status
       : console.log('status field not found'),
@@ -31,12 +39,15 @@ export function mDown(i) {
   };
 }
 
+export function cUp(i) {
+  return {
+    studentIds: i,
+  };
+}
+
 export function up(i) {
   return {
-    code: i?.code,
-    name: i?.name,
-    isDisabled: !i?.status,
-    approverIDs: i?.approvers?.map(j => j?.value) || [],
+    teamId: i?.team.value,
   };
 }
 
