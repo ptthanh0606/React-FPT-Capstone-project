@@ -39,7 +39,7 @@ export function down(i) {
 export function up(i) {
   return {
     name: i?.name,
-    maxTopicApplication: i?.maxApplication,
+    maxTopicApplication: Number(i?.maxApplication),
     assigningDate: convertDateUp(i?.matchingDate),
     inProgressDate: convertDateUp(i?.inprogressDate),
     finishedDate: convertDateUp(i?.finishedDate),

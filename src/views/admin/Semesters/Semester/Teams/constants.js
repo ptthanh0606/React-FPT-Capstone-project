@@ -152,7 +152,8 @@ export const createModalConfigs = semId => [
     name: 'maxMembers',
     type: 'number',
     label: 'Maximum member',
-    placeholder: 'Maximum member can join this team',
+    smallLabel: 'Maximum member can join this team',
+    placeholder: '10',
   },
   {
     name: 'department',
@@ -218,13 +219,13 @@ export const createModalConfigs = semId => [
     isMulti: false,
   },
   {
-    name: 'isPublic',
+    name: 'privacy',
     type: 'toggle',
     label: 'Public team',
     smallLabel: 'Is this team private',
   },
   {
-    name: 'isLocked',
+    name: 'lock',
     type: 'toggle',
     label: 'Lock team',
     smallLabel: 'Lock this team',

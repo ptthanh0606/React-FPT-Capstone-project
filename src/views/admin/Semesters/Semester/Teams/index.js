@@ -63,22 +63,28 @@ export default React.memo(function Teams() {
     setShowCreate(false);
   }, []);
 
-  const handleCreate = React.useCallback(fieldData => {
-    setIsProcessing(true);
-    request({
-      to: endpoints.CREATE_TEAM.url,
-      method: endpoints.CREATE_TEAM.method,
-      data: transformers.up(fieldData),
-    })
-      .then(res => {
-        toast.success('Create team successfully');
-        setShowCreate(false);
-        loadData();
-        setFieldTemplate({});
+  const handleCreate = React.useCallback(
+    fieldData => {
+      setIsProcessing(true);
+      request({
+        to: endpoints.CREATE_TEAM.url,
+        method: endpoints.CREATE_TEAM.method,
+        data: transformers.up(fieldData),
+        params: {
+          semesterId: semId,
+        },
       })
-      .catch(handleErrors)
-      .finally(() => setIsProcessing(false));
-  }, []);
+        .then(res => {
+          toast.success('Create team successfully');
+          setShowCreate(false);
+          loadData();
+          setFieldTemplate({});
+        })
+        .catch(handleErrors)
+        .finally(() => setIsProcessing(false));
+    },
+    [semId]
+  );
 
   // ---------------------------------------------------------------------------
 
@@ -92,6 +98,10 @@ export default React.memo(function Teams() {
       request({
         to: endpoints.UPDATE_TEAM(editId).url,
         method: endpoints.UPDATE_TEAM(editId).method,
+        params: {
+          teamId: editId,
+          semesterId: semId,
+        },
         data: transformers.up(fieldData),
       })
         .then(res => {
@@ -102,30 +112,34 @@ export default React.memo(function Teams() {
         .catch(handleErrors)
         .finally(() => setIsProcessing(false));
     },
-    [editId]
+    [editId, semId]
   );
 
-  const handleEdit = React.useCallback(e => {
-    e.preventDefault();
-    const id = Number(e.currentTarget.getAttribute('data-id'));
-    if (!Number.isInteger(id)) {
-      toast.error('Internal Server Error');
-      return;
-    }
-    request({
-      to: endpoints.READ_TEAM.url,
-      method: endpoints.READ_TEAM.method,
-      params: {
-        teamId: id,
-      },
-    })
-      .then(res => {
-        setEditId(id);
-        setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
-        setShowUpdate(true);
+  const handleEdit = React.useCallback(
+    e => {
+      e.preventDefault();
+      const id = Number(e.currentTarget.getAttribute('data-id'));
+      if (!Number.isInteger(id)) {
+        toast.error('Internal Server Error');
+        return;
+      }
+      request({
+        to: endpoints.READ_TEAM(editId).url,
+        method: endpoints.READ_TEAM(editId).method,
+        params: {
+          teamId: id,
+          semesterId: semId,
+        },
       })
-      .catch(handleErrors);
-  }, []);
+        .then(res => {
+          setEditId(id);
+          setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
+          setShowUpdate(true);
+        })
+        .catch(handleErrors);
+    },
+    [editId, semId]
+  );
 
   const handleRemove = React.useCallback(
     e => {
@@ -147,8 +161,8 @@ export default React.memo(function Teams() {
         ),
         onConfirm: () =>
           request({
-            to: endpoints.DELETE_TEAM.url,
-            method: endpoints.DELETE_TEAM.method,
+            to: endpoints.DELETE_TEAM(id).url,
+            method: endpoints.DELETE_TEAM(id).method,
             params: {
               teamId: id,
             },
@@ -185,7 +199,7 @@ export default React.memo(function Teams() {
         pageSize: pageSize,
         sortField: sortField,
         sortOrder: sortOrder,
-        semester: semId,
+        semesterId: semId,
       },
       source,
     })

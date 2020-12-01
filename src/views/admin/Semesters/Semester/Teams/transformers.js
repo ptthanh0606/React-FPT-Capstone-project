@@ -30,16 +30,18 @@ export function down(i) {
             i.teamDetail.department.id || console.log('code field not found'),
         }
       : (console.log('department field not found'), {}),
-    topic: i?.topic && {
-      label:
-        (i.topic.name &&
-          i.topic.code &&
-          '[' + i.topic.code + '] ' + i.topic.name) ||
-        console.log('topic code and name field not found'),
-      value: i.topic.id || console.log('topic id field not found'),
-      abstract:
-        i.topic.abstract || console.log('topic abstract field not found'),
-    },
+    topic: i?.topic
+      ? {
+          label:
+            (i.topic.name &&
+              i.topic.code &&
+              '[' + i.topic.code + '] ' + i.topic.name) ||
+            console.log('topic code and name field not found'),
+          value: i.topic.id || console.log('topic id field not found'),
+          abstract:
+            i.topic.abstract || console.log('topic abstract field not found'),
+        }
+      : undefined,
     status:
       i?.teamDetail?.status !== undefined
         ? i?.teamDetail?.status
@@ -67,13 +69,12 @@ export function mDown(i) {
 
 export function up(i) {
   return {
-    name: i?.name,
-    maxMembers: i?.maxMembers,
-    isPublic: i?.isPublic,
-    isLocked: i?.isLocked,
-    departmentId: i?.department?.value,
-    topicId: i?.topic?.value,
-    memberIds: i?.members?.map(j => j.value),
-    semesterId: i?.semester,
+    name: String(i?.name),
+    maxMembers: Number(i?.maxMembers),
+    isPublic: !!i?.isPublic,
+    isLocked: !!i?.isLocked,
+    departmentId: Number(i?.department?.value),
+    topicId: Number(i?.topic?.value),
+    memberIds: i?.members?.map(j => Number(j.value)),
   };
 }
