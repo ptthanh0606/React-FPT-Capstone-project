@@ -2,6 +2,11 @@ import React from 'react';
 
 import { columnsTransformer, columnFormatter } from 'utils/common';
 import { Link } from 'react-router-dom';
+import request from 'utils/request';
+import * as endpoints from 'endpoints';
+import { mDown as mDownDep } from 'views/admin/Departments/transformers';
+import { mDown as mDownAStu } from 'views/admin/Semesters/Semester/ActiveStudents/transformers';
+import { mDown as mDownTopic } from 'views/admin/Semesters/Semester/Topics/transformers';
 
 //------------------------------------------------------------------------------
 
@@ -136,7 +141,7 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
     },
   ]);
 
-export const modalConfigs = [
+export const createModalConfigs = semId => [
   {
     name: 'name',
     type: 'text',
@@ -144,51 +149,49 @@ export const modalConfigs = [
     placeholder: 'Give this team a name...',
   },
   {
+    name: 'maxMembers',
+    type: 'number',
+    label: 'Maximum member',
+    placeholder: 'Maximum member can join this team',
+  },
+  {
     name: 'department',
-    type: 'selectBox',
+    type: 'selectBoxAsync',
     label: 'Department',
     smallLabel: 'This team belong to which department',
-    options: [
-      {
-        label: 'SE',
-        value: 'se',
-      },
-      {
-        label: 'GD',
-        value: 'gd',
-      },
-      {
-        label: 'CC',
-        value: 'cc',
-      },
-    ],
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_DEPARTMENT.url,
+        method: endpoints.LIST_DEPARTMENT.method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownDep) || []);
+        })
+        .catch(() => callback([]));
+    },
   },
   {
     name: 'members',
     type: 'selectBoxAsync',
     label: 'Student members',
     smallLabel: 'First added user will be leader',
-    load: (memberInput, callback) => {
-      setTimeout(() => {
-        callback([
-          {
-            label: 'Huynh Duc Duy',
-            value: 'Huynh Duc Duy',
-          },
-          {
-            label: 'Phan Thong Thanh',
-            value: 'Phan Thong Thanh',
-          },
-          {
-            label: 'Dinh Ngoc Hai',
-            value: 'Dinh Ngoc Hai',
-          },
-          {
-            label: 'Ly Phuoc Hiep',
-            value: 'Ly Phuoc Hiep',
-          },
-        ]);
-      }, 2000);
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_ACTIVE_STUDENTS(semId).url,
+        method: endpoints.LIST_ACTIVE_STUDENTS(semId).method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownAStu) || []);
+        })
+        .catch(() => callback([]));
     },
     isMulti: true,
   },
@@ -197,30 +200,27 @@ export const modalConfigs = [
     type: 'selectBoxAsync',
     label: 'Topic taken',
     smallLabel: 'Select a topic to assign to this student team',
-    load: (memberInput, callback) => {
-      setTimeout(() => {
-        callback([
-          {
-            label: 'Capstone management system',
-            value: 'Capstone management system',
-          },
-          {
-            label: 'Traffic tracking',
-            value: 'Traffic tracking',
-          },
-          {
-            label: 'Web checker system',
-            value: 'Web checker system',
-          },
-        ]);
-      }, 2000);
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_TOPIC.url,
+        method: endpoints.LIST_TOPIC.method,
+        params: {
+          term: input,
+          pageSize: 10,
+          semesterId: semId,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownTopic) || []);
+        })
+        .catch(() => callback([]));
     },
     isMulti: false,
   },
   {
-    name: 'isPrivate',
+    name: 'isPublic',
     type: 'toggle',
-    label: 'Private team',
+    label: 'Public team',
     smallLabel: 'Is this team private',
   },
   {

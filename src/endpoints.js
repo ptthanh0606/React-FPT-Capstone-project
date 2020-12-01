@@ -257,3 +257,30 @@ export const DELETE_COUNCIL = (id, id2) => ({
   url: READ_COUNCIL(id, id2).url,
   method: METHOD.DELETE,
 });
+
+// -----------------------------------------------------------------------------
+
+export const LIST_TOPIC = {
+  url: config.api + 'topics',
+  method: METHOD.GET,
+};
+
+export const CREATE_TOPIC = {
+  url: LIST_TOPIC.url,
+  method: METHOD.POST,
+};
+
+export const READ_TOPIC = id => ({
+  url: LIST_TOPIC.url + '/' + id,
+  method: METHOD.GET,
+});
+
+export const UPDATE_TOPIC = id => ({
+  url: READ_TOPIC(id).url,
+  method: METHOD.PUT,
+});
+
+export const DELETE_TOPIC = id => ({
+  url: READ_TOPIC(id).url,
+  method: METHOD.DELETE,
+});

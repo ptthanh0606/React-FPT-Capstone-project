@@ -70,6 +70,7 @@ export default React.memo(function Table({
                     No records found
                   </div>
                 )}
+                headerClasses="text-nowrap"
                 {...paginationTableProps}
               />
             </Pagination>

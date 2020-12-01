@@ -27,6 +27,7 @@ export default React.memo(function Teams() {
   const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
   const { id: semId } = useParams();
+  const [modalConfigs, setModalConfigs] = React.useState([]);
 
   const [l, loadData] = React.useReducer(() => ({}), {});
 
@@ -215,6 +216,7 @@ export default React.memo(function Teams() {
         { title: 'Team', path: '/semester/' + semId + '/team' },
       ],
     }));
+    setModalConfigs(constants.createModalConfigs(semId));
   }, [semId, setMeta]);
 
   return (
@@ -266,7 +268,7 @@ export default React.memo(function Teams() {
       <CMSModal
         isShowFlg={showCreate}
         onHide={hideCreateModal}
-        configs={constants.modalConfigs}
+        configs={modalConfigs}
         title="Create student team"
         subTitle="Add a student team to this semester"
         onConfirmForm={handleCreate}
@@ -276,7 +278,7 @@ export default React.memo(function Teams() {
       <CMSModal
         isShowFlg={showUpdate}
         onHide={hideUpdateModal}
-        configs={constants.modalConfigs}
+        configs={modalConfigs}
         title="Update student team"
         subTitle="Change this team info"
         onConfirmForm={edit}
