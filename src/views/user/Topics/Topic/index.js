@@ -17,6 +17,7 @@ const Topic = () => {
   const [modalConfigs, setModalConfigs] = React.useState([]);
   const [studentTeam, setStudentTeam] = React.useState({});
   const [mentors, setMentors] = React.useState({});
+  const [applications, setApplications] = React.useState([]);
   // ----------------------------------------------------------
 
   // ----------------------------------------------------------
@@ -321,6 +322,20 @@ const Topic = () => {
   }, []);
 
   React.useEffect(() => {
+    setApplications([
+      {
+        name: 'Team name example 1',
+        leader: 'Huynh Duc Duy',
+      },
+      {
+        name: 'Team name example 2',
+        leader: 'Huynh Duc Duy',
+      },
+      {
+        name: 'Team name example 3',
+        leader: 'Huynh Duc Duy',
+      },
+    ]);
     setStudentTeam({
       name: 'SKT T1',
       department: 'Software Engineer',
@@ -392,13 +407,18 @@ const Topic = () => {
           />
         </div>
         <div className="col-lg-6 col-xxl-3">
-          <GroupCard
+          {/* <GroupCard
             className="gutter-b"
             title="Assigned team"
             members={studentTeam.members}
             name={studentTeam.name}
             department={studentTeam.department}
             leader={studentTeam.leader}
+          /> */}
+          <CMSList
+            className="gutter-b"
+            label="Applying teams"
+            rows={applications}
           />
           <GroupCard
             title="Mentors"
