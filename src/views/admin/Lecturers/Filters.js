@@ -32,7 +32,7 @@ function Filters({ filters, setFilters }) {
                   placeholder="All"
                   onChange={e => {
                     setSelectState(e);
-                    setFieldValue('departmentId', e.value);
+                    setFieldValue('departmentId', e?.value);
                     handleSubmit();
                   }}
                   value={selectState}
@@ -66,7 +66,7 @@ function Filters({ filters, setFilters }) {
                   onBlur={handleBlur}
                   value={values.status}
                 >
-                  <option>All</option>
+                  <option value="">All</option>
                   <option value="0">Deactivated</option>
                   <option value="1">Activated</option>
                 </select>

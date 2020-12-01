@@ -186,23 +186,49 @@ export const LIST_TEAM = {
 };
 
 export const CREATE_TEAM = {
-  url: LIST_TEAM.url + '/createTeam',
+  url: LIST_TEAM.url,
   method: METHOD.POST,
 };
 
-export const READ_TEAM = {
-  url: LIST_TEAM.url + '/viewTeam',
+export const READ_TEAM = id => ({
+  url: LIST_TEAM.url + '/' + id,
   method: METHOD.GET,
-};
+});
 
-export const UPDATE_TEAM = {
-  url: LIST_TEAM.url + '/edit',
+export const UPDATE_TEAM = id => ({
+  url: READ_TEAM(id).url,
   method: METHOD.PUT,
-};
+});
 
-export const DELETE_TEAM = {
-  url: LIST_TEAM.url + '/',
+export const DELETE_TEAM = id => ({
+  url: READ_TEAM(id).url,
   method: METHOD.DELETE,
+});
+
+// -----------------------------------------------------------------------------
+export const JOIN_TEAM = id => ({
+  url: READ_TEAM(id).url + '/join',
+  method: METHOD.PUT,
+});
+
+export const TRANSFER_LEADER_TEAM = id => ({
+  url: READ_TEAM(id).url + '/transferLeader',
+  method: METHOD.PUT,
+});
+
+export const LEAVE_TEAM = id => ({
+  url: READ_TEAM(id).url + '/leave',
+  method: METHOD.PUT,
+});
+
+export const LOCK_TEAM = id => ({
+  url: READ_TEAM(id).url + '/editLockStatus',
+  method: METHOD.PUT,
+});
+
+export const REFRESH_CODE_TEAM = {
+  url: LIST_TEAM.url + '/refreshCode',
+  method: METHOD.PUT,
 };
 
 // -----------------------------------------------------------------------------

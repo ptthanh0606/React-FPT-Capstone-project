@@ -46,7 +46,7 @@ export function down(i) {
         : console.log('status field not found'),
     privacy:
       i?.teamDetail?.isPublic !== undefined
-        ? !i.teamDetail.isPublic
+        ? !!i.teamDetail.isPublic
         : console.log('isPublic field not found'),
     lock:
       i?.teamDetail?.isLocked !== undefined
@@ -58,20 +58,22 @@ export function down(i) {
 export function mDown(i) {
   return {
     value: i?.id || console.log('id field not found'),
-    label: i?.code || console.log('code field not found'),
+    label:
+      i?.id && i?.name
+        ? '[' + i?.id + '] ' + i?.name
+        : console.log('id and name field not found'),
   };
 }
 
 export function up(i) {
   return {
-    code: i?.code,
     name: i?.name,
-    email: i?.email,
+    maxMembers: i?.maxMembers,
+    isPublic: i?.isPublic,
+    isLocked: i?.isLocked,
+    departmentId: i?.department?.value,
+    topicId: i?.topic?.value,
+    memberIds: i?.members?.map(j => j.value),
+    semesterId: i?.semester,
   };
 }
-
-// Down for list
-// Down for selection
-// Down for read
-// Up for update
-// Up for create

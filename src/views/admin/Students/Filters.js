@@ -31,7 +31,7 @@ export default function CustomersFilter({ filters, setFilters }) {
                   placeholder="All"
                   onChange={e => {
                     setSelectState(e);
-                    setFieldValue('departmentId', e.value);
+                    setFieldValue('departmentId', e?.value);
                     handleSubmit();
                   }}
                   value={selectState}
