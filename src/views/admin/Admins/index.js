@@ -1,202 +1,195 @@
 import React from 'react';
 import { Card, CardBody } from '_metronic/_partials/controls';
-import metaAtom from 'store/meta';
-import { useSetRecoilState } from 'recoil';
-import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from './Filters';
-import { Link } from 'react-router-dom';
-import ConfirmRemoveModal from 'components/ConfirmModal/ConfirmModal';
+
+import metaAtom from 'store/meta';
+import { useSetRecoilState } from 'recoil';
+import useConfirm from 'utils/confirm';
 import CMSModal from 'components/CMSModal/CMSModal';
 
-const defaultSorted = [{ dataField: 'id', order: 'asc' }];
+import toast from 'utils/toast';
+import { useDebounce } from 'use-debounce';
+import request from 'utils/request';
+import { handleErrors } from 'utils/common';
+import * as endpoints from 'endpoints';
 
-const sizePerPageList = [
-  { text: '10', value: 10 },
-  { text: '20', value: 20 },
-  { text: '50', value: 50 },
-  { text: '100', value: 100 },
-];
-
-const statusClasses = ['danger', 'success'];
-const statusTitles = ['Deactivated', 'Activated'];
-
-const mockData = [
-  {
-    id: 0,
-    code: 'SE130491',
-    email: 'duyhdse130491@fpt.edu.vn',
-    name: 'Huynh Duc Duy',
-    status: 0,
-  },
-];
+import * as transformers from './transformers';
+import * as constants from './constants';
 
 export default function CustomersCard() {
-  const [data, setData] = React.useState([]);
-  const [total, setTotal] = React.useState(0);
-  const [isLoading] = React.useState(false);
-  const [selected, setSelected] = React.useState([]);
-  const [filters, setFilters] = React.useState({});
-  const [page, setPage] = React.useState(1);
-  const [pageSize, setPageSize] = React.useState(10);
-  const [sortField, setSortField] = React.useState(null);
-  const [sortOrder, setSortOrder] = React.useState(null);
-  const [fieldTemplate, setFieldTemplate] = React.useState({});
-  const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
-  const [modalConfigs, setModalConfigs] = React.useState([]);
-  const [
-    showRemoveAdminConfirmModalFlg,
-    setShowRemoveAdminConfirmModalFlg,
-  ] = React.useState(false);
-  const [showCreateAdminModalFlg, setShowCreateAdminModalFlg] = React.useState(
-    false
-  );
-  const [showUpdateAdminModalFlg, setShowUpdateAdminModalFlg] = React.useState(
-    false
-  );
-  const [selectedId, setSelectedId] = React.useState(null);
-
+  const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
 
-  const handleShowRemoveAdminModal = () => {
-    setShowRemoveAdminConfirmModalFlg(true);
-  };
+  const [l, loadData] = React.useReducer(() => ({}), {});
 
-  const handleHideRemoveAdminModal = () => {
-    setShowRemoveAdminConfirmModalFlg(false);
-  };
+  const [data, setData] = React.useState([]);
+  const [total, setTotal] = React.useState(0);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [selected, setSelected] = React.useState([]);
+  const [filters, setFilters] = React.useState({});
+  const [debouncedFilters] = useDebounce(filters, 500);
+  const [page, setPage] = React.useState(1);
+  const [pageSize, setPageSize] = React.useState(
+    constants.sizePerPageList[0].value
+  );
+  const [sortField, setSortField] = React.useState(null);
+  const [sortOrder, setSortOrder] = React.useState(null);
 
-  const handleShowCreateAdminModal = () => {
-    setShowCreateAdminModalFlg(true);
-  };
+  //----------------------------------------------------------------------------
 
-  const handleHideCreateAdminModal = () => {
-    setShowCreateAdminModalFlg(false);
-  };
+  const [fieldTemplate, setFieldTemplate] = React.useState({});
+  const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
+  const [showCreate, setShowCreate] = React.useState(false);
+  const [showUpdate, setShowUpdate] = React.useState(false);
+  const [editId, setEditId] = React.useState(0);
+  const [isProcessing, setIsProcessing] = React.useState(false);
 
-  const handleShowUpdateAdminModal = () => {
-    setUpdateFieldTemplate({
-      name: 'Huynh Duc Duy',
-      email: 'duyhdse130491@fpt.edu.vn',
-      isActive: false,
-    });
-    setShowUpdateAdminModalFlg(true);
-  };
+  // ---------------------------------------------------------------------------
 
-  const handleHideUpdateAdminModal = () => {
-    setShowUpdateAdminModalFlg(false);
-  };
-
-  const handleOnCreateAdmin = React.useCallback(fieldData => {
-    console.log(fieldData);
+  const showCreateModal = React.useCallback(() => {
+    setShowCreate(true);
   }, []);
 
-  const handleOnUpdateAdmin = React.useCallback(fieldData => {
-    console.log(fieldData);
+  const hideCreateModal = React.useCallback(() => {
+    setShowCreate(false);
   }, []);
 
-  function ActionsColumnFormatter(
-    cellContent,
-    row,
-    rowIndex,
-    { openEditCustomerDialog, openDeleteCustomerDialog }
-  ) {
-    return (
-      <span className="text-nowrap">
-        <a
-          href="/"
-          title="Edit"
-          className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-          onClick={event => {
-            event.preventDefault();
-            setSelectedId(row.id);
-            handleShowUpdateAdminModal();
-          }}
-        >
-          <i class="fas fa-pencil-alt mx-2"></i>
-        </a>
-        <a
-          href="/"
-          title="Remove"
-          className="btn btn-icon btn-light btn-hover-primary btn-sm"
-          onClick={event => {
-            event.preventDefault();
-            setSelectedId(row.id);
-            handleShowRemoveAdminModal();
-          }}
-        >
-          <i class="fas fa-trash mx-2"></i>
-        </a>
-      </span>
-    );
-  }
+  const handleCreate = React.useCallback(fieldData => {
+    setIsProcessing(true);
+    request({
+      to: endpoints.CREATE_ADMIN.url,
+      method: endpoints.CREATE_ADMIN.method,
+      data: transformers.up(fieldData),
+    })
+      .then(res => {
+        toast.success('Create admin successfully');
+        setShowCreate(false);
+        loadData();
+        setFieldTemplate({});
+      })
+      .catch(handleErrors)
+      .finally(() => setIsProcessing(false));
+  }, []);
 
-  function StatusColumnFormatter(cellContent, row) {
-    const getLabelCssClasses = () => {
-      return `label label-lg label-light-${
-        statusClasses[row.status]
-      } label-inline text-nowrap`;
+  // ---------------------------------------------------------------------------
+
+  const hideUpdateModal = React.useCallback(() => {
+    setShowUpdate(false);
+  }, []);
+
+  const edit = React.useCallback(
+    fieldData => {
+      setIsProcessing(true);
+      request({
+        to: endpoints.UPDATE_ADMIN(editId).url,
+        method: endpoints.UPDATE_ADMIN(editId).method,
+        data: transformers.up(fieldData),
+      })
+        .then(res => {
+          toast.success('Update admin successfully');
+          setShowUpdate(false);
+          loadData();
+        })
+        .catch(handleErrors)
+        .finally(() => setIsProcessing(false));
+    },
+    [editId]
+  );
+
+  const handleEdit = React.useCallback(e => {
+    e.preventDefault();
+    const id = Number(e.currentTarget.getAttribute('data-id'));
+    if (!Number.isInteger(id)) {
+      toast.error('Internal Server Error');
+      return;
+    }
+    request({
+      to: endpoints.READ_ADMIN(id).url,
+      method: endpoints.READ_ADMIN(id).method,
+    })
+      .then(res => {
+        setEditId(id);
+        setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
+        setShowUpdate(true);
+      })
+      .catch(handleErrors);
+  }, []);
+
+  const handleRemove = React.useCallback(
+    e => {
+      e.preventDefault();
+      const id = Number(e.currentTarget.getAttribute('data-id'));
+      if (!Number.isInteger(id)) {
+        toast.error('Internal Server Error');
+        return;
+      }
+      confirm({
+        title: 'Removal Confirmation',
+        body: (
+          <>
+            Do you wanna remove this admin?
+            <br />
+            This admin will be <b>permanently removed</b>, and all historical
+            data belong to this admin too.
+          </>
+        ),
+        onConfirm: () =>
+          request({
+            to: endpoints.DELETE_ADMIN(id).url,
+            method: endpoints.DELETE_ADMIN(id).method,
+          })
+            .then(res => {
+              loadData();
+              toast.success('Successfully remove admin');
+            })
+            .catch(handleErrors),
+      });
+    },
+    [confirm]
+  );
+
+  // ---------------------------------------------------------------------------
+
+  const columns = React.useMemo(
+    () => constants.createColumns({ handleEdit, handleRemove }),
+    [handleEdit, handleRemove]
+  );
+
+  // ---------------------------------------------------------------------------
+
+  React.useEffect(() => {
+    setIsLoading(true);
+    const source = {};
+
+    request({
+      to: endpoints.LIST_ADMIN.url,
+      method: endpoints.LIST_ADMIN.method,
+      params: {
+        ...debouncedFilters,
+        pageNumber: page,
+        pageSize: pageSize,
+        sortField: sortField,
+        sortOrder: sortOrder,
+      },
+      source,
+    })
+      .then(res => {
+        setData(res.data?.data?.map(transformers.down));
+        setTotal(res.data?.totalRecords);
+        setPage(res.data?.pageNumber);
+        setPageSize(res.data?.pageSize);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        handleErrors(err);
+        if (!err.isCancel) setIsLoading(false);
+      });
+
+    return () => {
+      source.cancel();
     };
-    return (
-      <span className={getLabelCssClasses()}>{statusTitles[row.status]}</span>
-    );
-  }
-
-  const columns = [
-    {
-      dataField: 'code',
-      text: 'Code',
-      sort: true,
-      sortCaret: sortCaret,
-      headerSortingClasses,
-    },
-    {
-      dataField: 'email',
-      text: 'Email',
-      sort: true,
-      sortCaret: sortCaret,
-      headerSortingClasses,
-    },
-    {
-      dataField: 'name',
-      text: 'Name',
-      sort: true,
-      sortCaret: sortCaret,
-      formatter: function StatusColumnFormatter(cellContent, row) {
-        return (
-          <Link
-            className="text-dark font-weight-bold"
-            to={'/semester/' + row.id}
-          >
-            {cellContent}
-          </Link>
-        );
-      },
-      headerSortingClasses,
-    },
-    {
-      dataField: 'status',
-      text: 'Status',
-      sort: true,
-      sortCaret: sortCaret,
-      formatter: StatusColumnFormatter,
-      headerSortingClasses,
-    },
-    {
-      dataField: 'action',
-      text: 'Actions',
-      formatter: ActionsColumnFormatter,
-      formatExtraData: {
-        openEditCustomerDialog: () => {},
-        openDeleteCustomerDialog: () => {},
-      },
-      classes: 'text-right pr-0',
-      headerClasses: 'text-right pr-3',
-      style: {
-        minWidth: '100px',
-      },
-    },
-  ];
+  }, [l, debouncedFilters, page, pageSize, sortField, sortOrder]);
 
   React.useEffect(() => {
     setMeta({
@@ -209,47 +202,14 @@ export default function CustomersCard() {
         <button
           type="button"
           className="btn btn-primary font-weight-bold btn-sm"
-          onClick={handleShowCreateAdminModal}
+          onClick={showCreateModal}
         >
           <i className="fas fa-plus mr-2"></i>
           New
         </button>
       ),
     });
-  }, [setMeta]);
-
-  React.useEffect(() => {
-    setData(mockData);
-    setTotal(100);
-  }, []);
-
-  React.useEffect(() => {
-    setModalConfigs([
-      {
-        name: 'name',
-        type: 'text',
-        label: 'Admin full name',
-        placeholder: 'Full name...',
-      },
-      {
-        name: 'email',
-        type: 'text',
-        label: 'Admin email',
-        placeholder: 'Enter admin @fpt.edu.vn email...',
-      },
-      {
-        name: 'isActive',
-        type: 'toggle',
-        label: 'Active state',
-        smallLabel: 'Is this admin active',
-      },
-    ]);
-    setFieldTemplate({
-      name: '',
-      email: '',
-      isActive: false,
-    });
-  }, []);
+  }, [setMeta, showCreateModal]);
 
   return (
     <Card>
@@ -270,34 +230,30 @@ export default function CustomersCard() {
           setSortField={setSortField}
           sortOrder={sortOrder}
           setSortOrder={setSortOrder}
-          defaultSorted={defaultSorted}
-          pageSizeList={sizePerPageList}
-          selectable
+          defaultSorted={constants.defaultSorted}
+          pageSizeList={constants.sizePerPageList}
         />
       </CardBody>
-      <ConfirmRemoveModal
-        isShowFlg={showRemoveAdminConfirmModalFlg}
-        onHide={handleHideRemoveAdminModal}
-        body={<h5>Are you sure you want to remove selected admin?</h5>}
-        // onConfirm={() => {}}
-      />
       <CMSModal
-        isShowFlg={showCreateAdminModalFlg}
-        onHide={handleHideCreateAdminModal}
-        configs={modalConfigs}
+        isShowFlg={showCreate}
+        onHide={hideCreateModal}
+        configs={constants.modalConfigs}
         title="Add new student"
         subTitle="Add student to the system"
-        onConfirmForm={handleOnCreateAdmin}
+        onConfirmForm={handleCreate}
         fieldTemplate={fieldTemplate}
+        isProcessing={isProcessing}
       />
       <CMSModal
-        isShowFlg={showUpdateAdminModalFlg}
-        onHide={handleHideUpdateAdminModal}
-        configs={modalConfigs}
+        isShowFlg={showUpdate}
+        onHide={hideUpdateModal}
+        configs={constants.modalConfigs}
         title="Update this student"
         subTitle="Change this student info"
-        onConfirmForm={handleOnUpdateAdmin}
+        onConfirmForm={edit}
         fieldTemplate={updateFieldTemplate}
+        primaryButtonLabel="Update"
+        isProcessing={isProcessing}
       />
     </Card>
   );

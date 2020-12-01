@@ -1,21 +1,20 @@
 import React from 'react';
-import {
-  MixedWidget1,
-  MixedWidget14,
-  ListsWidget9,
-  StatsWidget11,
-  StatsWidget12,
-  ListsWidget1,
-  AdvanceTablesWidget2,
-  AdvanceTablesWidget4,
-  ListsWidget3,
-  ListsWidget4,
-  ListsWidget8,
-} from '_metronic/_partials/widgets';
+// import {
+//   MixedWidget1,
+//   MixedWidget14,
+//   ListsWidget9,
+//   StatsWidget11,
+//   StatsWidget12,
+//   ListsWidget1,
+//   AdvanceTablesWidget2,
+//   AdvanceTablesWidget4,
+//   ListsWidget3,
+//   ListsWidget4,
+//   ListsWidget8,
+// } from '_metronic/_partials/widgets';
 
 import { useSetRecoilState } from 'recoil';
 import metaAtom from 'store/meta';
-import TestWidgets from 'components/CMSWidgets/TestWidgets';
 
 export default React.memo(function DashboardPage() {
   const setMeta = useSetRecoilState(metaAtom);

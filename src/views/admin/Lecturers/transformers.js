@@ -1,31 +1,36 @@
 export function down(i) {
   return i
     ? {
-        id: i.lecturerID,
-        code: i.code,
-        status: !i.isDisabled,
-        name: i.name,
-        email: i.email,
+        id: i?.id || console.log('id field not found'),
+        code: i?.code || console.log('code field not found'),
+        status:
+          i?.isDisabled !== undefined
+            ? !i?.isDisabled
+            : !!console.log('isDisabled field not found'),
+        name: i?.name || console.log('name field not found'),
+        email: i?.email || console.log('email field not found'),
         departments:
-          (i.departments &&
-            i.departments.map(j => ({
-              value: j.departmentID,
-              label: j.code,
-              isApprover: j.isApprover,
-            }))) ||
-          [],
+          i?.departments?.map(j => ({
+            value: j?.id,
+            label: j?.code,
+            isApprover: j?.isApprover,
+          })) || (console.log('approvers field not found'), []),
       }
     : {};
 }
 
+export function mDown(i) {
+  return {
+    value: i?.id || console.log('id field not found'),
+    label: i?.code || console.log('code field not found'),
+  };
+}
 export function up(i) {
-  return i
-    ? {
-        email: i.email,
-        code: i.code,
-        name: i.name,
-        departmentIDs: (i.departments && i.departments.map(j => j.value)) || [],
-        isDisabled: !i.status,
-      }
-    : {};
+  return {
+    email: i?.email,
+    code: i?.code,
+    name: i?.name,
+    departmentIDs: i?.departments?.map(j => j.value) || [],
+    isDisabled: !i?.status,
+  };
 }

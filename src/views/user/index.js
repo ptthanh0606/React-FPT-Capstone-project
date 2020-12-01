@@ -1,31 +1,59 @@
 import React, { lazy } from 'react';
 
-import { Switch, Route as DefaultRoute } from 'react-router-dom';
+import { Switch, Route as DefaultRoute, useHistory } from 'react-router-dom';
 import * as Route from 'utils/router/routes';
 
 import { Layout } from '_metronic/layout';
 import semesterAtom from 'store/semester';
 
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import roleSelector from 'auth/recoil/selectors/role';
+import request from 'utils/request';
+import { READ_SEMESTER } from 'endpoints';
+import { down } from 'views/admin/Semesters/transformers';
 
-function fetchSemester(semester, setSemester, lastSemester, setLastSemester) {
+function fetchSemester(
+  semester,
+  setSemester,
+  lastSemester,
+  setLastSemester,
+  history
+) {
   if (semester.id !== lastSemester) {
-    setSemester({
-      id: semester.id,
-      name: 'Fall 2020',
-      status: 1,
-    });
-    setLastSemester(semester.id);
+    request({
+      to: READ_SEMESTER(semester.id).url,
+      method: READ_SEMESTER(semester.id).method,
+    })
+      .then(res => {
+        const data = down(res?.data?.data);
+        setSemester({
+          id: data.id,
+          name: data.name,
+          status: data.status,
+        });
+        setLastSemester(data.id);
+      })
+      .catch(err => {
+        history.push('/select-semester');
+      });
   }
 }
 
 const User = () => {
+  const role = useRecoilValue(roleSelector);
+  const history = useHistory();
   const [semester, setSemester] = useRecoilState(semesterAtom);
   const [lastSemester, setLastSemester] = React.useState(semester);
 
   React.useEffect(() => {
-    fetchSemester(semester, setSemester, lastSemester, setLastSemester);
-  }, [lastSemester, semester, setSemester]);
+    fetchSemester(
+      semester,
+      setSemester,
+      lastSemester,
+      setLastSemester,
+      history
+    );
+  }, [history, lastSemester, semester, setSemester]);
   return (
     <Switch>
       <Route.NormalRoute
@@ -39,10 +67,18 @@ const User = () => {
       <DefaultRoute>
         <Layout>
           <Switch>
-            <Route.SemesterSelected
-              path="/dashboard"
-              component={lazy(() => import('views/user/Dashboard'))}
-            />
+            {role === 'student' ? (
+              <Route.SemesterSelected
+                path="/dashboard"
+                component={lazy(() => import('views/user/StudentDashboard'))}
+              />
+            ) : (
+              <Route.SemesterSelected
+                path="/dashboard"
+                component={lazy(() => import('views/user/LecturerDashboard'))}
+              />
+            )}
+
             <Route.SemesterSelected
               path="/topic/:id(\d+)"
               component={lazy(() => import('views/user/Topics/Topic'))}

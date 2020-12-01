@@ -1,5 +1,10 @@
 import React, { lazy } from 'react';
-import { Switch, BrowserRouter, useHistory } from 'react-router-dom';
+import {
+  Switch,
+  BrowserRouter,
+  useHistory,
+  Route as DefaultRoute,
+} from 'react-router-dom';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
@@ -14,6 +19,7 @@ import AuthGuard from 'auth/AuthGuard';
 
 import User from 'views/user';
 import Admin from 'views/admin';
+import Profile from 'views/Profile';
 
 import { ME } from 'endpoints';
 import request from 'utils/request';
@@ -58,6 +64,7 @@ function fetchMe(setRole, setUser, history) {
 const RoleBasedLayout = React.memo(({ role }) => {
   return (
     <>
+      {/* Need loading */}
       {role === 'admin' && <Admin />}
       {['student', 'lecturer'].includes(role) && <User />}
     </>
@@ -76,7 +83,14 @@ const Private = React.memo(function Private() {
   return (
     <>
       <AuthGuard />
-      <RoleBasedLayout role={role} />
+      <Switch>
+        <DefaultRoute path="/profile">
+          <Profile />
+        </DefaultRoute>
+        <DefaultRoute>
+          <RoleBasedLayout role={role} />
+        </DefaultRoute>
+      </Switch>
     </>
   );
 });

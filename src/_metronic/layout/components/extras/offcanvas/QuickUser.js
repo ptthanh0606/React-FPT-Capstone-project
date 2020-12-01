@@ -8,9 +8,12 @@ import { useRecoilValue } from 'recoil';
 import userStore from 'store/user';
 
 import md5 from 'utils/md5';
-export function QuickUser() {
+import { role } from 'auth/recoil/selectors';
+
+const QuickUser = () => {
   const history = useHistory();
   const user = useRecoilValue(userStore);
+  const userRole = useRecoilValue(role);
 
   const logoutClick = () => {
     const toggle = document.getElementById('kt_quick_user_toggle');
@@ -18,6 +21,15 @@ export function QuickUser() {
       toggle.click();
     }
     history.push('/logout');
+  };
+
+  const myprofileClick = e => {
+    e.preventDefault();
+    const toggle = document.getElementById('kt_quick_user_toggle');
+    if (toggle) {
+      toggle.click();
+    }
+    history.push(`/profile/${userRole}/1`);
   };
 
   return (
@@ -52,7 +64,7 @@ export function QuickUser() {
             />
             <i className="symbol-badge bg-success" />
           </div>
-          <div className="d-flex flex-column">
+          <div className="d-flex flex-column align-items-start">
             <a
               href="#"
               className="font-weight-bold font-size-h5 text-dark-75 text-hover-primary"
@@ -61,7 +73,9 @@ export function QuickUser() {
             </a>
             <div className="text-muted mt-1 text-capitalize">{user.role}</div>
             {user.department && (
-              <div className="text-muted mt-1">{user.department[0].name}</div>
+              <div className="text-muted mt-1">
+                {user.department[0]?.name && ''}
+              </div>
             )}
             <div className="navi mt-2">
               <a href="#" className="navi-item">
@@ -85,7 +99,7 @@ export function QuickUser() {
                 Sign Out
               </Link> */}
             <button
-              className="btn btn-light-primary btn-bold"
+              className=" btn btn-light-primary btn-bold"
               onClick={logoutClick}
             >
               Sign out
@@ -96,7 +110,7 @@ export function QuickUser() {
         <div className="separator separator-dashed mt-8 mb-5" />
 
         <div className="navi navi-spacer-x-0 p-0">
-          <a href="/user/profile" className="navi-item">
+          <a href="/" className="navi-item" onClick={myprofileClick}>
             <div className="navi-link">
               <div className="symbol symbol-40 bg-light mr-3">
                 <div className="symbol-label">
@@ -184,4 +198,6 @@ export function QuickUser() {
       </div>
     </div>
   );
-}
+};
+
+export default React.memo(QuickUser);

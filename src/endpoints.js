@@ -14,7 +14,7 @@ export const ME = {
 //------------------------------------------------------------------------------
 
 export const LIST_DEPARTMENT = {
-  url: config.api + 'departments/viewAll',
+  url: config.api + 'departments',
   method: METHOD.GET,
 };
 
@@ -87,6 +87,33 @@ export const DELETE_LECTURER = id => ({
 
 // -----------------------------------------------------------------------------
 
+export const LIST_ADMIN = {
+  url: config.api + 'admins',
+  method: METHOD.GET,
+};
+
+export const CREATE_ADMIN = {
+  url: LIST_ADMIN.url,
+  method: METHOD.POST,
+};
+
+export const READ_ADMIN = id => ({
+  url: LIST_ADMIN.url + '/' + id,
+  method: METHOD.GET,
+});
+
+export const UPDATE_ADMIN = id => ({
+  url: READ_ADMIN(id).url,
+  method: METHOD.PUT,
+});
+
+export const DELETE_ADMIN = id => ({
+  url: READ_ADMIN(id).url,
+  method: METHOD.DELETE,
+});
+
+// -----------------------------------------------------------------------------
+
 export const LIST_SEMESTER = {
   url: config.api + 'semesters',
   method: METHOD.GET,
@@ -114,6 +141,33 @@ export const DELETE_SEMESTER = id => ({
 
 // -----------------------------------------------------------------------------
 
+export const LIST_ACTIVE_STUDENTS = id => ({
+  url: READ_SEMESTER(id).url + '/Students',
+  method: METHOD.GET,
+});
+
+export const CREATE_ACTIVE_STUDENTS = id => ({
+  url: READ_SEMESTER(id).url + '/Students',
+  method: METHOD.POST,
+});
+
+export const READ_ACTIVE_STUDENTS = (id, id2) => ({
+  url: READ_SEMESTER(id).url + '/Students/' + id2,
+  method: METHOD.GET,
+});
+
+export const UPDATE_ACTIVE_STUDENTS = (id, id2) => ({
+  url: READ_SEMESTER(id).url + '/Students/' + id2,
+  method: METHOD.PATCH,
+});
+
+export const DELETE_ACTIVE_STUDENTS = id => ({
+  url: READ_SEMESTER(id).url + '/Students',
+  method: METHOD.DELETE,
+});
+
+// -----------------------------------------------------------------------------
+
 export const LIST_STUDENT = {
   url: config.api + 'students',
   method: METHOD.GET,
@@ -136,5 +190,112 @@ export const UPDATE_STUDENT = id => ({
 
 export const DELETE_STUDENT = id => ({
   url: READ_STUDENT(id).url,
+  method: METHOD.DELETE,
+});
+
+// -----------------------------------------------------------------------------
+
+export const LIST_TEAM = {
+  url: config.api + 'teams',
+  method: METHOD.GET,
+};
+
+export const CREATE_TEAM = {
+  url: LIST_TEAM.url,
+  method: METHOD.POST,
+};
+
+export const READ_TEAM = id => ({
+  url: LIST_TEAM.url + '/' + id,
+  method: METHOD.GET,
+});
+
+export const UPDATE_TEAM = id => ({
+  url: READ_TEAM(id).url,
+  method: METHOD.PUT,
+});
+
+export const DELETE_TEAM = id => ({
+  url: READ_TEAM(id).url,
+  method: METHOD.DELETE,
+});
+
+// -----------------------------------------------------------------------------
+export const JOIN_TEAM = id => ({
+  url: READ_TEAM(id).url + '/join',
+  method: METHOD.PUT,
+});
+
+export const TRANSFER_LEADER_TEAM = id => ({
+  url: READ_TEAM(id).url + '/transferLeader',
+  method: METHOD.PUT,
+});
+
+export const LEAVE_TEAM = id => ({
+  url: READ_TEAM(id).url + '/leave',
+  method: METHOD.PUT,
+});
+
+export const LOCK_TEAM = id => ({
+  url: READ_TEAM(id).url + '/editLockStatus',
+  method: METHOD.PUT,
+});
+
+export const REFRESH_CODE_TEAM = {
+  url: LIST_TEAM.url + '/refreshCode',
+  method: METHOD.PUT,
+};
+
+// -----------------------------------------------------------------------------
+
+export const LIST_COUNCIL = id => ({
+  url: config.api + 'semesters/' + id + '/councils',
+  method: METHOD.GET,
+});
+
+export const CREATE_COUNCIL = id => ({
+  url: LIST_COUNCIL(id).url,
+  method: METHOD.POST,
+});
+
+export const READ_COUNCIL = (id, id2) => ({
+  url: LIST_COUNCIL(id).url + '/' + id2,
+  method: METHOD.GET,
+});
+
+export const UPDATE_COUNCIL = (id, id2) => ({
+  url: READ_COUNCIL(id, id2).url,
+  method: METHOD.PUT,
+});
+
+export const DELETE_COUNCIL = (id, id2) => ({
+  url: READ_COUNCIL(id, id2).url,
+  method: METHOD.DELETE,
+});
+
+// -----------------------------------------------------------------------------
+
+export const LIST_TOPIC = {
+  url: config.api + 'topics',
+  method: METHOD.GET,
+};
+
+export const CREATE_TOPIC = {
+  url: LIST_TOPIC.url,
+  method: METHOD.POST,
+};
+
+export const READ_TOPIC = id => ({
+  url: LIST_TOPIC.url + '/' + id,
+  method: METHOD.GET,
+});
+
+export const UPDATE_TOPIC = id => ({
+  url: READ_TOPIC(id).url,
+  method: METHOD.PUT,
+});
+
+export const DELETE_TOPIC = id => ({
+  url: READ_TOPIC(id).url,
   method: METHOD.DELETE,
 });

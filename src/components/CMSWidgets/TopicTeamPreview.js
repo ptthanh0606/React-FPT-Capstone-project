@@ -7,13 +7,16 @@ const TopicTeamPreview = () => {
     <div className="card card-custom card-border gutter-b">
       <div className="card-body">
         <div className="d-flex flex-wrap align-items-center py-1">
-          <div className="symbol symbol-80 symbol-light-success mr-5">
-            <span className="symbol-label">
-              <img src="#" className="h-50 align-self-center" alt="" />
-            </span>
-          </div>
-
           <div className="d-flex flex-column flex-grow-1 my-lg-0 my-2 pr-3">
+            <a
+              href="/"
+              className="text-dark font-weight-bolder text-hover-primary font-size-h5 "
+            >
+              Your topic
+            </a>
+            <span className="text-muted font-weight-bold font-size-lg mb-10">
+              Your current matched topic
+            </span>
             <a
               href="/"
               className="text-dark font-weight-bolder text-hover-primary font-size-h5"

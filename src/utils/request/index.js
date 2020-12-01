@@ -24,6 +24,7 @@ async function request({
   params = {},
   headers = {},
   r = true,
+  source = {},
   ...rest
 }) {
   if (authHelpers.tokenIsAlmostExpired() || !authHelpers.getAccessToken()) {
@@ -41,6 +42,10 @@ async function request({
     //     });
   }
 
+  const s = axios.CancelToken.source();
+  source.cancel = s.cancel;
+  source.token = s.token;
+
   return axios({
     headers: { ...defaultHeaders(), ...headers },
     url: to,
@@ -48,8 +53,9 @@ async function request({
     data,
     params,
     config,
+    cancelToken: s.token,
     ...rest,
-  });
+  }).catch(err => Promise.reject({ ...err, isCancel: axios.isCancel(err) }));
 }
 
 function Get(props) {

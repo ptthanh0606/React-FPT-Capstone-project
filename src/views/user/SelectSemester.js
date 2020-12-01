@@ -1,178 +1,77 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
-import metaAtom from 'store/meta';
-
-import SemesterCard from 'components/SemesterCard';
-import ScrollContainer from 'react-indiana-drag-scroll';
-import styles from './SelectSemester.module.scss';
-
-import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
-import Filters from 'views/admin/Semesters/SemesterFilters';
+import Filters from 'views/admin/Semesters/Filters.js';
 
-export const statusClasses = ['info', 'primary', 'warning', 'danger'];
-export const statusTitles = [
-  'Preparing',
-  'Matching',
-  'In-progress',
-  'Finished',
-];
-export const defaultSorted = [{ dataField: 'id', order: 'asc' }];
-export const sizePerPageList = [
-  { text: '10', value: 10 },
-  { text: '20', value: 20 },
-  { text: '50', value: 50 },
-  { text: '100', value: 100 },
-];
+import metaAtom from 'store/meta';
+import { useSetRecoilState } from 'recoil';
+import { Link } from 'react-router-dom';
 
-function ActionsColumnFormatter(
-  cellContent,
-  row,
-  rowIndex,
-  { openEditCustomerDialog, openDeleteCustomerDialog }
-) {
-  return (
-    <span className="text-nowrap">
-      <a
-        title="Edit"
-        className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-        onClick={() => openEditCustomerDialog(row.id)}
-      >
-        <i className="fas fa-mouse-pointer mx-2"></i>
-      </a>
-    </span>
-  );
-}
+import { useDebounce } from 'use-debounce';
+import request from 'utils/request';
+import { handleErrors } from 'utils/common';
+import * as endpoints from 'endpoints';
 
-function StatusColumnFormatter(cellContent, row) {
-  const getLabelCssClasses = () => {
-    return `label label-lg label-light-${
-      statusClasses[row.status]
-    } label-inline text-nowrap`;
-  };
-  return (
-    <span className={getLabelCssClasses()}>{statusTitles[row.status]}</span>
-  );
-}
+import * as transformers from 'views/admin/Semesters/transformers';
+import * as constants from 'views/admin/Semesters/constants';
 
-const columns = [
-  {
-    dataField: 'name',
-    text: 'Name',
-    sort: true,
-    sortCaret: sortCaret,
-    formatter: function StatusColumnFormatter(cellContent, row) {
-      return (
-        <Link className="text-dark font-weight-bold" to={'/semester/' + row.id}>
-          {cellContent}
-        </Link>
-      );
-    },
-    headerSortingClasses,
-  },
-  {
-    dataField: 'status',
-    text: 'Status',
-    sort: true,
-    sortCaret: sortCaret,
-    formatter: StatusColumnFormatter,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'action',
-    text: 'Actions',
-    formatter: ActionsColumnFormatter,
-    formatExtraData: {
-      openEditCustomerDialog: () => {},
-    },
-    classes: 'text-right pr-0',
-    headerClasses: 'text-right pr-3',
-    style: {
-      minWidth: '100px',
-    },
-  },
-];
+import SemesterCard from 'views/admin/Semesters/SemesterCard';
+import ScrollContainer from 'react-indiana-drag-scroll';
+import styles from 'views/admin/Semesters/nearest.module.scss';
 
-const semesters = [
-  {
-    name: 'Fall 2021',
-    id: 1,
-    status: 0,
-    color: 'danger',
-  },
-  {
-    name: 'Summer 2021',
-    id: 2,
-    status: 1,
-    color: 'warning',
-  },
-  {
-    name: 'Spring 2021',
-    id: 3,
-    status: 2,
-    color: 'success',
-  },
-  {
-    name: 'Fall 2020',
-    id: 4,
-    status: 3,
-    color: 'primary',
-  },
-  {
-    name: 'Summer 2020',
-    id: 5,
-    status: 3,
-    color: 'info',
-  },
-  {
-    name: 'Fall 2021',
-    id: 6,
-    status: 0,
-    color: 'danger',
-  },
-  {
-    name: 'Summer 2021',
-    id: 7,
-    status: 1,
-    color: 'warning',
-  },
-  {
-    name: 'Spring 2021',
-    id: 8,
-    status: 2,
-    color: 'success',
-  },
-  {
-    name: 'Fall 2020',
-    id: 9,
-    status: 3,
-    color: 'primary',
-  },
-  {
-    name: 'Summer 2020',
-    id: 10,
-    status: 3,
-    color: 'info',
-  },
-];
+export default function CustomersCard() {
+  const setMeta = useSetRecoilState(metaAtom);
 
-export default React.memo(function DashboardPage() {
+  const [l] = React.useReducer(() => ({}), {});
+
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [filters, setFilters] = React.useState({});
+  const [debouncedFilters] = useDebounce(filters, 500);
   const [page, setPage] = React.useState(1);
-  const [pageSize, setPageSize] = React.useState(10);
+  const [pageSize, setPageSize] = React.useState(
+    constants.sizePerPageList[0].value
+  );
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
 
+  const columns = React.useMemo(() => constants.createColumns(), []);
+
+  // ---------------------------------------------------------------------------
+
   React.useEffect(() => {
-    setData(semesters);
-    setTotal(100);
-  }, []);
-  const setMeta = useSetRecoilState(metaAtom);
+    setIsLoading(true);
+    const source = {};
+
+    request({
+      to: endpoints.LIST_SEMESTER.url,
+      method: endpoints.LIST_SEMESTER.method,
+      params: {
+        ...debouncedFilters,
+        pageNumber: page,
+        pageSize: pageSize,
+        sortField: sortField,
+        sortOrder: sortOrder,
+      },
+      source,
+    })
+      .then(res => {
+        setData(res.data?.data?.map(transformers.down));
+        setTotal(res.data?.totalRecords);
+        setPage(res.data?.pageNumber);
+        setPageSize(res.data?.pageSize);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        handleErrors(err);
+        if (!err.isCancel) setIsLoading(false);
+      });
+
+    return () => {
+      source.cancel();
+    };
+  }, [l, debouncedFilters, page, pageSize, sortField, sortOrder]);
 
   React.useEffect(() => {
     setMeta({
@@ -212,7 +111,7 @@ export default React.memo(function DashboardPage() {
       <ScrollContainer
         className={styles['semester-scroll'] + ' alert-shadow gutter-b'}
       >
-        {semesters.map(s => (
+        {data.slice(0, 5).map(s => (
           <SemesterCard {...s} key={s.id} />
         ))}
       </ScrollContainer>
@@ -233,10 +132,10 @@ export default React.memo(function DashboardPage() {
           setSortField={setSortField}
           sortOrder={sortOrder}
           setSortOrder={setSortOrder}
-          defaultSorted={defaultSorted}
-          pageSizeList={sizePerPageList}
+          defaultSorted={constants.defaultSorted}
+          pageSizeList={constants.sizePerPageList}
         />
       </div>
     </div>
   );
-});
+}
