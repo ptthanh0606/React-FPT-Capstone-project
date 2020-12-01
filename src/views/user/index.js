@@ -6,7 +6,8 @@ import * as Route from 'utils/router/routes';
 import { Layout } from '_metronic/layout';
 import semesterAtom from 'store/semester';
 
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import roleSelector from 'auth/recoil/selectors/role';
 import request from 'utils/request';
 import { READ_SEMESTER } from 'endpoints';
 import { down } from 'views/admin/Semesters/transformers';
@@ -39,6 +40,7 @@ function fetchSemester(
 }
 
 const User = () => {
+  const role = useRecoilValue(roleSelector);
   const history = useHistory();
   const [semester, setSemester] = useRecoilState(semesterAtom);
   const [lastSemester, setLastSemester] = React.useState(semester);
@@ -65,10 +67,18 @@ const User = () => {
       <DefaultRoute>
         <Layout>
           <Switch>
-            <Route.SemesterSelected
-              path="/dashboard"
-              component={lazy(() => import('views/user/Dashboard'))}
-            />
+            {role === 'student' ? (
+              <Route.SemesterSelected
+                path="/dashboard"
+                component={lazy(() => import('views/user/StudentDashboard'))}
+              />
+            ) : (
+              <Route.SemesterSelected
+                path="/dashboard"
+                component={lazy(() => import('views/user/LecturerDashboard'))}
+              />
+            )}
+
             <Route.SemesterSelected
               path="/topic/:id(\d+)"
               component={lazy(() => import('views/user/Topics/Topic'))}

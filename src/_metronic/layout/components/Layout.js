@@ -10,8 +10,8 @@ import { Footer } from './footer/Footer';
 import { LayoutInit } from './LayoutInit';
 import { SubHeader } from './subheader/SubHeader';
 import { QuickPanel } from './extras/offcanvas/QuickPanel';
-import { QuickUser } from './extras/offcanvas/QuickUser';
 import { ScrollTop } from './extras/ScrollTop';
+import QuickUser from './extras/offcanvas/QuickUser';
 // import { StickyToolbar } from './extras/StickyToolbar';
 
 export function Layout({ children }) {
