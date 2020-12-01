@@ -140,7 +140,6 @@ const Information = ({ loadData = function () {} }) => {
               <Col sm={9}>
                 <Form.Control
                   type="datetime-local"
-                  placeholder="Date"
                   onChange={e => setMatchingDate(e.currentTarget.value)}
                   value={matchingDate}
                 />
@@ -153,7 +152,6 @@ const Information = ({ loadData = function () {} }) => {
               <Col sm={9}>
                 <Form.Control
                   type="datetime-local"
-                  placeholder="Date"
                   onChange={e => setInprogressDate(e.currentTarget.value)}
                   value={inprogressDate}
                 />
@@ -170,7 +168,6 @@ const Information = ({ loadData = function () {} }) => {
               <Col sm={9}>
                 <Form.Control
                   type="datetime-local"
-                  placeholder="Date"
                   onChange={e => setFinishedDate(e.currentTarget.value)}
                   value={finishedDate}
                 />

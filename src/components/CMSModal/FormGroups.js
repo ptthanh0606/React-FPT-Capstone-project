@@ -78,9 +78,20 @@ const FormGroups = ({ config, value, handleChangeFields, type }) => {
             {config.label}
           </Form.Label>
           <Col sm={9}>
+            <Form.Control type="date" value={value} onChange={handleChange} />
+            <small className="form-text text-muted">{config.smallLabel}</small>
+          </Col>
+        </Form.Group>
+      );
+    case 'datetime-local':
+      return (
+        <Form.Group as={Row}>
+          <Form.Label column sm={3}>
+            {config.label}
+          </Form.Label>
+          <Col sm={9}>
             <Form.Control
-              type="date"
-              placeholder={config.placeholder}
+              type="datetime-local"
               value={value}
               onChange={handleChange}
             />
