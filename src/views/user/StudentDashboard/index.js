@@ -1,27 +1,14 @@
 import React from 'react';
-// import {
-//   MixedWidget1,
-//   MixedWidget14,
-//   ListsWidget9,
-//   StatsWidget11,
-//   StatsWidget12,
-//   ListsWidget1,
-//   AdvanceTablesWidget2,
-//   AdvanceTablesWidget4,
-//   ListsWidget3,
-//   ListsWidget4,
-//   ListsWidget8,
-// } from '_metronic/_partials/widgets';
 
 import { useSetRecoilState } from 'recoil';
 import metaAtom from 'store/meta';
 import TopicTeamPreview from 'components/CMSWidgets/TopicTeamPreview';
 import Reports from 'components/CMSWidgets/Reports';
-import Timeline from 'components/CMSWidgets/Timeline';
 import Anouncement from 'components/CMSWidgets/Anouncement';
 import CheckpointProgress from 'components/CMSWidgets/CheckpointProgress';
+import FlowTimeline from 'components/CMSWidgets/FlowTimeline';
 
-export default React.memo(function DashboardPage() {
+export default React.memo(function LecturerDashboard() {
   const setMeta = useSetRecoilState(metaAtom);
 
   React.useEffect(() => {
@@ -46,7 +33,7 @@ export default React.memo(function DashboardPage() {
       </div>
       <div className="col-lg-6 col-xxl-4">
         {/* Have team, have topic */}
-        <Timeline className="card-stretch gutter-b" />
+        <FlowTimeline className=" gutter-b" />
 
         {/* Have team || No team */}
         {/* <TopicPreviewList
@@ -57,7 +44,7 @@ export default React.memo(function DashboardPage() {
       <div className="col-lg-6 col-xxl-4">
         {/* Have team, have topic */}
         <Anouncement />
-        <CheckpointProgress />
+        <CheckpointProgress className=" gutter-b" />
       </div>
     </div>
   );

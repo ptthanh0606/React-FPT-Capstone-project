@@ -9,7 +9,8 @@ import userStore from 'store/user';
 
 import md5 from 'utils/md5';
 import { role } from 'auth/recoil/selectors';
-export function QuickUser() {
+
+const QuickUser = () => {
   const history = useHistory();
   const user = useRecoilValue(userStore);
   const userRole = useRecoilValue(role);
@@ -63,7 +64,7 @@ export function QuickUser() {
             />
             <i className="symbol-badge bg-success" />
           </div>
-          <div className="d-flex flex-column">
+          <div className="d-flex flex-column align-items-start">
             <a
               href="#"
               className="font-weight-bold font-size-h5 text-dark-75 text-hover-primary"
@@ -98,7 +99,7 @@ export function QuickUser() {
                 Sign Out
               </Link> */}
             <button
-              className="btn btn-light-primary btn-bold"
+              className=" btn btn-light-primary btn-bold"
               onClick={logoutClick}
             >
               Sign out
@@ -197,4 +198,6 @@ export function QuickUser() {
       </div>
     </div>
   );
-}
+};
+
+export default React.memo(QuickUser);

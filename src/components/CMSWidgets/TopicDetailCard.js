@@ -2,14 +2,21 @@ import React from 'react';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 import SVG from 'react-inlinesvg';
 import Feedback from './Feedback';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
-const TopicDetailCard = ({
-  className,
-  topicCode,
-  topicName,
-  fromCompany,
-  fullDesc,
-}) => {
+const TopicDetailCard = ({ className, topicCode, topicName, fullDesc }) => {
+  const handleShowApplicationModal = React.useCallback(e => {
+    e.preventDefault();
+  }, []);
+
+  const handleShowTeamDetail = React.useCallback(event => {
+    event.preventDefault();
+  }, []);
+
+  const handleShowMentorDetail = React.useCallback(event => {
+    event.preventDefault();
+  }, []);
+
   return (
     <div className={className + ' card card-custom gutter-b'}>
       <div className="card-body">
@@ -19,53 +26,26 @@ const TopicDetailCard = ({
               <div className="mr-3">
                 <a
                   href="/"
-                  className="d-flex align-items-center text-dark text-hover-primary font-size-h5 font-weight-bold mr-3"
+                  className="d-flex align-items-center text-dark text-hover-primary font-size-h3 font-weight-bolder mr-3"
                 >
-                  {`${topicCode} - ${topicName}`}{' '}
-                  <i className="flaticon2-correct text-success icon-md ml-2"></i>
+                  {`${topicName}`}{' '}
                 </a>
                 <div className="d-flex flex-wrap my-2">
                   <a
                     href="/"
                     className="text-muted text-hover-primary font-weight-bold mr-lg-8 mr-5 mb-lg-0 mb-2"
                   >
-                    <span className="svg-icon svg-icon-md svg-icon-gray-500 mr-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24px"
-                        height="24px"
-                        viewBox="0 0 24 24"
-                        version="1.1"
-                      >
-                        <g
-                          stroke="none"
-                          stroke-width="1"
-                          fill="none"
-                          fill-rule="evenodd"
-                        >
-                          <mask fill="white">
-                            <use></use>
-                          </mask>
-                          <g></g>
-                          <path
-                            d="M7,10 L7,8 C7,5.23857625 9.23857625,3 12,3 C14.7614237,3 17,5.23857625 17,8 L17,10 L18,10 C19.1045695,10 20,10.8954305 20,12 L20,18 C20,19.1045695 19.1045695,20 18,20 L6,20 C4.8954305,20 4,19.1045695 4,18 L4,12 C4,10.8954305 4.8954305,10 6,10 L7,10 Z M12,5 C10.3431458,5 9,6.34314575 9,8 L9,10 L15,10 L15,8 C15,6.34314575 13.6568542,5 12,5 Z"
-                            fill="#000000"
-                          ></path>
-                        </g>
-                      </svg>
-                    </span>{' '}
-                    {fromCompany}
+                    {topicCode}
                   </a>
                 </div>
               </div>
               <div className="my-lg-0 my-1">
                 <a
                   href="/"
-                  className="btn btn-sm btn-light-success font-weight-bolder text-uppercase mr-3"
+                  className="btn btn-sm btn-light-primary font-weight-bolder text-uppercase"
                 >
-                  <span className="svg-icon svg-icon-md svg-icon-primary">
+                  <span className="svg-icon svg-icon-md">
                     <SVG
-                      className="h-75 align-self-end"
                       src={toAbsoluteUrl(
                         '/media/svg/icons/General/Attachment2.svg'
                       )}
@@ -73,12 +53,6 @@ const TopicDetailCard = ({
                   </span>
                   Attachment
                 </a>
-                {/* <a
-                  href="/"
-                  className="btn btn-md btn-info font-weight-bolder text-uppercase"
-                >
-                  Give feedback
-                </a> */}
               </div>
             </div>
 
@@ -89,20 +63,17 @@ const TopicDetailCard = ({
 
               <div className="d-flex flex-wrap align-items-center py-2">
                 <div className="d-flex align-items-center">
-                  <div className="mr-6">
-                    <div className="font-weight-bold mb-2">Department</div>
-                    <span className="label label-xl label-light label-inline text-nowrap">
-                      SE
+                  <div className="mr-10">
+                    <div className="font-weight-bolder mb-2">Department</div>
+                    <span className="label label-xl label-light label-inline text-nowrap mr-2">
+                      Software Engineer
                     </span>
-                  </div>
-                  <div className="mr-6">
-                    <div className="font-weight-bold mb-2">Submit by</div>
                     <span className="label label-xl label-light label-inline text-nowrap">
-                      Phan Thong Thanh
+                      Software Engineer
                     </span>
                   </div>
                   <div className="">
-                    <div className="font-weight-bold mb-2">Status</div>
+                    <div className="font-weight-bolder mb-2">Status</div>
                     <span className="label label-xl label-light-danger label-inline text-nowrap">
                       Rejected
                     </span>
@@ -131,9 +102,14 @@ const TopicDetailCard = ({
           </div>
 
           <div className="d-flex align-items-center flex-lg-fill my-1">
-            <span className="mr-4">
-              <i className="flaticon-network icon-2x text-muted font-weight-bold"></i>
-            </span>
+            <OverlayTrigger
+              placement="bottom"
+              overlay={<Tooltip id="quick-user-tooltip">Team members</Tooltip>}
+            >
+              <a href="/" className="mr-4" onClick={handleShowTeamDetail}>
+                <i className="flaticon-users icon-2x text-muted font-weight-bold"></i>
+              </a>
+            </OverlayTrigger>
             <div className="symbol-group symbol-hover">
               <div
                 className="symbol symbol-30 symbol-circle"
@@ -171,9 +147,14 @@ const TopicDetailCard = ({
           </div>
 
           <div className="d-flex align-items-center flex-lg-fill my-1">
-            <span className="mr-4">
-              <i className="flaticon-network icon-2x text-muted font-weight-bold"></i>
-            </span>
+            <OverlayTrigger
+              placement="bottom"
+              overlay={<Tooltip id="quick-user-tooltip">Mentors</Tooltip>}
+            >
+              <a href="/" className="mr-4" onClick={handleShowMentorDetail}>
+                <i className="flaticon-profile-1 icon-2x text-muted font-weight-bold"></i>
+              </a>
+            </OverlayTrigger>
             <div className="symbol-group symbol-hover">
               <div
                 className="symbol symbol-30 symbol-circle"
@@ -202,9 +183,13 @@ const TopicDetailCard = ({
               <span className="text-dark-75 font-weight-bolder font-size-sm">
                 73 Applications
               </span>
-              <a href="/" className="text-primary font-weight-bolder">
+              {/* <a
+                href="/"
+                className="text-primary font-weight-bolder"
+                onClick={handleShowApplicationModal}
+              >
                 View
-              </a>
+              </a> */}
             </div>
           </div>
         </div>
