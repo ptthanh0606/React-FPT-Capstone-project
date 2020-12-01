@@ -1,4 +1,5 @@
 import React from 'react';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import SVG from 'react-inlinesvg';
 import { useHistory } from 'react-router-dom';
 import { toAbsoluteUrl } from '_metronic/_helpers';
@@ -36,26 +37,40 @@ const ApplicationRow = ({
           <span className="text-muted font-weight-bolder">{subLabel}</span>
         </span>
       </div>
-      <button
-        type="button"
-        className="btn btn-primary btn-success font-weight-bold btn-sm mr-2"
-        onClick={onApprove}
+      <OverlayTrigger
+        placement="bottom"
+        overlay={
+          <Tooltip id="quick-user-tooltip">Approve selected team</Tooltip>
+        }
       >
-        <span class="svg-icon svg-icon-white">
-          <SVG src={toAbsoluteUrl('/media/svg/icons/General/Smile.svg')}></SVG>
-        </span>{' '}
-        {buttonLabel}
-      </button>
-      <button
-        type="button"
-        className="btn btn-light-danger font-weight-bold btn-sm "
-        onClick={onReject}
+        <button
+          type="button"
+          className="btn btn-primary btn-success font-weight-bold btn-sm mr-2"
+          onClick={onApprove}
+        >
+          <span class="svg-icon mr-0">
+            <SVG
+              src={toAbsoluteUrl('/media/svg/icons/General/Smile.svg')}
+            ></SVG>
+          </span>
+        </button>
+      </OverlayTrigger>
+      <OverlayTrigger
+        placement="bottom"
+        overlay={
+          <Tooltip id="quick-user-tooltip">Reject selected team</Tooltip>
+        }
       >
-        <span class="svg-icon svg-icon-red">
-          <SVG src={toAbsoluteUrl('/media/svg/icons/General/Sad.svg')}></SVG>
-        </span>{' '}
-        {buttonLabel}
-      </button>
+        <button
+          type="button"
+          className="btn btn-light-danger font-weight-bold btn-sm "
+          onClick={onReject}
+        >
+          <span class="svg-icon mr-0 svg-icon-red">
+            <SVG src={toAbsoluteUrl('/media/svg/icons/General/Sad.svg')}></SVG>
+          </span>
+        </button>
+      </OverlayTrigger>
     </div>
   );
 };

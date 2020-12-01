@@ -2,15 +2,11 @@ import React from 'react';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 import SVG from 'react-inlinesvg';
 import Feedback from './Feedback';
-import ApplicationsModal from 'components/CMSModal/ApplicationsModal';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 const TopicDetailCard = ({ className, topicCode, topicName, fullDesc }) => {
-  const [showApplication, setShowApplication] = React.useState(false);
-
   const handleShowApplicationModal = React.useCallback(e => {
     e.preventDefault();
-    setShowApplication(true);
   }, []);
 
   const handleShowTeamDetail = React.useCallback(event => {
@@ -187,17 +183,13 @@ const TopicDetailCard = ({ className, topicCode, topicName, fullDesc }) => {
               <span className="text-dark-75 font-weight-bolder font-size-sm">
                 73 Applications
               </span>
-              <a
+              {/* <a
                 href="/"
                 className="text-primary font-weight-bolder"
                 onClick={handleShowApplicationModal}
               >
                 View
-              </a>
-              <ApplicationsModal
-                isShowFlg={showApplication}
-                onHide={() => setShowApplication(false)}
-              />
+              </a> */}
             </div>
           </div>
         </div>
