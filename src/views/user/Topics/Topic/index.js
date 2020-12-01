@@ -18,6 +18,7 @@ const Topic = () => {
   const [studentTeam, setStudentTeam] = React.useState({});
   const [mentors, setMentors] = React.useState({});
   const [applications, setApplications] = React.useState([]);
+
   // ----------------------------------------------------------
 
   // ----------------------------------------------------------
@@ -76,11 +77,19 @@ const Topic = () => {
             </button>
             <button
               type="button"
-              className="btn btn-primary btn-success font-weight-bold btn-sm "
+              className="btn btn-primary btn-success font-weight-bold btn-sm mr-2"
               onClick={() => {}}
             >
               <i className="fas fa-sign-in-alt mr-2"></i>
-              Apply for matching
+              Apply for mentoring
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary btn-danger font-weight-bold btn-sm "
+              onClick={() => {}}
+            >
+              <i className="far fa-trash-alt mr-2"></i>
+              Dump
             </button>
           </>
         );
