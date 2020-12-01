@@ -17,7 +17,7 @@ import { Form } from 'react-bootstrap';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
 import toast from 'utils/toast';
-import { down, up } from './transformers';
+import { down, up } from '../../transformers';
 import Button from 'components/Button';
 
 const Information = ({ loadData = function () {} }) => {
