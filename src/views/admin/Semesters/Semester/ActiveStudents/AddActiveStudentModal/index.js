@@ -7,9 +7,10 @@ import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 
-import * as transformers from 'views/admin/Students/transformers';
-import * as constants from 'views/admin/Students/constants';
-import { Button, Modal } from 'react-bootstrap';
+import * as transformers from 'modules/student/transformers';
+import * as constants from 'modules/student/constants';
+import { Modal } from 'react-bootstrap';
+import Button from 'components/Button';
 
 const AddActiveStudentModal = ({ isShowFlg, onHide, onAdd }) => {
   const { id: semId } = useParams();
@@ -27,6 +28,7 @@ const AddActiveStudentModal = ({ isShowFlg, onHide, onAdd }) => {
   );
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [isProcessing, setIsProcessing] = React.useState(false);
 
   // ---------------------------------------------------------------------------
 
@@ -69,7 +71,8 @@ const AddActiveStudentModal = ({ isShowFlg, onHide, onAdd }) => {
   }, [l, debouncedFilters, page, pageSize, sortField, sortOrder, semId]);
 
   const handleAddStudent = () => {
-    onAdd(selected);
+    setIsProcessing(true);
+    onAdd(selected).finally(() => setIsProcessing(false));
   };
 
   const onHideModal = React.useCallback(() => {
@@ -127,7 +130,11 @@ const AddActiveStudentModal = ({ isShowFlg, onHide, onAdd }) => {
         <Button variant="secondary" onClick={onHideModal}>
           Close
         </Button>
-        <Button variant="primary" onClick={handleAddStudent}>
+        <Button
+          variant="primary"
+          onClick={handleAddStudent}
+          isLoading={isProcessing}
+        >
           Add ({selected.length}) selected
         </Button>
       </Modal.Footer>

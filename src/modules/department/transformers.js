@@ -9,8 +9,12 @@ export function down(i) {
     name: i?.name || console.log('name field not found'),
     approvers:
       i?.approvers?.map(j => ({
-        value: j?.id,
-        label: j?.code,
+        value: j?.id || console.log('approver id field not found'),
+        label: j?.code || console.log('approver code field not found'),
+        isDisabled:
+          j?.isDisabled !== undefined
+            ? j?.isDisabled
+            : console.log('approvers isDisabled field not found'),
       })) || (console.log('approvers field not found'), []),
   };
 }
