@@ -26,9 +26,9 @@ const ActionCard = ({
       <span className={`svg-icon svg-icon-3x svg-icon-${type} d-block my-2`}>
         <SVG src={iconSrc}></SVG>
       </span>
-      <a href="/" className={`text-${type} font-weight-bold font-size-h6 mt-2`}>
+      <span className={`text-${type} font-weight-bold font-size-h6 mt-2`}>
         {label}
-      </a>
+      </span>
     </a>
   );
 };

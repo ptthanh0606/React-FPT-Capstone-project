@@ -7,21 +7,23 @@ const Anouncement = ({
 }) => {
   return (
     <div
-      class={`card wave wave-animate-slow wave-${type} card-custom bgi-no-repeat card-border gutter-b`}
+      className={`card wave wave-animate-slow wave-${type} card-custom bgi-no-repeat card-border gutter-b`}
       style={{
         backgroundPosition: 'right top',
         backgroundSize: '30% auto',
         backgroundImage: 'url(assets/media/svg/shapes/abstract-4.svg)',
       }}
     >
-      <div class="card-body">
-        <span class="card-title font-weight-bolder text-muted text-hover-primary font-size-h5">
+      <div className="card-body">
+        <span className="card-title font-weight-bolder text-muted text-hover-primary font-size-h5">
           Anouncement
         </span>
 
-        <div class={`font-weight-bolder text-${type} mt-9 mb-5`}>{date}</div>
+        <div className={`font-weight-bolder text-${type} mt-9 mb-5`}>
+          {date}
+        </div>
 
-        <p class="text-dark-75 font-size-h5 m-0">{body}</p>
+        <p className="text-dark-75 font-size-h5 m-0">{body}</p>
       </div>
     </div>
   );

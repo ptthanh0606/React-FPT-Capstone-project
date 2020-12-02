@@ -38,12 +38,12 @@ const StatTile = ({
             {dataText}
           </div>
 
-          <a
+          <span
             href="/"
             className={`text-inverse-${baseColor} font-weight-bold font-size-lg mt-1`}
           >
             {desciption}
-          </a>
+          </span>
         </div>
       </a>
     </>

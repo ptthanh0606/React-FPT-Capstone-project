@@ -203,38 +203,52 @@ const Topic = () => {
       },
     ]);
     setStudentTeam({
+      id: '',
       name: 'SKT T1',
       department: 'Software Engineer',
       leader: 'Huynh Duc Duy',
       members: [
         {
+          id: '1',
+          role: '1',
           name: 'Huynh Duc Duy',
           code: 'SE130491',
         },
         {
+          id: '2',
+          role: '1',
           name: 'Phan Thong Thanh',
           code: 'SE130491',
         },
         {
+          id: '3',
+          role: '1',
           name: 'Tran Tuan Anh',
           code: 'SE130491',
         },
         {
+          id: '4',
+          role: '1',
           name: 'Tran Thai Trung',
           code: 'SE130491',
         },
       ],
     });
     setMentors({
+      id: '',
       name: 'Mentor team 1',
       department: 'Software Engineer',
       leader: 'Tran Tuan Anh',
       members: [
         {
+          id: '1',
+          role: '2',
           name: 'Tran Tuan Anh',
           code: '',
         },
         {
+          id: '2',
+          role: '2',
           name: 'Lam Huu Khanh Phuong',
           code: '',
         },
@@ -282,18 +296,9 @@ const Topic = () => {
           <GroupCard
             className="gutter-b"
             title="Assigned team"
-            members={studentTeam.members}
-            name={studentTeam.name}
-            department={studentTeam.department}
-            leader={studentTeam.leader}
+            group={studentTeam}
           />
-          <GroupCard
-            title="Mentors"
-            members={mentors.members}
-            name={mentors.name}
-            department={mentors.department}
-            leader={mentors.leader}
-          />
+          <GroupCard title="Mentors" group={mentors} />
         </div>
         <CMSModal
           isShowFlg={showSettingFlg}

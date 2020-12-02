@@ -47,9 +47,10 @@ const QuickAction = ({
         <div className="card-spacer mt-n25">
           {actionsRows &&
             actionsRows.map(row => (
-              <div className="row m-0">
+              <div key={actionsRows.indexOf(row)} className="row m-0">
                 {row.map(action => (
                   <ActionCard
+                    key={action.label}
                     className={action.className}
                     type={action.type}
                     iconSrc={action.iconSrc}

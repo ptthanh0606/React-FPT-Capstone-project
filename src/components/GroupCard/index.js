@@ -3,8 +3,16 @@ import { useHistory } from 'react-router-dom';
 import GroupInfo from './GroupInfo';
 import GroupMember from './GroupMember';
 
-const GroupCard = ({ className, title, members, name, department, leader }) => {
+const GroupCard = ({ group, groupId, className, title }) => {
   const history = useHistory();
+
+  const handleClick = React.useCallback(
+    e => {
+      e.preventDefault();
+      history.push(`/team/${groupId}`);
+    },
+    [groupId, history]
+  );
 
   return (
     <div className={`card card-custom ${className}`}>
@@ -13,6 +21,7 @@ const GroupCard = ({ className, title, members, name, department, leader }) => {
         <div className="card-toolbar">
           <a
             href="/"
+            onClick={handleClick}
             className="btn btn-sm btn-light-primary font-weight-bolder"
           >
             More
@@ -21,11 +30,17 @@ const GroupCard = ({ className, title, members, name, department, leader }) => {
       </div>
       <div className="card-body pt-2">
         <div className={'d-flex-column align-items-center' + className}>
-          <GroupInfo name={name} department={department} leader={leader} />
-          {members &&
-            members.map(member => (
+          <GroupInfo
+            name={group.name}
+            department={group.department}
+            leader={group.leader}
+          />
+          {group.members &&
+            group.members.map(member => (
               <GroupMember
-                key={member.name}
+                key={member.id}
+                id={member.id}
+                role={member.role}
                 label={member.name}
                 subLabel={member.code}
               />
@@ -36,4 +51,4 @@ const GroupCard = ({ className, title, members, name, department, leader }) => {
   );
 };
 
-export default GroupCard;
+export default React.memo(GroupCard);
