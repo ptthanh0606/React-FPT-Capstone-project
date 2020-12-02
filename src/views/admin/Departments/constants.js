@@ -65,6 +65,11 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
                     <Link
                       className="text-dark font-weight-bold"
                       to={'/profile/lecturer/' + i.value}
+                      style={{
+                        textDecoration: i.isDisabled
+                          ? 'line-through'
+                          : undefined,
+                      }}
                     >
                       {i.label}
                     </Link>
