@@ -237,28 +237,6 @@ export default function CustomersCard() {
         buttons = <></>;
         break;
 
-      case 'admin':
-        buttons = (
-          <>
-            <button
-              type="button"
-              className="btn btn-primary font-weight-bold btn-sm btn-light mr-2"
-            >
-              <i className="fas fa-cog mr-2"></i>
-              Settings
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary font-weight-bold"
-              onClick={showNewTopicModal}
-            >
-              <i className="fas fa-paper-plane mr-2"></i>
-              Submit
-            </button>
-          </>
-        );
-        break;
-
       case 'lecturer':
         buttons = (
           <>
