@@ -2,6 +2,7 @@ import React from 'react';
 import Row from './Row';
 
 const CMSAnotherList = ({
+  darkMode = true,
   className,
   title,
   subTitle,
@@ -21,12 +22,24 @@ const CMSAnotherList = ({
   // -------------------------------------------------------------
 
   return (
-    <div className={`card card-custom card-border ${className}`}>
+    <div
+      className={`card card-custom card-border ${
+        darkMode && 'bg-dark'
+      } ${className}`}
+    >
       <div className="card-header align-items-center border-0 mt-4">
-        <h3 className="card-title font-weight-bolder align-items-start text-dark flex-column">
+        <h3
+          className={`card-title font-weight-bolder align-items-start text-${
+            darkMode && 'white'
+          } flex-column`}
+        >
           {title}
           {subTitle && (
-            <span className="text-muted mt-3 font-weight-bold font-size-sm mb-5">
+            <span
+              className={`text-muted text-${
+                darkMode && 'white'
+              } mt-3 font-weight-bold font-size-sm mb-5`}
+            >
               {subTitle}
             </span>
           )}
@@ -41,6 +54,7 @@ const CMSAnotherList = ({
               subLabel={row.subLabel}
               emailAvatar={row.emailAvatar}
               altLabel={row.altLabel}
+              darkMode={darkMode}
             />
           ))}
       </div>

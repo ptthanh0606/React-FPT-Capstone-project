@@ -8,6 +8,7 @@ const Row = ({
   altLabel = '',
   emailAvatar = '',
   onLabelClick,
+  darkMode,
 }) => {
   const handleRoute = React.useCallback(
     event => {
@@ -26,13 +27,19 @@ const Row = ({
         <a
           href="/"
           onClick={handleRoute}
-          className="text-dark-75 text-hover-primary font-weight-bolder mr-2"
+          className={`text-${
+            darkMode && 'light-primary'
+          } text-hover-primary font-weight-bold mr-2`}
         >
           {label}
         </a>
 
         <div className="mt-2">
-          <span className="label label-light-primary font-weight-bold label-inline mr-2">
+          <span
+            className={`label ${
+              darkMode ? 'label-info' : 'label-light-primary'
+            } font-weight-bold label-inline mr-2`}
+          >
             {subLabel}
           </span>
         </div>
@@ -41,11 +48,16 @@ const Row = ({
         className="d-flex align-items-center justify-content-end flex-wrap"
         data-toggle="view"
       >
-        <div className="font-weight-bolder" data-toggle="view">
+        <a
+          href="/"
+          className={`font-weight-bolder ${
+            darkMode && 'text-light-primary text-hover-primary'
+          }`}
+        >
           {altLabel}
-        </div>
+        </a>
 
-        <span className="symbol symbol-30 ml-3">
+        <a href="/" className="symbol symbol-30 ml-3">
           <span
             className="symbol-label"
             style={{
@@ -54,7 +66,7 @@ const Row = ({
               )})`,
             }}
           ></span>
-        </span>
+        </a>
       </div>
     </div>
   );

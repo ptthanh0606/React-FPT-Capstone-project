@@ -14,11 +14,13 @@ import FlowTimeline from 'components/CMSWidgets/FlowTimeline';
 import CMSAnotherList from 'components/CMSAnotherList';
 
 export default React.memo(function LecturerDashboard() {
-  const history = useHistory();
   const setMeta = useSetRecoilState(metaAtom);
+  const history = useHistory();
   const [topicType, setTopicType] = React.useState('Submited');
   const [topicPreviews, setTopicPreviews] = React.useState([]);
   const [flowTimelines, setFlowTimelines] = React.useState([]);
+  const [topicNeedFeedback, setTopicNeedFeedback] = React.useState([]);
+  const [applications, setApplications] = React.useState([]);
 
   // --------------------------------------------------------------------
 
@@ -48,6 +50,7 @@ export default React.memo(function LecturerDashboard() {
     });
   }, [setMeta]);
 
+  // My topic
   React.useEffect(() => {
     const response =
       topicType === 'Submited'
@@ -142,6 +145,56 @@ export default React.memo(function LecturerDashboard() {
     setTopicPreviews(response);
   }, [handleRouteToSpecificTopic, topicType]);
 
+  // Applications
+  React.useEffect(() => {
+    const response = [
+      {
+        id: 0,
+        label: 'Capstone Management System',
+        onLabelClick: handleRouteToSpecificTopic(0),
+        subLabel: 'FA20SE13',
+        action: applicationRowActionFormatter(10),
+      },
+      {
+        id: 0,
+        label: 'Web Checker System',
+        onLabelClick: handleRouteToSpecificTopic(0),
+        subLabel: 'FA20SE11',
+        action: applicationRowActionFormatter(5),
+      },
+      {
+        id: 0,
+        label: 'Example topic name',
+        onLabelClick: handleRouteToSpecificTopic(0),
+        subLabel: 'FA20SE15',
+        action: applicationRowActionFormatter(2),
+      },
+      {
+        id: 0,
+        label: 'Example topic name 2',
+        onLabelClick: handleRouteToSpecificTopic(0),
+        subLabel: 'FA20SE15',
+        action: applicationRowActionFormatter(2),
+      },
+      {
+        id: 0,
+        label: 'Example topic name 3',
+        onLabelClick: handleRouteToSpecificTopic(0),
+        subLabel: 'FA20SE15',
+        action: applicationRowActionFormatter(2),
+      },
+      {
+        id: 0,
+        label: 'Example topic name 4',
+        onLabelClick: handleRouteToSpecificTopic(0),
+        subLabel: 'FA20SE15',
+        action: applicationRowActionFormatter(2),
+      },
+    ];
+    setApplications(response);
+  }, [handleRouteToSpecificTopic]);
+
+  // Flow timelines
   React.useEffect(() => {
     setFlowTimelines([
       {
@@ -187,6 +240,37 @@ export default React.memo(function LecturerDashboard() {
     ]);
   }, []);
 
+  // Topic need feedback
+  React.useEffect(() => {
+    const response = [
+      {
+        id: 0,
+        label: 'Capstone Management System',
+        onLabelClick: handleRouteToSpecificTopic(0),
+        subLabel: 'Software Engineer',
+        altLabel: 'Ho Hoan Kiem',
+        emailAvatar: 'phanthongthanh0606@gmail.com',
+      },
+      {
+        id: 0,
+        label: 'Web Checker System',
+        onLabelClick: handleRouteToSpecificTopic(0),
+        subLabel: 'Graphic Design',
+        altLabel: 'Le Vu Truong',
+        emailAvatar: 'phanthongthanh0606@gmail.com',
+      },
+      {
+        id: 0,
+        label: 'Example topic name',
+        onLabelClick: handleRouteToSpecificTopic(0),
+        subLabel: 'International Business',
+        altLabel: 'Tran Dinh Thanh',
+        emailAvatar: 'phanthongthanh0606@gmail.com',
+      },
+    ];
+    setTopicNeedFeedback(response);
+  }, [handleRouteToSpecificTopic]);
+
   return (
     <div className="row">
       <div className="col-lg-6 col-xxl-4">
@@ -225,11 +309,10 @@ export default React.memo(function LecturerDashboard() {
               date="20 Jun 2020"
               body={
                 <>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  Lorem ipsum dolor,
                   <br />
-                  <br /> Duis aute irure dolor in reprehenderit in voluptate
-                  velit esse cillum dolore eu fugiat nulla pariatur. <br />
+                  <br /> Consectetur adipiscing elit, sed do eiusmod tempor
+                  incididunt ut labore et dolore magna aliqua. <br />
                 </>
               }
             />
@@ -240,35 +323,7 @@ export default React.memo(function LecturerDashboard() {
             <CMSAnotherList
               className="gutter-b"
               title="Topic need feedback"
-              rows={[
-                {
-                  id: 0,
-                  label: 'Capstone Management System',
-                  onLabelClick: handleRouteToSpecificTopic(0),
-                  subLabel: 'Software Engineer',
-                  altLabel: 'Ho Hoan Kiem',
-                  emailAvatar: 'phanthongthanh0606@gmail.com',
-                  action: applicationRowActionFormatter(10),
-                },
-                {
-                  id: 0,
-                  label: 'Web Checker System',
-                  onLabelClick: handleRouteToSpecificTopic(0),
-                  subLabel: 'Graphic Design',
-                  altLabel: 'Le Vu Truong',
-                  emailAvatar: 'phanthongthanh0606@gmail.com',
-                  action: applicationRowActionFormatter(5),
-                },
-                {
-                  id: 0,
-                  label: 'Example topic name',
-                  onLabelClick: handleRouteToSpecificTopic(0),
-                  subLabel: 'International Business',
-                  altLabel: 'Tran Dinh Thanh',
-                  emailAvatar: 'phanthongthanh0606@gmail.com',
-                  action: applicationRowActionFormatter(2),
-                },
-              ]}
+              rows={topicNeedFeedback}
             />
           </div>
         </div>
@@ -282,52 +337,9 @@ export default React.memo(function LecturerDashboard() {
         <div className="row">
           <div className="col-lg-12 col-xxl-12">
             <CMSList
-              className="gutter-b"
+              className="gutter-b card-stretch"
               title="Topic applications"
-              rows={[
-                {
-                  id: 0,
-                  label: 'Capstone Management System',
-                  onLabelClick: handleRouteToSpecificTopic(0),
-                  subLabel: 'FA20SE13',
-                  action: applicationRowActionFormatter(10),
-                },
-                {
-                  id: 0,
-                  label: 'Web Checker System',
-                  onLabelClick: handleRouteToSpecificTopic(0),
-                  subLabel: 'FA20SE11',
-                  action: applicationRowActionFormatter(5),
-                },
-                {
-                  id: 0,
-                  label: 'Example topic name',
-                  onLabelClick: handleRouteToSpecificTopic(0),
-                  subLabel: 'FA20SE15',
-                  action: applicationRowActionFormatter(2),
-                },
-                {
-                  id: 0,
-                  label: 'Example topic name 2',
-                  onLabelClick: handleRouteToSpecificTopic(0),
-                  subLabel: 'FA20SE15',
-                  action: applicationRowActionFormatter(2),
-                },
-                {
-                  id: 0,
-                  label: 'Example topic name 3',
-                  onLabelClick: handleRouteToSpecificTopic(0),
-                  subLabel: 'FA20SE15',
-                  action: applicationRowActionFormatter(2),
-                },
-                {
-                  id: 0,
-                  label: 'Example topic name 4',
-                  onLabelClick: handleRouteToSpecificTopic(0),
-                  subLabel: 'FA20SE15',
-                  action: applicationRowActionFormatter(2),
-                },
-              ]}
+              rows={applications}
             />
           </div>
         </div>
