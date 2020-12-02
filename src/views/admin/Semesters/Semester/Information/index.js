@@ -43,19 +43,19 @@ const Information = ({ loadData = function () {} }) => {
         setMatchingDate(downData?.matchingDate);
         setInprogressDate(downData?.inprogressDate);
         setFinishedDate(downData?.finishedDate);
+
+        setMeta(meta => ({
+          ...meta,
+          title: 'Information of ' + downData?.name,
+          breadcrumb: [
+            { title: 'Semester', path: '/semester' },
+            { title: downData?.name, path: '/semester/' + id },
+            { title: 'Information', path: '/semester/' + id + '/information' },
+          ],
+        }));
       })
       .catch(handleErrors)
       .finally();
-
-    setMeta(meta => ({
-      ...meta,
-      title: 'Information of Fall 2020',
-      breadcrumb: [
-        { title: 'Semester', path: '/semester' },
-        { title: 'Fall 2020', path: '/semester/' + id },
-        { title: 'Information', path: '/semester/' + id + '/information' },
-      ],
-    }));
   }, [setMeta, id]);
 
   const handleSave = React.useCallback(() => {

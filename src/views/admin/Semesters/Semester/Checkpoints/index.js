@@ -53,7 +53,7 @@ const mockData = [
   },
 ];
 
-export default function Checkpoints() {
+export default function Checkpoints({ semester }) {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
   const [isLoading] = React.useState(false);
@@ -142,14 +142,14 @@ export default function Checkpoints() {
   React.useEffect(() => {
     setMeta(meta => ({
       ...meta,
-      title: 'Checkpoints of Fall 2020',
+      title: 'Checkpoints of ' + semester.name,
       breadcrumb: [
         { title: 'Semester', path: '/semester' },
-        { title: 'Fall 2020', path: '/semester/' + id },
+        { title: semester.name, path: '/semester/' + id },
         { title: 'Checkpoints', path: '/semester/' + id + '/checkpoint' },
       ],
     }));
-  }, [id, setMeta]);
+  }, [id, semester.name, setMeta]);
 
   React.useEffect(() => {
     setData(mockData);

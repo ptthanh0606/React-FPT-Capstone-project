@@ -26,8 +26,10 @@ export function down(i) {
         : console.log('submitByStudent field not found'),
     submitter: i?.submitter
       ? {
-          label: i?.code || console.log('submitter code field not found'),
-          value: i?.id || console.log('submitter id field not found'),
+          label:
+            i?.submitter?.code || console.log('submitter code field not found'),
+          value:
+            i?.submitter?.id || console.log('submitter id field not found'),
         }
       : console.log('submitter field not found'),
     teamMembers: i?.teamMembers?.map(j => ({

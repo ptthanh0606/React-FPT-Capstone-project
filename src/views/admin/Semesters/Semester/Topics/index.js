@@ -23,7 +23,7 @@ import * as endpoints from 'endpoints';
 import * as transformers from './transformers';
 import * as constants from './constants';
 
-export default function Topics() {
+export default function Topics({ semester }) {
   const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
   const { id: semId } = useParams();
@@ -217,14 +217,14 @@ export default function Topics() {
   React.useEffect(() => {
     setMeta(meta => ({
       ...meta,
-      title: 'Topics of Fall 2020',
+      title: 'Topics of ' + semester.name,
       breadcrumb: [
         { title: 'Semester', path: '/semester' },
-        { title: 'Fall 2020', path: '/semester/' + semId },
+        { title: semester.name, path: '/semester/' + semId },
         { title: 'Topic', path: '/semester/' + semId + '/topic' },
       ],
     }));
-  }, [setMeta, semId]);
+  }, [setMeta, semId, semester.name]);
 
   return (
     <Card>

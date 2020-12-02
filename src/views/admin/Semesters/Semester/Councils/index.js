@@ -23,7 +23,7 @@ import * as endpoints from 'endpoints';
 import * as transformers from './transformers';
 import * as constants from './constants';
 
-export default React.memo(function Teams() {
+export default function Councils({ semester }) {
   const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
   const { id: semId } = useParams();
@@ -207,14 +207,14 @@ export default React.memo(function Teams() {
   React.useEffect(() => {
     setMeta(meta => ({
       ...meta,
-      title: 'Councils of Fall 2020',
+      title: 'Councils of ' + semester.name,
       breadcrumb: [
         { title: 'Semester', path: '/semester' },
-        { title: 'Fall 2020', path: '/semester/' + semId },
+        { title: semester.name, path: '/semester/' + semId },
         { title: 'Council', path: '/semester/' + semId + '/council' },
       ],
     }));
-  }, [semId, setMeta]);
+  }, [semId, semester.name, setMeta]);
 
   return (
     <Card>
@@ -285,4 +285,4 @@ export default React.memo(function Teams() {
       />
     </Card>
   );
-});
+}

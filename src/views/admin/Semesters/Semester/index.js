@@ -31,6 +31,10 @@ import useConfirm from 'utils/confirm';
 import * as endpoints from 'endpoints';
 import { handleErrors } from 'utils/common';
 
+const withSemesterInfo = (semester, Component) => {
+  return <Component semester={semester} />;
+};
+
 const Semester = () => {
   const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
@@ -41,6 +45,26 @@ const Semester = () => {
   });
   const [l, loadData] = React.useReducer(() => ({}), {});
   const history = useHistory();
+
+  const TopicsWithSemester = React.useCallback(() => {
+    return withSemesterInfo(data, Topics);
+  }, [data]);
+
+  const ActiveStudentsWithSemester = React.useCallback(() => {
+    return withSemesterInfo(data, ActiveStudents);
+  }, [data]);
+
+  const CouncilsWithSemester = React.useCallback(() => {
+    return withSemesterInfo(data, Councils);
+  }, [data]);
+
+  const TeamsWithSemester = React.useCallback(() => {
+    return withSemesterInfo(data, Teams);
+  }, [data]);
+
+  const CheckpointsWithSemester = React.useCallback(() => {
+    return withSemesterInfo(data, Checkpoints);
+  }, [data]);
 
   const handleRemove = React.useCallback(
     e => {
@@ -183,14 +207,20 @@ const Semester = () => {
               path="/semester/:id/information"
               component={WrappedInformation}
             />
-            <Route path="/semester/:id/topic" component={Topics} />
+            <Route path="/semester/:id/topic" component={TopicsWithSemester} />
             <Route
               path="/semester/:id/active-student"
-              component={ActiveStudents}
+              component={ActiveStudentsWithSemester}
             />
-            <Route path="/semester/:id/council" component={Councils} />
-            <Route path="/semester/:id/team" component={Teams} />
-            <Route path="/semester/:id/checkpoint" component={Checkpoints} />
+            <Route
+              path="/semester/:id/council"
+              component={CouncilsWithSemester}
+            />
+            <Route path="/semester/:id/team" component={TeamsWithSemester} />
+            <Route
+              path="/semester/:id/checkpoint"
+              component={CheckpointsWithSemester}
+            />
             <Route>
               <Redirect to={'/semester/' + id + '/information'} />
             </Route>
