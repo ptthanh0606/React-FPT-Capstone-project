@@ -6,17 +6,9 @@ import GroupMember from './GroupMember';
 const GroupCard = ({ className, title, members, name, department, leader }) => {
   const history = useHistory();
 
-  const handleRoutToTeam = React.useCallback(
-    event => {
-      event.preventDefault();
-      history.push('/team/0');
-    },
-    [history]
-  );
-
   return (
     <div className={`card card-custom ${className}`}>
-      <div className="card-header border-0">
+      <div className="card-header align-items-center border-0 mt-4">
         <h3 className="card-title font-weight-bolder text-dark">{title}</h3>
         <div className="card-toolbar">
           <a
@@ -32,7 +24,11 @@ const GroupCard = ({ className, title, members, name, department, leader }) => {
           <GroupInfo name={name} department={department} leader={leader} />
           {members &&
             members.map(member => (
-              <GroupMember label={member.name} subLabel={member.code} />
+              <GroupMember
+                key={member.name}
+                label={member.name}
+                subLabel={member.code}
+              />
             ))}
         </div>
       </div>

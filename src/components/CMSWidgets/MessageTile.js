@@ -2,29 +2,39 @@ import React from 'react';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 import SVG from 'react-inlinesvg';
 
-const MessageTile = ({ className }) => {
+const MessageTile = ({
+  className,
+  iconSrc = toAbsoluteUrl('/media/svg/icons/Layout/Layout-4-blocks.svg'),
+  content = (
+    <>
+      Configure user passwords to expire periodically. Users will need warning
+      that their passwords are going to expire,
+    </>
+  ),
+}) => {
   return (
     <div
-      className={`${className} d-flex align-items-center bg-light-success rounded p-5 mb-9`}
+      class="alert alert-custom alert-light-danger fade show mb-10"
+      role="alert"
     >
-      <span className="svg-icon svg-icon-success mr-5 svg-icon-lg">
-        <SVG
-          src={toAbsoluteUrl('/media/svg/icons/Communication/Write.svg')}
-        ></SVG>
-      </span>
-      <div className="d-flex flex-column flex-grow-1 mr-2">
-        <a
-          href="/"
-          className="font-weight-bold text-dark-75 text-hover-primary font-size-lg mb-1"
-        >
-          Apply for a topic to be display here
-        </a>
-        <span className="text-muted font-weight-bold">Due in 2 Days</span>
+      <div class="alert-icon">
+        <span class="svg-icon svg-icon-3x svg-icon-danger">
+          <SVG src={iconSrc} />
+        </span>{' '}
       </div>
-
-      <span className="font-weight-bolder text-success py-1 font-size-lg">
-        Apply now
-      </span>
+      <div class="alert-text font-weight-bold">{content}</div>
+      {/* <div class="alert-close">
+        <button
+          type="button"
+          class="close"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">
+            <i class="ki ki-close"></i>
+          </span>
+        </button>
+      </div> */}
     </div>
   );
 };
