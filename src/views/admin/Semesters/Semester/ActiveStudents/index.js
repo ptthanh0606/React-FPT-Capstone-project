@@ -20,14 +20,14 @@ import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 
-import * as transformers from './transformers';
-import * as constants from './constants';
-import AddActiveStudentModal from './AddActiveStudentModal/AddActiveStudentModal';
+import * as transformers from '../../../../../modules/semester/activeStudent/transformers';
+import * as constants from '../../../../../modules/semester/activeStudent/constants';
+import AddActiveStudentModal from './AddActiveStudentModal';
 
 export const statusClasses = ['danger', 'info', 'success', ''];
 export const statusTitles = ['Not in a team', 'Matching', 'Matched', ''];
 
-export default function CustomersCard() {
+export default function ActiveStudents({ semester }) {
   const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
   const { id: semId } = useParams();
@@ -68,7 +68,7 @@ export default function CustomersCard() {
   const handleCreate = React.useCallback(
     fieldData => {
       setIsProcessing(true);
-      request({
+      return request({
         to: endpoints.CREATE_ACTIVE_STUDENTS(semId).url,
         method: endpoints.CREATE_ACTIVE_STUDENTS(semId).method,
         data: transformers.cUp(fieldData),
@@ -245,17 +245,17 @@ export default function CustomersCard() {
   React.useEffect(() => {
     setMeta(meta => ({
       ...meta,
-      title: 'Active students of Fall 2020',
+      title: 'Active students of ' + semester.name,
       breadcrumb: [
         { title: 'Semester', path: '/semester' },
-        { title: 'Fall 2020', path: '/semester/' + semId },
+        { title: semester.name, path: '/semester/' + semId },
         {
           title: 'Active student',
           path: '/semester/' + semId + '/active-student',
         },
       ],
     }));
-  }, [semId, setMeta]);
+  }, [semId, semester.name, setMeta]);
 
   return (
     <Card>

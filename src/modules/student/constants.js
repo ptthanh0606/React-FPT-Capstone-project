@@ -2,6 +2,9 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
+import request from 'utils/request';
+import * as endpoints from 'endpoints';
+import { mDown as mDownDep } from '../department/transformers';
 
 //------------------------------------------------------------------------------
 
@@ -14,30 +17,26 @@ export const sizePerPageList = [
   { text: '100', value: 100 },
 ];
 
-export const statusClasses = ['danger', 'warning', 'success'];
-export const statusTitles = ['Not in a team', 'Matching', 'Matched'];
+export const statusClasses = ['danger', 'success', 'info', ''];
+export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
 
-// export const createColumns = ({ handleEdit, handleRemove }) =>
-//   columnsTransformer();
-// xóa caret, sortheader, constant.
-
-export const createColumns = ({ handleEdit, handleRemove }) =>
-  columnsTransformer([
+export const createColumns = ({ handleEdit, handleRemove }) => {
+  const cols = [
     {
       dataField: 'code',
       text: 'Code',
       sort: true,
     },
     {
-      dataField: 'department',
-      text: 'DEP',
+      dataField: 'email',
+      text: 'Email',
       sort: true,
     },
     {
       dataField: 'name',
       text: 'Name',
       sort: true,
-      formatter: (cellContent, row) => {
+      formatter: function (cellContent, row) {
         return (
           <Link
             className="text-dark font-weight-bold"
@@ -49,37 +48,17 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       },
     },
     {
-      dataField: 'team',
-      text: 'Team',
+      dataField: 'department',
+      text: 'Department',
       sort: true,
-      formatter: (cellContent, row) => {
-        return cellContent.label;
+      formatter: function (cellContent, row) {
+        return cellContent?.label;
       },
     },
-    {
-      dataField: 'status',
-      text: 'Status',
-      sort: true,
-      formatter: (cellContent, row) => {
-        const getLabelCssClasses = () => {
-          return `label label-lg label-light-${
-            statusClasses[row.status]
-          } label-inline text-nowrap`;
-        };
-        return (
-          <span className={getLabelCssClasses()}>
-            {statusTitles[row.status]}
-          </span>
-        );
-      },
-    },
-    {
-      dataField: 'addedAt',
-      text: 'Added at',
-      sort: true,
-      formatter: (cellContent, row) => new Date(cellContent).toLocaleString(),
-    },
-    {
+  ];
+
+  if (handleEdit && handleRemove) {
+    cols.push({
       dataField: 'action',
       text: 'Actions',
       formatter: (cellContent, row, rowIndex) => {
@@ -89,8 +68,8 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
               href="/"
               title="Edit"
               className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-              onClick={handleEdit}
               data-id={row.id}
+              onClick={handleEdit}
             >
               <i className="fas fa-pencil-alt mx-2"></i>
             </a>
@@ -98,8 +77,8 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
               href="/"
               title="Remove"
               className="btn btn-icon btn-light btn-hover-primary btn-sm"
-              onClick={handleRemove}
               data-id={row.id}
+              onClick={handleRemove}
             >
               <i className="fas fa-trash mx-2"></i>
             </a>
@@ -111,15 +90,50 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       style: {
         minWidth: '100px',
       },
-    },
-  ]);
+    });
+  }
+
+  return columnsTransformer(cols);
+};
 
 export const modalConfigs = [
   {
+    name: 'name',
+    type: 'text',
+    label: 'Student full name',
+    placeholder: 'Full name...',
+  },
+  {
     name: 'code',
     type: 'text',
-    label: 'Team code',
-    smallLabel: 'Assign this student to a team by changing team code',
-    placeholder: 'Team code...',
+    label: 'Student code',
+    placeholder: 'Enter student code...',
+  },
+  {
+    name: 'email',
+    type: 'text',
+    label: 'Student email',
+    placeholder: 'Enter student @fpt.edu.vn email...',
+  },
+  {
+    name: 'department',
+    type: 'selectBoxAsync',
+    label: 'Department',
+    smallLabel: 'Departments for this lecturer',
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_DEPARTMENT.url,
+        method: endpoints.LIST_DEPARTMENT.method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res?.data?.data?.map(mDownDep) || []);
+        })
+        .catch(() => callback([]));
+    },
+    isMulti: false,
   },
 ];

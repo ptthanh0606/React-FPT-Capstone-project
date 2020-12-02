@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import SelectTagInput from 'components/TagInput/SelectTagInput';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
-import { mDown as mDownDep } from 'views/admin/Departments/transformers';
+import { mDown as mDownDep } from 'modules/department/transformers';
 
 function Filters({ filters, setFilters }) {
   const [selectState, setSelectState] = React.useState();
@@ -58,17 +58,16 @@ function Filters({ filters, setFilters }) {
               <div className="col-lg-2">
                 <select
                   className="form-control form-control-solid"
-                  name="status"
                   onChange={e => {
-                    setFieldValue('status', e.target.value);
+                    setFieldValue('isDisabled', e.target.value);
                     handleSubmit();
                   }}
                   onBlur={handleBlur}
                   value={values.status}
                 >
                   <option value="">All</option>
-                  <option value="0">Deactivated</option>
-                  <option value="1">Activated</option>
+                  <option value="true">Deactivated</option>
+                  <option value="false">Activated</option>
                 </select>
                 <small className="form-text text-muted">
                   Filter by <b>status</b>
