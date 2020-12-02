@@ -9,10 +9,13 @@ import CMSList from 'components/CMSList';
 import { applicationRowActionFormatter, rowActionFormatter } from './constants';
 import StatTile from 'components/CMSWidgets/StatTile';
 import { useHistory } from 'react-router-dom';
+import DropdownPopover from 'components/DropdownPopover';
 
 export default React.memo(function LecturerDashboard() {
   const history = useHistory();
   const setMeta = useSetRecoilState(metaAtom);
+  const [topicType, setTopicType] = React.useState('');
+  const [topicPreviews, setTopicPreviews] = React.useState([]);
 
   // --------------------------------------------------------------------
 
@@ -41,6 +44,82 @@ export default React.memo(function LecturerDashboard() {
       breadcrumb: [{ title: 'Dashboard', path: '/dashboard' }],
     });
   }, [setMeta]);
+
+  React.useEffect(() => {
+    const response =
+      topicType === 'Submited'
+        ? [
+            {
+              label: 'Capstone Management System',
+              onLabelClick: handleRouteToSpecificTopic(0),
+              subLabel: 'FA20SE13',
+              action: rowActionFormatter(1),
+            },
+            {
+              label: 'Web Checker System',
+              onLabelClick: handleRouteToSpecificTopic(0),
+              subLabel: 'FA20SE11',
+              action: rowActionFormatter(0),
+            },
+            {
+              label: 'Example topic name',
+              onLabelClick: handleRouteToSpecificTopic(0),
+              subLabel: 'FA20SE15',
+              action: rowActionFormatter(2),
+            },
+            {
+              label: 'Example topic name 2',
+              onLabelClick: handleRouteToSpecificTopic(0),
+              subLabel: 'FA20SE15',
+              action: rowActionFormatter(1),
+            },
+            {
+              label: 'Example topic name 3',
+              onLabelClick: handleRouteToSpecificTopic(0),
+              subLabel: 'FA20SE15',
+              action: rowActionFormatter(0),
+            },
+            {
+              label: 'Example topic name 4',
+              onLabelClick: handleRouteToSpecificTopic(0),
+              subLabel: 'FA20SE11',
+              action: rowActionFormatter(0),
+            },
+            {
+              label: 'Example topic name 5',
+              onLabelClick: handleRouteToSpecificTopic(0),
+              subLabel: 'FA20SE15',
+              action: rowActionFormatter(2),
+            },
+          ]
+        : [
+            {
+              label: 'Example topic name 2',
+              onLabelClick: handleRouteToSpecificTopic(0),
+              subLabel: 'FA20SE15',
+              action: rowActionFormatter(1),
+            },
+            {
+              label: 'Example topic name 3',
+              onLabelClick: handleRouteToSpecificTopic(0),
+              subLabel: 'FA20SE15',
+              action: rowActionFormatter(0),
+            },
+            {
+              label: 'Example topic name 4',
+              onLabelClick: handleRouteToSpecificTopic(0),
+              subLabel: 'FA20SE11',
+              action: rowActionFormatter(0),
+            },
+            {
+              label: 'Example topic name 5',
+              onLabelClick: handleRouteToSpecificTopic(0),
+              subLabel: 'FA20SE15',
+              action: rowActionFormatter(2),
+            },
+          ];
+    setTopicPreviews(response);
+  }, [handleRouteToSpecificTopic, topicType]);
 
   return (
     <div className="row">
@@ -103,60 +182,24 @@ export default React.memo(function LecturerDashboard() {
       <div className="col-lg-6 col-xxl-4">
         <CMSList
           className="gutter-b"
-          title="My submited topic status"
+          title="My topic"
           toolBar={
-            <a
-              href="/"
-              onClick={handleRouteToTopics}
-              className="text-primary font-weight-bolder"
-            >
-              View all
-            </a>
+            <DropdownPopover
+              value="Submited"
+              items={[
+                {
+                  label: 'Submited',
+                  value: 'Submited',
+                },
+                {
+                  label: 'Mentoring',
+                  value: 'Mentoring',
+                },
+              ]}
+              onChange={value => setTopicType(value)}
+            />
           }
-          rows={[
-            {
-              label: 'Capstone Management System',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE13',
-              action: rowActionFormatter(1),
-            },
-            {
-              label: 'Web Checker System',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE11',
-              action: rowActionFormatter(0),
-            },
-            {
-              label: 'Example topic name',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE15',
-              action: rowActionFormatter(2),
-            },
-            {
-              label: 'Example topic name 2',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE15',
-              action: rowActionFormatter(1),
-            },
-            {
-              label: 'Example topic name 3',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE15',
-              action: rowActionFormatter(0),
-            },
-            {
-              label: 'Example topic name 4',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE11',
-              action: rowActionFormatter(0),
-            },
-            {
-              label: 'Example topic name 5',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE15',
-              action: rowActionFormatter(2),
-            },
-          ]}
+          rows={topicPreviews}
         />
       </div>
       <div className="col-lg-6 col-xxl-4">
