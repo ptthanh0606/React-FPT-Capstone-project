@@ -136,4 +136,10 @@ export const modalConfigs = [
     },
     isMulti: false,
   },
+  {
+    name: 'biography',
+    type: 'textarea',
+    label: 'Biography',
+    placeholder: '...',
+  },
 ];
