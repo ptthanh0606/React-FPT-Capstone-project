@@ -20,8 +20,8 @@ import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 
-import * as transformers from './transformers';
-import * as constants from './constants';
+import * as transformers from '../../../../../modules/semester/team/transformers';
+import * as constants from '../../../../../modules/semester/team/constants';
 
 export default function Teams({ semester }) {
   const confirm = useConfirm();

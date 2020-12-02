@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
-import { mDown as mDownLec } from 'views/admin/Lecturers/transformers';
+import { mDown as mDownLec } from 'modules/lecturer/transformers';
 
 //------------------------------------------------------------------------------
 

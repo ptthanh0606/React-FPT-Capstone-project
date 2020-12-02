@@ -2,12 +2,11 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
-import * as endpoints from 'endpoints';
 import request from 'utils/request';
-import { mDown as mDownTeam } from 'views/admin/Semesters/Semester/Teams/transformers';
+import * as endpoints from 'endpoints';
+import { mDown as mDownDep } from '../department/transformers';
 
 //------------------------------------------------------------------------------
-
 export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 
 export const sizePerPageList = [
@@ -17,12 +16,8 @@ export const sizePerPageList = [
   { text: '100', value: 100 },
 ];
 
-export const statusClasses = ['danger', 'warning', 'success'];
-export const statusTitles = ['Not in a team', 'Matching', 'Matched'];
-
-// export const createColumns = ({ handleEdit, handleRemove }) =>
-//   columnsTransformer();
-// xóa caret, sortheader, constant.
+export const statusClasses = ['danger', 'success'];
+export const statusTitles = ['Deactivated', 'Activated'];
 
 export const createColumns = ({ handleEdit, handleRemove }) =>
   columnsTransformer([
@@ -32,19 +27,14 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       sort: true,
     },
     {
-      dataField: 'department',
-      text: 'DEP',
-      sort: true,
-    },
-    {
       dataField: 'name',
       text: 'Name',
       sort: true,
-      formatter: (cellContent, row) => {
+      formatter: function (cellContent, row) {
         return (
           <Link
             className="text-dark font-weight-bold"
-            to={'/profile/student/' + row.id}
+            to={'/profile/lecturer/' + row.id}
           >
             {cellContent}
           </Link>
@@ -52,11 +42,24 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       },
     },
     {
-      dataField: 'team',
-      text: 'Team',
+      dataField: 'email',
+      text: 'Email',
       sort: true,
-      formatter: (cellContent, row) => {
-        return cellContent.label;
+    },
+    {
+      dataField: 'departments',
+      text: 'Department',
+      sort: true,
+      formatter: function (cellContent, row) {
+        return (
+          <>
+            {cellContent?.length > 0
+              ? cellContent
+                  .map(i => (i.isApprover ? <u>{i.label}</u> : <>{i.label}</>))
+                  .reduce((prev, curr) => [prev, ', ', curr])
+              : ''}
+          </>
+        );
       },
     },
     {
@@ -66,21 +69,15 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       formatter: (cellContent, row) => {
         const getLabelCssClasses = () => {
           return `label label-lg label-light-${
-            statusClasses[row.status]
+            statusClasses[row.status ? 1 : 0]
           } label-inline text-nowrap`;
         };
         return (
           <span className={getLabelCssClasses()}>
-            {statusTitles[row.status]}
+            {statusTitles[row.status ? 1 : 0]}
           </span>
         );
       },
-    },
-    {
-      dataField: 'addedAt',
-      text: 'Added at',
-      sort: true,
-      formatter: (cellContent, row) => new Date(cellContent).toLocaleString(),
     },
     {
       dataField: 'action',
@@ -92,8 +89,8 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
               href="/"
               title="Edit"
               className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-              onClick={handleEdit}
               data-id={row.id}
+              onClick={handleEdit}
             >
               <i className="fas fa-pencil-alt mx-2"></i>
             </a>
@@ -101,8 +98,8 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
               href="/"
               title="Remove"
               className="btn btn-icon btn-light btn-hover-primary btn-sm"
-              onClick={handleRemove}
               data-id={row.id}
+              onClick={handleRemove}
             >
               <i className="fas fa-trash mx-2"></i>
             </a>
@@ -119,23 +116,48 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
 
 export const modalConfigs = [
   {
-    name: 'team',
+    name: 'code',
+    type: 'text',
+    label: 'Lecturer code name',
+    placeholder: 'Code name...',
+  },
+  {
+    name: 'name',
+    type: 'text',
+    label: 'Lecturer full name',
+    placeholder: 'Full name...',
+  },
+  {
+    name: 'email',
+    type: 'email',
+    label: 'Lecturer email',
+    placeholder: 'Email...',
+  },
+  {
+    name: 'departments',
     type: 'selectBoxAsync',
-    label: 'Team',
-    smallLabel: 'This team belong to which department',
+    label: 'Department',
+    smallLabel: 'Departments for this lecturer',
     load: (input, callback) => {
       request({
-        to: endpoints.LIST_TEAM.url,
-        method: endpoints.LIST_TEAM.method,
+        to: endpoints.LIST_DEPARTMENT.url,
+        method: endpoints.LIST_DEPARTMENT.method,
         params: {
           term: input,
           pageSize: 10,
         },
       })
         .then(res => {
-          callback(res.data.data?.map(mDownTeam) || []);
+          callback(res.data.data?.map(mDownDep) || []);
         })
         .catch(() => callback([]));
     },
+    isMulti: true,
+  },
+  {
+    name: 'status',
+    type: 'toggle',
+    label: 'Active state',
+    smallLabel: 'Is this lecturer active',
   },
 ];

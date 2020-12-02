@@ -1,11 +1,10 @@
 import React from 'react';
 
-import { columnsTransformer } from 'utils/common';
 import { Link } from 'react-router-dom';
+import { columnsTransformer } from 'utils/common';
 import * as endpoints from 'endpoints';
-import { mDown as mDownDep } from 'views/admin/Departments/transformers';
-import { mDown as mDownLec } from 'views/admin/Lecturers/transformers';
 import request from 'utils/request';
+import { mDown as mDownTeam } from 'modules/semester/team/transformers';
 
 //------------------------------------------------------------------------------
 
@@ -18,43 +17,70 @@ export const sizePerPageList = [
   { text: '100', value: 100 },
 ];
 
-export const statusClasses = ['danger', 'success', 'info'];
-export const statusTitles = ['Finished', 'In progress', 'Preparing'];
+export const statusClasses = ['danger', 'warning', 'success'];
+export const statusTitles = ['Not in a team', 'Matching', 'Matched'];
+
+// export const createColumns = ({ handleEdit, handleRemove }) =>
+//   columnsTransformer();
+// xóa caret, sortheader, constant.
 
 export const createColumns = ({ handleEdit, handleRemove }) =>
   columnsTransformer([
     {
+      dataField: 'code',
+      text: 'Code',
+      sort: true,
+    },
+    {
       dataField: 'department',
       text: 'DEP',
       sort: true,
-      formatter: (cellContent, row) => cellContent?.label,
     },
     {
       dataField: 'name',
       text: 'Name',
       sort: true,
-    },
-    {
-      dataField: 'members',
-      text: 'Members',
-      formatter: function StatusColumnFormatter(cellContent, row) {
+      formatter: (cellContent, row) => {
         return (
-          <>
-            {cellContent?.length > 0
-              ? cellContent
-                  .map(i => (
-                    <Link
-                      className={'text-dark font-weight-bold'}
-                      to={'/profile/lecturer/' + i.value}
-                    >
-                      {i.isLeader ? <u>{i.label}</u> : i.label}
-                    </Link>
-                  ))
-                  .reduce((prev, curr) => [prev, ', ', curr])
-              : ''}
-          </>
+          <Link
+            className="text-dark font-weight-bold"
+            to={'/profile/student/' + row.id}
+          >
+            {cellContent}
+          </Link>
         );
       },
+    },
+    {
+      dataField: 'team',
+      text: 'Team',
+      sort: true,
+      formatter: (cellContent, row) => {
+        return cellContent.label;
+      },
+    },
+    {
+      dataField: 'status',
+      text: 'Status',
+      sort: true,
+      formatter: (cellContent, row) => {
+        const getLabelCssClasses = () => {
+          return `label label-lg label-light-${
+            statusClasses[row.status]
+          } label-inline text-nowrap`;
+        };
+        return (
+          <span className={getLabelCssClasses()}>
+            {statusTitles[row.status]}
+          </span>
+        );
+      },
+    },
+    {
+      dataField: 'addedAt',
+      text: 'Added at',
+      sort: true,
+      formatter: (cellContent, row) => new Date(cellContent).toLocaleString(),
     },
     {
       dataField: 'action',
@@ -66,8 +92,8 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
               href="/"
               title="Edit"
               className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-              data-id={row.id}
               onClick={handleEdit}
+              data-id={row.id}
             >
               <i className="fas fa-pencil-alt mx-2"></i>
             </a>
@@ -75,8 +101,8 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
               href="/"
               title="Remove"
               className="btn btn-icon btn-light btn-hover-primary btn-sm"
-              data-id={row.id}
               onClick={handleRemove}
+              data-id={row.id}
             >
               <i className="fas fa-trash mx-2"></i>
             </a>
@@ -93,50 +119,23 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
 
 export const modalConfigs = [
   {
-    name: 'name',
-    type: 'text',
-    label: 'Council name',
-    placeholder: 'Give this council a name...',
-  },
-  {
-    name: 'department',
+    name: 'team',
     type: 'selectBoxAsync',
-    label: 'Department',
+    label: 'Team',
     smallLabel: 'This team belong to which department',
     load: (input, callback) => {
       request({
-        to: endpoints.LIST_DEPARTMENT.url,
-        method: endpoints.LIST_DEPARTMENT.method,
+        to: endpoints.LIST_TEAM.url,
+        method: endpoints.LIST_TEAM.method,
         params: {
           term: input,
           pageSize: 10,
         },
       })
         .then(res => {
-          callback(res.data.data?.map(mDownDep) || []);
+          callback(res.data.data?.map(mDownTeam) || []);
         })
         .catch(() => callback([]));
     },
-  },
-  {
-    name: 'members',
-    type: 'selectBoxAsync',
-    label: 'Members',
-    smallLabel: 'Member of this council, first member is leader',
-    load: (input, callback) => {
-      request({
-        to: endpoints.LIST_LECTURER.url,
-        method: endpoints.LIST_LECTURER.method,
-        params: {
-          term: input,
-          pageSize: 10,
-        },
-      })
-        .then(res => {
-          callback(res.data.data?.map(mDownLec) || []);
-        })
-        .catch(() => callback([]));
-    },
-    isMulti: true,
   },
 ];

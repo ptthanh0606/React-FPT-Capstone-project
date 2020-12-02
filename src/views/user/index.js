@@ -10,7 +10,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import roleSelector from 'auth/recoil/selectors/role';
 import request from 'utils/request';
 import { READ_SEMESTER } from 'endpoints';
-import { down } from 'views/admin/Semesters/transformers';
+import { down } from 'modules/semester/transformers';
 
 function fetchSemester(
   semester,

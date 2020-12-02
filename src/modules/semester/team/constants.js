@@ -4,9 +4,9 @@ import { columnsTransformer, columnFormatter } from 'utils/common';
 import { Link } from 'react-router-dom';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
-import { mDown as mDownDep } from 'views/admin/Departments/transformers';
-import { mDown as mDownAStu } from 'views/admin/Semesters/Semester/ActiveStudents/transformers';
-import { mDown as mDownTopic } from 'views/admin/Semesters/Semester/Topics/transformers';
+import { mDown as mDownDep } from 'modules/department/transformers';
+import { mDown as mDownAStu } from 'modules/semester/activeStudent/transformers';
+import { mDown as mDownTopic } from 'modules/semester/topic/transformers';
 
 //------------------------------------------------------------------------------
 

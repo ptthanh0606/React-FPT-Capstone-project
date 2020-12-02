@@ -20,9 +20,9 @@ import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 
-import * as transformers from './transformers';
-import * as constants from './constants';
-import AddActiveStudentModal from './AddActiveStudentModal/AddActiveStudentModal';
+import * as transformers from '../../../../../modules/semester/activeStudent/transformers';
+import * as constants from '../../../../../modules/semester/activeStudent/constants';
+import AddActiveStudentModal from './AddActiveStudentModal';
 
 export const statusClasses = ['danger', 'info', 'success', ''];
 export const statusTitles = ['Not in a team', 'Matching', 'Matched', ''];

@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import SelectTagInput from 'components/TagInput/SelectTagInput';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
-import { mDown as mDownDep } from 'views/admin/Departments/transformers';
+import { mDown as mDownDep } from 'modules/department/transformers';
 
 function Filters({ filters, setFilters }) {
   const [selectState, setSelectState] = React.useState();

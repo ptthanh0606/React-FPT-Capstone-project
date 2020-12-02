@@ -20,8 +20,8 @@ import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 
-import * as transformers from './transformers';
-import * as constants from './constants';
+import * as transformers from '../../../../../modules/semester/council/transformers';
+import * as constants from '../../../../../modules/semester/council/constants';
 
 export default function Councils({ semester }) {
   const confirm = useConfirm();

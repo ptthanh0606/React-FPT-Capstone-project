@@ -11,8 +11,8 @@ import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 
-import * as transformers from 'views/admin/Semesters/transformers';
-import * as constants from 'views/admin/Semesters/constants';
+import * as transformers from 'modules/semester/transformers';
+import * as constants from 'modules/semester/constants';
 
 import SemesterCard from 'views/admin/Semesters/SemesterCard';
 import ScrollContainer from 'react-indiana-drag-scroll';

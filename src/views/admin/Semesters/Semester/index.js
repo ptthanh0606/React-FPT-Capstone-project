@@ -23,8 +23,8 @@ import Checkpoints from './Checkpoints';
 
 import request from 'utils/request';
 import { READ_SEMESTER } from 'endpoints';
-import { down } from 'views/admin/Semesters/transformers';
-import { statusTitles } from 'views/admin/Semesters/constants';
+import { down } from 'modules/semester/transformers';
+import { statusTitles } from 'modules/semester/constants';
 
 import toast from 'utils/toast';
 import useConfirm from 'utils/confirm';
