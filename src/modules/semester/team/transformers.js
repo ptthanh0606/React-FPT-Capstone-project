@@ -55,6 +55,10 @@ export function down(i) {
       i?.teamDetail?.isLocked !== undefined
         ? !!i.teamDetail.isLocked
         : console.log('isLocked field not found'),
+    maxMembers:
+      i?.teamDetail?.maxMembers !== undefined
+        ? i?.teamDetail?.maxMembers
+        : console.log('team max members field not found'),
   };
 }
 
