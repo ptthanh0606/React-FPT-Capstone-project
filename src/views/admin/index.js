@@ -46,14 +46,6 @@ const Admin = () => {
             import('views/admin/Admins' /* webpackChunkName: "admin" */)
           )}
         />
-        <Route
-          path={'/checkpoint-template'}
-          component={lazy(() =>
-            import(
-              'views/admin/CheckpointTemplates' /* webpackChunkName: "checkpoint-template" */
-            )
-          )}
-        />
         <Route>
           <Redirect to="/dashboard" />
         </Route>
