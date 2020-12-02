@@ -156,6 +156,11 @@ export default function Topics() {
 
   // ------------------------------------------------------------------
 
+  const handleToggleChange = e => {
+    setMineTopicFlg(e.currentTarget.checked);
+    console.log(e.currentTarget.checked);
+  };
+
   const showNewTopicModal = React.useCallback(() => {
     setShowedNewTopicModal(true);
   }, []);
@@ -230,28 +235,6 @@ export default function Topics() {
     switch (currentRole) {
       case 'student':
         buttons = <></>;
-        break;
-
-      case 'admin':
-        buttons = (
-          <>
-            <button
-              type="button"
-              className="btn btn-primary font-weight-bold btn-sm btn-light mr-2"
-            >
-              <i className="fas fa-cog mr-2"></i>
-              Settings
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary font-weight-bold"
-              onClick={showNewTopicModal}
-            >
-              <i className="fas fa-paper-plane mr-2"></i>
-              Submit
-            </button>
-          </>
-        );
         break;
 
       case 'lecturer':
@@ -697,7 +680,7 @@ export default function Topics() {
         <CardHeaderToolbar className="text-nowrap">
           <span className="mr-2">Show mine only</span>
           <ToggleSwitch
-            onChange={e => setMineTopicFlg(e.currentTarget.checked)}
+            onChange={handleToggleChange}
             isActive={mineTopicFlg}
             className={'switch-primary'}
           />
@@ -705,25 +688,48 @@ export default function Topics() {
       </CardHeader>
       <CardBody>
         <Filters filters={filters} setFilters={setFilters} />
-        <Table
-          columns={columns}
-          data={data}
-          total={total}
-          isLoading={isLoading}
-          selected={selected}
-          setSelected={setSelected}
-          page={page}
-          setPage={setPage}
-          pageSize={pageSize}
-          setPageSize={setPageSize}
-          sortField={sortField}
-          setSortField={setSortField}
-          sortOrder={sortOrder}
-          setSortOrder={setSortOrder}
-          defaultSorted={defaultSorted}
-          pageSizeList={sizePerPageList}
-          selectable={false}
-        />
+        {mineTopicFlg ? (
+          <Table
+            key="1"
+            columns={columns}
+            data={data}
+            total={total}
+            isLoading={isLoading}
+            selected={selected}
+            setSelected={setSelected}
+            page={page}
+            setPage={setPage}
+            pageSize={pageSize}
+            setPageSize={setPageSize}
+            sortField={sortField}
+            setSortField={setSortField}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            defaultSorted={defaultSorted}
+            pageSizeList={sizePerPageList}
+            selectable={currentRole === 'lecturer'}
+          />
+        ) : (
+          <Table
+            key="2"
+            columns={columns}
+            data={data}
+            total={total}
+            isLoading={isLoading}
+            selected={selected}
+            setSelected={setSelected}
+            page={page}
+            setPage={setPage}
+            pageSize={pageSize}
+            setPageSize={setPageSize}
+            sortField={sortField}
+            setSortField={setSortField}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            defaultSorted={defaultSorted}
+            pageSizeList={sizePerPageList}
+          />
+        )}
       </CardBody>
       <CMSModal
         isShowFlg={showedNewTopicModal}

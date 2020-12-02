@@ -1,5 +1,5 @@
-import TopicDetailCard from 'components/CMSWidgets/TopicDetailCard';
 import React from 'react';
+import TopicDetailCard from 'components/CMSWidgets/TopicDetailCard';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import metaAtom from 'store/meta';
@@ -7,6 +7,8 @@ import { role } from 'auth/recoil/selectors';
 import CMSModal from 'components/CMSModal/CMSModal';
 import CMSList from 'components/CMSList';
 import GroupCard from 'components/GroupCard';
+import toast from 'utils/toast';
+import { rowActionFormatter, SETTING_MODAL_CONFIG } from './constants';
 
 const Topic = () => {
   const { id } = useParams();
@@ -21,7 +23,13 @@ const Topic = () => {
 
   // ----------------------------------------------------------
 
-  // ----------------------------------------------------------
+  const handleApproveTeam = React.useCallback(id => {
+    toast.success('Approved selected team to topic');
+  }, []);
+
+  const handleRejectTeam = React.useCallback(id => {
+    toast.success('Rejected selected team');
+  }, []);
 
   const toolBar = React.useCallback(() => {
     let buttons = <></>;
@@ -123,166 +131,7 @@ const Topic = () => {
   });
 
   React.useEffect(() => {
-    setModalConfigs([
-      {
-        name: 'topicCode',
-        type: 'text',
-        label: 'Topic Code',
-        smallLabel: 'Specify a code for this topic',
-        placeholder: 'Code...',
-      },
-      {
-        name: 'name',
-        type: 'text',
-        label: 'Name',
-        smallLabel: 'Give this topic a name',
-        placeholder: 'Name...',
-      },
-      {
-        name: 'description',
-        type: 'text',
-        label: 'Description',
-        smallLabel: 'Brief description for this topic',
-        placeholder: 'Description...',
-      },
-      {
-        name: 'note',
-        type: 'text',
-        label: 'Note',
-        smallLabel: 'Special note for this topic',
-        placeholder: 'Note...',
-      },
-      {
-        name: 'minMem',
-        type: 'number',
-        label: 'Minimum team members',
-        smallLabel: 'Minimum team member for this topic',
-        placeholder: '0',
-      },
-      {
-        name: 'maxMem',
-        type: 'number',
-        label: 'Maximum team members',
-        smallLabel: 'Maximum team member for this topic',
-        placeholder: '4',
-      },
-      {
-        name: 'department',
-        type: 'selectBox',
-        label: 'From department',
-        smallLabel: 'Topic in which department',
-        placeholder: 'Select a department',
-        options: [
-          {
-            label: 'SE',
-            value: 'se',
-          },
-          {
-            label: 'GD',
-            value: 'gd',
-          },
-          {
-            label: 'CC',
-            value: 'cc',
-          },
-        ],
-      },
-      {
-        name: 'isByStudent',
-        type: 'toggle',
-        label: 'By student',
-        smallLabel: 'Is this topic from student',
-        isChecked: false,
-      },
-      {
-        name: 'studentTeam',
-        type: 'selectBoxAsync',
-        label: 'Student team',
-        smallLabel: 'Student team taking this topic',
-        load: (mentorInput, callback) => {
-          setTimeout(() => {
-            callback([
-              {
-                label: 'Phan Thong Thanh',
-                value: 'Phan Thong Thanh',
-              },
-              {
-                label: 'Tran Thai Trung',
-                value: 'Tran Thai Trung',
-              },
-              {
-                label: 'Nguyen Hoang Dung',
-                value: 'Nguyen Hoang Dung',
-              },
-              {
-                label: 'Le Huu Mon',
-                value: 'Le Huu Mon',
-              },
-            ]);
-          }, 2000);
-        },
-        isMulti: true,
-      },
-      {
-        name: 'mentorGroup',
-        type: 'selectBoxAsync',
-        label: 'Mentor Group',
-        smallLabel: 'Mentor group for this topic',
-        load: (mentorInput, callback) => {
-          setTimeout(() => {
-            callback([
-              {
-                label: 'Huynh Duc Duy',
-                value: 'Huynh Duc Duy',
-              },
-              {
-                label: 'Tran Tuan Anh',
-                value: 'Tran Tuan Anh',
-              },
-              {
-                label: 'Dinh Ngoc Hai',
-                value: 'Dinh Ngoc Hai',
-              },
-              {
-                label: 'Ly Phuoc Hiep',
-                value: 'Ly Phuoc Hiep',
-              },
-            ]);
-          }, 2000);
-        },
-        isMulti: true,
-      },
-      {
-        name: 'keywords',
-        type: 'creatableSelectBoxAsync',
-        label: 'Keywords',
-        smallLabel: 'Some keywords for this topic',
-        load: (keyword, callback) => {
-          setTimeout(() => {
-            callback([
-              {
-                label: 'capstone',
-                value: 'capstone',
-              },
-              {
-                label: 'management',
-                value: 'management',
-              },
-              {
-                label: 'system',
-                value: 'system',
-              },
-            ]);
-          }, 2000);
-        },
-      },
-      {
-        name: 'attachment',
-        type: 'file',
-        label: 'Attachment',
-        smallLabel: '.pdf, .docx',
-      },
-    ]);
+    setModalConfigs(SETTING_MODAL_CONFIG);
     setUpdateFieldTemplate({
       topicCode: 'FA20SE13',
       name: 'Capstone Management System for FPT University',
@@ -328,62 +177,84 @@ const Topic = () => {
       ],
       attachment: {},
     });
-  }, []);
+  }, [modalConfigs]);
 
   React.useEffect(() => {
     setApplications([
       {
-        name: 'Team name example 1',
-        leader: 'Huynh Duc Duy',
+        label: 'Team name example 1',
+        subLabel: (
+          <>
+            Lead by{' '}
+            <span className="text-muted font-weight-bolder">Huynh Duc Duy</span>
+          </>
+        ),
+        action: rowActionFormatter(handleApproveTeam, handleRejectTeam),
       },
       {
-        name: 'Team name example 2',
-        leader: 'Huynh Duc Duy',
+        label: 'Team name example 2',
+        subLabel: 'Huynh Duc Duy',
+        action: rowActionFormatter(handleApproveTeam, handleRejectTeam),
       },
       {
-        name: 'Team name example 3',
-        leader: 'Huynh Duc Duy',
+        label: 'Team name example 3',
+        subLabel: 'Huynh Duc Duy',
+        action: rowActionFormatter(handleApproveTeam, handleRejectTeam),
       },
     ]);
     setStudentTeam({
+      id: '',
       name: 'SKT T1',
       department: 'Software Engineer',
       leader: 'Huynh Duc Duy',
       members: [
         {
+          id: '1',
+          role: '1',
           name: 'Huynh Duc Duy',
           code: 'SE130491',
         },
         {
+          id: '2',
+          role: '1',
           name: 'Phan Thong Thanh',
           code: 'SE130491',
         },
         {
+          id: '3',
+          role: '1',
           name: 'Tran Tuan Anh',
           code: 'SE130491',
         },
         {
+          id: '4',
+          role: '1',
           name: 'Tran Thai Trung',
           code: 'SE130491',
         },
       ],
     });
     setMentors({
+      id: '',
       name: 'Mentor team 1',
       department: 'Software Engineer',
       leader: 'Tran Tuan Anh',
       members: [
         {
+          id: '1',
+          role: '2',
           name: 'Tran Tuan Anh',
           code: '',
         },
         {
+          id: '2',
+          role: '2',
           name: 'Lam Huu Khanh Phuong',
           code: '',
         },
       ],
     });
-  }, []);
+  }, [handleApproveTeam, handleRejectTeam]);
 
   return (
     <>
@@ -416,39 +287,28 @@ const Topic = () => {
           />
         </div>
         <div className="col-lg-6 col-xxl-3">
-          {/* <GroupCard
-            className="gutter-b"
-            title="Assigned team"
-            members={studentTeam.members}
-            name={studentTeam.name}
-            department={studentTeam.department}
-            leader={studentTeam.leader}
-          /> */}
           <CMSList
             className="gutter-b"
-            label="Applying teams"
+            title="Applying teams"
+            subTitle="Consider approve team to topic"
             rows={applications}
           />
           <GroupCard
-            title="Mentors"
-            members={mentors.members}
-            name={mentors.name}
-            department={mentors.department}
-            leader={mentors.leader}
+            className="gutter-b"
+            title="Assigned team"
+            group={studentTeam}
           />
+          <GroupCard title="Mentors" group={mentors} />
         </div>
         <CMSModal
           isShowFlg={showSettingFlg}
           onHide={() => setShowSettingFlg(false)}
           configs={modalConfigs}
           title="Setting"
-          subTitle="Change or see this topic info"
+          subTitle="Change this topic info"
           onConfirmForm={handleOnUpdateTopic}
           fieldTemplate={updateFieldTemplate}
         />
-        {/* <div className="col-lg-6 col-xxl-3">
-          <BigButton />
-        </div> */}
       </div>
     </>
   );

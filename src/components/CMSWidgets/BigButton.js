@@ -16,7 +16,7 @@ const BigButton = () => {
           </div>
 
           <div class="d-flex flex-column">
-            <a href="/" class="text-dark font-weight-bold font-size-h4 mb-3">
+            <a href="/" class="text-dark font-weight-bolder font-size-h4 mb-3">
               Apply
             </a>
             <div class="text-dark-75">Books &amp; Articles</div>

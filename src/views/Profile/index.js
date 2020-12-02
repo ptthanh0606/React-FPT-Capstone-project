@@ -1,20 +1,26 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { Layout } from '_metronic/layout';
-import ProfilePage from './ProfilePage';
+import NotOwnProfilePage from './NotOwn';
+import OwnProfilePage from './Own';
 
 const Profile = () => {
   return (
     <Layout>
       <Switch>
+        {/* {personalRoutes()} */}
+        <Route path="/profile/myprofile">
+          <OwnProfilePage />
+        </Route>
+        {/* {viewProfileRoutes()} */}
         <Route path="/profile/admin/:id(\d+)">
-          <ProfilePage />
+          <NotOwnProfilePage />
         </Route>
         <Route path="/profile/lecturer/:id(\d+)">
-          <ProfilePage />
+          <NotOwnProfilePage />
         </Route>
         <Route path="/profile/student/:id(\d+)">
-          <ProfilePage />
+          <NotOwnProfilePage />
         </Route>
       </Switch>
     </Layout>
