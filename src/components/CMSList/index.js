@@ -1,34 +1,34 @@
-import ApplicationRow from 'components/CMSModal/ApplicationsModal/ApplicationRow';
+import Row from 'components/CMSList/Row';
 import React from 'react';
-import toast from 'utils/toast';
 
-const CMSList = ({ className, label, subLabel, rows }) => {
+const CMSList = ({ className, title, subTitle, rows, toolBar }) => {
   // -------------------------------------------------------------
-
-  const handleApproveTeam = React.useCallback(id => {
-    toast.success('Approved selected team to topic!');
-  }, []);
-
-  const handleRejectTeam = React.useCallback(id => {
-    toast.success('Rejected selected team!');
-  }, []);
 
   // -------------------------------------------------------------
 
   return (
-    <div className={`card card-custom ${className}`}>
-      <div className="card-header border-0">
-        <h3 className="card-title font-weight-bolder text-dark">{label}</h3>
+    <div className={`card card-custom card-border ${className}`}>
+      <div className="card-header align-items-center border-0 mt-4">
+        <h3 className="card-title font-weight-bolder align-items-start text-dark flex-column">
+          {title}
+          {subTitle && (
+            <span className="text-muted mt-3 font-weight-bold font-size-sm mb-5">
+              {subTitle}
+            </span>
+          )}
+        </h3>
+        <div className="card-toolbar">{toolBar}</div>
       </div>
       <div className="card-body pt-2">
         {rows &&
           rows.map(row => (
-            <ApplicationRow
-              label={row.name}
-              subLabel={row.leader}
+            <Row
+              key={row.label}
+              label={row.label}
+              subLabel={row.subLabel}
               buttonLabel="Approve"
-              onApprove={handleApproveTeam}
-              onReject={handleRejectTeam}
+              action={row.action}
+              onLabelClick={row.onLabelClick}
             />
           ))}
       </div>

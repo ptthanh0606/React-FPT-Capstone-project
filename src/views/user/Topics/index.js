@@ -156,6 +156,11 @@ export default function CustomersCard() {
 
   // ------------------------------------------------------------------
 
+  const handleToggleChange = e => {
+    setMineTopicFlg(e.currentTarget.checked);
+    console.log(e.currentTarget.checked);
+  };
+
   const showNewTopicModal = React.useCallback(() => {
     setShowedNewTopicModal(true);
   }, []);
@@ -697,7 +702,7 @@ export default function CustomersCard() {
         <CardHeaderToolbar className="text-nowrap">
           <span className="mr-2">Show mine only</span>
           <ToggleSwitch
-            onChange={e => setMineTopicFlg(e.currentTarget.checked)}
+            onChange={handleToggleChange}
             isActive={mineTopicFlg}
             className={'switch-primary'}
           />
@@ -705,25 +710,48 @@ export default function CustomersCard() {
       </CardHeader>
       <CardBody>
         <Filters filters={filters} setFilters={setFilters} />
-        <Table
-          columns={columns}
-          data={data}
-          total={total}
-          isLoading={isLoading}
-          selected={selected}
-          setSelected={setSelected}
-          page={page}
-          setPage={setPage}
-          pageSize={pageSize}
-          setPageSize={setPageSize}
-          sortField={sortField}
-          setSortField={setSortField}
-          sortOrder={sortOrder}
-          setSortOrder={setSortOrder}
-          defaultSorted={defaultSorted}
-          pageSizeList={sizePerPageList}
-          selectable={false}
-        />
+        {mineTopicFlg ? (
+          <Table
+            key="1"
+            columns={columns}
+            data={data}
+            total={total}
+            isLoading={isLoading}
+            selected={selected}
+            setSelected={setSelected}
+            page={page}
+            setPage={setPage}
+            pageSize={pageSize}
+            setPageSize={setPageSize}
+            sortField={sortField}
+            setSortField={setSortField}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            defaultSorted={defaultSorted}
+            pageSizeList={sizePerPageList}
+            selectable={currentRole === 'lecturer'}
+          />
+        ) : (
+          <Table
+            key="2"
+            columns={columns}
+            data={data}
+            total={total}
+            isLoading={isLoading}
+            selected={selected}
+            setSelected={setSelected}
+            page={page}
+            setPage={setPage}
+            pageSize={pageSize}
+            setPageSize={setPageSize}
+            sortField={sortField}
+            setSortField={setSortField}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            defaultSorted={defaultSorted}
+            pageSizeList={sizePerPageList}
+          />
+        )}
       </CardBody>
       <CMSModal
         isShowFlg={showedNewTopicModal}
