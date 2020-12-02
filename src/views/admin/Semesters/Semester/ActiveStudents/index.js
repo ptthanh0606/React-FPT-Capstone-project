@@ -27,7 +27,7 @@ import AddActiveStudentModal from './AddActiveStudentModal/AddActiveStudentModal
 export const statusClasses = ['danger', 'info', 'success', ''];
 export const statusTitles = ['Not in a team', 'Matching', 'Matched', ''];
 
-export default function CustomersCard() {
+export default function ActiveStudents() {
   const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
   const { id: semId } = useParams();

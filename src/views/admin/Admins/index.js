@@ -17,7 +17,7 @@ import * as endpoints from 'endpoints';
 import * as transformers from './transformers';
 import * as constants from './constants';
 
-export default function CustomersCard() {
+export default function Admins() {
   const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
 

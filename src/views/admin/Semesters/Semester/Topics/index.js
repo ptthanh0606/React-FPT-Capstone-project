@@ -141,7 +141,7 @@ function StatusColumnFormatter(cellContent, row) {
   return <span className={getLabelCssClasses()}>{titles[row.status]}</span>;
 }
 
-export default function CustomersCard() {
+export default function Topics() {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
   const [isLoading] = React.useState(false);

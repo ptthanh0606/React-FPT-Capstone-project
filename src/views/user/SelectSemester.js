@@ -18,7 +18,7 @@ import SemesterCard from 'views/admin/Semesters/SemesterCard';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import styles from 'views/admin/Semesters/nearest.module.scss';
 
-export default function CustomersCard() {
+export default function SelectSemester() {
   const setMeta = useSetRecoilState(metaAtom);
 
   const [l] = React.useReducer(() => ({}), {});
