@@ -1,7 +1,12 @@
 import React from 'react';
 import { Formik } from 'formik';
+import SelectTagInput from 'components/TagInput/SelectTagInput';
+import request from 'utils/request';
+import * as endpoints from 'endpoints';
+import { mDown as mDownDep } from 'views/admin/Departments/transformers';
 
 export default function CustomersFilter({ filters, setFilters }) {
+  const [selectState, setSelectState] = React.useState();
   return (
     <>
       <Formik
@@ -21,23 +26,29 @@ export default function CustomersFilter({ filters, setFilters }) {
           <form onSubmit={handleSubmit} className="form form-label-right">
             <div className="form-group row">
               <div className="col-lg-3">
-                <select
-                  className="form-control form-control-solid"
-                  name="status"
-                  placeholder="Filter by Department"
+                <SelectTagInput
+                  placeholder="All"
                   onChange={e => {
-                    setFieldValue('status', e.target.value);
+                    setSelectState(e);
+                    setFieldValue('departmentId', e?.value);
                     handleSubmit();
                   }}
-                  onBlur={handleBlur}
-                  value={values.status}
-                >
-                  <option value="">All</option>
-                  <option value="0">SE</option>
-                  <option value="1">BA</option>
-                  <option value="2">SS</option>
-                  <option value="2">JP</option>
-                </select>
+                  value={selectState}
+                  load={(input, callback) => {
+                    request({
+                      to: endpoints.LIST_DEPARTMENT.url,
+                      method: endpoints.LIST_DEPARTMENT.method,
+                      params: {
+                        term: input,
+                        pageSize: 10,
+                      },
+                    })
+                      .then(res => {
+                        callback(res?.data?.data?.map(mDownDep) || []);
+                      })
+                      .catch(() => callback([]));
+                  }}
+                />
                 <small className="form-text text-muted">
                   Filter by <b>department</b>
                 </small>
@@ -58,10 +69,10 @@ export default function CustomersFilter({ filters, setFilters }) {
                   <option value="0">Pending</option>
                   <option value="1">Rejected</option>
                   <option value="2">Approved</option>
-                  <option value="2">Ready</option>
-                  <option value="2">Matched</option>
-                  <option value="2">Passed</option>
-                  <option value="2">Failed</option>
+                  <option value="3">Ready</option>
+                  <option value="4">Matched</option>
+                  <option value="5">Passed</option>
+                  <option value="6">Failed</option>
                 </select>
                 <small className="form-text text-muted">
                   Filter by <b>status</b>
@@ -72,12 +83,12 @@ export default function CustomersFilter({ filters, setFilters }) {
                   <input
                     type="text"
                     className="form-control form-control-solid"
-                    name="searchText"
+                    name="term"
                     placeholder="Search"
                     onBlur={handleBlur}
-                    value={values.searchText}
+                    value={values.term}
                     onChange={e => {
-                      setFieldValue('searchText', e.target.value);
+                      setFieldValue('term', e.target.value);
                       handleSubmit();
                     }}
                   />
