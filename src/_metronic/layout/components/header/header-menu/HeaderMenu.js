@@ -81,8 +81,8 @@ export const HeaderMenu = React.memo(function ({ layoutProps }) {
 
   React.useEffect(() => {
     if (role === 'admin') setMenus(menusOfAdmin);
-    if (role === 'lecturer') setMenus(menusOfLecturer);
-    else setMenus(menusOfStudent);
+    else if (role === 'lecturer') setMenus(menusOfLecturer);
+    else if (role === 'student') setMenus(menusOfStudent);
   }, [role]);
 
   const getMenuItemActive = React.useCallback(
