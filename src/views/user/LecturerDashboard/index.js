@@ -11,6 +11,7 @@ import StatTile from 'components/CMSWidgets/StatTile';
 import { useHistory } from 'react-router-dom';
 import DropdownPopover from 'components/DropdownPopover';
 import FlowTimeline from 'components/CMSWidgets/FlowTimeline';
+import CMSAnotherList from 'components/CMSAnotherList';
 
 export default React.memo(function LecturerDashboard() {
   const history = useHistory();
@@ -52,42 +53,56 @@ export default React.memo(function LecturerDashboard() {
       topicType === 'Submited'
         ? [
             {
+              id: 1,
               label: 'Capstone Management System',
               onLabelClick: handleRouteToSpecificTopic(0),
               subLabel: 'FA20SE13',
               action: rowActionFormatter(1),
             },
             {
+              id: 2,
               label: 'Web Checker System',
               onLabelClick: handleRouteToSpecificTopic(0),
               subLabel: 'FA20SE11',
               action: rowActionFormatter(0),
             },
             {
+              id: 3,
               label: 'Example topic name',
               onLabelClick: handleRouteToSpecificTopic(0),
               subLabel: 'FA20SE15',
               action: rowActionFormatter(2),
             },
             {
+              id: 4,
               label: 'Example topic name 2',
               onLabelClick: handleRouteToSpecificTopic(0),
               subLabel: 'FA20SE15',
               action: rowActionFormatter(1),
             },
             {
+              id: 5,
               label: 'Example topic name 3',
               onLabelClick: handleRouteToSpecificTopic(0),
               subLabel: 'FA20SE15',
               action: rowActionFormatter(0),
             },
             {
+              id: 6,
               label: 'Example topic name 4',
               onLabelClick: handleRouteToSpecificTopic(0),
               subLabel: 'FA20SE11',
               action: rowActionFormatter(0),
             },
             {
+              id: 7,
+              label: 'Example topic name 5',
+              onLabelClick: handleRouteToSpecificTopic(0),
+              subLabel: 'FA20SE15',
+              action: rowActionFormatter(2),
+            },
+            {
+              id: 8,
               label: 'Example topic name 5',
               onLabelClick: handleRouteToSpecificTopic(0),
               subLabel: 'FA20SE15',
@@ -96,24 +111,28 @@ export default React.memo(function LecturerDashboard() {
           ]
         : [
             {
+              id: 1,
               label: 'Example topic name 2',
               onLabelClick: handleRouteToSpecificTopic(0),
               subLabel: 'FA20SE15',
               action: rowActionFormatter(1),
             },
             {
+              id: 2,
               label: 'Example topic name 3',
               onLabelClick: handleRouteToSpecificTopic(0),
               subLabel: 'FA20SE15',
               action: rowActionFormatter(0),
             },
             {
+              id: 3,
               label: 'Example topic name 4',
               onLabelClick: handleRouteToSpecificTopic(0),
               subLabel: 'FA20SE11',
               action: rowActionFormatter(0),
             },
             {
+              id: 4,
               label: 'Example topic name 5',
               onLabelClick: handleRouteToSpecificTopic(0),
               subLabel: 'FA20SE15',
@@ -216,6 +235,43 @@ export default React.memo(function LecturerDashboard() {
             />
           </div>
         </div>
+        <div className="row">
+          <div className="col-lg-12 col-xxl-12">
+            <CMSAnotherList
+              className="gutter-b"
+              title="Topic need feedback"
+              rows={[
+                {
+                  id: 0,
+                  label: 'Capstone Management System',
+                  onLabelClick: handleRouteToSpecificTopic(0),
+                  subLabel: 'Software Engineer',
+                  altLabel: 'Ho Hoan Kiem',
+                  emailAvatar: 'phanthongthanh0606@gmail.com',
+                  action: applicationRowActionFormatter(10),
+                },
+                {
+                  id: 0,
+                  label: 'Web Checker System',
+                  onLabelClick: handleRouteToSpecificTopic(0),
+                  subLabel: 'Graphic Design',
+                  altLabel: 'Le Vu Truong',
+                  emailAvatar: 'phanthongthanh0606@gmail.com',
+                  action: applicationRowActionFormatter(5),
+                },
+                {
+                  id: 0,
+                  label: 'Example topic name',
+                  onLabelClick: handleRouteToSpecificTopic(0),
+                  subLabel: 'International Business',
+                  altLabel: 'Tran Dinh Thanh',
+                  emailAvatar: 'phanthongthanh0606@gmail.com',
+                  action: applicationRowActionFormatter(2),
+                },
+              ]}
+            />
+          </div>
+        </div>
       </div>
       <div className="col-lg-6 col-xxl-4">
         <div className="row">
@@ -230,19 +286,43 @@ export default React.memo(function LecturerDashboard() {
               title="Topic applications"
               rows={[
                 {
+                  id: 0,
                   label: 'Capstone Management System',
                   onLabelClick: handleRouteToSpecificTopic(0),
                   subLabel: 'FA20SE13',
                   action: applicationRowActionFormatter(10),
                 },
                 {
+                  id: 0,
                   label: 'Web Checker System',
                   onLabelClick: handleRouteToSpecificTopic(0),
                   subLabel: 'FA20SE11',
                   action: applicationRowActionFormatter(5),
                 },
                 {
+                  id: 0,
                   label: 'Example topic name',
+                  onLabelClick: handleRouteToSpecificTopic(0),
+                  subLabel: 'FA20SE15',
+                  action: applicationRowActionFormatter(2),
+                },
+                {
+                  id: 0,
+                  label: 'Example topic name 2',
+                  onLabelClick: handleRouteToSpecificTopic(0),
+                  subLabel: 'FA20SE15',
+                  action: applicationRowActionFormatter(2),
+                },
+                {
+                  id: 0,
+                  label: 'Example topic name 3',
+                  onLabelClick: handleRouteToSpecificTopic(0),
+                  subLabel: 'FA20SE15',
+                  action: applicationRowActionFormatter(2),
+                },
+                {
+                  id: 0,
+                  label: 'Example topic name 4',
                   onLabelClick: handleRouteToSpecificTopic(0),
                   subLabel: 'FA20SE15',
                   action: applicationRowActionFormatter(2),
