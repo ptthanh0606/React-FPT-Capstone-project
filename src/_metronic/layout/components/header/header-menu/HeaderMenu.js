@@ -35,7 +35,26 @@ const menusOfAdmin = [
   },
 ];
 
-const menusOfUser = [
+const menusOfLecturer = [
+  {
+    path: '/dashboard',
+    title: 'Dashboard',
+  },
+  {
+    path: '/topic',
+    title: 'Topic',
+  },
+  {
+    path: '/council',
+    title: 'Council',
+  },
+  {
+    path: '/my-council',
+    title: 'My council',
+  },
+];
+
+const menusOfStudent = [
   {
     path: '/dashboard',
     title: 'Dashboard',
@@ -50,7 +69,7 @@ const menusOfUser = [
   },
   {
     path: '/my-team',
-    title: 'My',
+    title: 'My Team',
   },
 ];
 
@@ -62,7 +81,8 @@ export const HeaderMenu = React.memo(function ({ layoutProps }) {
 
   React.useEffect(() => {
     if (role === 'admin') setMenus(menusOfAdmin);
-    else setMenus(menusOfUser);
+    if (role === 'lecturer') setMenus(menusOfLecturer);
+    else setMenus(menusOfStudent);
   }, [role]);
 
   const getMenuItemActive = React.useCallback(
