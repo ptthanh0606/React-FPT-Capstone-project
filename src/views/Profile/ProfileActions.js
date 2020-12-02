@@ -1,40 +1,30 @@
 import React from 'react';
-import { toAbsoluteUrl } from '_metronic/_helpers';
-import SVG from 'react-inlinesvg';
-import { useHistory } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { role } from 'auth/recoil/selectors';
+import md5 from 'utils/md5';
 
-const ProfileActions = () => {
-  const history = useHistory();
+const ProfileActions = ({ fullName, departments, email }) => {
   const userRole = useRecoilValue(role);
 
-  const logoutClick = () => {
-    const toggle = document.getElementById('kt_quick_user_toggle');
-    if (toggle) {
-      toggle.click();
-    }
-    history.push('/logout');
-  };
-
   return (
-    <div class="card card-custom card-stretch">
+    <div className="card card-custom">
       <div className="card-body pt-4">
         <div className="d-flex align-items-center">
           <div className="symbol symbol-60 symbol-xxl-100 mr-5 align-self-start align-self-xxl-center">
             <div
               className="symbol-label"
-              // style="background-image:url('assets/media/users/300_21.jpg')"
+              style={{
+                backgroundImage: `url(https://www.gravatar.com/avatar/${
+                  email && md5(email.toLowerCase())
+                })`,
+              }}
             ></div>
             <i className="symbol-badge bg-success"></i>
           </div>
           <div>
-            <a
-              href="/"
-              className="font-weight-bolder font-size-h5 text-dark-75 text-hover-primary"
-            >
-              Phan Thong Thanh
-            </a>
+            <span className="font-weight-bolder font-size-h5 text-dark-75 text-hover-primary">
+              {fullName}
+            </span>
             <div className="text-muted">{userRole}</div>
           </div>
         </div>
@@ -42,9 +32,7 @@ const ProfileActions = () => {
         <div className="py-9">
           <div className="d-flex align-items-center justify-content-between mb-2">
             <span className="font-weight-bold mr-2">Email:</span>
-            <a href="/" className="text-muted text-hover-primary">
-              thanhptse130359@fpt.edu.vn
-            </a>
+            <span className="text-muted text-hover-primary">{email}</span>
           </div>
           <div className="d-flex align-items-center justify-content-between mb-2">
             <span className="font-weight-bold mr-2">Department:</span>
@@ -58,7 +46,7 @@ const ProfileActions = () => {
 
         <div className="navi navi-bold navi-hover navi-active navi-link-rounded">
           <div className="navi-item mb-2">
-            <a href="/" className="navi-link py-4 active">
+            <span className="navi-link py-4 active">
               <span className="navi-icon mr-2">
                 <span className="svg-icon">
                   <svg
@@ -92,7 +80,7 @@ const ProfileActions = () => {
               <span className="navi-text font-size-lg">
                 Personal Information
               </span>
-            </a>
+            </span>
           </div>
 
           {/* <div className="navi-item mb-2">
@@ -324,7 +312,7 @@ const ProfileActions = () => {
             </a>
           </div> */}
 
-          <div className="navi-item mb-2">
+          {/* <div className="navi-item mb-2">
             <a
               href="/"
               className="navi-link py-4"
@@ -344,7 +332,7 @@ const ProfileActions = () => {
               </span>
               <span className="navi-text">Logout</span>
             </a>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

@@ -29,7 +29,7 @@ const QuickUser = () => {
     if (toggle) {
       toggle.click();
     }
-    history.push(`/profile/${userRole}/1`);
+    history.push(`/profile/myprofile`);
   };
 
   return (
