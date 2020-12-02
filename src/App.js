@@ -33,13 +33,13 @@ function fetchMe(setRole, setUser, history) {
       let role;
 
       switch (data.data.role) {
-        case 0:
+        case '0':
           role = 'admin';
           break;
-        case 1:
+        case '1':
           role = 'student';
           break;
-        case 2:
+        case '2':
           role = 'lecturer';
           break;
         default:
