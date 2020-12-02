@@ -79,10 +79,10 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
         return (
           <div>
             <div className="text-nowrap text-dark-75 font-weight-bold font-size-lg mb-0">
-              {cellContent.label}
+              {cellContent?.label}
             </div>
             <span className="text-muted font-weight-bold text-hover-primary">
-              {cellContent.abstract}
+              {cellContent?.abstract}
             </span>
           </div>
         );
