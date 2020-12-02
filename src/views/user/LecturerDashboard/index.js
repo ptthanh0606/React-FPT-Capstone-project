@@ -14,7 +14,7 @@ import DropdownPopover from 'components/DropdownPopover';
 export default React.memo(function LecturerDashboard() {
   const history = useHistory();
   const setMeta = useSetRecoilState(metaAtom);
-  const [topicType, setTopicType] = React.useState('');
+  const [topicType, setTopicType] = React.useState('Submited');
   const [topicPreviews, setTopicPreviews] = React.useState([]);
 
   // --------------------------------------------------------------------
