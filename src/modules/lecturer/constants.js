@@ -4,10 +4,9 @@ import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
-import { mDown as mDownDep } from '../Departments/transformers';
+import { mDown as mDownDep } from '../department/transformers';
 
 //------------------------------------------------------------------------------
-
 export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 
 export const sizePerPageList = [
@@ -17,19 +16,14 @@ export const sizePerPageList = [
   { text: '100', value: 100 },
 ];
 
-export const statusClasses = ['danger', 'success', 'info', ''];
-export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
+export const statusClasses = ['danger', 'success'];
+export const statusTitles = ['Deactivated', 'Activated'];
 
-export const createColumns = ({ handleEdit, handleRemove }) => {
-  const cols = [
+export const createColumns = ({ handleEdit, handleRemove }) =>
+  columnsTransformer([
     {
       dataField: 'code',
       text: 'Code',
-      sort: true,
-    },
-    {
-      dataField: 'email',
-      text: 'Email',
       sort: true,
     },
     {
@@ -40,7 +34,7 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
         return (
           <Link
             className="text-dark font-weight-bold"
-            to={'/semester/' + row.id}
+            to={'/profile/lecturer/' + row.id}
           >
             {cellContent}
           </Link>
@@ -48,17 +42,44 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
       },
     },
     {
-      dataField: 'department',
+      dataField: 'email',
+      text: 'Email',
+      sort: true,
+    },
+    {
+      dataField: 'departments',
       text: 'Department',
       sort: true,
       formatter: function (cellContent, row) {
-        return cellContent?.label;
+        return (
+          <>
+            {cellContent?.length > 0
+              ? cellContent
+                  .map(i => (i.isApprover ? <u>{i.label}</u> : <>{i.label}</>))
+                  .reduce((prev, curr) => [prev, ', ', curr])
+              : ''}
+          </>
+        );
       },
     },
-  ];
-
-  if (handleEdit && handleRemove) {
-    cols.push({
+    {
+      dataField: 'status',
+      text: 'Status',
+      sort: true,
+      formatter: (cellContent, row) => {
+        const getLabelCssClasses = () => {
+          return `label label-lg label-light-${
+            statusClasses[row.status ? 1 : 0]
+          } label-inline text-nowrap`;
+        };
+        return (
+          <span className={getLabelCssClasses()}>
+            {statusTitles[row.status ? 1 : 0]}
+          </span>
+        );
+      },
+    },
+    {
       dataField: 'action',
       text: 'Actions',
       formatter: (cellContent, row, rowIndex) => {
@@ -90,33 +111,30 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
       style: {
         minWidth: '100px',
       },
-    });
-  }
-
-  return columnsTransformer(cols);
-};
+    },
+  ]);
 
 export const modalConfigs = [
   {
+    name: 'code',
+    type: 'text',
+    label: 'Lecturer code name',
+    placeholder: 'Code name...',
+  },
+  {
     name: 'name',
     type: 'text',
-    label: 'Student full name',
+    label: 'Lecturer full name',
     placeholder: 'Full name...',
   },
   {
-    name: 'code',
-    type: 'text',
-    label: 'Student code',
-    placeholder: 'Enter student code...',
-  },
-  {
     name: 'email',
-    type: 'text',
-    label: 'Student email',
-    placeholder: 'Enter student @fpt.edu.vn email...',
+    type: 'email',
+    label: 'Lecturer email',
+    placeholder: 'Email...',
   },
   {
-    name: 'department',
+    name: 'departments',
     type: 'selectBoxAsync',
     label: 'Department',
     smallLabel: 'Departments for this lecturer',
@@ -130,10 +148,16 @@ export const modalConfigs = [
         },
       })
         .then(res => {
-          callback(res?.data?.data?.map(mDownDep) || []);
+          callback(res.data.data?.map(mDownDep) || []);
         })
         .catch(() => callback([]));
     },
-    isMulti: false,
+    isMulti: true,
+  },
+  {
+    name: 'status',
+    type: 'toggle',
+    label: 'Active state',
+    smallLabel: 'Is this lecturer active',
   },
 ];

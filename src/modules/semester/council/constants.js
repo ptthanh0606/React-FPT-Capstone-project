@@ -1,12 +1,14 @@
 import React from 'react';
 
-import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
-import request from 'utils/request';
+import { Link } from 'react-router-dom';
 import * as endpoints from 'endpoints';
-import { mDown as mDownDep } from '../Departments/transformers';
+import { mDown as mDownDep } from 'modules/department/transformers';
+import { mDown as mDownLec } from 'modules/lecturer/transformers';
+import request from 'utils/request';
 
 //------------------------------------------------------------------------------
+
 export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 
 export const sizePerPageList = [
@@ -16,66 +18,41 @@ export const sizePerPageList = [
   { text: '100', value: 100 },
 ];
 
-export const statusClasses = ['danger', 'success'];
-export const statusTitles = ['Deactivated', 'Activated'];
+export const statusClasses = ['danger', 'success', 'info'];
+export const statusTitles = ['Finished', 'In progress', 'Preparing'];
 
 export const createColumns = ({ handleEdit, handleRemove }) =>
   columnsTransformer([
     {
-      dataField: 'code',
-      text: 'Code',
+      dataField: 'department',
+      text: 'DEP',
       sort: true,
+      formatter: (cellContent, row) => cellContent?.label,
     },
     {
       dataField: 'name',
       text: 'Name',
       sort: true,
-      formatter: function (cellContent, row) {
-        return (
-          <Link
-            className="text-dark font-weight-bold"
-            to={'/profile/lecturer/' + row.id}
-          >
-            {cellContent}
-          </Link>
-        );
-      },
     },
     {
-      dataField: 'email',
-      text: 'Email',
-      sort: true,
-    },
-    {
-      dataField: 'departments',
-      text: 'Department',
-      sort: true,
-      formatter: function (cellContent, row) {
+      dataField: 'members',
+      text: 'Members',
+      formatter: function StatusColumnFormatter(cellContent, row) {
         return (
           <>
             {cellContent?.length > 0
               ? cellContent
-                  .map(i => (i.isApprover ? <u>{i.label}</u> : <>{i.label}</>))
+                  .map(i => (
+                    <Link
+                      className={'text-dark font-weight-bold'}
+                      to={'/profile/lecturer/' + i.value}
+                    >
+                      {i.isLeader ? <u>{i.label}</u> : i.label}
+                    </Link>
+                  ))
                   .reduce((prev, curr) => [prev, ', ', curr])
               : ''}
           </>
-        );
-      },
-    },
-    {
-      dataField: 'status',
-      text: 'Status',
-      sort: true,
-      formatter: (cellContent, row) => {
-        const getLabelCssClasses = () => {
-          return `label label-lg label-light-${
-            statusClasses[row.status ? 1 : 0]
-          } label-inline text-nowrap`;
-        };
-        return (
-          <span className={getLabelCssClasses()}>
-            {statusTitles[row.status ? 1 : 0]}
-          </span>
         );
       },
     },
@@ -116,28 +93,16 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
 
 export const modalConfigs = [
   {
-    name: 'code',
-    type: 'text',
-    label: 'Lecturer code name',
-    placeholder: 'Code name...',
-  },
-  {
     name: 'name',
     type: 'text',
-    label: 'Lecturer full name',
-    placeholder: 'Full name...',
+    label: 'Council name',
+    placeholder: 'Give this council a name...',
   },
   {
-    name: 'email',
-    type: 'email',
-    label: 'Lecturer email',
-    placeholder: 'Email...',
-  },
-  {
-    name: 'departments',
+    name: 'department',
     type: 'selectBoxAsync',
     label: 'Department',
-    smallLabel: 'Departments for this lecturer',
+    smallLabel: 'This team belong to which department',
     load: (input, callback) => {
       request({
         to: endpoints.LIST_DEPARTMENT.url,
@@ -152,12 +117,26 @@ export const modalConfigs = [
         })
         .catch(() => callback([]));
     },
-    isMulti: true,
   },
   {
-    name: 'status',
-    type: 'toggle',
-    label: 'Active state',
-    smallLabel: 'Is this lecturer active',
+    name: 'members',
+    type: 'selectBoxAsync',
+    label: 'Members',
+    smallLabel: 'Member of this council, first member is leader',
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_LECTURER.url,
+        method: endpoints.LIST_LECTURER.method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownLec) || []);
+        })
+        .catch(() => callback([]));
+    },
+    isMulti: true,
   },
 ];

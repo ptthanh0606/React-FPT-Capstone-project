@@ -5,18 +5,17 @@ import MessageTile from './MessageTile';
 const TopicTeamPreview = () => {
   return (
     <div className="card card-custom card-border gutter-b">
+      <div className="card-header align-items-center border-0 mt-4">
+        <h3 className="card-title font-weight-bolder align-items-start text-dark flex-column">
+          Your topic
+          <span className="text-muted mt-3 font-weight-bold font-size-sm">
+            Your current matched topic
+          </span>
+        </h3>
+      </div>
       <div className="card-body">
         <div className="d-flex flex-wrap align-items-center py-1">
           <div className="d-flex flex-column flex-grow-1 my-lg-0 my-2 pr-3">
-            <a
-              href="/"
-              className="text-dark font-weight-bolder text-hover-primary font-size-h5 "
-            >
-              Your topic
-            </a>
-            <span className="text-muted font-weight-bold font-size-lg mb-10">
-              Your current matched topic
-            </span>
             <a
               href="/"
               className="text-dark font-weight-bolder text-hover-primary font-size-h5"

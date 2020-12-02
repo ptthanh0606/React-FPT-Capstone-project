@@ -2,9 +2,9 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
-import request from 'utils/request';
 import * as endpoints from 'endpoints';
-import { mDown as mDownLec } from 'views/admin/Lecturers/transformers';
+import request from 'utils/request';
+import { mDown as mDownTeam } from 'modules/semester/team/transformers';
 
 //------------------------------------------------------------------------------
 
@@ -17,8 +17,8 @@ export const sizePerPageList = [
   { text: '100', value: 100 },
 ];
 
-export const statusClasses = ['danger', 'success'];
-export const statusTitles = ['Deactivated', 'Activated'];
+export const statusClasses = ['danger', 'warning', 'success'];
+export const statusTitles = ['Not in a team', 'Matching', 'Matched'];
 
 // export const createColumns = ({ handleEdit, handleRemove }) =>
 //   columnsTransformer();
@@ -32,9 +32,32 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       sort: true,
     },
     {
+      dataField: 'department',
+      text: 'DEP',
+      sort: true,
+    },
+    {
       dataField: 'name',
       text: 'Name',
       sort: true,
+      formatter: (cellContent, row) => {
+        return (
+          <Link
+            className="text-dark font-weight-bold"
+            to={'/profile/student/' + row.id}
+          >
+            {cellContent}
+          </Link>
+        );
+      },
+    },
+    {
+      dataField: 'team',
+      text: 'Team',
+      sort: true,
+      formatter: (cellContent, row) => {
+        return cellContent.label;
+      },
     },
     {
       dataField: 'status',
@@ -43,37 +66,21 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       formatter: (cellContent, row) => {
         const getLabelCssClasses = () => {
           return `label label-lg label-light-${
-            statusClasses[row.status === true ? 1 : 0]
+            statusClasses[row.status]
           } label-inline text-nowrap`;
         };
         return (
           <span className={getLabelCssClasses()}>
-            {statusTitles[row.status === true ? 1 : 0]}
+            {statusTitles[row.status]}
           </span>
         );
       },
     },
     {
-      dataField: 'approvers',
-      text: 'Approvers',
-      formatter: function (cellContent, row) {
-        return (
-          <>
-            {cellContent?.length > 0
-              ? cellContent
-                  .map(i => (
-                    <Link
-                      className="text-dark font-weight-bold"
-                      to={'/profile/lecturer/' + i.value}
-                    >
-                      {i.label}
-                    </Link>
-                  ))
-                  .reduce((prev, curr) => [prev, ', ', curr])
-              : ''}
-          </>
-        );
-      },
+      dataField: 'addedAt',
+      text: 'Added at',
+      sort: true,
+      formatter: (cellContent, row) => new Date(cellContent).toLocaleString(),
     },
     {
       dataField: 'action',
@@ -85,8 +92,8 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
               href="/"
               title="Edit"
               className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-              data-id={row.id}
               onClick={handleEdit}
+              data-id={row.id}
             >
               <i className="fas fa-pencil-alt mx-2"></i>
             </a>
@@ -94,8 +101,8 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
               href="/"
               title="Remove"
               className="btn btn-icon btn-light btn-hover-primary btn-sm"
-              data-id={row.id}
               onClick={handleRemove}
+              data-id={row.id}
             >
               <i className="fas fa-trash mx-2"></i>
             </a>
@@ -112,42 +119,23 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
 
 export const modalConfigs = [
   {
-    name: 'name',
-    type: 'text',
-    label: 'Department name',
-    placeholder: 'Give this department a name...',
-  },
-  {
-    name: 'code',
-    type: 'text',
-    label: 'Department code',
-    smallLabel: 'Ex: Software Engineer to be "SE"',
-  },
-  {
-    name: 'approvers',
+    name: 'team',
     type: 'selectBoxAsync',
-    label: 'Approver',
-    smallLabel: 'Approvers for this department',
+    label: 'Team',
+    smallLabel: 'This team belong to which department',
     load: (input, callback) => {
       request({
-        to: endpoints.LIST_LECTURER.url,
-        method: endpoints.LIST_LECTURER.method,
+        to: endpoints.LIST_TEAM.url,
+        method: endpoints.LIST_TEAM.method,
         params: {
           term: input,
           pageSize: 10,
         },
       })
         .then(res => {
-          callback(res.data.data?.map(mDownLec) || []);
+          callback(res.data.data?.map(mDownTeam) || []);
         })
         .catch(() => callback([]));
     },
-    isMulti: true,
-  },
-  {
-    name: 'status',
-    type: 'toggle',
-    label: 'Active state',
-    smallLabel: 'Is this department active',
   },
 ];

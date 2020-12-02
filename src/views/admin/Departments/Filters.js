@@ -26,15 +26,15 @@ const Filters = React.memo(({ filters, setFilters }) => {
                   name="status"
                   placeholder="Filter by Department"
                   onChange={e => {
-                    setFieldValue('status', e.target.value);
+                    setFieldValue('isDisabled', e.target.value);
                     handleSubmit();
                   }}
                   onBlur={handleBlur}
-                  value={values.status}
+                  value={values.isDisabled}
                 >
                   <option value="">All</option>
-                  <option value="0">Deactivated</option>
-                  <option value="1">Activated</option>
+                  <option value="true">Deactivated</option>
+                  <option value="false">Activated</option>
                 </select>
                 <small className="form-text text-muted">
                   Filter by <b>status</b>

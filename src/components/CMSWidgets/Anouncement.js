@@ -1,28 +1,29 @@
 import React from 'react';
 
-const Anouncement = () => {
+const Anouncement = ({
+  type = 'primary',
+  date = 'Title',
+  body = <>body</>,
+}) => {
   return (
     <div
-      class="card card-custom bgi-no-repeat card-border gutter-b"
+      className={`card wave wave-animate-slow wave-${type} card-custom bgi-no-repeat card-border gutter-b`}
       style={{
         backgroundPosition: 'right top',
         backgroundSize: '30% auto',
         backgroundImage: 'url(assets/media/svg/shapes/abstract-4.svg)',
       }}
     >
-      <div class="card-body">
-        <a
-          href="/"
-          class="card-title font-weight-bold text-muted text-hover-primary font-size-h5"
-        >
+      <div className="card-body">
+        <span className="card-title font-weight-bolder text-muted text-hover-primary font-size-h5">
           Anouncement
-        </a>
+        </span>
 
-        <div class="font-weight-bolder text-success mt-9 mb-5">03 May 2020</div>
+        <div className={`font-weight-bolder text-${type} mt-9 mb-5`}>
+          {date}
+        </div>
 
-        <p class="text-dark-75 font-weight-bolder font-size-h5 m-0">
-          Some important anouncement from FPTU
-        </p>
+        <p className="text-dark-75 font-size-h5 m-0">{body}</p>
       </div>
     </div>
   );

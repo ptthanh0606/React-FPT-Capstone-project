@@ -3,24 +3,12 @@ import toast from 'utils/toast';
 import * as endpoints from 'endpoints';
 import { handleErrors } from 'utils/common';
 import request from 'utils/request';
-import { useParams } from 'react-router-dom';
+import md5 from 'utils/md5';
 
-const PersonalInfomation = () => {
-  const { id } = useParams();
-
+const PersonalInfomation = ({ id, email, bio }) => {
   const handleUpdate = React.useCallback(e => {
     e.preventDefault();
-    const id = Number(e.currentTarget.getAttribute('data-id'));
-    if (!Number.isInteger(id)) {
-      toast.error('Internal Server Error');
-      return;
-    }
-    request({
-      to: endpoints.READ_DEPARTMENT(id).url,
-      method: endpoints.READ_DEPARTMENT(id).method,
-    })
-      .then(res => {})
-      .catch(handleErrors);
+    toast.success('Saved');
   }, []);
 
   return (
@@ -31,9 +19,6 @@ const PersonalInfomation = () => {
             <h3 className="card-label font-weight-bolder text-dark">
               Personal Information
             </h3>
-            <span className="text-muted font-weight-bold font-size-sm mt-1">
-              Update your personal informaiton
-            </span>
           </div>
           <div className="card-toolbar">
             <button
@@ -67,51 +52,19 @@ const PersonalInfomation = () => {
                 <div
                   className="image-input image-input-outline"
                   id="kt_profile_avatar"
-                  // style="background-image: url(assets/media/users/blank.png)"
                 >
                   <div
                     className="image-input-wrapper"
-                    // style="background-image: url(assets/media/users/300_21.jpg)"
+                    style={{
+                      backgroundImage: `url(https://www.gravatar.com/avatar/${
+                        email && md5(email.toLowerCase())
+                      })`,
+                    }}
                   ></div>
-
-                  <label
-                    className="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow"
-                    data-action="change"
-                    data-toggle="tooltip"
-                    title=""
-                    data-original-title="Change avatar"
-                  >
-                    <i className="fa fa-pen icon-sm text-muted"></i>
-                    <input
-                      type="file"
-                      name="profile_avatar"
-                      accept=".png, .jpg, .jpeg"
-                    />
-                    <input type="hidden" name="profile_avatar_remove" />
-                  </label>
-
-                  <span
-                    className="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow"
-                    data-action="cancel"
-                    data-toggle="tooltip"
-                    title=""
-                    data-original-title="Cancel avatar"
-                  >
-                    <i className="ki ki-bold-close icon-xs text-muted"></i>
-                  </span>
-
-                  <span
-                    className="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow"
-                    data-action="remove"
-                    data-toggle="tooltip"
-                    title=""
-                    data-original-title="Remove avatar"
-                  >
-                    <i className="ki ki-bold-close icon-xs text-muted"></i>
-                  </span>
                 </div>
                 <span className="form-text text-muted">
-                  Allowed file types: png, jpg, jpeg.
+                  You can change avatar on{' '}
+                  <span className="font-weight-bolder">Google Account</span>
                 </span>
               </div>
             </div>
@@ -130,7 +83,9 @@ const PersonalInfomation = () => {
                     resize: 'none',
                     height: '130px',
                   }}
-                ></textarea>
+                >
+                  {bio}
+                </textarea>
               </div>
             </div>
           </div>

@@ -5,10 +5,6 @@ import Feedback from './Feedback';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 const TopicDetailCard = ({ className, topicCode, topicName, fullDesc }) => {
-  const handleShowApplicationModal = React.useCallback(e => {
-    e.preventDefault();
-  }, []);
-
   const handleShowTeamDetail = React.useCallback(event => {
     event.preventDefault();
   }, []);

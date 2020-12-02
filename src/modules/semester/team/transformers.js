@@ -30,18 +30,19 @@ export function down(i) {
             i.teamDetail.department.id || console.log('code field not found'),
         }
       : (console.log('department field not found'), {}),
-    topic: i?.topic
-      ? {
-          label:
-            (i.topic.name &&
-              i.topic.code &&
-              '[' + i.topic.code + '] ' + i.topic.name) ||
-            console.log('topic code and name field not found'),
-          value: i.topic.id || console.log('topic id field not found'),
-          abstract:
-            i.topic.abstract || console.log('topic abstract field not found'),
-        }
-      : undefined,
+    topic:
+      i?.topic && i?.teamDetail?.status === true
+        ? {
+            label:
+              (i.topic.name &&
+                i.topic.code &&
+                '[' + i.topic.code + '] ' + i.topic.name) ||
+              console.log('topic code and name field not found'),
+            value: i.topic.id || console.log('topic id field not found'),
+            abstract:
+              i.topic.abstract || console.log('topic abstract field not found'),
+          }
+        : {},
     status:
       i?.teamDetail?.status !== undefined
         ? i?.teamDetail?.status
@@ -54,16 +55,20 @@ export function down(i) {
       i?.teamDetail?.isLocked !== undefined
         ? !!i.teamDetail.isLocked
         : console.log('isLocked field not found'),
+    maxMembers:
+      i?.teamDetail?.maxMembers !== undefined
+        ? i?.teamDetail?.maxMembers
+        : console.log('team max members field not found'),
   };
 }
 
 export function mDown(i) {
   return {
-    value: i?.id || console.log('id field not found'),
     label:
-      i?.id && i?.name
-        ? '[' + i?.id + '] ' + i?.name
-        : console.log('id and name field not found'),
+      i?.teamDetail?.id && i?.teamDetail?.name
+        ? '[' + i.teamDetail.id + '] ' + i.teamDetail.name
+        : console.log('team id and name field not found'),
+    value: i?.teamDetail?.id || console.log('team id field not found'),
   };
 }
 

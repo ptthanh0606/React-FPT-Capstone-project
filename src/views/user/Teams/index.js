@@ -6,16 +6,21 @@ import {
   CardHeaderToolbar,
 } from '_metronic/_partials/controls';
 
-import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
+import {
+  sortCaret,
+  headerSortingClasses,
+  toAbsoluteUrl,
+} from '_metronic/_helpers';
 import Table from 'components/Table';
+import SVG from 'react-inlinesvg';
 import Filters from './Filters';
 import { Link } from 'react-router-dom';
 import metaAtom from 'store/meta';
-import { useSetRecoilState } from 'recoil';
-
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { role } from 'auth/recoil/selectors';
 import { useParams } from 'react-router-dom';
-import ConfirmRemoveModal from 'components/ConfirmModal/ConfirmModal';
 import CreateTeamStudentModal from 'components/CreateTeamStudentModal/CreateTeamStudentModal';
+import CMSModal from 'components/CMSModal/CMSModal';
 
 export const statusClasses = ['info', 'success', ''];
 export const statusTitles = ['Matching', 'Matched', ''];
@@ -172,20 +177,19 @@ const columns = [
   },
 ];
 
-export default function CustomersCard() {
+export default function Teams() {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [filters, setFilters] = React.useState({});
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
-  const [
-    showRemoveStudentTeamConfirmModalFlg,
-    setShowRemoveStudentTeamConfirmModalFlg,
-  ] = React.useState(false);
+  const currentRole = useRecoilValue(role);
+  const [joinTeamModalShowFlg, setJoinTeamModalShowFlg] = React.useState(false);
+
   const [
     showCreateStudentTeamModalFlg,
     setShowCreateStudentTeamModalFlg,
@@ -194,14 +198,6 @@ export default function CustomersCard() {
   const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
 
-  const handleShowRemoveStudentTeamModal = () => {
-    setShowRemoveStudentTeamConfirmModalFlg(true);
-  };
-
-  const handleHideRemoveStudentTeamModal = () => {
-    setShowRemoveStudentTeamConfirmModalFlg(false);
-  };
-
   const handleShowCreateStudentTeamModal = () => {
     setShowCreateStudentTeamModalFlg(true);
   };
@@ -209,6 +205,54 @@ export default function CustomersCard() {
   const handleHideCreateStudentTeamModal = () => {
     setShowCreateStudentTeamModalFlg(false);
   };
+
+  // --------------------------------------------------------------------
+
+  const toolBar = React.useCallback(() => {
+    let buttons = <></>;
+    switch (currentRole) {
+      case 'student':
+        buttons = (
+          <>
+            <button
+              type="button"
+              className="btn btn-light-info font-weight-bold mr-2"
+              onClick={() => setJoinTeamModalShowFlg(true)}
+            >
+              <span className="svg-icon svg-icon-md">
+                <SVG
+                  src={toAbsoluteUrl('/media/svg/icons/Media/Forward.svg')}
+                ></SVG>
+              </span>
+              Join with code
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary font-weight-bold"
+              onClick={handleShowCreateStudentTeamModal}
+            >
+              <span className="svg-icon svg-icon-md">
+                <SVG
+                  src={toAbsoluteUrl('/media/svg/icons/Navigation/Plus.svg')}
+                ></SVG>
+              </span>
+              Create a team
+            </button>
+          </>
+        );
+        break;
+
+      case 'lecturer':
+        buttons = <></>;
+        break;
+
+      default:
+        break;
+    }
+    return buttons;
+  }, [currentRole]);
+
+  // --------------------------------------------------------------------
 
   React.useEffect(() => {
     setMeta(meta => ({
@@ -219,9 +263,9 @@ export default function CustomersCard() {
         { title: 'Fall 2020', path: '/semester/' + id },
         { title: 'Team', path: '/semester/' + id + '/team' },
       ],
-      toolbar: <></>,
+      toolbar: toolBar(),
     }));
-  }, [setMeta, id]);
+  }, [setMeta, id, toolBar]);
 
   React.useEffect(() => {
     setData(mockData);
@@ -231,16 +275,7 @@ export default function CustomersCard() {
   return (
     <Card>
       <CardHeader title="All teams">
-        <CardHeaderToolbar className="text-nowrap">
-          <button
-            type="button"
-            className="btn btn-primary font-weight-bold"
-            onClick={handleShowCreateStudentTeamModal}
-          >
-            <i className="fas fa-plus mr-2"></i>
-            New
-          </button>
-        </CardHeaderToolbar>
+        <CardHeaderToolbar className="text-nowrap"></CardHeaderToolbar>
       </CardHeader>
       <CardBody>
         <Filters filters={filters} setFilters={setFilters} />
@@ -263,17 +298,27 @@ export default function CustomersCard() {
           pageSizeList={sizePerPageList}
         />
       </CardBody>
-      <ConfirmRemoveModal
-        title="Confirm on remove"
-        body={<h5>Are you sure you want to remove selected student teams?</h5>}
-        isShowFlg={showRemoveStudentTeamConfirmModalFlg}
-        onHide={handleHideRemoveStudentTeamModal}
-        onConfirm={() => {}}
-      />
       <CreateTeamStudentModal
         isShowFlg={showCreateStudentTeamModalFlg}
         onHide={handleHideCreateStudentTeamModal}
         onCreate={() => {}}
+      />
+      <CMSModal
+        isShowFlg={joinTeamModalShowFlg}
+        onHide={() => setJoinTeamModalShowFlg(false)}
+        title="Join team with code"
+        fieldTemplate={{
+          code: '',
+        }}
+        configs={[
+          {
+            type: 'text',
+            name: 'code',
+            label: 'Code',
+            smallLabel: 'Enter team code to quickly join a team',
+          },
+        ]}
+        primaryButtonLabel="Join"
       />
     </Card>
   );
