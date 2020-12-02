@@ -124,8 +124,8 @@ export default React.memo(function Teams() {
         return;
       }
       request({
-        to: endpoints.READ_TEAM(editId).url,
-        method: endpoints.READ_TEAM(editId).method,
+        to: endpoints.READ_TEAM(id).url,
+        method: endpoints.READ_TEAM(id).method,
         params: {
           teamId: id,
           semesterId: semId,
@@ -138,7 +138,7 @@ export default React.memo(function Teams() {
         })
         .catch(handleErrors);
     },
-    [editId, semId]
+    [semId]
   );
 
   const handleRemove = React.useCallback(

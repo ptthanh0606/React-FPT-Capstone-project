@@ -23,29 +23,6 @@ import * as endpoints from 'endpoints';
 import * as transformers from './transformers';
 import * as constants from './constants';
 
-const mockData = [
-  {
-    id: 0,
-    code: 'FA20SE30',
-    name: 'Capstone Management System for FPT University',
-    description:
-      'Hệ thống quản lý các đồ án của sinh viên ở trường đại học FPT.',
-    status: 0,
-    owner: [1, 'Huynh Duc Duy'],
-    mentors: [
-      [1, 'Huynh Duc Duy'],
-      [2, 'Tran Tuan Anh'],
-    ],
-    members: [
-      [3, 'Phan Thong Thanh'],
-      [4, 'Tran Thai Trung'],
-    ],
-    semester_id: 1,
-    department: [0, 'SE'],
-    attachment: 'xxx',
-  },
-];
-
 export default function Topics() {
   const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
@@ -123,7 +100,6 @@ export default function Topics() {
         method: endpoints.UPDATE_TOPIC(editId).method,
         params: {
           topicId: editId,
-          semesterId: semId,
         },
         data: transformers.up(fieldData),
       })
@@ -135,34 +111,30 @@ export default function Topics() {
         .catch(handleErrors)
         .finally(() => setIsProcessing(false));
     },
-    [editId, semId]
+    [editId]
   );
 
-  const handleEdit = React.useCallback(
-    e => {
-      e.preventDefault();
-      const id = Number(e.currentTarget.getAttribute('data-id'));
-      if (!Number.isInteger(id)) {
-        toast.error('Internal Server Error');
-        return;
-      }
-      request({
-        to: endpoints.READ_TOPIC(editId).url,
-        method: endpoints.READ_TOPIC(editId).method,
-        params: {
-          topicId: id,
-          semesterId: semId,
-        },
+  const handleEdit = React.useCallback(e => {
+    e.preventDefault();
+    const id = Number(e.currentTarget.getAttribute('data-id'));
+    if (!Number.isInteger(id)) {
+      toast.error('Internal Server Error');
+      return;
+    }
+    request({
+      to: endpoints.READ_TOPIC(id).url,
+      method: endpoints.READ_TOPIC(id).method,
+      params: {
+        topicId: id,
+      },
+    })
+      .then(res => {
+        setEditId(id);
+        setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
+        setShowUpdate(true);
       })
-        .then(res => {
-          setEditId(id);
-          setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
-          setShowUpdate(true);
-        })
-        .catch(handleErrors);
-    },
-    [editId, semId]
-  );
+      .catch(handleErrors);
+  }, []);
 
   const handleRemove = React.useCallback(
     e => {
