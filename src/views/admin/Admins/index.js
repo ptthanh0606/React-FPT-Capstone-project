@@ -232,7 +232,6 @@ export default function CustomersCard() {
           setSortOrder={setSortOrder}
           defaultSorted={constants.defaultSorted}
           pageSizeList={constants.sizePerPageList}
-          selectable
         />
       </CardBody>
       <CMSModal

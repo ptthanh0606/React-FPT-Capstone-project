@@ -1,145 +1,224 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import {
   Card,
   CardBody,
   CardHeader,
   CardHeaderToolbar,
 } from '_metronic/_partials/controls';
-
-import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 import Table from 'components/Table';
 import Filters from './Filters';
-import { Link } from 'react-router-dom';
+
 import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
-
-import { useParams } from 'react-router-dom';
-import ConfirmRemoveModal from 'components/ConfirmModal/ConfirmModal';
+import useConfirm from 'utils/confirm';
 import CMSModal from 'components/CMSModal/CMSModal';
 
-export const statusClasses = ['danger', 'info', 'success', ''];
-export const statusTitles = ['Not in a team', 'Matching', 'Matched', ''];
-export const lockClasses = ['success', 'danger'];
-export const lockTitles = ['Unlocked', 'Locked'];
-export const privateClasses = ['success', 'danger'];
-export const privateTitles = ['Public', 'Private'];
+import toast from 'utils/toast';
+import { useDebounce } from 'use-debounce';
+import request from 'utils/request';
+import { handleErrors } from 'utils/common';
+import * as endpoints from 'endpoints';
 
-export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
-export const sizePerPageList = [
-  { text: '10', value: 10 },
-  { text: '20', value: 20 },
-  { text: '50', value: 50 },
-  { text: '100', value: 100 },
-];
+import * as transformers from './transformers';
+import * as constants from './constants';
 
-const mockData = [
-  {
-    id: 0,
-    name: 'HKT',
-    code: 'JDNU8KD',
-    department: 'SE',
-    leader: ['Duy Duc Huynh'],
-    members: ['Huynh Duc Duy', 'Phan Thong Thanh'],
-    topic: 'FPT CMS',
-    status: 0,
-    lock: false,
-    private: false,
-  },
-];
+export default React.memo(function Teams() {
+  const confirm = useConfirm();
+  const setMeta = useSetRecoilState(metaAtom);
+  const { id: semId } = useParams();
+  const [modalConfigs, setModalConfigs] = React.useState([]);
 
-export default function CustomersCard() {
+  const [l, loadData] = React.useReducer(() => ({}), {});
+
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
-  const [isLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [filters, setFilters] = React.useState({});
+  const [debouncedFilters] = useDebounce(filters, 500);
   const [page, setPage] = React.useState(1);
-  const [pageSize, setPageSize] = React.useState(10);
+  const [pageSize, setPageSize] = React.useState(
+    constants.sizePerPageList[0].value
+  );
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+
+  //----------------------------------------------------------------------------
+
   const [fieldTemplate, setFieldTemplate] = React.useState({});
   const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
-  const [modalConfigs, setModalConfigs] = React.useState([]);
-  const [
-    showRemoveAllSelectedStudentTeamConfirmModalFlg,
-    setShowRemoveAllSelectedStudentTeamConfirmModalFlg,
-  ] = React.useState(false);
-  const [
-    showRemoveSelectedStudentTeamConfirmModalFlg,
-    setShowRemoveSelectedStudentTeamConfirmModalFlg,
-  ] = React.useState(false);
-  const [
-    showCreateStudentTeamModalFlg,
-    setShowCreateStudentTeamModalFlg,
-  ] = React.useState(false);
-  const [
-    showUpdateStudentTeamModalFlg,
-    setShowUpdateStudentTeamModalFlg,
-  ] = React.useState(false);
-  const [selectedId, setSelectedId] = React.useState();
+  const [showCreate, setShowCreate] = React.useState(false);
+  const [showUpdate, setShowUpdate] = React.useState(false);
+  const [editId, setEditId] = React.useState(0);
+  const [isProcessing, setIsProcessing] = React.useState(false);
 
-  const { id } = useParams();
-  const setMeta = useSetRecoilState(metaAtom);
+  // ---------------------------------------------------------------------------
 
-  const handleShowRemoveAllSelectedStudentTeamModal = () => {
-    setShowRemoveAllSelectedStudentTeamConfirmModalFlg(true);
-  };
+  const showCreateModal = React.useCallback(() => {
+    setShowCreate(true);
+  }, []);
 
-  const handleHideRemoveAllSelectedStudentTeamModal = () => {
-    setShowRemoveAllSelectedStudentTeamConfirmModalFlg(false);
-  };
+  const hideCreateModal = React.useCallback(() => {
+    setShowCreate(false);
+  }, []);
 
-  const handleShowRemoveSelectedStudentTeamModal = () => {
-    setShowRemoveSelectedStudentTeamConfirmModalFlg(true);
-  };
-
-  const handleHideRemoveSelectedStudentTeamModal = () => {
-    setShowRemoveSelectedStudentTeamConfirmModalFlg(false);
-  };
-
-  const handleShowCreateStudentTeamModal = () => {
-    setShowCreateStudentTeamModalFlg(true);
-  };
-
-  const handleHideCreateStudentTeamModal = () => {
-    setShowCreateStudentTeamModalFlg(false);
-  };
-
-  const handleShowUpdateStudentTeamModal = () => {
-    setUpdateFieldTemplate({
-      name: 'FUTEAM',
-      department: 'se',
-      studentMember: [
-        {
-          label: 'Huynh Duc Duy',
-          value: 'Huynh Duc Duy',
+  const handleCreate = React.useCallback(
+    fieldData => {
+      setIsProcessing(true);
+      request({
+        to: endpoints.CREATE_TEAM.url,
+        method: endpoints.CREATE_TEAM.method,
+        data: transformers.up(fieldData),
+        params: {
+          semesterId: semId,
         },
-        {
-          label: 'Phan Thong Thanh',
-          value: 'Phan Thong Thanh',
+      })
+        .then(res => {
+          toast.success('Create team successfully');
+          setShowCreate(false);
+          loadData();
+          setFieldTemplate({});
+        })
+        .catch(handleErrors)
+        .finally(() => setIsProcessing(false));
+    },
+    [semId]
+  );
+
+  // ---------------------------------------------------------------------------
+
+  const hideUpdateModal = React.useCallback(() => {
+    setShowUpdate(false);
+  }, []);
+
+  const edit = React.useCallback(
+    fieldData => {
+      setIsProcessing(true);
+      request({
+        to: endpoints.UPDATE_TEAM(editId).url,
+        method: endpoints.UPDATE_TEAM(editId).method,
+        params: {
+          teamId: editId,
+          semesterId: semId,
         },
-      ],
-      topic: {
-        label: 'Capstone management system',
-        value: 'Capstone management system',
+        data: transformers.up(fieldData),
+      })
+        .then(res => {
+          toast.success('Update team successfully');
+          setShowUpdate(false);
+          loadData();
+        })
+        .catch(handleErrors)
+        .finally(() => setIsProcessing(false));
+    },
+    [editId, semId]
+  );
+
+  const handleEdit = React.useCallback(
+    e => {
+      e.preventDefault();
+      const id = Number(e.currentTarget.getAttribute('data-id'));
+      if (!Number.isInteger(id)) {
+        toast.error('Internal Server Error');
+        return;
+      }
+      request({
+        to: endpoints.READ_TEAM(editId).url,
+        method: endpoints.READ_TEAM(editId).method,
+        params: {
+          teamId: id,
+          semesterId: semId,
+        },
+      })
+        .then(res => {
+          setEditId(id);
+          setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
+          setShowUpdate(true);
+        })
+        .catch(handleErrors);
+    },
+    [editId, semId]
+  );
+
+  const handleRemove = React.useCallback(
+    e => {
+      e.preventDefault();
+      const id = Number(e.currentTarget.getAttribute('data-id'));
+      if (!Number.isInteger(id)) {
+        toast.error('Internal Server Error');
+        return;
+      }
+      confirm({
+        title: 'Removal Confirmation',
+        body: (
+          <>
+            Do you wanna remove this team?
+            <br />
+            This team will be <b>permanently removed</b>, and all historical
+            data belong to this team too.
+          </>
+        ),
+        onConfirm: () =>
+          request({
+            to: endpoints.DELETE_TEAM(id).url,
+            method: endpoints.DELETE_TEAM(id).method,
+            params: {
+              teamId: id,
+            },
+          })
+            .then(res => {
+              loadData();
+              toast.success('Successfully remove team');
+            })
+            .catch(handleErrors),
+      });
+    },
+    [confirm]
+  );
+
+  // ---------------------------------------------------------------------------
+
+  const columns = React.useMemo(
+    () => constants.createColumns({ handleEdit, handleRemove }),
+    [handleEdit, handleRemove]
+  );
+
+  // ---------------------------------------------------------------------------
+
+  React.useEffect(() => {
+    setIsLoading(true);
+    const source = {};
+
+    request({
+      to: endpoints.LIST_TEAM.url,
+      method: endpoints.LIST_TEAM.method,
+      params: {
+        ...debouncedFilters,
+        pageNumber: page,
+        pageSize: pageSize,
+        sortField: sortField,
+        sortOrder: sortOrder,
+        semesterId: semId,
       },
-      isPrivate: true,
-      isLocked: true,
-    });
-    setShowUpdateStudentTeamModalFlg(true);
-  };
+      source,
+    })
+      .then(res => {
+        setData(res.data?.data?.map(transformers.down));
+        setTotal(res.data?.totalRecords);
+        setPage(res.data?.pageNumber);
+        setPageSize(res.data?.pageSize);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        handleErrors(err);
+        if (!err.isCancel) setIsLoading(false);
+      });
 
-  const handleHideUpdateStudentTeamModal = () => {
-    setShowUpdateStudentTeamModalFlg(false);
-  };
-
-  const handleOnCreateTeam = React.useCallback(fieldData => {
-    console.log(fieldData);
-  }, []);
-
-  const handleOnUpdateTeam = React.useCallback(fieldData => {
-    console.log(fieldData);
-  }, []);
+    return () => {
+      source.cancel();
+    };
+  }, [l, debouncedFilters, page, pageSize, sortField, sortOrder, semId]);
 
   React.useEffect(() => {
     setMeta(meta => ({
@@ -147,264 +226,12 @@ export default function CustomersCard() {
       title: 'Teams of Fall 2020',
       breadcrumb: [
         { title: 'Semester', path: '/semester' },
-        { title: 'Fall 2020', path: '/semester/' + id },
-        { title: 'Team', path: '/semester/' + id + '/team' },
+        { title: 'Fall 2020', path: '/semester/' + semId },
+        { title: 'Team', path: '/semester/' + semId + '/team' },
       ],
     }));
-  }, [setMeta, id]);
-
-  React.useEffect(() => {
-    setData(mockData);
-    setTotal(100);
-  }, []);
-
-  React.useEffect(() => {
-    const response = [
-      {
-        label: 'SE',
-        value: 'se',
-      },
-      {
-        label: 'GD',
-        value: 'gd',
-      },
-      {
-        label: 'CC',
-        value: 'cc',
-      },
-    ];
-    setModalConfigs([
-      {
-        name: 'name',
-        type: 'text',
-        label: 'Team name',
-        placeholder: 'Give this team a name...',
-      },
-      {
-        name: 'department',
-        type: 'selectBox',
-        label: 'Department',
-        smallLabel: 'This team belong to which department',
-        options: response,
-      },
-      {
-        name: 'studentMember',
-        type: 'selectBoxAsync',
-        label: 'Student members',
-        smallLabel: 'First added user will be leader',
-        load: (memberInput, callback) => {
-          setTimeout(() => {
-            callback([
-              {
-                label: 'Huynh Duc Duy',
-                value: 'Huynh Duc Duy',
-              },
-              {
-                label: 'Phan Thong Thanh',
-                value: 'Phan Thong Thanh',
-              },
-              {
-                label: 'Dinh Ngoc Hai',
-                value: 'Dinh Ngoc Hai',
-              },
-              {
-                label: 'Ly Phuoc Hiep',
-                value: 'Ly Phuoc Hiep',
-              },
-            ]);
-          }, 2000);
-        },
-        isMulti: true,
-      },
-      {
-        name: 'topic',
-        type: 'selectBoxAsync',
-        label: 'Topic taken',
-        smallLabel: 'Select a topic to assign to this student team',
-        load: (memberInput, callback) => {
-          setTimeout(() => {
-            callback([
-              {
-                label: 'Capstone management system',
-                value: 'Capstone management system',
-              },
-              {
-                label: 'Traffic tracking',
-                value: 'Traffic tracking',
-              },
-              {
-                label: 'Web checker system',
-                value: 'Web checker system',
-              },
-            ]);
-          }, 2000);
-        },
-        isMulti: false,
-      },
-      {
-        name: 'isPrivate',
-        type: 'toggle',
-        label: 'Private team',
-        smallLabel: 'Is this team private',
-      },
-      {
-        name: 'isLocked',
-        type: 'toggle',
-        label: 'Lock team',
-        smallLabel: 'Lock this team',
-      },
-    ]);
-    setFieldTemplate({
-      name: '',
-      department: '',
-      studentMember: [],
-      topic: '',
-      isPrivate: false,
-      isLocked: false,
-    });
-  }, []);
-
-  function ActionsColumnFormatter(cellContent, row, rowIndex) {
-    return (
-      <span className="text-nowrap">
-        <a
-          href="/"
-          title="Edit"
-          className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-          onClick={event => {
-            event.preventDefault();
-            setSelectedId(row.id);
-            handleShowUpdateStudentTeamModal();
-          }}
-        >
-          <i className="fas fa-pencil-alt mx-2"></i>
-        </a>
-        <a
-          href="/"
-          title="Remove"
-          className="btn btn-icon btn-light btn-hover-primary btn-sm"
-          onClick={event => {
-            event.preventDefault();
-            setSelectedId(row.id);
-            handleShowRemoveSelectedStudentTeamModal();
-          }}
-        >
-          <i className="fas fa-trash mx-2"></i>
-        </a>
-      </span>
-    );
-  }
-
-  function ColumnFormatter(classes, titles) {
-    return function (cellContent, row) {
-      const getLabelCssClasses = () => {
-        return `label label-lg label-light-${
-          classes[row.status]
-        } label-inline text-nowrap text-nowrap`;
-      };
-      return <span className={getLabelCssClasses()}>{titles[row.status]}</span>;
-    };
-  }
-
-  const columns = [
-    {
-      dataField: 'department',
-      text: 'DEP',
-      sort: true,
-      sortCaret: sortCaret,
-      headerSortingClasses,
-    },
-    {
-      dataField: 'code',
-      text: 'Code',
-      sort: true,
-      sortCaret: sortCaret,
-      headerSortingClasses,
-    },
-    {
-      dataField: 'name',
-      text: 'Name',
-      sort: true,
-      sortCaret: sortCaret,
-      formatter: function StatusColumnFormatter(cellContent, row) {
-        return (
-          <Link
-            className="text-dark font-weight-bold"
-            to={'/semester/' + row.id}
-          >
-            {cellContent}
-          </Link>
-        );
-      },
-      headerSortingClasses,
-    },
-    {
-      dataField: 'leader',
-      text: 'Leader',
-      sort: true,
-      sortCaret: sortCaret,
-      headerSortingClasses,
-    },
-    {
-      dataField: 'members',
-      text: 'Members',
-      formatter: function StatusColumnFormatter(cellContent, row) {
-        return (
-          <Link
-            className="text-dark font-weight-bold"
-            to={'/semester/' + row.id}
-          >
-            {cellContent.join(', ')}
-          </Link>
-        );
-      },
-    },
-    {
-      dataField: 'topic',
-      text: 'Topic',
-      sort: true,
-      sortCaret: sortCaret,
-      headerSortingClasses,
-    },
-    {
-      dataField: 'status',
-      text: 'Status',
-      sort: true,
-      sortCaret: sortCaret,
-      formatter: ColumnFormatter(statusClasses, statusTitles),
-      headerSortingClasses,
-    },
-    {
-      dataField: 'lock',
-      text: 'Lock',
-      sort: true,
-      sortCaret: sortCaret,
-      formatter: ColumnFormatter(lockClasses, lockTitles),
-      headerSortingClasses,
-    },
-    {
-      dataField: 'private',
-      text: 'Private',
-      sort: true,
-      sortCaret: sortCaret,
-      formatter: ColumnFormatter(privateClasses, privateTitles),
-      headerSortingClasses,
-    },
-    {
-      dataField: 'action',
-      text: 'Actions',
-      formatter: ActionsColumnFormatter,
-      formatExtraData: {
-        openEditCustomerDialog: () => {},
-        openDeleteCustomerDialog: () => {},
-      },
-      classes: 'text-right pr-0',
-      headerClasses: 'text-right pr-3',
-      style: {
-        minWidth: '100px',
-      },
-    },
-  ];
+    setModalConfigs(constants.createModalConfigs(semId));
+  }, [semId, setMeta]);
 
   return (
     <Card>
@@ -414,7 +241,7 @@ export default function CustomersCard() {
             type="button"
             className="btn btn-danger font-weight-bold"
             disabled={Array.isArray(selected) && selected.length === 0}
-            onClick={handleShowRemoveAllSelectedStudentTeamModal}
+            // onClick={}
           >
             <i className="fas fa-trash mr-2"></i>
             Remove ({(Array.isArray(selected) && selected.length) || 0})
@@ -423,7 +250,7 @@ export default function CustomersCard() {
           <button
             type="button"
             className="btn btn-primary font-weight-bold"
-            onClick={handleShowCreateStudentTeamModal}
+            onClick={showCreateModal}
           >
             <i className="fas fa-plus mr-2"></i>
             New
@@ -447,45 +274,32 @@ export default function CustomersCard() {
           setSortField={setSortField}
           sortOrder={sortOrder}
           setSortOrder={setSortOrder}
-          defaultSorted={defaultSorted}
-          pageSizeList={sizePerPageList}
+          defaultSorted={constants.defaultSorted}
+          pageSizeList={constants.sizePerPageList}
           selectable
         />
       </CardBody>
-      <ConfirmRemoveModal
-        title="Confirm on remove"
-        body={
-          <h5>Are you sure you want to remove all selected student teams?</h5>
-        }
-        isShowFlg={showRemoveAllSelectedStudentTeamConfirmModalFlg}
-        onHide={handleHideRemoveAllSelectedStudentTeamModal}
-        onConfirm={() => {}}
-      />
-      <ConfirmRemoveModal
-        title="Confirm on remove"
-        body={<h5>Are you sure you want to remove selected student teams?</h5>}
-        isShowFlg={showRemoveSelectedStudentTeamConfirmModalFlg}
-        onHide={handleHideRemoveSelectedStudentTeamModal}
-        onConfirm={() => {}}
-      />
       <CMSModal
-        isShowFlg={showCreateStudentTeamModalFlg}
-        onHide={handleHideCreateStudentTeamModal}
+        isShowFlg={showCreate}
+        onHide={hideCreateModal}
         configs={modalConfigs}
         title="Create student team"
         subTitle="Add a student team to this semester"
-        onConfirmForm={handleOnCreateTeam}
+        onConfirmForm={handleCreate}
         fieldTemplate={fieldTemplate}
+        isProcessing={isProcessing}
       />
       <CMSModal
-        isShowFlg={showUpdateStudentTeamModalFlg}
-        onHide={handleHideUpdateStudentTeamModal}
+        isShowFlg={showUpdate}
+        onHide={hideUpdateModal}
         configs={modalConfigs}
         title="Update student team"
         subTitle="Change this team info"
-        onConfirmForm={handleOnUpdateTeam}
+        onConfirmForm={edit}
         fieldTemplate={updateFieldTemplate}
+        primaryButtonLabel="Update"
+        isProcessing={isProcessing}
       />
     </Card>
   );
-}
+});

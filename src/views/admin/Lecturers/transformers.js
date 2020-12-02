@@ -11,7 +11,7 @@ export function down(i) {
         email: i?.email || console.log('email field not found'),
         departments:
           i?.departments?.map(j => ({
-            value: j?.departmentID,
+            value: j?.id,
             label: j?.code,
             isApprover: j?.isApprover,
           })) || (console.log('approvers field not found'), []),

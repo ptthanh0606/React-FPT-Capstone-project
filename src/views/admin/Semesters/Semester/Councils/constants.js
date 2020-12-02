@@ -1,10 +1,11 @@
 import React from 'react';
 
-import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
-import request from 'utils/request';
+import { Link } from 'react-router-dom';
 import * as endpoints from 'endpoints';
+import { mDown as mDownDep } from 'views/admin/Departments/transformers';
 import { mDown as mDownLec } from 'views/admin/Lecturers/transformers';
+import request from 'utils/request';
 
 //------------------------------------------------------------------------------
 
@@ -17,19 +18,16 @@ export const sizePerPageList = [
   { text: '100', value: 100 },
 ];
 
-export const statusClasses = ['danger', 'success'];
-export const statusTitles = ['Deactivated', 'Activated'];
-
-// export const createColumns = ({ handleEdit, handleRemove }) =>
-//   columnsTransformer();
-// xóa caret, sortheader, constant.
+export const statusClasses = ['danger', 'success', 'info'];
+export const statusTitles = ['Finished', 'In progress', 'Preparing'];
 
 export const createColumns = ({ handleEdit, handleRemove }) =>
   columnsTransformer([
     {
-      dataField: 'code',
-      text: 'Code',
+      dataField: 'department',
+      text: 'DEP',
       sort: true,
+      formatter: (cellContent, row) => cellContent?.label,
     },
     {
       dataField: 'name',
@@ -37,36 +35,19 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       sort: true,
     },
     {
-      dataField: 'status',
-      text: 'Status',
-      sort: true,
-      formatter: (cellContent, row) => {
-        const getLabelCssClasses = () => {
-          return `label label-lg label-light-${
-            statusClasses[row.status === true ? 1 : 0]
-          } label-inline text-nowrap`;
-        };
-        return (
-          <span className={getLabelCssClasses()}>
-            {statusTitles[row.status === true ? 1 : 0]}
-          </span>
-        );
-      },
-    },
-    {
-      dataField: 'approvers',
-      text: 'Approvers',
-      formatter: function (cellContent, row) {
+      dataField: 'members',
+      text: 'Members',
+      formatter: function StatusColumnFormatter(cellContent, row) {
         return (
           <>
             {cellContent?.length > 0
               ? cellContent
                   .map(i => (
                     <Link
-                      className="text-dark font-weight-bold"
+                      className={'text-dark font-weight-bold'}
                       to={'/profile/lecturer/' + i.value}
                     >
-                      {i.label}
+                      {i.isLeader ? <u>{i.label}</u> : i.label}
                     </Link>
                   ))
                   .reduce((prev, curr) => [prev, ', ', curr])
@@ -114,20 +95,34 @@ export const modalConfigs = [
   {
     name: 'name',
     type: 'text',
-    label: 'Department name',
-    placeholder: 'Give this department a name...',
+    label: 'Council name',
+    placeholder: 'Give this council a name...',
   },
   {
-    name: 'code',
-    type: 'text',
-    label: 'Department code',
-    smallLabel: 'Ex: Software Engineer to be "SE"',
-  },
-  {
-    name: 'approvers',
+    name: 'department',
     type: 'selectBoxAsync',
-    label: 'Approver',
-    smallLabel: 'Approvers for this department',
+    label: 'Department',
+    smallLabel: 'This team belong to which department',
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_DEPARTMENT.url,
+        method: endpoints.LIST_DEPARTMENT.method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownDep) || []);
+        })
+        .catch(() => callback([]));
+    },
+  },
+  {
+    name: 'members',
+    type: 'selectBoxAsync',
+    label: 'Members',
+    smallLabel: 'Member of this council, first member is leader',
     load: (input, callback) => {
       request({
         to: endpoints.LIST_LECTURER.url,
@@ -143,11 +138,5 @@ export const modalConfigs = [
         .catch(() => callback([]));
     },
     isMulti: true,
-  },
-  {
-    name: 'status',
-    type: 'toggle',
-    label: 'Active state',
-    smallLabel: 'Is this department active',
   },
 ];

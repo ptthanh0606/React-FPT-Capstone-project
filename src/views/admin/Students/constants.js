@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
-import { mDown as depTrans } from '../Departments/transformers';
+import { mDown as mDownDep } from '../Departments/transformers';
 
 //------------------------------------------------------------------------------
 
@@ -20,8 +20,8 @@ export const sizePerPageList = [
 export const statusClasses = ['danger', 'success', 'info', ''];
 export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
 
-export const createColumns = ({ handleEdit, handleRemove }) =>
-  columnsTransformer([
+export const createColumns = ({ handleEdit, handleRemove }) => {
+  const cols = [
     {
       dataField: 'code',
       text: 'Code',
@@ -52,10 +52,13 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       text: 'Department',
       sort: true,
       formatter: function (cellContent, row) {
-        return cellContent?.value;
+        return cellContent?.label;
       },
     },
-    {
+  ];
+
+  if (handleEdit && handleRemove) {
+    cols.push({
       dataField: 'action',
       text: 'Actions',
       formatter: (cellContent, row, rowIndex) => {
@@ -87,8 +90,12 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       style: {
         minWidth: '100px',
       },
-    },
-  ]);
+    });
+  }
+
+  return columnsTransformer(cols);
+};
+
 export const modalConfigs = [
   {
     name: 'name',
@@ -118,12 +125,12 @@ export const modalConfigs = [
         to: endpoints.LIST_DEPARTMENT.url,
         method: endpoints.LIST_DEPARTMENT.method,
         params: {
-          q: input,
+          term: input,
           pageSize: 10,
         },
       })
         .then(res => {
-          callback(res?.data?.data?.map(depTrans) || []);
+          callback(res?.data?.data?.map(mDownDep) || []);
         })
         .catch(() => callback([]));
     },

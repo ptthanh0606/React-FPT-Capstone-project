@@ -181,6 +181,8 @@ export default function CustomersCard() {
         setPage(res.data?.pageNumber);
         setPageSize(res.data?.pageSize);
         setIsLoading(false);
+
+        // console.log(res.data?.data?.map(transformers.down));
       })
       .catch(err => {
         handleErrors(err);
