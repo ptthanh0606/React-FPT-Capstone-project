@@ -68,7 +68,7 @@ export default function ActiveStudents({ semester }) {
   const handleCreate = React.useCallback(
     fieldData => {
       setIsProcessing(true);
-      request({
+      return request({
         to: endpoints.CREATE_ACTIVE_STUDENTS(semId).url,
         method: endpoints.CREATE_ACTIVE_STUDENTS(semId).method,
         data: transformers.cUp(fieldData),

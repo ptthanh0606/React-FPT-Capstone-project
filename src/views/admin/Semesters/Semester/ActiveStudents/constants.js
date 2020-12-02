@@ -2,6 +2,9 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
+import * as endpoints from 'endpoints';
+import request from 'utils/request';
+import { mDown as mDownTeam } from 'views/admin/Semesters/Semester/Teams/transformers';
 
 //------------------------------------------------------------------------------
 
@@ -41,7 +44,7 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
         return (
           <Link
             className="text-dark font-weight-bold"
-            to={'/semester/' + row.id}
+            to={'/profile/student/' + row.id}
           >
             {cellContent}
           </Link>
@@ -116,10 +119,23 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
 
 export const modalConfigs = [
   {
-    name: 'code',
-    type: 'text',
-    label: 'Team code',
-    smallLabel: 'Assign this student to a team by changing team code',
-    placeholder: 'Team code...',
+    name: 'team',
+    type: 'selectBoxAsync',
+    label: 'Team',
+    smallLabel: 'This team belong to which department',
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_TEAM.url,
+        method: endpoints.LIST_TEAM.method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownTeam) || []);
+        })
+        .catch(() => callback([]));
+    },
   },
 ];

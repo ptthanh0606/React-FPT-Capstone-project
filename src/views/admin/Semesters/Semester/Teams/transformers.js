@@ -60,11 +60,11 @@ export function down(i) {
 
 export function mDown(i) {
   return {
-    value: i?.id || console.log('id field not found'),
     label:
-      i?.id && i?.name
-        ? '[' + i?.id + '] ' + i?.name
-        : console.log('id and name field not found'),
+      i?.teamDetail?.id && i?.teamDetail?.name
+        ? '[' + i.teamDetail.id + '] ' + i.teamDetail.name
+        : console.log('team id and name field not found'),
+    value: i?.teamDetail?.id || console.log('team id field not found'),
   };
 }
 
