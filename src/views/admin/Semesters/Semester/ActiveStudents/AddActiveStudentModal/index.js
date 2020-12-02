@@ -7,8 +7,8 @@ import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 
-import * as transformers from 'views/admin/Students/transformers';
-import * as constants from 'views/admin/Students/constants';
+import * as transformers from 'modules/student/transformers';
+import * as constants from 'modules/student/constants';
 import { Modal } from 'react-bootstrap';
 import Button from 'components/Button';
 
