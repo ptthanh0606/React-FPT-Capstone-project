@@ -4,6 +4,17 @@ export function down(i) {
     code: i?.code || console.log('code field not found'),
     id: i?.id || console.log('id field not found'),
     name: i?.name || console.log('name field not found'),
+    note: i?.note || console.log('note field not found'),
+    description: i?.description || console.log('description field not found'),
+    keywords: i?.keywords || console.log('keywords field not found'),
+    maxMembers:
+      i?.maxMembers !== undefined
+        ? i?.maxMembers
+        : console.log('maxMembers field not found'),
+    minMembers:
+      i?.minMembers !== undefined
+        ? i?.minMembers
+        : console.log('minMembers field not found'),
     department: i?.department
       ? {
           label:
@@ -53,5 +64,26 @@ export function mDown(i) {
 }
 
 export function up(i) {
-  return i;
+  const newLecturers = [...(i?.lecturers || [])].sort(function (a, b) {
+    if (a.isLeader) return -1;
+    if (b.isLeader) return 1;
+    return 0;
+  });
+
+  return {
+    // semesterId
+    name: i?.name,
+    code: i?.code,
+    abstract: i?.abstract,
+    description: i?.description,
+    note: i?.note,
+    maxMembers: Number(i?.maxMembers),
+    minMembers: Number(i?.minMembers),
+    departmentId: Number(i?.department?.value),
+    submitByStudent: !!i?.submitByStudent,
+    teamId: Number(i?.team?.value),
+    lecturerIds: newLecturers?.map(j => Number(j.value)),
+    keywords: i?.keywords,
+    attachment: i?.attachment,
+  };
 }

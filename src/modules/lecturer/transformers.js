@@ -23,6 +23,7 @@ export function mDown(i) {
   return {
     value: i?.id || console.log('id field not found'),
     label: i?.code || console.log('code field not found'),
+    name: i?.name || console.log('name field not found'),
   };
 }
 export function up(i) {

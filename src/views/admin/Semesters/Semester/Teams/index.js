@@ -69,7 +69,7 @@ export default function Teams({ semester }) {
       request({
         to: endpoints.CREATE_TEAM.url,
         method: endpoints.CREATE_TEAM.method,
-        data: transformers.up(fieldData),
+        data: { ...transformers.up(fieldData), semesterId: Number(semId) },
         params: {
           semesterId: semId,
         },
@@ -102,7 +102,7 @@ export default function Teams({ semester }) {
           teamId: editId,
           semesterId: semId,
         },
-        data: transformers.up(fieldData),
+        data: { ...transformers.up(fieldData), teamId: editId },
       })
         .then(res => {
           toast.success('Update team successfully');

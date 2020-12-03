@@ -12,7 +12,6 @@ import Filters from './Filters';
 import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
 import useConfirm from 'utils/confirm';
-import CMSModal from 'components/CMSModal/CMSModal';
 
 import toast from 'utils/toast';
 import { useDebounce } from 'use-debounce';
@@ -22,6 +21,9 @@ import * as endpoints from 'endpoints';
 
 import * as transformers from '../../../../../modules/semester/council/transformers';
 import * as constants from '../../../../../modules/semester/council/constants';
+
+import Create from './Create';
+import Update from './Update';
 
 export default function Councils({ semester }) {
   const confirm = useConfirm();
@@ -65,7 +67,7 @@ export default function Councils({ semester }) {
   const handleCreate = React.useCallback(
     fieldData => {
       setIsProcessing(true);
-      request({
+      return request({
         to: endpoints.CREATE_COUNCIL(semId).url,
         method: endpoints.CREATE_COUNCIL(semId).method,
         data: transformers.up(fieldData),
@@ -262,26 +264,20 @@ export default function Councils({ semester }) {
           selectable
         />
       </CardBody>
-      <CMSModal
+      <Create
         isShowFlg={showCreate}
         onHide={hideCreateModal}
-        configs={constants.modalConfigs}
-        title="Create council"
-        subTitle="Assign council to this semester"
         onConfirmForm={handleCreate}
+        isProcessing={isProcessing}
         fieldTemplate={fieldTemplate}
-        isProcessing={isProcessing}
       />
-      <CMSModal
+      <Update
         isShowFlg={showUpdate}
+        setIsShowFlg={setShowUpdate}
         onHide={hideUpdateModal}
-        configs={constants.modalConfigs}
-        title="Update council"
-        subTitle="Change this council info"
         onConfirmForm={edit}
-        fieldTemplate={updateFieldTemplate}
-        primaryButtonLabel="Update"
         isProcessing={isProcessing}
+        fieldTemplate={updateFieldTemplate}
       />
     </Card>
   );

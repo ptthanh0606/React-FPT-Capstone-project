@@ -43,6 +43,7 @@ function fetchMe(setRole, setUser, history) {
           role = 'lecturer';
           break;
         default:
+          throw new Error('Not valid role!');
       }
 
       setRole(role);
