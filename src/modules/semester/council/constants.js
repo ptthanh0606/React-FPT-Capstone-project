@@ -93,32 +93,6 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
 
 export const modalConfigs = [
   {
-    name: 'name',
-    type: 'text',
-    label: 'Council name',
-    placeholder: 'Give this council a name...',
-  },
-  {
-    name: 'department',
-    type: 'selectBoxAsync',
-    label: 'Department',
-    smallLabel: 'This team belong to which department',
-    load: (input, callback) => {
-      request({
-        to: endpoints.LIST_DEPARTMENT.url,
-        method: endpoints.LIST_DEPARTMENT.method,
-        params: {
-          term: input,
-          pageSize: 10,
-        },
-      })
-        .then(res => {
-          callback(res.data.data?.map(mDownDep) || []);
-        })
-        .catch(() => callback([]));
-    },
-  },
-  {
     name: 'members',
     type: 'selectBoxAsync',
     label: 'Members',

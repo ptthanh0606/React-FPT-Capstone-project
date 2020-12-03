@@ -76,7 +76,7 @@ const useConfirm = function () {
       });
     })
       .then(() => {})
-      .catch(() => {});
+      .catch(err => Promise.reject(err));
   }
 
   return React.useCallback(confirm, []);

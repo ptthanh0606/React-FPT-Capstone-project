@@ -38,6 +38,27 @@ const FormGroups = ({
           </Col>
         </Form.Group>
       );
+    case 'textarea':
+      return (
+        <Form.Group as={Row}>
+          <Form.Label column sm={3}>
+            {config.label}
+          </Form.Label>
+          <Col sm={9}>
+            <Form.Control
+              as="textarea"
+              rows="4"
+              type="text"
+              placeholder={config.placeholder}
+              value={value}
+              defaultValue={config.defaultValue}
+              name={config.name}
+              onChange={handleChange}
+            />
+            <small className="form-text text-muted">{config.smallLabel}</small>
+          </Col>
+        </Form.Group>
+      );
     case 'email':
       return (
         <Form.Group as={Row}>
