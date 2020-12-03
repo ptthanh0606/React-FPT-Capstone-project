@@ -27,7 +27,7 @@ export default function Topics({ semester }) {
   const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
   const { id: semId } = useParams();
-  const [modalConfigs, setModalConfigs] = React.useState([]);
+  // const [modalConfigs, setModalConfigs] = React.useState([]);
 
   const [l, loadData] = React.useReducer(() => ({}), {});
 
@@ -275,7 +275,7 @@ export default function Topics({ semester }) {
       <CMSModal
         isShowFlg={showCreate}
         onHide={hideCreateModal}
-        configs={modalConfigs}
+        configs={constants.modalConfigs}
         title="Create new topic"
         subTitle="Submit new topic to this capstone semester"
         onConfirmForm={handleCreate}
@@ -285,7 +285,7 @@ export default function Topics({ semester }) {
       <CMSModal
         isShowFlg={showUpdate}
         onHide={hideUpdateModal}
-        configs={modalConfigs}
+        configs={constants.modalConfigs}
         title="Update topic"
         subTitle="Change this topic info"
         onConfirmForm={edit}

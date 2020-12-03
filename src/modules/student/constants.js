@@ -23,6 +23,11 @@ export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
 export const createColumns = ({ handleEdit, handleRemove }) => {
   const cols = [
     {
+      dataField: 'id',
+      text: 'ID',
+      sort: true,
+    },
+    {
       dataField: 'code',
       text: 'Code',
       sort: true,
