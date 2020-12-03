@@ -14,9 +14,9 @@ export const sizePerPageList = [
 
 export const modalConfigs = [
   {
-    name: 'topicCode',
+    name: 'code',
     type: 'text',
-    label: 'Topic Code',
+    label: 'Code',
     smallLabel: 'Specify a code for this topic',
     placeholder: 'Code...',
   },
@@ -29,7 +29,7 @@ export const modalConfigs = [
   },
   {
     name: 'description',
-    type: 'text',
+    type: 'textarea',
     label: 'Description',
     smallLabel: 'Brief description for this topic',
     placeholder: 'Description...',
@@ -42,14 +42,14 @@ export const modalConfigs = [
     placeholder: 'Note...',
   },
   {
-    name: 'minMem',
+    name: 'minMembers',
     type: 'number',
     label: 'Minimum team members',
     smallLabel: 'Minimum team member for this topic',
     placeholder: '0',
   },
   {
-    name: 'maxMem',
+    name: 'maxMembers',
     type: 'number',
     label: 'Maximum team members',
     smallLabel: 'Maximum team member for this topic',
@@ -307,6 +307,10 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
           </>
         );
       },
+    },
+    {
+      dataField: 'note',
+      text: 'Note',
     },
     {
       dataField: 'action',
