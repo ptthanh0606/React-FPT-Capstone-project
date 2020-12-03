@@ -45,6 +45,10 @@ const menusOfLecturer = [
     title: 'Topic',
   },
   {
+    path: '/team',
+    title: 'Team',
+  },
+  {
     path: '/council',
     title: 'Council',
   },
@@ -70,6 +74,10 @@ const menusOfStudent = [
   {
     path: '/my-team',
     title: 'My Team',
+  },
+  {
+    path: '/council',
+    title: 'Council',
   },
 ];
 
