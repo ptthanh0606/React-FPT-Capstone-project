@@ -6,12 +6,13 @@ import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
 import { handleErrors } from 'utils/common';
 
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardHeaderToolbar,
-} from '_metronic/_partials/controls';
+// import {
+//   Card,
+//   CardBody,
+//   CardHeader,
+//   CardHeaderToolbar,
+// } from '_metronic/_partials/controls';
+import Card from 'components/Card';
 
 import { Form } from 'react-bootstrap';
 import request from 'utils/request';
@@ -91,95 +92,94 @@ const Information = ({ loadData = function () {} }) => {
 
   return (
     <>
-      <Card>
-        <CardHeader title="Basic informations">
-          <CardHeaderToolbar>
-            <Button
-              type="button"
-              className="btn btn-primary font-weight-bold"
-              onClick={handleSave}
-              isLoading={isLoading}
-            >
-              <i className="fas fa-save mr-2"></i>
-              Save
-            </Button>
-          </CardHeaderToolbar>
-        </CardHeader>
-        <CardBody>
-          <Form>
-            <Form.Group as={Row} controlId="formHorizontalEmail">
-              <Form.Label column sm={3}>
-                Name
-              </Form.Label>
-              <Col sm={9}>
-                <Form.Control
-                  className="form-control form-control-md form-control-solid"
-                  type="text"
-                  placeholder="Name"
-                  onChange={e => setName(e.currentTarget.value)}
-                  value={name}
-                />
-              </Col>
-            </Form.Group>
-            <Form.Group as={Row} controlId="formHorizontalEmail">
-              <Form.Label column sm={3}>
-                Maximum applications per team
-              </Form.Label>
-              <Col sm={9}>
-                <Form.Control
-                  className="form-control form-control-md form-control-solid"
-                  type="number"
-                  placeholder="Maximum applications per team"
-                  onChange={e => setMaxApplication(e.currentTarget.value)}
-                  value={maxApplication}
-                />
-              </Col>
-            </Form.Group>
-            <Form.Group as={Row} controlId="formHorizontalEmail">
-              <Form.Label column sm={3}>
-                Matching
-              </Form.Label>
-              <Col sm={9}>
-                <Form.Control
-                  className="form-control form-control-md form-control-solid"
-                  type="datetime-local"
-                  onChange={e => setMatchingDate(e.currentTarget.value)}
-                  value={matchingDate}
-                />
-              </Col>
-            </Form.Group>
-            <Form.Group as={Row} controlId="formHorizontalEmail">
-              <Form.Label column sm={3}>
-                In progress
-              </Form.Label>
-              <Col sm={9}>
-                <Form.Control
-                  className="form-control form-control-md form-control-solid"
-                  type="datetime-local"
-                  onChange={e => setInprogressDate(e.currentTarget.value)}
-                  value={inprogressDate}
-                />
-              </Col>
-            </Form.Group>
-            <Form.Group
-              as={Row}
-              controlId="formHorizontalEmail"
-              style={{ marginBottom: 0 }}
-            >
-              <Form.Label column sm={3}>
-                Finished
-              </Form.Label>
-              <Col sm={9}>
-                <Form.Control
-                  className="form-control form-control-md form-control-solid"
-                  type="datetime-local"
-                  onChange={e => setFinishedDate(e.currentTarget.value)}
-                  value={finishedDate}
-                />
-              </Col>
-            </Form.Group>
-          </Form>
-        </CardBody>
+      <Card
+        title="Basic information"
+        isLoading={isLoading}
+        toolbar={
+          <Button
+            type="button"
+            className="btn btn-primary font-weight-bold"
+            onClick={handleSave}
+            isLoading={isLoading}
+          >
+            <i className="fas fa-save mr-2"></i>
+            Save
+          </Button>
+        }
+      >
+        <Form>
+          <Form.Group as={Row} controlId="formHorizontalEmail">
+            <Form.Label column sm={3}>
+              Name
+            </Form.Label>
+            <Col sm={9}>
+              <Form.Control
+                className="form-control form-control-md form-control-solid"
+                type="text"
+                placeholder="Name"
+                onChange={e => setName(e.currentTarget.value)}
+                value={name}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group as={Row} controlId="formHorizontalEmail">
+            <Form.Label column sm={3}>
+              Maximum applications per team
+            </Form.Label>
+            <Col sm={9}>
+              <Form.Control
+                className="form-control form-control-md form-control-solid"
+                type="number"
+                placeholder="Maximum applications per team"
+                onChange={e => setMaxApplication(e.currentTarget.value)}
+                value={maxApplication}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group as={Row} controlId="formHorizontalEmail">
+            <Form.Label column sm={3}>
+              Matching
+            </Form.Label>
+            <Col sm={9}>
+              <Form.Control
+                className="form-control form-control-md form-control-solid"
+                type="datetime-local"
+                onChange={e => setMatchingDate(e.currentTarget.value)}
+                value={matchingDate}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group as={Row} controlId="formHorizontalEmail">
+            <Form.Label column sm={3}>
+              In progress
+            </Form.Label>
+            <Col sm={9}>
+              <Form.Control
+                className="form-control form-control-md form-control-solid"
+                type="datetime-local"
+                onChange={e => setInprogressDate(e.currentTarget.value)}
+                value={inprogressDate}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group
+            as={Row}
+            controlId="formHorizontalEmail"
+            style={{ marginBottom: 0 }}
+          >
+            <Form.Label column sm={3}>
+              Finished
+            </Form.Label>
+            <Col sm={9}>
+              <Form.Control
+                className="form-control form-control-md form-control-solid"
+                type="datetime-local"
+                onChange={e => setFinishedDate(e.currentTarget.value)}
+                value={finishedDate}
+              />
+            </Col>
+          </Form.Group>
+        </Form>
       </Card>
     </>
   );
