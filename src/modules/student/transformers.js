@@ -10,6 +10,7 @@ export function down(i) {
           label: i?.department?.code,
         }
       : (console.log('department field not found'), {}),
+    biography: i?.biography || console.log('biography field not found'),
   };
 }
 
@@ -30,6 +31,7 @@ export function up(i) {
         name: i.name,
         email: i.email,
         departmentID: i.department?.value,
+        biography: i.biography,
       }
     : {};
 }

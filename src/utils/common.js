@@ -12,8 +12,14 @@ export function handleErrors(err) {
         for (const j of i[1]) toast.error(j);
       }
     } else {
-      toast.error('Internal Server Error');
-      console.log(err);
+      if (err.response.code === 401) {
+        toast.error('Unauthorized!');
+      } else if (err.response.code === 403) {
+        toast.error('Access denied!');
+      } else {
+        toast.error('Internal Server Error');
+        console.log(err);
+      }
     }
 }
 
