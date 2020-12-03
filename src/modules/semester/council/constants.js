@@ -24,6 +24,11 @@ export const statusTitles = ['Finished', 'In progress', 'Preparing'];
 export const createColumns = ({ handleEdit, handleRemove }) =>
   columnsTransformer([
     {
+      dataField: 'id',
+      text: 'ID',
+      sort: true,
+    },
+    {
       dataField: 'department',
       text: 'DEP',
       sort: true,

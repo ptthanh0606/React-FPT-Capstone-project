@@ -21,32 +21,30 @@ const StatTile = ({
   );
 
   return (
-    <>
-      <a
-        href="/"
-        onClick={handleClick}
-        className={`card card-custom bg-${baseColor} ${className}`}
-        style={{ height: widgetHeight }}
-      >
-        <div className="card-body">
-          <span className={`svg-icon svg-icon-3x svg-icon-${iconColor} ml-n2`}>
-            <SVG src={iconSrc} />
-          </span>
-          <div
-            className={`text-inverse-${baseColor} font-weight-bolder font-size-h2 mt-3`}
-          >
-            {dataText}
-          </div>
-
-          <span
-            href="/"
-            className={`text-inverse-${baseColor} font-weight-bold font-size-lg mt-1`}
-          >
-            {desciption}
-          </span>
+    <a
+      href="/"
+      onClick={handleClick}
+      className={`card card-custom bg-${baseColor} ${className}`}
+      style={{ height: widgetHeight }}
+    >
+      <div className="card-body">
+        <span className={`svg-icon svg-icon-3x svg-icon-${iconColor} ml-n2`}>
+          <SVG src={iconSrc} />
+        </span>
+        <div
+          className={`text-inverse-${baseColor} font-weight-bolder font-size-h2 mt-3`}
+        >
+          {dataText}
         </div>
-      </a>
-    </>
+
+        <span
+          href="/"
+          className={`text-inverse-${baseColor} font-weight-bold font-size-lg mt-1`}
+        >
+          {desciption}
+        </span>
+      </div>
+    </a>
   );
 };
 
