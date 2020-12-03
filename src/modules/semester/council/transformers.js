@@ -30,9 +30,16 @@ export function mDown(i) {
 }
 
 export function up(i) {
+  i.members = i.members.sort(function (a, b) {
+    if (a.isLeader) return -1;
+    if (b.isLeader) return 1;
+    return 0;
+  });
+
   return {
-    name: i?.name,
-    departmentId: i?.department?.value,
-    lecturerIds: i?.members?.map(j => j.value),
+    name: String(i?.name),
+    departmentId: Number(i?.department?.value),
+    lecturerIds: i?.members?.map(j => Number(j.value)),
+    weights: i?.members?.map(j => Number(j.weight)),
   };
 }

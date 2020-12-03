@@ -22,6 +22,7 @@ import * as endpoints from 'endpoints';
 
 import * as transformers from '../../../../../modules/semester/council/transformers';
 import * as constants from '../../../../../modules/semester/council/constants';
+import Create from './Create';
 
 export default function Councils({ semester }) {
   const confirm = useConfirm();
@@ -65,7 +66,7 @@ export default function Councils({ semester }) {
   const handleCreate = React.useCallback(
     fieldData => {
       setIsProcessing(true);
-      request({
+      return request({
         to: endpoints.CREATE_COUNCIL(semId).url,
         method: endpoints.CREATE_COUNCIL(semId).method,
         data: transformers.up(fieldData),
@@ -262,7 +263,13 @@ export default function Councils({ semester }) {
           selectable
         />
       </CardBody>
-      <CMSModal
+      <Create
+        isShowFlg={showCreate}
+        onHide={hideCreateModal}
+        onConfirmForm={handleCreate}
+        isProcessing={isProcessing}
+      />
+      {/* <CMSModal
         isShowFlg={showCreate}
         onHide={hideCreateModal}
         configs={constants.modalConfigs}
@@ -282,7 +289,7 @@ export default function Councils({ semester }) {
         fieldTemplate={updateFieldTemplate}
         primaryButtonLabel="Update"
         isProcessing={isProcessing}
-      />
+      /> */}
     </Card>
   );
 }
