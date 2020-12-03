@@ -22,6 +22,11 @@ export const statusTitles = ['Deactivated', 'Activated'];
 export const createColumns = ({ handleEdit, handleRemove }) =>
   columnsTransformer([
     {
+      dataField: 'id',
+      text: 'ID',
+      sort: true,
+    },
+    {
       dataField: 'code',
       text: 'Code',
       sort: true,

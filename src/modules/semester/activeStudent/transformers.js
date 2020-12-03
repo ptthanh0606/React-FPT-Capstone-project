@@ -47,7 +47,7 @@ export function cUp(i) {
 
 export function up(i) {
   return {
-    teamId: i?.team.value,
+    teamId: i?.team?.value,
   };
 }
 

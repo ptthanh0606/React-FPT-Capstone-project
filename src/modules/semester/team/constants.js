@@ -29,6 +29,11 @@ export const privacyTitles = { true: 'Public', false: 'Private' };
 export const createColumns = ({ handleEdit, handleRemove }) =>
   columnsTransformer([
     {
+      dataField: 'id',
+      text: 'ID',
+      sort: true,
+    },
+    {
       dataField: 'department',
       text: 'DEP',
       sort: true,
@@ -43,22 +48,22 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       dataField: 'name',
       text: 'Name',
       sort: true,
-      formatter: (cellContent, row) => {
-        return (
-          <Link
-            className="text-dark font-weight-bold"
-            to={'/semester/' + row.id}
-          >
-            {cellContent}
-          </Link>
-        );
-      },
     },
     {
       dataField: 'leader',
       text: 'Leader',
       formatter: function (cellContent, row) {
-        return cellContent?.label;
+        return (
+          cellContent?.label &&
+          cellContent?.value && (
+            <Link
+              className={'text-dark font-weight-bold'}
+              to={'/profile/student/' + cellContent?.value}
+            >
+              {cellContent?.label}
+            </Link>
+          )
+        );
       },
     },
     {
@@ -67,7 +72,14 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       formatter: function (cellContent, row) {
         return cellContent?.length > 0
           ? cellContent
-              ?.map(i => i.label)
+              ?.map(i => (
+                <Link
+                  className={'text-dark font-weight-bold'}
+                  to={'/profile/student/' + i?.value}
+                >
+                  {i?.label}
+                </Link>
+              ))
               ?.reduce((prev, curr) => [prev, ', ', curr])
           : '';
       },

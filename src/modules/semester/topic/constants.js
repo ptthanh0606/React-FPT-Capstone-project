@@ -176,6 +176,11 @@ export const modalConfigs = [
 export const createColumns = ({ handleEdit, handleRemove }) => {
   return columnsTransformer([
     {
+      dataField: 'id',
+      text: 'ID',
+      sort: true,
+    },
+    {
       dataField: 'department',
       text: 'Dep',
       sort: true,
