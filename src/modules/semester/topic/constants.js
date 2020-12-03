@@ -143,27 +143,8 @@ export const modalConfigs = [
   },
   {
     name: 'keywords',
-    type: 'creatableSelectBoxAsync',
+    type: 'text',
     label: 'Keywords',
-    smallLabel: 'Some keywords for this topic',
-    load: (keyword, callback) => {
-      setTimeout(() => {
-        callback([
-          {
-            label: 'capstone',
-            value: 'capstone',
-          },
-          {
-            label: 'management',
-            value: 'management',
-          },
-          {
-            label: 'system',
-            value: 'system',
-          },
-        ]);
-      }, 2000);
-    },
   },
   {
     name: 'attachment',
@@ -195,6 +176,7 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
     },
     {
       text: 'Information',
+      dataField: 'topic',
       sort: true,
       formatter: function StatusColumnFormatter(cellContent, row) {
         return (

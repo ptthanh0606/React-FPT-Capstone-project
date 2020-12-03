@@ -28,6 +28,7 @@ const FormGroups = ({
           <Col sm={9}>
             <Form.Control
               type="text"
+              className="form-control form-control-md form-control-solid"
               placeholder={config.placeholder}
               value={value}
               defaultValue={config.defaultValue}
@@ -47,6 +48,7 @@ const FormGroups = ({
           <Col sm={9}>
             <Form.Control
               as="textarea"
+              className="form-control form-control-md form-control-solid"
               rows="4"
               type="text"
               placeholder={config.placeholder}
@@ -68,6 +70,7 @@ const FormGroups = ({
           <Col sm={9}>
             <Form.Control
               type="email"
+              className="form-control form-control-md form-control-solid"
               placeholder={config.placeholder}
               value={value}
               defaultValue={config.defaultValue}
@@ -87,6 +90,7 @@ const FormGroups = ({
           <Col sm={9}>
             <Form.Control
               type="number"
+              className="form-control form-control-md form-control-solid"
               placeholder={config.placeholder}
               value={value}
               defaultValue={config.defaultValue}
@@ -104,7 +108,12 @@ const FormGroups = ({
             {config.label}
           </Form.Label>
           <Col sm={9}>
-            <Form.Control type="date" value={value} onChange={handleChange} />
+            <Form.Control
+              type="date"
+              className="form-control form-control-md form-control-solid"
+              value={value}
+              onChange={handleChange}
+            />
             <small className="form-text text-muted">{config.smallLabel}</small>
           </Col>
         </Form.Group>
@@ -118,6 +127,7 @@ const FormGroups = ({
           <Col sm={9}>
             <Form.Control
               type="datetime-local"
+              className="form-control form-control-md form-control-solid"
               value={value}
               onChange={handleChange}
             />

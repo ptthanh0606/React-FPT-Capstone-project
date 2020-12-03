@@ -113,6 +113,7 @@ const Information = ({ loadData = function () {} }) => {
               </Form.Label>
               <Col sm={9}>
                 <Form.Control
+                  className="form-control form-control-md form-control-solid"
                   type="text"
                   placeholder="Name"
                   onChange={e => setName(e.currentTarget.value)}
@@ -126,6 +127,7 @@ const Information = ({ loadData = function () {} }) => {
               </Form.Label>
               <Col sm={9}>
                 <Form.Control
+                  className="form-control form-control-md form-control-solid"
                   type="number"
                   placeholder="Maximum applications per team"
                   onChange={e => setMaxApplication(e.currentTarget.value)}
@@ -139,6 +141,7 @@ const Information = ({ loadData = function () {} }) => {
               </Form.Label>
               <Col sm={9}>
                 <Form.Control
+                  className="form-control form-control-md form-control-solid"
                   type="datetime-local"
                   onChange={e => setMatchingDate(e.currentTarget.value)}
                   value={matchingDate}
@@ -151,6 +154,7 @@ const Information = ({ loadData = function () {} }) => {
               </Form.Label>
               <Col sm={9}>
                 <Form.Control
+                  className="form-control form-control-md form-control-solid"
                   type="datetime-local"
                   onChange={e => setInprogressDate(e.currentTarget.value)}
                   value={inprogressDate}
@@ -167,6 +171,7 @@ const Information = ({ loadData = function () {} }) => {
               </Form.Label>
               <Col sm={9}>
                 <Form.Control
+                  className="form-control form-control-md form-control-solid"
                   type="datetime-local"
                   onChange={e => setFinishedDate(e.currentTarget.value)}
                   value={finishedDate}
