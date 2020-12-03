@@ -54,6 +54,7 @@ const UpdateCouncil = ({
     setDepartment(fieldTemplate.department);
     setMembers(fieldTemplate.members || []);
     setLecturerToAdd();
+    console.log(fieldTemplate.members);
   }, [fieldTemplate]);
 
   //----------------------------------------------------------------------------

@@ -19,6 +19,10 @@ export function down(i) {
           j.isLeader !== 'undefined'
             ? j.isLeader
             : console.log('member isLeader field not found'),
+        weight:
+          j.weight !== undefined
+            ? Number(j.weight)
+            : console.log('member weight not found'),
       })) || console.log('member fields not found'),
   };
 }
@@ -31,7 +35,7 @@ export function mDown(i) {
 }
 
 export function up(i) {
-  i.members = i?.members?.sort(function (a, b) {
+  const newMembers = [...(i?.members || [])].sort(function (a, b) {
     if (a.isLeader) return -1;
     if (b.isLeader) return 1;
     return 0;
@@ -40,7 +44,7 @@ export function up(i) {
   return {
     name: String(i?.name),
     departmentId: Number(i?.department?.value),
-    lecturerIds: i?.members?.map(j => Number(j.value)),
-    weights: i?.members?.map(j => Number(j.weight)),
+    lecturerIds: newMembers?.map(j => Number(j.value)),
+    weights: newMembers?.map(j => Number(j.weight)),
   };
 }
