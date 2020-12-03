@@ -8,7 +8,7 @@ import { mDown as mDownLec } from 'modules/lecturer/transformers';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
 import { columnsTransformer } from 'utils/common';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import BootstrapTable from 'react-bootstrap-table-next';
 import toast from 'utils/toast';
 import cellEditFactory from 'react-bootstrap-table2-editor';
@@ -34,8 +34,9 @@ class NumberEditor extends React.Component {
   }
 }
 
-const CreateCouncil = ({
+const UpdateCouncil = ({
   isShowFlg = false,
+  setIsShowFlg = function () {},
   onHide = () => {},
   onConfirmForm = () => {},
   isProcessing = false,
@@ -47,6 +48,13 @@ const CreateCouncil = ({
   const [lecturerToAdd, setLecturerToAdd] = React.useState();
 
   const [isShowAdd, setIsShowAdd] = React.useState(false);
+
+  React.useEffect(() => {
+    setName(fieldTemplate.name);
+    setDepartment(fieldTemplate.department);
+    setMembers(fieldTemplate.members || []);
+    setLecturerToAdd();
+  }, [fieldTemplate]);
 
   //----------------------------------------------------------------------------
 
@@ -118,14 +126,7 @@ const CreateCouncil = ({
     setLecturerToAdd();
   }, []);
 
-  React.useEffect(() => {
-    setName(fieldTemplate.name);
-    setDepartment(fieldTemplate.department);
-    setMembers(fieldTemplate.members || []);
-    setLecturerToAdd();
-  }, [fieldTemplate]);
-
-  const onCreate = React.useCallback(
+  const onUpdate = React.useCallback(
     () =>
       onConfirmForm({
         name: name,
@@ -234,8 +235,10 @@ const CreateCouncil = ({
     >
       <Modal.Header closeButton>
         <Modal.Title id="example-modal-sizes-title-lg">
-          Create council
-          <small className="form-text text-muted">Create a new countcil</small>
+          Update council
+          <small className="form-text text-muted">
+            Update information of this council
+          </small>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body style={{}}>
@@ -399,15 +402,15 @@ const CreateCouncil = ({
         <Button
           type="submit"
           variant="primary"
-          onClick={onCreate}
+          onClick={onUpdate}
           form="test-form"
           isLoading={isProcessing}
         >
-          Create
+          Update
         </Button>
       </Modal.Footer>
     </Modal>
   );
 };
 
-export default CreateCouncil;
+export default UpdateCouncil;

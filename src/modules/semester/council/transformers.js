@@ -14,6 +14,7 @@ export function down(i) {
       i?.members?.map(j => ({
         label: j.code || console.log('member code field not found'),
         value: j.id || console.log('member id field not found'),
+        name: j.name || console.log('member name field not found'),
         isLeader:
           j.isLeader !== 'undefined'
             ? j.isLeader
@@ -30,7 +31,7 @@ export function mDown(i) {
 }
 
 export function up(i) {
-  i.members = i.members.sort(function (a, b) {
+  i.members = i?.members?.sort(function (a, b) {
     if (a.isLeader) return -1;
     if (b.isLeader) return 1;
     return 0;
