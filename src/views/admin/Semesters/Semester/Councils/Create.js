@@ -41,9 +41,9 @@ const CreateCouncil = ({
   isProcessing = false,
 }) => {
   const [name, setName] = React.useState('');
-  const [department, setDepartment] = React.useState({});
+  const [department, setDepartment] = React.useState();
   const [members, setMembers] = React.useState([]);
-  const [lecturerToAdd, setLecturerToAdd] = React.useState({});
+  const [lecturerToAdd, setLecturerToAdd] = React.useState();
 
   const [isShowAdd, setIsShowAdd] = React.useState(false);
 
@@ -116,6 +116,15 @@ const CreateCouncil = ({
     setIsShowAdd(false);
     setLecturerToAdd();
   }, []);
+
+  React.useEffect(() => {
+    if (!isShowFlg) {
+      setName();
+      setDepartment();
+      setMembers([]);
+      setLecturerToAdd();
+    }
+  }, [isShowFlg]);
 
   const onCreate = React.useCallback(
     () =>

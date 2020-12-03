@@ -270,16 +270,6 @@ export default function Councils({ semester }) {
         isProcessing={isProcessing}
       />
       {/* <CMSModal
-        isShowFlg={showCreate}
-        onHide={hideCreateModal}
-        configs={constants.modalConfigs}
-        title="Create council"
-        subTitle="Assign council to this semester"
-        onConfirmForm={handleCreate}
-        fieldTemplate={fieldTemplate}
-        isProcessing={isProcessing}
-      />
-      <CMSModal
         isShowFlg={showUpdate}
         onHide={hideUpdateModal}
         configs={constants.modalConfigs}
