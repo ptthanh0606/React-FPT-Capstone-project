@@ -95,6 +95,22 @@ const User = () => {
               path="/team"
               component={lazy(() => import('views/user/Teams'))}
             />
+            <Route.SemesterSelected
+              path="/my-team"
+              component={lazy(() => import('views/user/Teams/Team'))}
+            />
+            <Route.SemesterSelected
+              path="/council/:id(\d+)"
+              component={lazy(() => import('views/user/Councils/Council'))}
+            />
+            <Route.SemesterSelected
+              path="/council"
+              component={lazy(() => import('views/user/Councils'))}
+            />
+            <Route.SemesterSelected
+              path="/my-council"
+              component={lazy(() => import('views/user/Councils/Council'))}
+            />
             <Route.RedirectRoute to="/dashboard" />
           </Switch>
         </Layout>

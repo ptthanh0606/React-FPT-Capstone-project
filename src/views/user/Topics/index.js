@@ -661,17 +661,17 @@ export default function Topics() {
         minWidth: '100px',
       },
     },
-    {
-      dataField: 'approval',
-      text: 'Approvals',
-      formatter: ApprovalColumnFormatter,
-      formatExtraData: {},
-      classes: 'text-right pr-0',
-      headerClasses: 'text-right pr-3',
-      style: {
-        minWidth: '100px',
-      },
-    },
+    // {
+    //   dataField: 'approval',
+    //   text: 'Approvals',
+    //   formatter: ApprovalColumnFormatter,
+    //   formatExtraData: {},
+    //   classes: 'text-right pr-0',
+    //   headerClasses: 'text-right pr-3',
+    //   style: {
+    //     minWidth: '100px',
+    //   },
+    // },
   ];
 
   return (
