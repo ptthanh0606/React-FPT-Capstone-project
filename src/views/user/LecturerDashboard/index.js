@@ -324,6 +324,7 @@ export default React.memo(function LecturerDashboard() {
               className="gutter-b"
               title="Topic need feedback"
               rows={topicNeedFeedback}
+              darkMode={true}
             />
           </div>
         </div>
