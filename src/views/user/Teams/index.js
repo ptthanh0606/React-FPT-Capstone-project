@@ -21,6 +21,8 @@ import { role } from 'auth/recoil/selectors';
 import { useParams } from 'react-router-dom';
 import CreateTeamStudentModal from 'components/CreateTeamStudentModal/CreateTeamStudentModal';
 import CMSModal from 'components/CMSModal/CMSModal';
+import { createTeamAsStudent } from 'modules/semester/team/constants';
+import toast from 'utils/toast';
 
 export const statusClasses = ['info', 'success', ''];
 export const statusTitles = ['Matching', 'Matched', ''];
@@ -252,6 +254,10 @@ export default function Teams() {
     return buttons;
   }, [currentRole]);
 
+  const handleConfirmCreate = React.useCallback(data => {
+    toast.success('Created!');
+  }, []);
+
   // --------------------------------------------------------------------
 
   React.useEffect(() => {
@@ -298,10 +304,16 @@ export default function Teams() {
           pageSizeList={sizePerPageList}
         />
       </CardBody>
-      <CreateTeamStudentModal
+      <CMSModal
         isShowFlg={showCreateStudentTeamModalFlg}
         onHide={handleHideCreateStudentTeamModal}
-        onCreate={() => {}}
+        title="Create your team"
+        configs={createTeamAsStudent}
+        fieldTemplate={{
+          name: '',
+          isPrivate: false,
+        }}
+        onConfirmForm={handleConfirmCreate}
       />
       <CMSModal
         isShowFlg={joinTeamModalShowFlg}
