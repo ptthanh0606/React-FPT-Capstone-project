@@ -243,3 +243,18 @@ export const createModalConfigs = semId => [
     smallLabel: 'Lock this team',
   },
 ];
+
+export const createTeamAsStudent = [
+  {
+    name: 'name',
+    type: 'text',
+    label: 'Team name',
+    placeholder: 'Give this team a name...',
+  },
+  {
+    name: 'isPrivate',
+    type: 'toggle',
+    label: 'Privacy',
+    smallLabel: 'Is your team private',
+  },
+];
