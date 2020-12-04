@@ -178,3 +178,22 @@
 }
 .Toastify__progress-bar--dark {
 }
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url(/arrow.png) center right 10px/10px no-repeat #eee;
+  padding-right: 10px;
+}
+
+select::-ms-expand {
+  display: none;
+}
+
+@media screen and (min-width: 0\0) {
+  select {
+    background: none\9;
+    padding: 5px\9;
+  }
+}

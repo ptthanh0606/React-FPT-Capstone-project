@@ -267,6 +267,9 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
           </>
         );
       },
+      style: {
+        minWidth: '200px',
+      },
     },
     {
       dataField: 'mentorMembers',
@@ -289,10 +292,16 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
           </>
         );
       },
+      style: {
+        minWidth: '200px',
+      },
     },
     {
       dataField: 'note',
       text: 'Note',
+      style: {
+        minWidth: '200px',
+      },
     },
     {
       dataField: 'action',
