@@ -1,10 +1,16 @@
 import React from 'react';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 import SVG from 'react-inlinesvg';
-import Feedback from './Feedback';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import FeedbackSection from './FeedbackSection';
 
-const TopicDetailCard = ({ className, topicCode, topicName, fullDesc }) => {
+const TopicDetailCard = ({
+  className,
+  topicCode,
+  topicName,
+  fullDesc,
+  feedbacks,
+}) => {
   const handleShowTeamDetail = React.useCallback(event => {
     event.preventDefault();
   }, []);
@@ -179,20 +185,13 @@ const TopicDetailCard = ({ className, topicCode, topicName, fullDesc }) => {
               <span className="text-dark-75 font-weight-bolder font-size-sm">
                 73 Applications
               </span>
-              {/* <a
-                href="/"
-                className="text-primary font-weight-bolder"
-                onClick={handleShowApplicationModal}
-              >
-                View
-              </a> */}
             </div>
           </div>
         </div>
 
         <div className="separator separator-solid my-7"></div>
 
-        <Feedback className="" />
+        <FeedbackSection className="" feedbacks={feedbacks} />
       </div>
     </div>
   );

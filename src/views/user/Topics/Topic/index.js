@@ -20,6 +20,7 @@ const Topic = () => {
   const [studentTeam, setStudentTeam] = React.useState({});
   const [mentors, setMentors] = React.useState({});
   const [applications, setApplications] = React.useState([]);
+  const [feedbacks, setFeedbacks] = React.useState([]);
 
   // ----------------------------------------------------------
 
@@ -256,6 +257,48 @@ const Topic = () => {
     });
   }, [handleApproveTeam, handleRejectTeam]);
 
+  React.useEffect(() => {
+    setFeedbacks([
+      {
+        name: 'Phan Thong Thanh',
+        email: 'phanthongthanh0606@gmail.com',
+        date: '8 June 2020',
+        content: `<p><strong>huhuhuh</strong></p>
+        <p><code>asdasdasdasdasdasdasdasd</code></p>
+        <ul>
+        <li>asdasdasdas</li>
+        <li>asdasdasdas</li>
+        </ul>
+        <h1>czxczxczxczxc</h1>
+        <table>
+        <thead>
+        <tr>
+        <th>Head</th>
+        <th>Head</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>Data</td>
+        <td>Data</td>
+        </tr>
+        <tr>
+        <td>Data</td>
+        <td>Data</td>
+        </tr>
+        </tbody>
+        </table>
+        `,
+      },
+      {
+        name: 'Huynh Duc Duy',
+        email: 'duuuuuuuuy@gmail.com',
+        date: '9 June 2020',
+        content: 'Ong tren kia comment gi vay',
+      },
+    ]);
+  }, []);
+
   return (
     <>
       <div className="row">
@@ -284,6 +327,7 @@ const Topic = () => {
                 sunt in culpa qui officia deserunt mollit anim id est laborum.
               </>
             ))()}
+            feedbacks={feedbacks}
           />
         </div>
         <div className="col-lg-6 col-xxl-3">

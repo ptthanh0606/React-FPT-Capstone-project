@@ -46,23 +46,6 @@ const UserCard = ({ id, name, email, department, code, isLead }) => {
           <div class="mt-9 mb-4 d-flex justify-content-between">
             <OverlayTrigger
               placement="bottom"
-              overlay={<Tooltip id="quick-user-tooltip">View info</Tooltip>}
-            >
-              <a
-                href="/"
-                class="btn btn-md btn-icon btn-light-primary btn-pill  mx-2"
-              >
-                <span className={`svg-icon svg-icon-white`}>
-                  <SVG
-                    src={toAbsoluteUrl(
-                      '/media/svg/icons/Communication/Address-card.svg'
-                    )}
-                  />
-                </span>
-              </a>
-            </OverlayTrigger>
-            <OverlayTrigger
-              placement="bottom"
               overlay={<Tooltip id="quick-user-tooltip">Edit weight</Tooltip>}
             >
               <a
@@ -70,10 +53,19 @@ const UserCard = ({ id, name, email, department, code, isLead }) => {
                 class="btn btn-md btn-icon btn-light-info btn-pill  mx-2"
               >
                 <span className={`svg-icon svg-icon-white`}>
-                  <SVG
-                    src={toAbsoluteUrl('/media/svg/icons/Design/Edit.svg')}
-                  />
+                  <i class="fas fa-pen"></i>
                 </span>
+              </a>
+            </OverlayTrigger>
+            <OverlayTrigger
+              placement="bottom"
+              overlay={<Tooltip id="quick-user-tooltip">Make Leader</Tooltip>}
+            >
+              <a
+                href="/"
+                class="btn btn-md btn-icon btn-light-primary btn-pill  mx-2"
+              >
+                <i class="fas fa-user-shield"></i>
               </a>
             </OverlayTrigger>
             <OverlayTrigger
@@ -85,11 +77,7 @@ const UserCard = ({ id, name, email, department, code, isLead }) => {
                 class="btn btn-md btn-icon btn-light-danger btn-pill  mx-2"
               >
                 <span className={`svg-icon svg-icon-white`}>
-                  <SVG
-                    src={toAbsoluteUrl(
-                      '/media/svg/icons/Navigation/Sign-out.svg'
-                    )}
-                  />
+                  <i class="fas fa-user-slash"></i>
                 </span>
               </a>
             </OverlayTrigger>
