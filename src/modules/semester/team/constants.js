@@ -170,6 +170,7 @@ export const createColumnsForStudentRole = ({ handleJoin }) =>
       dataField: 'code',
       text: 'Code',
       sort: true,
+      hidden: true,
     },
     {
       dataField: 'name',
