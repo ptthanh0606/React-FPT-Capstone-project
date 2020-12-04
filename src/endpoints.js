@@ -222,7 +222,7 @@ export const DELETE_TEAM = id => ({
 
 // -----------------------------------------------------------------------------
 
-export const JOIN_TEAM = (id, code, semesterId) => ({
+export const JOIN_TEAM = id => ({
   url: READ_TEAM(id).url + '/join',
   method: METHOD.POST,
 });
