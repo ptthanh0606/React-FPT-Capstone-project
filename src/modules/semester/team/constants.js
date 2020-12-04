@@ -153,6 +153,118 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
     },
   ]);
 
+export const createColumnsForStudentRole = ({ handleJoin }) =>
+  columnsTransformer([
+    {
+      dataField: 'id',
+      text: 'ID',
+      sort: true,
+    },
+    {
+      dataField: 'department',
+      text: 'DEP',
+      sort: true,
+      formatter: cellContent => cellContent?.label,
+    },
+    {
+      dataField: 'code',
+      text: 'Code',
+      sort: true,
+    },
+    {
+      dataField: 'name',
+      text: 'Name',
+      sort: true,
+    },
+    {
+      dataField: 'leader',
+      text: 'Leader',
+      formatter: function (cellContent, row) {
+        return (
+          cellContent?.label &&
+          cellContent?.value && (
+            <Link
+              className={'text-dark font-weight-bold'}
+              to={'/profile/student/' + cellContent?.value}
+            >
+              {cellContent?.label}
+            </Link>
+          )
+        );
+      },
+    },
+    {
+      dataField: 'members',
+      text: 'Members',
+      formatter: function (cellContent, row) {
+        return cellContent?.length > 0
+          ? cellContent
+              ?.map(i => (
+                <Link
+                  className={'text-dark font-weight-bold'}
+                  to={'/profile/student/' + i?.value}
+                >
+                  {i?.label}
+                </Link>
+              ))
+              ?.reduce((prev, curr) => [prev, ', ', curr])
+          : '';
+      },
+    },
+    {
+      dataField: 'topic',
+      text: 'Topic',
+      formatter: function (cellContent, row) {
+        return (
+          <div>
+            <div className="text-nowrap text-dark-75 font-weight-bold font-size-lg mb-0">
+              {cellContent?.label}
+            </div>
+            <span className="text-muted font-weight-bold text-hover-primary">
+              {cellContent?.abstract}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      dataField: 'status',
+      text: 'Status',
+      sort: true,
+      formatter: columnFormatter(statusClasses, statusTitles),
+    },
+    {
+      dataField: 'lock',
+      text: 'Lock',
+      sort: true,
+      formatter: columnFormatter(lockClasses, lockTitles),
+    },
+    {
+      dataField: 'privacy',
+      text: 'privacy',
+      sort: true,
+      formatter: columnFormatter(privacyClasses, privacyTitles),
+    },
+    {
+      dataField: 'action',
+      text: 'Action',
+      formatter: (cellContent, row) => {
+        return (
+          <a
+            href="/"
+            title="Join team"
+            className="btn btn-icon btn-light btn-hover-primary btn-sm"
+            data-id={row.id}
+            data-code={row.code}
+            onClick={handleJoin}
+          >
+            <i className="fas fa-play icon-sm"></i>
+          </a>
+        );
+      },
+    },
+  ]);
+
 export const createModalConfigs = semId => [
   {
     name: 'name',

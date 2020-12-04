@@ -221,9 +221,10 @@ export const DELETE_TEAM = id => ({
 });
 
 // -----------------------------------------------------------------------------
-export const JOIN_TEAM = id => ({
+
+export const JOIN_TEAM = (id, code, semesterId) => ({
   url: READ_TEAM(id).url + '/join',
-  method: METHOD.PUT,
+  method: METHOD.POST,
 });
 
 export const TRANSFER_LEADER_TEAM = id => ({
