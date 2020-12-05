@@ -63,7 +63,7 @@ function Filters({ filters, setFilters }) {
                     handleSubmit();
                   }}
                   onBlur={handleBlur}
-                  value={values.status}
+                  value={values.isDisabled}
                 >
                   <option value="">All</option>
                   <option value="true">Deactivated</option>
