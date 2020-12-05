@@ -1,6 +1,6 @@
 import React from 'react';
 import TopicDetailCard from 'components/CMSWidgets/TopicDetailCard';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import metaAtom from 'store/meta';
 import userAtom from 'store/user';
@@ -18,6 +18,7 @@ import { handleErrors } from 'utils/common';
 
 const Topic = () => {
   const [l, loadData] = React.useReducer(() => ({}), {});
+  const history = useHistory();
   // ----------------------------------------------------------
 
   const { id } = useParams();
@@ -67,10 +68,15 @@ const Topic = () => {
     toast.success('Rejected selected team');
   }, []);
 
-  const handleMoreStudentTeamClick = React.useCallback(e => {
-    e.preventDefault();
-    // history.push(`/team/${teamId}`);
-  }, []);
+  const handleMoreStudentTeamClick = React.useCallback(
+    id => {
+      return () => {
+        console.log(id);
+        history.push(`/team/${id}`);
+      };
+    },
+    [history]
+  );
 
   const handleShowEditWeight = React.useCallback(e => {
     e.preventDefault();
@@ -79,7 +85,6 @@ const Topic = () => {
 
   const onFeedbackSuccess = React.useCallback(
     e => {
-      toast.success('');
       fetchTopic();
     },
     [fetchTopic]
@@ -200,7 +205,7 @@ const Topic = () => {
         { title: 'Fall 2020', path: '/semester/' + id },
         { title: 'Topic', path: '/semester/' + id + '/topic' },
         {
-          title: 'Capstone Management System',
+          title: currentTopic.name,
           path: '/semester/' + id + '/topic',
         },
       ],
@@ -272,43 +277,49 @@ const Topic = () => {
             department={currentTopic.department}
             status={currentTopic.status}
             maxMember={currentTopic.maxMembers}
-            studentTeam={currentTopic.team}
-            mentorGroup={currentTopic.mentorMembers}
+            studentMembers={currentTopic.team?.members}
+            mentorMembers={currentTopic.mentorMembers}
             applications={currentTopic.applications}
             feedbacks={currentTopic.feedbacks}
             onFeedbackSuccess={onFeedbackSuccess}
           />
         </div>
         <div className="col-lg-6 col-xxl-3">
-          {statusTitles[currentTopic.status] === 'Approved' && (
+          {statusTitles[currentTopic.status] === 'Ready' && (
             <CMSList
               className="gutter-b"
               title="Applying teams"
               subTitle="Consider approve team to topic"
               rows={currentTopic.applications}
+              fallbackMsg="Awaiting for application..."
             />
           )}
 
-          {/* <GroupCard
-            className="gutter-b"
-            title="Assigned team"
-            group={currentTopic.team}
-            toolBar={
-              <a
-                href="/"
-                onClick={handleMoreStudentTeamClick}
-                className="btn btn-sm btn-light-primary font-weight-bolder"
-              >
-                More
-              </a>
-            }
-          /> */}
+          {statusTitles[currentTopic.status] === 'Matched' &&
+            currentTopic.team?.value && (
+              <GroupCard
+                className="gutter-b"
+                title="Assigned team"
+                role="student"
+                group={currentTopic.team?.members}
+                toolBar={
+                  <button
+                    onClick={handleMoreStudentTeamClick(
+                      currentTopic.team?.value
+                    )}
+                    className="btn btn-sm btn-light-primary font-weight-bolder"
+                  >
+                    More
+                  </button>
+                }
+              />
+            )}
 
           <GroupCard
             title="Mentors"
+            role="lecturer"
             group={currentTopic.mentorMembers}
             toolBar={mentorCardToolbar()}
-            role="lecturer"
             booleanFlg={editWeightFlg}
           />
         </div>
