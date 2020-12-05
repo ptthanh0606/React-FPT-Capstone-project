@@ -52,6 +52,7 @@ const CMSModal = ({
         <Form id="test-form" onSubmit={handleOnSubmitForm}>
           {configs.map(config => (
             <FormGroups
+              {...config}
               key={config.label}
               type={config.type}
               config={config}

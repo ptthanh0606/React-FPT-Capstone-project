@@ -33,6 +33,7 @@ const Information = ({ loadData = function () {} }) => {
   const { id } = useParams();
 
   React.useEffect(() => {
+    setIsLoading(true);
     request({
       to: endpoints.READ_SEMESTER(id).url,
       method: endpoints.READ_SEMESTER(id).method,
@@ -54,6 +55,8 @@ const Information = ({ loadData = function () {} }) => {
             { title: 'Information', path: '/semester/' + id + '/information' },
           ],
         }));
+
+        setIsLoading(false);
       })
       .catch(handleErrors)
       .finally();
@@ -146,6 +149,7 @@ const Information = ({ loadData = function () {} }) => {
                 type="datetime-local"
                 onChange={e => setMatchingDate(e.currentTarget.value)}
                 value={matchingDate}
+                step={3600}
               />
             </Col>
           </Form.Group>

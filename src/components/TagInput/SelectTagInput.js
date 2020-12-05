@@ -72,6 +72,7 @@ const SelectTagInput = ({
   isClearable = true,
   placeholder = '',
   isMulti = false,
+  readOnly = false,
 }) => {
   return (
     <>
@@ -89,7 +90,6 @@ const SelectTagInput = ({
         required={required}
         aria-label={label}
         value={value}
-        isClearable={isClearable}
         autoFocus={autofocus}
         onChange={onChange}
         name={name}
@@ -100,6 +100,9 @@ const SelectTagInput = ({
         loadOptions={load}
         createOptionPosition="first"
         allowCreateWhileLoading={true}
+        isClearable={isClearable && !readOnly}
+        isSearchable={!readOnly}
+        openMenuOnClick={!readOnly}
       />
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </>
