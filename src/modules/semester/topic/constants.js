@@ -33,6 +33,13 @@ export const modalConfigs = [
     placeholder: 'Name...',
   },
   {
+    name: 'abstract',
+    type: 'textarea',
+    label: 'Abstract',
+    smallLabel: 'Brief description for this topic',
+    placeholder: 'Description...',
+  },
+  {
     name: 'description',
     type: 'textarea',
     label: 'Description',
@@ -107,6 +114,27 @@ export const modalConfigs = [
         })
         .catch(() => callback([]));
     },
+  },
+  {
+    name: 'submitter',
+    type: 'selectBoxAsync',
+    label: 'Mentor',
+    smallLabel: 'Owner of this topic',
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_LECTURER.url,
+        method: endpoints.LIST_LECTURER.method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownLec) || []);
+        })
+        .catch(() => callback([]));
+    },
+    isMulti: false,
   },
   {
     name: 'mentorMembers',

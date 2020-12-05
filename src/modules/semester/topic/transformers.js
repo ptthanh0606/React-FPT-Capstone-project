@@ -147,7 +147,7 @@ export function up(i) {
       id: Number(i?.department?.value),
     },
     submitByStudent: !!i?.submitByStudent,
-    team: {
+    team: i?.team?.value && {
       id: Number(i?.team?.value),
     },
     mentorGroup: {
@@ -158,7 +158,7 @@ export function up(i) {
     },
     keywords: i?.keywords,
     attachment: i?.attachment,
-    submitter: {
+    submitter: i?.submitter?.value && {
       id: Number(i?.submitter?.value),
     },
   };
