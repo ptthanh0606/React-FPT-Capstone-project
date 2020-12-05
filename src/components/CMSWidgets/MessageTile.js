@@ -5,6 +5,7 @@ import SVG from 'react-inlinesvg';
 const MessageTile = ({
   className,
   iconSrc = toAbsoluteUrl('/media/svg/icons/Layout/Layout-4-blocks.svg'),
+  baseColor = 'success',
   content = (
     <>
       Configure user passwords to expire periodically. Users will need warning
@@ -14,11 +15,11 @@ const MessageTile = ({
 }) => {
   return (
     <div
-      class="alert alert-custom alert-light-danger fade show mb-10"
+      class={`alert alert-custom alert-light-${baseColor} fade show`}
       role="alert"
     >
       <div class="alert-icon">
-        <span class="svg-icon svg-icon-3x svg-icon-danger">
+        <span class={`svg-icon svg-icon-3x svg-icon-${baseColor}`}>
           <SVG src={iconSrc} />
         </span>{' '}
       </div>

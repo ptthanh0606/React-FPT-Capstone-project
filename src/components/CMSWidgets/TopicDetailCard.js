@@ -3,14 +3,34 @@ import { toAbsoluteUrl } from '_metronic/_helpers';
 import SVG from 'react-inlinesvg';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import FeedbackSection from './FeedbackSection';
+import * as constants from '../../modules/semester/topic/constants';
+import md5 from 'utils/md5';
+import userAtom from 'store/user';
+import { useRecoilValue } from 'recoil';
 
 const TopicDetailCard = ({
   className,
   topicCode,
   topicName,
   fullDesc,
+  department,
+  status,
+  maxMember,
+  mentorMembers = [],
+  studentMembers = [],
+  applications,
   feedbacks,
+  onFeedbackSuccess,
 }) => {
+  const currentUser = useRecoilValue(userAtom);
+
+  // -----------------------------------------------------------------------------
+
+  const statusTitles = React.useMemo(() => constants.statusTitles, []);
+  const statusClasses = React.useMemo(() => constants.statusClasses, []);
+
+  // -----------------------------------------------------------------------------
+
   const handleShowTeamDetail = React.useCallback(event => {
     event.preventDefault();
   }, []);
@@ -18,6 +38,14 @@ const TopicDetailCard = ({
   const handleShowMentorDetail = React.useCallback(event => {
     event.preventDefault();
   }, []);
+
+  // -----------------------------------------------------------------------------
+
+  React.useEffect(() => {
+    console.log();
+  }, [currentUser, department]);
+
+  // -----------------------------------------------------------------------------
 
   return (
     <div className={className + ' card card-custom gutter-b'}>
@@ -67,17 +95,18 @@ const TopicDetailCard = ({
                 <div className="d-flex align-items-center">
                   <div className="mr-10">
                     <div className="font-weight-bolder mb-2">Department</div>
-                    <span className="label label-xl label-light label-inline text-nowrap mr-2">
-                      Software Engineer
-                    </span>
-                    <span className="label label-xl label-light label-inline text-nowrap">
-                      Software Engineer
-                    </span>
+                    {department && (
+                      <span className="label label-xl label-light label-inline text-nowrap mr-2">
+                        {department.fullName}
+                      </span>
+                    )}
                   </div>
-                  <div className="">
+                  <div className="mr-10">
                     <div className="font-weight-bolder mb-2">Status</div>
-                    <span className="label label-xl label-light-danger label-inline text-nowrap">
-                      Rejected
+                    <span
+                      className={`label label-xl label-light-${statusClasses[status]} label-inline text-nowrap`}
+                    >
+                      {statusTitles[status]}
                     </span>
                   </div>
                 </div>
@@ -98,7 +127,9 @@ const TopicDetailCard = ({
                 Max members
               </span>
               <span className="font-weight-bolder font-size-h5">
-                <span className="text-dark-50 font-weight-bold">5</span>
+                <span className="text-dark-50 font-weight-bold">
+                  {maxMember}
+                </span>
               </span>
             </div>
           </div>
@@ -113,38 +144,21 @@ const TopicDetailCard = ({
               </a>
             </OverlayTrigger>
             <div className="symbol-group symbol-hover">
-              <div
-                className="symbol symbol-30 symbol-circle"
-                data-toggle="tooltip"
-                title=""
-                data-original-title="Mark Stone"
-              >
-                <img alt="Pic" src="/media/users/300_25.jpg" />
-              </div>
-              <div
-                className="symbol symbol-30 symbol-circle"
-                data-toggle="tooltip"
-                title=""
-                data-original-title="Charlie Stone"
-              >
-                <img alt="Pic" src="/media/users/300_19.jpg" />
-              </div>
-              <div
-                className="symbol symbol-30 symbol-circle"
-                data-toggle="tooltip"
-                title=""
-                data-original-title="Luca Doncic"
-              >
-                <img alt="Pic" src="/media/users/300_22.jpg" />
-              </div>
-              <div
-                className="symbol symbol-30 symbol-circle"
-                data-toggle="tooltip"
-                title=""
-                data-original-title="Nick Mana"
-              >
-                <img alt="Pic" src={toAbsoluteUrl('/media/users/300_23.jpg')} />
-              </div>
+              {studentMembers?.length ? (
+                studentMembers.map(student => (
+                  <div
+                    className="symbol symbol-30 symbol-circle"
+                    data-toggle="tooltip"
+                    style={{
+                      backgroundImage: `url(https://www.gravatar.com/avatar/${md5(
+                        student.email ? student.email.toLowerCase() : ''
+                      )})`,
+                    }}
+                  ></div>
+                ))
+              ) : (
+                <>Not yet</>
+              )}
             </div>
           </div>
 
@@ -158,22 +172,21 @@ const TopicDetailCard = ({
               </a>
             </OverlayTrigger>
             <div className="symbol-group symbol-hover">
-              <div
-                className="symbol symbol-30 symbol-circle"
-                data-toggle="tooltip"
-                title=""
-                data-original-title="Mark Stone"
-              >
-                <img alt="Pic" src="/media/users/300_25.jpg" />
-              </div>
-              <div
-                className="symbol symbol-30 symbol-circle"
-                data-toggle="tooltip"
-                title=""
-                data-original-title="Charlie Stone"
-              >
-                <img alt="Pic" src="/media/users/300_19.jpg" />
-              </div>
+              {mentorMembers?.length ? (
+                mentorMembers.map(mentor => (
+                  <div
+                    className="symbol symbol-30 symbol-circle"
+                    data-toggle="tooltip"
+                    style={{
+                      backgroundImage: `url(https://www.gravatar.com/avatar/${md5(
+                        mentor.email ? mentor.email.toLowerCase() : 'c'
+                      )})`,
+                    }}
+                  ></div>
+                ))
+              ) : (
+                <>Not yet</>
+              )}
             </div>
           </div>
 
@@ -183,7 +196,7 @@ const TopicDetailCard = ({
             </span>
             <div className="d-flex flex-column flex-lg-fill">
               <span className="text-dark-75 font-weight-bolder font-size-sm">
-                73 Applications
+                {applications?.length} Applications
               </span>
             </div>
           </div>
@@ -191,7 +204,18 @@ const TopicDetailCard = ({
 
         <div className="separator separator-solid my-7"></div>
 
-        <FeedbackSection className="" feedbacks={feedbacks} />
+        {['Pending', 'Approved'].includes(statusTitles[status]) && (
+          <FeedbackSection
+            className=""
+            feedbacks={feedbacks}
+            onSuccess={onFeedbackSuccess}
+            topicStatus={statusTitles[status]}
+            isInDep={
+              !!currentUser.department.filter(({ name }) => name === department)
+                .length
+            }
+          />
+        )}
       </div>
     </div>
   );

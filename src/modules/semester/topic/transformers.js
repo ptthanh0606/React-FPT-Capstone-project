@@ -69,13 +69,19 @@ export function downRead(i) {
             console.log('department code field not found'),
           value:
             i?.department?.id || console.log('department id field not found'),
+          fullName:
+            i?.department?.name ||
+            console.log('department name field not found'),
         }
       : console.log('department field not found'),
     mentorMembers:
       i?.mentorGroup?.members?.map(j => ({
         label: j.code,
+        id: j.id,
         value: j.id,
         weight: j.weight,
+        isLeader: j.isLeader,
+        name: j.name,
       })) || console.log('mentor members field not found'),
     status:
       i?.status !== undefined
@@ -99,6 +105,7 @@ export function downRead(i) {
         i?.team?.id && i?.team?.name
           ? '[' + i?.team?.id + '] ' + i?.team?.name
           : console.log('team field not found'),
+      members: i?.team?.members || [],
     },
     applications: i?.topicApplications?.map(j => ({
       id: j.id,
@@ -108,6 +115,8 @@ export function downRead(i) {
     })),
     feedbacks: i?.topicFeedbacks?.map(j => ({
       id: j.id,
+      content: j.content,
+      date: j.createdAt,
       approver: {
         id: j.approver?.id,
         code: j.approver?.code,

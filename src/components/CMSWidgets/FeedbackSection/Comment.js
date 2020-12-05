@@ -1,5 +1,5 @@
+import { formatRelative, subMinutes } from 'date-fns';
 import React from 'react';
-import { toAbsoluteUrl } from '_metronic/_helpers';
 import 'react-markdown-editor-lite/lib/index.css';
 import md5 from 'utils/md5';
 
@@ -22,7 +22,12 @@ const Comment = ({ className, email, name, date, content }) => {
               >
                 {name}
               </a>
-              <span className="text-muted ml-2">{date}</span>
+              <span className="text-muted ml-2">
+                {formatRelative(
+                  subMinutes(new Date(date), new Date().getTimezoneOffset()),
+                  new Date()
+                )}
+              </span>
             </div>
           </div>
           <p
