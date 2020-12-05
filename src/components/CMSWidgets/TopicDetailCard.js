@@ -5,6 +5,8 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import FeedbackSection from './FeedbackSection';
 import * as constants from '../../modules/semester/topic/constants';
 import md5 from 'utils/md5';
+import userAtom from 'store/user';
+import { useRecoilValue } from 'recoil';
 
 const TopicDetailCard = ({
   className,
@@ -20,6 +22,15 @@ const TopicDetailCard = ({
   feedbacks,
   onFeedbackSuccess,
 }) => {
+  const currentUser = useRecoilValue(userAtom);
+
+  // -----------------------------------------------------------------------------
+
+  const statusTitles = React.useMemo(() => constants.statusTitles, []);
+  const statusClasses = React.useMemo(() => constants.statusClasses, []);
+
+  // -----------------------------------------------------------------------------
+
   const handleShowTeamDetail = React.useCallback(event => {
     event.preventDefault();
   }, []);
@@ -28,8 +39,13 @@ const TopicDetailCard = ({
     event.preventDefault();
   }, []);
 
-  const statusTitles = React.useMemo(() => constants.statusTitles, []);
-  const statusClasses = React.useMemo(() => constants.statusClasses, []);
+  // -----------------------------------------------------------------------------
+
+  React.useEffect(() => {
+    console.log();
+  }, [currentUser, department]);
+
+  // -----------------------------------------------------------------------------
 
   return (
     <div className={className + ' card card-custom gutter-b'}>
@@ -188,11 +204,18 @@ const TopicDetailCard = ({
 
         <div className="separator separator-solid my-7"></div>
 
-        <FeedbackSection
-          className=""
-          feedbacks={feedbacks}
-          onSuccess={onFeedbackSuccess}
-        />
+        {['Pending', 'Approved'].includes(statusTitles[status]) && (
+          <FeedbackSection
+            className=""
+            feedbacks={feedbacks}
+            onSuccess={onFeedbackSuccess}
+            topicStatus={statusTitles[status]}
+            isInDep={
+              !!currentUser.department.filter(({ name }) => name === department)
+                .length
+            }
+          />
+        )}
       </div>
     </div>
   );
