@@ -6,6 +6,7 @@ const CMSList = ({
   title,
   subTitle,
   rows,
+  rowActions = <></>,
   toolBar,
   fallbackMsg,
 }) => {
@@ -31,8 +32,7 @@ const CMSList = ({
               key={row.label}
               label={row.label}
               subLabel={row.subLabel}
-              buttonLabel="Approve"
-              action={row.action}
+              action={rowActions}
               onLabelClick={row.onLabelClick}
             />
           ))

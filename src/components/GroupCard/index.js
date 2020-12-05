@@ -6,13 +6,20 @@ const GroupCard = ({
   role,
   className,
   title,
+  subTitle,
   toolBar = <></>,
   booleanFlg = false,
+  fallbackMsg,
 }) => {
   return (
     <div className={`card card-custom ${className}`}>
       <div className="card-header align-items-center border-0 mt-4">
-        <h3 className="card-title font-weight-bolder text-dark">{title}</h3>
+        <h3 className="card-title font-weight-bolder align-items-start text-dark flex-column">
+          {title}
+          <span className="text-muted mt-3 font-weight-bold font-size-sm mb-5">
+            {subTitle}
+          </span>
+        </h3>
         <div className="card-toolbar">{toolBar}</div>
       </div>
       <div className="card-body pt-2">
@@ -30,7 +37,7 @@ const GroupCard = ({
               />
             ))
           ) : (
-            <>Awaiting for team...</>
+            <>{fallbackMsg}</>
           )}
         </div>
       </div>

@@ -1,27 +1,32 @@
 import React from 'react';
-import TopicDetailCard from 'components/CMSWidgets/TopicDetailCard';
+
 import { useHistory, useParams } from 'react-router-dom';
+
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import metaAtom from 'store/meta';
 import userAtom from 'store/user';
 import { role } from 'auth/recoil/selectors';
-import CMSModal from 'components/CMSModal/CMSModal';
-import CMSList from 'components/CMSList';
-import GroupCard from 'components/GroupCard';
+
 import toast from 'utils/toast';
-import { SETTING_MODAL_CONFIG } from './constants';
-import * as endpoints from 'endpoints';
-import * as transformers from '../../../../modules/semester/topic/transformers';
-import * as constants from '../../../../modules/semester/topic/constants';
 import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 
+import * as endpoints from 'endpoints';
+import * as transformers from '../../../../modules/semester/topic/transformers';
+import * as constants from '../../../../modules/semester/topic/constants';
+import { rowActionFormatter, SETTING_MODAL_CONFIG } from './constants';
+
+import CMSModal from 'components/CMSModal/CMSModal';
+import CMSList from 'components/CMSList';
+import GroupCard from 'components/GroupCard';
+import TopicDetailCard from 'components/CMSWidgets/TopicDetailCard';
+
 const Topic = () => {
-  const [l, loadData] = React.useReducer(() => ({}), {});
   const history = useHistory();
+  const { id } = useParams();
+
   // ----------------------------------------------------------
 
-  const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
   const currentRole = useRecoilValue(role);
   const currentUser = useRecoilValue(userAtom);
@@ -54,9 +59,10 @@ const Topic = () => {
         setCurrentTopic(transformers.downRead(res.data.data));
       })
       .catch(err => {
+        history.goBack();
         handleErrors(err);
       });
-  }, [id]);
+  }, [history, id]);
 
   // ----------------------------------------------------------
 
@@ -94,81 +100,91 @@ const Topic = () => {
 
   const toolBar = React.useCallback(() => {
     let buttons = <></>;
-    switch (currentRole) {
-      case 'student':
-        buttons = (
-          <>
-            <button
-              type="button"
-              className="btn btn-primary btn-success font-weight-bold btn-sm "
-              onClick={() => {}}
-            >
-              <i className="fas fa-sign-in-alt mr-2"></i>
-              Apply for matching
-            </button>
-          </>
-        );
-        break;
+    if (currentTopic) {
+      switch (currentRole) {
+        case 'student':
+          buttons = (
+            <>
+              <button
+                type="button"
+                className="btn btn-primary btn-success font-weight-bold btn-sm "
+                onClick={() => {}}
+              >
+                <i className="fas fa-sign-in-alt mr-2"></i>
+                Apply for matching
+              </button>
+            </>
+          );
+          break;
 
-      case 'admin':
-        buttons = (
-          <>
-            <button
-              type="button"
-              className="btn btn-primary font-weight-bold btn-sm btn-light mr-2"
-              onClick={() => setShowSettingFlg(true)}
-            >
-              <i className="fas fa-cog mr-2"></i>
-              Settings
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary btn-success font-weight-bold btn-sm "
-              onClick={() => {}}
-            >
-              <i className="fas fa-sign-in-alt mr-2"></i>
-              Apply for matching
-            </button>
-          </>
-        );
-        break;
+        case 'admin':
+          buttons = (
+            <>
+              <button
+                type="button"
+                className="btn btn-primary font-weight-bold btn-sm btn-light mr-2"
+                onClick={() => setShowSettingFlg(true)}
+              >
+                <i className="fas fa-cog mr-2"></i>
+                Settings
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary btn-danger font-weight-bold btn-sm "
+                onClick={() => {}}
+              >
+                <i className="far fa-trash-alt mr-2"></i>
+                Dump
+              </button>
+            </>
+          );
+          break;
 
-      case 'lecturer':
-        buttons = (
-          <>
-            <button
-              type="button"
-              className="btn btn-primary font-weight-bold btn-sm btn-light mr-2"
-              onClick={() => setShowSettingFlg(true)}
-            >
-              <i className="fas fa-cog mr-2"></i>
-              Settings
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary btn-success font-weight-bold btn-sm mr-2"
-              onClick={() => {}}
-            >
-              <i className="fas fa-sign-in-alt mr-2"></i>
-              Apply for mentoring
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary btn-danger font-weight-bold btn-sm "
-              onClick={() => {}}
-            >
-              <i className="far fa-trash-alt mr-2"></i>
-              Dump
-            </button>
-          </>
-        );
-        break;
+        case 'lecturer':
+          buttons = (
+            <>
+              {statusTitles[currentTopic.status] === 'Pending' &&
+                currentTopic.submitter.value === currentUser.id && (
+                  <button
+                    type="button"
+                    className="btn btn-primary font-weight-bold btn-sm btn-light mr-2"
+                    onClick={() => setShowSettingFlg(true)}
+                  >
+                    <i className="fas fa-cog mr-2"></i>
+                    Settings
+                  </button>
+                )}
+              {statusTitles[currentTopic.status] === 'Pending' && (
+                <button
+                  type="button"
+                  className="btn btn-primary btn-success font-weight-bold btn-sm mr-2"
+                  onClick={() => {}}
+                >
+                  <i className="fas fa-sign-in-alt mr-2"></i>
+                  Apply for mentoring
+                </button>
+              )}
+              {statusTitles[currentTopic.status] === 'Pending' &&
+                currentTopic.submitter.value === currentUser.id && (
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-danger font-weight-bold btn-sm "
+                    onClick={() => {}}
+                  >
+                    <i className="far fa-trash-alt mr-2"></i>
+                    Dump
+                  </button>
+                )}
+            </>
+          );
+          break;
 
-      default:
-        break;
+        default:
+          break;
+      }
     }
     return buttons;
-  }, [currentRole]);
+  }, [currentRole, currentTopic, currentUser, statusTitles]);
 
   const mentorCardToolbar = React.useCallback(() => {
     if (currentTopic?.mentorMembers?.length) {
@@ -271,12 +287,12 @@ const Topic = () => {
       <div className="row">
         <div className="col-lg-12 col-xxl-9">
           <TopicDetailCard
-            topicCode={currentTopic.code}
-            topicName={currentTopic.name}
-            fullDesc={currentTopic.description}
-            department={currentTopic.department}
+            topicCode={currentTopic.code || ''}
+            topicName={currentTopic.name || ''}
+            fullDesc={currentTopic.description || ''}
+            department={currentTopic.department || ''}
             status={currentTopic.status}
-            maxMember={currentTopic.maxMembers}
+            maxMember={currentTopic.maxMembers || ''}
             studentMembers={currentTopic.team?.members}
             mentorMembers={currentTopic.mentorMembers}
             applications={currentTopic.applications}
@@ -291,18 +307,20 @@ const Topic = () => {
               title="Applying teams"
               subTitle="Consider approve team to topic"
               rows={currentTopic.applications}
+              rowActions={rowActionFormatter()}
               fallbackMsg="Awaiting for application..."
             />
           )}
 
-          {statusTitles[currentTopic.status] === 'Matched' &&
-            currentTopic.team?.value && (
-              <GroupCard
-                className="gutter-b"
-                title="Assigned team"
-                role="student"
-                group={currentTopic.team?.members}
-                toolBar={
+          {statusTitles[currentTopic.status] === 'Matched' && (
+            <GroupCard
+              className="gutter-b"
+              title="Assigned team"
+              role="student"
+              group={currentTopic.team?.members}
+              fallbackMsg={'Awaiting for team...'}
+              toolBar={
+                !!currentTopic.team?.members.length && (
                   <button
                     onClick={handleMoreStudentTeamClick(
                       currentTopic.team?.value
@@ -311,13 +329,16 @@ const Topic = () => {
                   >
                     More
                   </button>
-                }
-              />
-            )}
+                )
+              }
+            />
+          )}
 
           <GroupCard
             title="Mentors"
+            subTitle="Mentor of this topic"
             role="lecturer"
+            fallbackMsg={'Become a leader mentor for this topic now!'}
             group={currentTopic.mentorMembers}
             toolBar={mentorCardToolbar()}
             booleanFlg={editWeightFlg}
