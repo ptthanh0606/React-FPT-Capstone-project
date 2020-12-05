@@ -118,7 +118,7 @@ export const modalConfigs = [
   {
     name: 'submitter',
     type: 'selectBoxAsync',
-    label: 'Mentor',
+    label: 'Submitter',
     smallLabel: 'Owner of this topic',
     load: (input, callback) => {
       request({
