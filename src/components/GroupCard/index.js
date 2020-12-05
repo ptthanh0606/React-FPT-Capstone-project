@@ -2,14 +2,12 @@ import React from 'react';
 import GroupMember from './GroupMember';
 
 const GroupCard = ({
-  rowAction,
-  group,
+  group = [],
   role,
   className,
   title,
   toolBar = <></>,
   booleanFlg = false,
-  setWeights = () => {},
 }) => {
   return (
     <div className={`card card-custom ${className}`}>
@@ -19,7 +17,7 @@ const GroupCard = ({
       </div>
       <div className="card-body pt-2">
         <div className={'d-flex-column align-items-center' + className}>
-          {group &&
+          {group?.length ? (
             group.map(member => (
               <GroupMember
                 key={member.id}
@@ -29,9 +27,11 @@ const GroupCard = ({
                 subLabel={member.isLeader && 'Leader'}
                 booleanFlg={booleanFlg}
                 value={member.weight}
-                setWeights={setWeights}
               />
-            ))}
+            ))
+          ) : (
+            <>Awaiting for team...</>
+          )}
         </div>
       </div>
     </div>

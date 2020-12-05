@@ -14,8 +14,8 @@ const TopicDetailCard = ({
   department,
   status,
   maxMember,
-  mentorGroup = [],
-  studentTeam = [],
+  mentorMembers = [],
+  studentMembers = [],
   applications,
   feedbacks,
   onFeedbackSuccess,
@@ -128,14 +128,14 @@ const TopicDetailCard = ({
               </a>
             </OverlayTrigger>
             <div className="symbol-group symbol-hover">
-              {studentTeam?.length ? (
-                studentTeam.map(student => (
+              {studentMembers?.length ? (
+                studentMembers.map(student => (
                   <div
                     className="symbol symbol-30 symbol-circle"
                     data-toggle="tooltip"
                     style={{
                       backgroundImage: `url(https://www.gravatar.com/avatar/${md5(
-                        student.email ? student.email.toLowerCase() : 'c'
+                        student.email ? student.email.toLowerCase() : ''
                       )})`,
                     }}
                   ></div>
@@ -156,8 +156,8 @@ const TopicDetailCard = ({
               </a>
             </OverlayTrigger>
             <div className="symbol-group symbol-hover">
-              {mentorGroup?.length ? (
-                mentorGroup.map(mentor => (
+              {mentorMembers?.length ? (
+                mentorMembers.map(mentor => (
                   <div
                     className="symbol symbol-30 symbol-circle"
                     data-toggle="tooltip"

@@ -105,6 +105,7 @@ export function downRead(i) {
         i?.team?.id && i?.team?.name
           ? '[' + i?.team?.id + '] ' + i?.team?.name
           : console.log('team field not found'),
+      members: i?.team?.members || [],
     },
     applications: i?.topicApplications?.map(j => ({
       id: j.id,

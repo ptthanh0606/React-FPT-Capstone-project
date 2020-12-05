@@ -1,9 +1,14 @@
 import Row from 'components/CMSList/Row';
 import React from 'react';
 
-const CMSList = ({ className, title, subTitle, rows, toolBar }) => {
-  // -------------------------------------------------------------
-
+const CMSList = ({
+  className,
+  title,
+  subTitle,
+  rows,
+  toolBar,
+  fallbackMsg,
+}) => {
   // -------------------------------------------------------------
 
   return (
@@ -20,7 +25,7 @@ const CMSList = ({ className, title, subTitle, rows, toolBar }) => {
         <div className="card-toolbar">{toolBar}</div>
       </div>
       <div className="card-body pt-2">
-        {rows &&
+        {rows?.length ? (
           rows.map(row => (
             <Row
               key={row.label}
@@ -30,7 +35,10 @@ const CMSList = ({ className, title, subTitle, rows, toolBar }) => {
               action={row.action}
               onLabelClick={row.onLabelClick}
             />
-          ))}
+          ))
+        ) : (
+          <>{fallbackMsg}</>
+        )}
       </div>
     </div>
   );
