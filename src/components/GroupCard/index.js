@@ -1,8 +1,16 @@
 import React from 'react';
-import GroupInfo from './GroupInfo';
 import GroupMember from './GroupMember';
 
-const GroupCard = ({ group, className, title, toolBar = <></> }) => {
+const GroupCard = ({
+  rowAction,
+  group,
+  role,
+  className,
+  title,
+  toolBar = <></>,
+  booleanFlg = false,
+  setWeights = () => {},
+}) => {
   return (
     <div className={`card card-custom ${className}`}>
       <div className="card-header align-items-center border-0 mt-4">
@@ -11,19 +19,17 @@ const GroupCard = ({ group, className, title, toolBar = <></> }) => {
       </div>
       <div className="card-body pt-2">
         <div className={'d-flex-column align-items-center' + className}>
-          <GroupInfo
-            name={group.name}
-            department={group.department}
-            leader={group.leader}
-          />
-          {group.members &&
-            group.members.map(member => (
+          {group &&
+            group.map(member => (
               <GroupMember
                 key={member.id}
                 id={member.id}
-                role={member.role}
+                role={role}
                 label={member.name}
-                subLabel={member.code}
+                subLabel={member.isLeader && 'Leader'}
+                booleanFlg={booleanFlg}
+                value={member.weight}
+                setWeights={setWeights}
               />
             ))}
         </div>

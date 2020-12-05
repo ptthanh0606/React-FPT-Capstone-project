@@ -7,8 +7,20 @@ import { mDown as mDownDep } from 'modules/department/transformers';
 import { mDown as mDownTeam } from 'modules/semester/team/transformers';
 import { mDown as mDownLec } from 'modules/lecturer/transformers';
 
-const statusClasses = ['warning', 'danger', 'success', 'primary', 'info'];
-const statusTitles = ['Pending', 'Rejected', 'Approved', 'Ready', 'Matched'];
+export const statusClasses = [
+  'warning',
+  'danger',
+  'success',
+  'primary',
+  'info',
+];
+export const statusTitles = [
+  'Pending',
+  'Rejected',
+  'Approved',
+  'Ready',
+  'Matched',
+];
 export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 export const sizePerPageList = [
   { text: '10', value: 10 },
