@@ -149,6 +149,7 @@ const Information = ({ loadData = function () {} }) => {
                 type="datetime-local"
                 onChange={e => setMatchingDate(e.currentTarget.value)}
                 value={matchingDate}
+                step={3600}
               />
             </Col>
           </Form.Group>

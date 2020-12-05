@@ -131,6 +131,7 @@ const FormGroups = ({
           </Form.Label>
           <Col sm={9}>
             <Form.Control
+              {...config}
               type="datetime-local"
               className="form-control form-control-md form-control-solid"
               value={value}
