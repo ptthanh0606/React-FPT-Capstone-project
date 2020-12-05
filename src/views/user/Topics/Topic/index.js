@@ -1,6 +1,6 @@
 import React from 'react';
 import TopicDetailCard from 'components/CMSWidgets/TopicDetailCard';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import metaAtom from 'store/meta';
 import { role } from 'auth/recoil/selectors';
@@ -9,11 +9,28 @@ import CMSList from 'components/CMSList';
 import GroupCard from 'components/GroupCard';
 import toast from 'utils/toast';
 import { rowActionFormatter, SETTING_MODAL_CONFIG } from './constants';
+import * as endpoints from 'endpoints';
+import * as transformers from '../../../../modules/semester/topic/transformers';
+import * as constants from '../../../../modules/semester/topic/constants';
+
+import request from 'utils/request';
+import { handleErrors } from 'utils/common';
 
 const Topic = () => {
+  const history = useHistory();
+
+  // ----------------------------------------------------------
+
   const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
   const currentRole = useRecoilValue(role);
+
+  // ----------------------------------------------------------
+
+  const [currentTopic, setCurrentTopic] = React.useState({});
+
+  // ----------------------------------------------------------
+
   const [showSettingFlg, setShowSettingFlg] = React.useState(false);
   const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
   const [modalConfigs, setModalConfigs] = React.useState([]);
@@ -31,6 +48,18 @@ const Topic = () => {
   const handleRejectTeam = React.useCallback(id => {
     toast.success('Rejected selected team');
   }, []);
+
+  const handleMoreStudentTeamClick = React.useCallback(e => {
+    e.preventDefault();
+    // history.push(`/team/${teamId}`);
+  }, []);
+
+  const handleShowEditWeight = React.useCallback(e => {
+    e.preventDefault();
+    // history.push(`/team/${groupId}`);
+  }, []);
+
+  // ----------------------------------------------------------
 
   const toolBar = React.useCallback(() => {
     let buttons = <></>;
@@ -130,6 +159,21 @@ const Topic = () => {
       toolbar: toolBar(),
     }));
   });
+
+  React.useEffect(() => {
+    // fetch Topic
+    request({
+      to: endpoints.READ_TOPIC(id).url,
+      method: endpoints.READ_TOPIC(id).method,
+    })
+      .then(res => {
+        console.log(transformers.down(res.data.data));
+        setCurrentTopic(transformers.down(res.data.data));
+      })
+      .catch(err => {
+        handleErrors(err);
+      });
+  }, [id]);
 
   React.useEffect(() => {
     setModalConfigs(SETTING_MODAL_CONFIG);
@@ -235,6 +279,24 @@ const Topic = () => {
         },
       ],
     });
+    const mentorGroupresponse = {
+      id: 0,
+      name: 'string',
+      department: {
+        id: 0,
+        code: 'string',
+        name: 'string',
+      },
+      members: [
+        {
+          id: 0,
+          code: 'string',
+          name: 'string',
+          weight: 0,
+          isLeader: true,
+        },
+      ],
+    };
     setMentors({
       id: '',
       name: 'Mentor team 1',
@@ -341,8 +403,35 @@ const Topic = () => {
             className="gutter-b"
             title="Assigned team"
             group={studentTeam}
+            toolBar={
+              <a
+                href="/"
+                onClick={handleMoreStudentTeamClick}
+                className="btn btn-sm btn-light-primary font-weight-bolder"
+              >
+                More
+              </a>
+            }
           />
-          <GroupCard title="Mentors" group={mentors} />
+          <GroupCard
+            title="Mentors"
+            group={mentors}
+            toolBar={
+              currentRole === 'admin' ? (
+                <>
+                  <a
+                    href="/"
+                    onClick={handleShowEditWeight}
+                    className="btn btn-sm btn-light-primary font-weight-bolder"
+                  >
+                    Change weight
+                  </a>
+                </>
+              ) : (
+                <></>
+              )
+            }
+          />
         </div>
         <CMSModal
           isShowFlg={showSettingFlg}
