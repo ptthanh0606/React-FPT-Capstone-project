@@ -15,7 +15,7 @@ const PersonalInfomation = ({ id, email, bio }) => {
     <>
       <div className="card card-custom card-stretch">
         <div className="card-header py-3">
-          <div className="card-title align-items-start flex-column">
+          <div className="card-title justify-content-center flex-column">
             <h3 className="card-label font-weight-bolder text-dark">
               Personal Information
             </h3>
