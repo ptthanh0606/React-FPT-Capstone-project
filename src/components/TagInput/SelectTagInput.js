@@ -10,7 +10,7 @@ const colourStyles = {
   }),
   control: (styles, { isFocused }) => ({
     ...styles,
-    backgroundColor: '#edf2f7',
+    backgroundColor: !isFocused ? '#f3f6f9' : '#ebedf3',
     border: 'none',
     boxShadow: isFocused ? '0 0 0 2px #69b3ff' : 'none',
   }),
@@ -20,11 +20,11 @@ const colourStyles = {
       backgroundColor: isDisabled
         ? null
         : isSelected
-        ? '#69b3ff'
+        ? '#3699ff'
         : isFocused
-        ? '#edf2f7'
+        ? '#f3f6f9'
         : null,
-      color: isDisabled ? '#757575' : '#00003b',
+      color: isDisabled ? '#757575' : isSelected ? '#fff' : '#00003b',
       cursor: isDisabled ? 'not-allowed' : 'default',
       ':active': {
         ...styles[':active'],
@@ -35,22 +35,23 @@ const colourStyles = {
   multiValue: styles => {
     return {
       ...styles,
-      backgroundColor: 'rgba(0, 184, 217, 0.1)',
+      backgroundColor: '#3699ff',
       marginRight: 3,
       borderRadius: 3,
     };
   },
   multiValueLabel: styles => ({
     ...styles,
-    color: 'rgb(0, 184, 217)',
+    color: '#fff',
     padding: '5px 6px 5px 6px',
   }),
   multiValueRemove: styles => ({
     ...styles,
-    color: 'rgb(0, 184, 217)',
+    color: '#fff',
+    backgroundColor: '#3699ff',
     ':hover': {
-      backgroundColor: '#69b3ff',
-      color: '#00003b',
+      backgroundColor: '#fff',
+      color: '#3699ff',
     },
   }),
 };

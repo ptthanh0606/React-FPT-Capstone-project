@@ -28,7 +28,7 @@ const TextInputSecondary = ({
       <div className={withIcon && 'input-icon'}>
         <input
           type="text"
-          className="form-control form-control-solid"
+          className="form-control form-control-md form-control-solid"
           name={name}
           placeholder={placeholder}
           onBlur={handleBlur}

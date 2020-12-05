@@ -156,7 +156,7 @@ function Login({ state = {} }) {
             value={selectedRole}
             style={{
               display: 'inline-block',
-              width: 'auto',
+              width: '110px',
               verticalAlign: 'text-bottom',
             }}
           />

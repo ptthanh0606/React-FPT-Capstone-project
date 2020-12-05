@@ -3,7 +3,7 @@ import React from 'react';
 const SelectBox = ({ placeholder, options, onChange, value, ...rest }) => {
   return (
     <select
-      className="form-control form-control-solid"
+      className="form-control form-control-md form-control-solid"
       name="status"
       placeholder={placeholder}
       onChange={e => {

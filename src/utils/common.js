@@ -5,17 +5,17 @@ import { sortCaret, headerSortingClasses } from '_metronic/_helpers';
 
 export function handleErrors(err) {
   if (!err.isCancel)
-    if (err?.response?.data?.messages[0]) {
+    if (err?.response?.data?.messages) {
       toast.error(err.response.data?.messages[0]);
     } else if (err?.response?.data?.errors) {
       for (const i of Object.entries(err.response.data.errors)) {
         for (const j of i[1]) toast.error(j);
       }
     } else {
-      if (err?.response?.code === 401) {
-        toast.error('Unauthorized!');
-      } else if (err?.response?.code === 403) {
-        toast.error('Access denied!');
+      if (err?.response?.status === 401) {
+        toast.error('Unauthorized');
+      } else if (err?.response?.status === 403) {
+        toast.error('Access denied');
       } else {
         toast.error('Internal Server Error');
         console.log(err);
