@@ -1,29 +1,29 @@
 import React from 'react';
 import TopicDetailCard from 'components/CMSWidgets/TopicDetailCard';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import metaAtom from 'store/meta';
+import userAtom from 'store/user';
 import { role } from 'auth/recoil/selectors';
 import CMSModal from 'components/CMSModal/CMSModal';
 import CMSList from 'components/CMSList';
 import GroupCard from 'components/GroupCard';
 import toast from 'utils/toast';
-import { rowActionFormatter, SETTING_MODAL_CONFIG } from './constants';
+import { SETTING_MODAL_CONFIG } from './constants';
 import * as endpoints from 'endpoints';
 import * as transformers from '../../../../modules/semester/topic/transformers';
 import * as constants from '../../../../modules/semester/topic/constants';
-
 import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 
 const Topic = () => {
-  const history = useHistory();
-
+  const [l, loadData] = React.useReducer(() => ({}), {});
   // ----------------------------------------------------------
 
   const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
   const currentRole = useRecoilValue(role);
+  const currentUser = useRecoilValue(userAtom);
 
   // ----------------------------------------------------------
 
@@ -32,12 +32,30 @@ const Topic = () => {
   // ----------------------------------------------------------
 
   const [showSettingFlg, setShowSettingFlg] = React.useState(false);
+  const [editWeightFlg, setEditWeightFlg] = React.useState(false);
   const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
   const [modalConfigs, setModalConfigs] = React.useState([]);
-  const [studentTeam, setStudentTeam] = React.useState({});
-  const [mentors, setMentors] = React.useState({});
-  const [applications, setApplications] = React.useState([]);
-  const [feedbacks, setFeedbacks] = React.useState([]);
+
+  // ----------------------------------------------------------
+
+  const statusTitles = React.useMemo(() => constants.statusTitles, []);
+
+  // ----------------------------------------------------------
+
+  const fetchTopic = React.useCallback(() => {
+    // fetch Topic
+    request({
+      to: endpoints.READ_TOPIC(id).url,
+      method: endpoints.READ_TOPIC(id).method,
+    })
+      .then(res => {
+        console.log(transformers.downRead(res.data.data));
+        setCurrentTopic(transformers.downRead(res.data.data));
+      })
+      .catch(err => {
+        handleErrors(err);
+      });
+  }, [id]);
 
   // ----------------------------------------------------------
 
@@ -56,8 +74,16 @@ const Topic = () => {
 
   const handleShowEditWeight = React.useCallback(e => {
     e.preventDefault();
-    // history.push(`/team/${groupId}`);
+    setEditWeightFlg(editWeightFlg => !editWeightFlg);
   }, []);
+
+  const onFeedbackSuccess = React.useCallback(
+    e => {
+      toast.success('');
+      fetchTopic();
+    },
+    [fetchTopic]
+  );
 
   // ----------------------------------------------------------
 
@@ -139,6 +165,28 @@ const Topic = () => {
     return buttons;
   }, [currentRole]);
 
+  const mentorCardToolbar = React.useCallback(() => {
+    if (currentTopic?.mentorMembers?.length) {
+      return currentTopic.mentorMembers.filter(mentor => mentor.id === 3) ? (
+        <>
+          <a
+            href="/"
+            onClick={handleShowEditWeight}
+            className={`btn btn-sm btn-${
+              editWeightFlg ? 'success' : 'light-primary'
+            } font-weight-bolder`}
+          >
+            {editWeightFlg ? 'Save' : 'Edit weight'}
+          </a>
+        </>
+      ) : (
+        <></>
+      );
+    }
+
+    return <></>;
+  }, [currentTopic.mentorMembers, editWeightFlg, handleShowEditWeight]);
+
   const handleOnUpdateTopic = React.useCallback(() => {}, []);
 
   // ----------------------------------------------------------
@@ -161,19 +209,8 @@ const Topic = () => {
   });
 
   React.useEffect(() => {
-    // fetch Topic
-    request({
-      to: endpoints.READ_TOPIC(id).url,
-      method: endpoints.READ_TOPIC(id).method,
-    })
-      .then(res => {
-        console.log(transformers.down(res.data.data));
-        setCurrentTopic(transformers.down(res.data.data));
-      })
-      .catch(err => {
-        handleErrors(err);
-      });
-  }, [id]);
+    fetchTopic();
+  }, [fetchTopic]);
 
   React.useEffect(() => {
     setModalConfigs(SETTING_MODAL_CONFIG);
@@ -224,185 +261,38 @@ const Topic = () => {
     });
   }, [modalConfigs]);
 
-  React.useEffect(() => {
-    setApplications([
-      {
-        label: 'Team name example 1',
-        subLabel: (
-          <>
-            Lead by{' '}
-            <span className="text-muted font-weight-bolder">Huynh Duc Duy</span>
-          </>
-        ),
-        action: rowActionFormatter(handleApproveTeam, handleRejectTeam),
-      },
-      {
-        label: 'Team name example 2',
-        subLabel: 'Huynh Duc Duy',
-        action: rowActionFormatter(handleApproveTeam, handleRejectTeam),
-      },
-      {
-        label: 'Team name example 3',
-        subLabel: 'Huynh Duc Duy',
-        action: rowActionFormatter(handleApproveTeam, handleRejectTeam),
-      },
-    ]);
-    setStudentTeam({
-      id: '',
-      name: 'SKT T1',
-      department: 'Software Engineer',
-      leader: 'Huynh Duc Duy',
-      members: [
-        {
-          id: '1',
-          role: '1',
-          name: 'Huynh Duc Duy',
-          code: 'SE130491',
-        },
-        {
-          id: '2',
-          role: '1',
-          name: 'Phan Thong Thanh',
-          code: 'SE130491',
-        },
-        {
-          id: '3',
-          role: '1',
-          name: 'Tran Tuan Anh',
-          code: 'SE130491',
-        },
-        {
-          id: '4',
-          role: '1',
-          name: 'Tran Thai Trung',
-          code: 'SE130491',
-        },
-      ],
-    });
-    const mentorGroupresponse = {
-      id: 0,
-      name: 'string',
-      department: {
-        id: 0,
-        code: 'string',
-        name: 'string',
-      },
-      members: [
-        {
-          id: 0,
-          code: 'string',
-          name: 'string',
-          weight: 0,
-          isLeader: true,
-        },
-      ],
-    };
-    setMentors({
-      id: '',
-      name: 'Mentor team 1',
-      department: 'Software Engineer',
-      leader: 'Tran Tuan Anh',
-      members: [
-        {
-          id: '1',
-          role: '2',
-          name: 'Tran Tuan Anh',
-          code: '',
-        },
-        {
-          id: '2',
-          role: '2',
-          name: 'Lam Huu Khanh Phuong',
-          code: '',
-        },
-      ],
-    });
-  }, [handleApproveTeam, handleRejectTeam]);
-
-  React.useEffect(() => {
-    setFeedbacks([
-      {
-        name: 'Phan Thong Thanh',
-        email: 'phanthongthanh0606@gmail.com',
-        date: '8 June 2020',
-        content: `<p><strong>huhuhuh</strong></p>
-        <p><code>asdasdasdasdasdasdasdasd</code></p>
-        <ul>
-        <li>asdasdasdas</li>
-        <li>asdasdasdas</li>
-        </ul>
-        <h1>czxczxczxczxc</h1>
-        <table>
-        <thead>
-        <tr>
-        <th>Head</th>
-        <th>Head</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-        <td>Data</td>
-        <td>Data</td>
-        </tr>
-        <tr>
-        <td>Data</td>
-        <td>Data</td>
-        </tr>
-        </tbody>
-        </table>
-        `,
-      },
-      {
-        name: 'Huynh Duc Duy',
-        email: 'duuuuuuuuy@gmail.com',
-        date: '9 June 2020',
-        content: 'Ong tren kia comment gi vay',
-      },
-    ]);
-  }, []);
-
   return (
     <>
       <div className="row">
         <div className="col-lg-12 col-xxl-9">
           <TopicDetailCard
-            topicCode="FA20SE13"
-            topicName="Capstone Management System"
-            fromCompany="FPT University"
-            fullDesc={(() => (
-              <>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. <br />
-                Excepteur sint occaecat cupidatat non proident, sunt in culpa
-                qui officia deserunt mollit anim id est laborum.
-                <br />
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
-              </>
-            ))()}
-            feedbacks={feedbacks}
+            topicCode={currentTopic.code}
+            topicName={currentTopic.name}
+            fullDesc={currentTopic.description}
+            department={currentTopic.department}
+            status={currentTopic.status}
+            maxMember={currentTopic.maxMembers}
+            studentTeam={currentTopic.team}
+            mentorGroup={currentTopic.mentorMembers}
+            applications={currentTopic.applications}
+            feedbacks={currentTopic.feedbacks}
+            onFeedbackSuccess={onFeedbackSuccess}
           />
         </div>
         <div className="col-lg-6 col-xxl-3">
-          <CMSList
-            className="gutter-b"
-            title="Applying teams"
-            subTitle="Consider approve team to topic"
-            rows={applications}
-          />
-          <GroupCard
+          {statusTitles[currentTopic.status] === 'Approved' && (
+            <CMSList
+              className="gutter-b"
+              title="Applying teams"
+              subTitle="Consider approve team to topic"
+              rows={currentTopic.applications}
+            />
+          )}
+
+          {/* <GroupCard
             className="gutter-b"
             title="Assigned team"
-            group={studentTeam}
+            group={currentTopic.team}
             toolBar={
               <a
                 href="/"
@@ -412,25 +302,14 @@ const Topic = () => {
                 More
               </a>
             }
-          />
+          /> */}
+
           <GroupCard
             title="Mentors"
-            group={mentors}
-            toolBar={
-              currentRole === 'admin' ? (
-                <>
-                  <a
-                    href="/"
-                    onClick={handleShowEditWeight}
-                    className="btn btn-sm btn-light-primary font-weight-bolder"
-                  >
-                    Change weight
-                  </a>
-                </>
-              ) : (
-                <></>
-              )
-            }
+            group={currentTopic.mentorMembers}
+            toolBar={mentorCardToolbar()}
+            role="lecturer"
+            booleanFlg={editWeightFlg}
           />
         </div>
         <CMSModal

@@ -4,6 +4,12 @@ import MarkdownIt from 'markdown-it';
 import 'react-markdown-editor-lite/lib/index.css';
 import Comment from './Comment';
 import Button from 'components/Button';
+import MessageTile from '../MessageTile';
+import { toAbsoluteUrl } from '_metronic/_helpers';
+import request from 'utils/request';
+import * as endpoints from 'endpoints';
+import { handleErrors } from 'utils/common';
+import { useParams } from 'react-router-dom';
 
 const mdParser = new MarkdownIt();
 
@@ -11,12 +17,16 @@ const FeedbackSection = ({
   className,
   feedbacks = [
     {
-      name: 'Phan Thong Thanh',
-      date: 'Todayy',
-      content: 'Hiii',
+      approver: { id: 3, code: 'TrungTTLecturer', name: 'Tran Thai Trung' },
+      content: 'THIS IS CONTENT',
+      date: '2020-12-03T16:48:49.272724',
+      id: 6,
     },
   ],
+  onSuccess,
 }) => {
+  const [l, loadData] = React.useReducer(() => ({}), {});
+  const { id } = useParams();
   const [commentValue, setCommentValue] = React.useState('');
   const [commentHtml, setCommentHtml] = React.useState('');
   const [isSubmitLoading, setIsSubmitLoading] = React.useState(false);
@@ -28,13 +38,20 @@ const FeedbackSection = ({
 
   const handleSubmitFeedback = React.useCallback(() => {
     setIsSubmitLoading(true);
-    setTimeout(() => {
-      console.log({ submiterID: '', comment: commentHtml });
-      setIsSubmitLoading(false);
-    }, 1000);
-  }, [commentHtml]);
-
-  React.useEffect(() => {}, []);
+    request({
+      to: endpoints.FEEDBACK_TOPIC(id).url,
+      method: endpoints.FEEDBACK_TOPIC(id).method,
+      data: '"' + commentHtml + '"',
+    })
+      .then(res => {
+        onSuccess();
+        setIsSubmitLoading(false);
+      })
+      .catch(err => {
+        handleErrors(err);
+        setIsSubmitLoading(false);
+      });
+  }, [commentHtml, id, onSuccess]);
 
   return (
     <>
@@ -77,17 +94,30 @@ const FeedbackSection = ({
         <div className="separator separator-dashed my-10"></div>
 
         <div className="timeline timeline-3">
+          <div className="my-5">
+            <span className="text-dark font-size-h5 font-weight-bold">
+              What other people think
+            </span>
+          </div>
           <div className="timeline-items">
-            {feedbacks.length &&
+            {feedbacks?.length ? (
               feedbacks.map(fb => (
                 <Comment
                   key={feedbacks.indexOf(fb)}
-                  email={fb.email}
-                  name={fb.name}
+                  email={'phanthongthanh0606@gmail.com'}
+                  name={fb.approver.name}
                   date={fb.date}
                   content={fb.content}
                 />
-              ))}
+              ))
+            ) : (
+              <MessageTile
+                iconSrc={toAbsoluteUrl(
+                  '/media/svg/icons/Communication/Chat-smile.svg'
+                )}
+                content={'Be the first one to feedback for this topic'}
+              />
+            )}
           </div>
         </div>
       </div>

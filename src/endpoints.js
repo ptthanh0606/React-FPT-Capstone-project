@@ -300,3 +300,8 @@ export const DELETE_TOPIC = id => ({
   url: READ_TOPIC(id).url,
   method: METHOD.DELETE,
 });
+
+export const FEEDBACK_TOPIC = id => ({
+  url: READ_TOPIC(id).url + '/feedback',
+  method: METHOD.POST,
+});
