@@ -135,7 +135,6 @@ export function up(i) {
   });
 
   return {
-    // semesterId
     name: i?.name,
     code: i?.code,
     abstract: i?.abstract,
@@ -143,23 +142,15 @@ export function up(i) {
     note: i?.note,
     maxMembers: Number(i?.maxMembers),
     minMembers: Number(i?.minMembers),
-    department: {
-      id: Number(i?.department?.value),
-    },
+    departmentId: Number(i?.department?.value),
     submitByStudent: !!i?.submitByStudent,
-    team: i?.team?.value && {
-      id: Number(i?.team?.value),
-    },
-    mentorGroup: {
-      members: newLecturers?.map(j => ({
-        id: Number(j.value),
-        weight: Number(j.weight),
-      })),
-    },
+    teamId: Number(i?.team?.value),
+    mentorMembers: newLecturers?.map(j => ({
+      id: Number(j.value),
+      weight: Number(j.weight),
+    })),
     keywords: i?.keywords,
     attachment: i?.attachment,
-    submitter: i?.submitter?.value && {
-      id: Number(i?.submitter?.value),
-    },
+    submitterId: Number(i?.submitter?.value),
   };
 }
