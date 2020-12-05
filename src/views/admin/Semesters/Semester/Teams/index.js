@@ -28,6 +28,7 @@ export default function Teams({ semester }) {
   const setMeta = useSetRecoilState(metaAtom);
   const { id: semId } = useParams();
   const [modalConfigs, setModalConfigs] = React.useState([]);
+  const [modalConfigsEdit, setModalConfigsEdit] = React.useState([]);
 
   const [l, loadData] = React.useReducer(() => ({}), {});
 

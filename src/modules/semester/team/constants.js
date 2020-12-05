@@ -284,7 +284,8 @@ export const createModalConfigs = semId => [
     name: 'department',
     type: 'selectBoxAsync',
     label: 'Department',
-    smallLabel: 'This team belong to which department',
+    smallLabel: 'This team belong to which department, cannot update',
+    readOnlyWhenEdit: true,
     load: (input, callback) => {
       request({
         to: endpoints.LIST_DEPARTMENT.url,

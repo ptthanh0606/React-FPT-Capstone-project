@@ -130,7 +130,7 @@ export default function Topics({ semester }) {
     })
       .then(res => {
         setEditId(id);
-        setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
+        setUpdateFieldTemplate(transformers.downRead(res.data?.data) || {});
         setShowUpdate(true);
       })
       .catch(handleErrors);
@@ -199,7 +199,7 @@ export default function Topics({ semester }) {
       source,
     })
       .then(res => {
-        setData(res.data?.data?.map(transformers.down));
+        setData(res.data?.data?.map(transformers.downList));
         setTotal(res.data?.totalRecords);
         setPage(res.data?.pageNumber);
         setPageSize(res.data?.pageSize);

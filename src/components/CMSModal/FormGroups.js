@@ -27,6 +27,7 @@ const FormGroups = ({
           </Form.Label>
           <Col sm={9}>
             <Form.Control
+              {...config}
               type="text"
               className="form-control form-control-md form-control-solid"
               placeholder={config.placeholder}
@@ -47,6 +48,7 @@ const FormGroups = ({
           </Form.Label>
           <Col sm={9}>
             <Form.Control
+              {...config}
               as="textarea"
               className="form-control form-control-md form-control-solid"
               rows="4"
@@ -69,6 +71,7 @@ const FormGroups = ({
           </Form.Label>
           <Col sm={9}>
             <Form.Control
+              {...config}
               type="email"
               className="form-control form-control-md form-control-solid"
               placeholder={config.placeholder}
@@ -89,6 +92,7 @@ const FormGroups = ({
           </Form.Label>
           <Col sm={9}>
             <Form.Control
+              {...config}
               type="number"
               className="form-control form-control-md form-control-solid"
               placeholder={config.placeholder}
@@ -109,6 +113,7 @@ const FormGroups = ({
           </Form.Label>
           <Col sm={9}>
             <Form.Control
+              {...config}
               type="date"
               className="form-control form-control-md form-control-solid"
               value={value}
@@ -143,6 +148,7 @@ const FormGroups = ({
           </Form.Label>
           <Col sm={9}>
             <SelectBox
+              {...config}
               onChange={event => handleChangeFields(event, config.name)}
               options={config.options}
               value={value}
@@ -159,6 +165,7 @@ const FormGroups = ({
           </Form.Label>
           <Col sm={9}>
             <ToggleSwitch
+              {...config}
               onChange={event =>
                 handleChangeFields(event.currentTarget.checked, config.name)
               }
@@ -176,6 +183,7 @@ const FormGroups = ({
           </Form.Label>
           <Col sm={9}>
             <Form.File
+              {...config}
               onChange={event =>
                 handleChangeFields(event.currentTarget.files, config.name)
               }
@@ -192,6 +200,7 @@ const FormGroups = ({
           </Form.Label>
           <Col sm={9}>
             <SelectTagInput
+              {...config}
               onChange={value => handleChangeFields(value, config.name)}
               isMulti={config.isMulti}
               load={config.load}
@@ -209,6 +218,7 @@ const FormGroups = ({
           </Form.Label>
           <Col sm={9}>
             <CreateableTagInput
+              {...config}
               onChange={value => handleChangeFields(value, config.name)}
               load={config.load}
               value={value}

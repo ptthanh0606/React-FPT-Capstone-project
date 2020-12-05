@@ -1,6 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
+import request from 'utils/request';
+import * as endpoints from 'endpoints';
+import { mDown as mDownDep } from 'modules/department/transformers';
+import { mDown as mDownTeam } from 'modules/semester/team/transformers';
+import { mDown as mDownLec } from 'modules/lecturer/transformers';
 
 const statusClasses = ['warning', 'danger', 'success', 'primary', 'info'];
 const statusTitles = ['Pending', 'Rejected', 'Approved', 'Ready', 'Matched'];
@@ -57,24 +62,24 @@ export const modalConfigs = [
   },
   {
     name: 'department',
-    type: 'selectBox',
-    label: 'From department',
-    smallLabel: 'Topic in which department',
-    placeholder: 'Select a department',
-    options: [
-      {
-        label: 'SE',
-        value: 'se',
-      },
-      {
-        label: 'GD',
-        value: 'gd',
-      },
-      {
-        label: 'CC',
-        value: 'cc',
-      },
-    ],
+    type: 'selectBoxAsync',
+    label: 'Department',
+    smallLabel: 'This team belong to which department, cannot update',
+    readOnlyWhenEdit: true,
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_DEPARTMENT.url,
+        method: endpoints.LIST_DEPARTMENT.method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownDep) || []);
+        })
+        .catch(() => callback([]));
+    },
   },
   {
     name: 'isByStudent',
@@ -84,60 +89,43 @@ export const modalConfigs = [
     isChecked: false,
   },
   {
-    name: 'studentTeam',
+    name: 'team',
     type: 'selectBoxAsync',
     label: 'Student team',
     smallLabel: 'Student team taking this topic',
-    load: (studentInput, callback) => {
-      setTimeout(() => {
-        callback([
-          {
-            label: 'Phan Thong Thanh',
-            value: 'Phan Thong Thanh',
-          },
-          {
-            label: 'Tran Thai Trung',
-            value: 'Tran Thai Trung',
-          },
-          {
-            label: 'Nguyen Hoang Dung',
-            value: 'Nguyen Hoang Dung',
-          },
-          {
-            label: 'Le Huu Mon',
-            value: 'Le Huu Mon',
-          },
-        ]);
-      }, 2000);
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_TEAM.url,
+        method: endpoints.LIST_TEAM.method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownTeam) || []);
+        })
+        .catch(() => callback([]));
     },
-    isMulti: true,
   },
   {
-    name: 'mentorGroup',
+    name: 'mentorMembers',
     type: 'selectBoxAsync',
-    label: 'Mentor Group',
-    smallLabel: 'Mentor group for this topic',
-    load: (mentorInput, callback) => {
-      setTimeout(() => {
-        callback([
-          {
-            label: 'Huynh Duc Duy',
-            value: 'Huynh Duc Duy',
-          },
-          {
-            label: 'Tran Tuan Anh',
-            value: 'Tran Tuan Anh',
-          },
-          {
-            label: 'Dinh Ngoc Hai',
-            value: 'Dinh Ngoc Hai',
-          },
-          {
-            label: 'Ly Phuoc Hiep',
-            value: 'Ly Phuoc Hiep',
-          },
-        ]);
-      }, 2000);
+    label: 'Mentor',
+    smallLabel: 'Mentor for this topic',
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_LECTURER.url,
+        method: endpoints.LIST_LECTURER.method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownLec) || []);
+        })
+        .catch(() => callback([]));
     },
     isMulti: true,
   },
