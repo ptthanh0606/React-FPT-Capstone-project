@@ -163,6 +163,7 @@ const Information = ({ loadData = function () {} }) => {
                 type="datetime-local"
                 onChange={e => setInprogressDate(e.currentTarget.value)}
                 value={inprogressDate}
+                step={3600}
               />
             </Col>
           </Form.Group>
@@ -180,6 +181,7 @@ const Information = ({ loadData = function () {} }) => {
                 type="datetime-local"
                 onChange={e => setFinishedDate(e.currentTarget.value)}
                 value={finishedDate}
+                step={3600}
               />
             </Col>
           </Form.Group>
