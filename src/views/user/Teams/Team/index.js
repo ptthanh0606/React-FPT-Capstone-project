@@ -1,20 +1,59 @@
 import React from 'react';
+
+import * as transformers from '../../../../modules/semester/team/transformers';
+import * as constants from '../../../../modules/semester/team/constants';
+
 import { Row, Col } from 'react-bootstrap';
 
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import metaAtom from 'store/meta';
+import semesterAtom from 'store/semester';
 
 import Member from './Member';
 import Application from './Application';
 import TeamHeader from 'components/CMSWidgets/TeamHeader';
 import UtilityButtonTile from 'components/CMSWidgets/UtilityButtonTile';
 import { toAbsoluteUrl } from '_metronic/_helpers';
+import request from 'utils/request';
+
+import * as endpoints from 'endpoints';
+import { useHistory, useParams } from 'react-router-dom';
+import { handleErrors } from 'utils/common';
 
 const members = [{}, {}, {}, {}];
 const applications = [{}, {}, {}, {}];
 
 const Team = () => {
+  const [currentTeam, setCurrentTeam] = React.useState({});
+
+  // ------------------------------------------------------------------
+
+  const { id } = useParams();
+
+  // ------------------------------------------------------------------
+
   const setMeta = useSetRecoilState(metaAtom);
+  const currentSemester = useRecoilValue(semesterAtom);
+
+  // ------------------------------------------------------------------
+
+  const fetchTeam = React.useCallback(() => {
+    request({
+      to: endpoints.READ_TEAM(id).url,
+      method: endpoints.READ_TEAM(id).method,
+      params: {
+        teamId: id,
+        semesterId: currentSemester.id,
+      },
+    })
+      .then(res => {
+        console.log(transformers.down(res.data.data));
+        setCurrentTeam(transformers.down(res.data.data));
+      })
+      .catch(err => {
+        handleErrors(err);
+      });
+  }, [currentSemester.id, id]);
 
   // ------------------------------------------------------------------
 
@@ -61,11 +100,23 @@ const Team = () => {
 
   // ------------------------------------------------------------------
 
+  React.useEffect(() => {
+    fetchTeam();
+  }, [fetchTeam]);
+
+  // ------------------------------------------------------------------
+
   return (
     <>
       <div className="row">
         <div className="col-lg-12 col-xxl-12">
-          <TeamHeader teamType="Private" withTopic />
+          <TeamHeader
+            teamName={currentTeam?.name || ''}
+            department={currentTeam?.department?.fullLabel}
+            teamType={currentTeam?.privacy ? 'Public' : 'Private'}
+            teamStatus={currentTeam?.status ? 'Matched' : 'Matching'}
+            withTopic={currentTeam?.topic}
+          />
         </div>
       </div>
       <div className="row">
@@ -145,27 +196,40 @@ const Team = () => {
           </div>
         </div>
         <div className="col-lg-12 col-xxl-3">
-          <UtilityButtonTile
-            className="gutter-b"
-            smallTitle="Private code"
-            baseColor="info"
-            label="JUJAKSS"
-            tooltipMsg={
-              <>
-                You can give this code to another student for joining.
-                <br />
-                <br /> Click the refresh button to get new code.
-              </>
-            }
-            buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Update.svg')}
-          />
-          <UtilityButtonTile
-            className="gutter-b"
-            smallTitle="Team state"
-            baseColor="danger"
-            label="Locked"
-            buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Lock.svg')}
-          />
+          {currentTeam?.lock && (
+            <UtilityButtonTile
+              className="gutter-b"
+              smallTitle="Private code"
+              baseColor="info"
+              label={currentTeam?.code}
+              tooltipMsg={
+                <>
+                  You can give this code to another student for joining.
+                  <br />
+                  <br /> Click the refresh button to get new code.
+                </>
+              }
+              buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Update.svg')}
+            />
+          )}
+
+          {currentTeam?.lock ? (
+            <UtilityButtonTile
+              className="gutter-b"
+              smallTitle="Team state"
+              baseColor="danger"
+              label="Locked"
+              buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Lock.svg')}
+            />
+          ) : (
+            <UtilityButtonTile
+              className="gutter-b"
+              smallTitle="Team state"
+              baseColor="success"
+              label="Unlocked"
+              buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Unlock.svg')}
+            />
+          )}
         </div>
       </div>
     </>

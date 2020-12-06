@@ -15,7 +15,7 @@ const MessageTile = ({
 }) => {
   return (
     <div
-      class={`alert alert-custom alert-light-${baseColor} fade show`}
+      class={`alert alert-custom alert-light-${baseColor} fade show ${className}`}
       role="alert"
     >
       <div class="alert-icon">

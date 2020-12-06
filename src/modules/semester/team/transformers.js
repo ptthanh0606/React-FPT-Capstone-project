@@ -26,6 +26,8 @@ export function down(i) {
       ? {
           label:
             i.teamDetail.department.code || console.log('code field not found'),
+          fullLabel:
+            i.teamDetail.department.name || console.log('name field not found'),
           value:
             i.teamDetail.department.id || console.log('code field not found'),
         }
