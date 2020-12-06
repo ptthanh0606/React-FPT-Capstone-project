@@ -6,6 +6,9 @@ import metaAtom from 'store/meta';
 
 import Member from './Member';
 import Application from './Application';
+import TeamHeader from 'components/CMSWidgets/TeamHeader';
+import UtilityButtonTile from 'components/CMSWidgets/UtilityButtonTile';
+import { toAbsoluteUrl } from '_metronic/_helpers';
 
 const members = [{}, {}, {}, {}];
 const applications = [{}, {}, {}, {}];
@@ -13,9 +16,11 @@ const applications = [{}, {}, {}, {}];
 const Team = () => {
   const setMeta = useSetRecoilState(metaAtom);
 
+  // ------------------------------------------------------------------
+
   React.useEffect(() => {
     setMeta({
-      title: 'Team SKT T1',
+      title: 'Team detail',
       breadcrumb: [
         { title: 'Dashboard', path: '/dashboard' },
         { title: 'Team', path: '/team' },
@@ -53,55 +58,24 @@ const Team = () => {
       ),
     });
   }, [setMeta]);
+
+  // ------------------------------------------------------------------
+
   return (
     <>
-      <Row>
-        <div
-          style={{
-            padding: '.5rem 1rem',
-            marginBottom: '1.5rem',
-          }}
-        >
-          <h1
-            style={{
-              fontSize: '4rem',
-            }}
-          >
-            SKT T1
-          </h1>
-          <span className="font-size-h2">Private team</span>
+      <div className="row">
+        <div className="col-lg-12 col-xxl-12">
+          <TeamHeader teamType="Private" withTopic />
         </div>
-      </Row>
-      <Row>
-        <Col lg={9}>
+      </div>
+      <div className="row">
+        <div className="col-lg-12 col-xxl-9">
           <div className={`card card-custom gutter-b`}>
             <div className="card-body d-flex flex-column p-0">
               <div className="d-flex justify-content-between card-spacer flex-grow-1">
                 <div className="d-flex flex-column mr-2">
                   <a
-                    href="#"
-                    className="text-dark-75 text-hover-primary font-weight-bolder font-size-h5"
-                  >
-                    Topic: Capstone Management System
-                  </a>
-                  <span className="text-muted font-weight-bold mt-2">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Etiam pellentesque, magna eu dignissim ullamcorper, augue
-                    elit consectetur quam, vitae molestie odio neque id purus.
-                    Suspendisse suscipit elementum quam eget dictum. In
-                    pellentesque magna vel lorem aliquet, eget cursus ipsum
-                    hendrerit.
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className={`card card-custom gutter-b`}>
-            <div className="card-body d-flex flex-column p-0">
-              <div className="d-flex justify-content-between card-spacer flex-grow-1">
-                <div className="d-flex flex-column mr-2">
-                  <a
-                    href="#"
+                    href="/"
                     className="text-dark-75 text-hover-primary font-weight-bolder font-size-h5"
                   >
                     Members
@@ -130,7 +104,7 @@ const Team = () => {
               <div className="d-flex justify-content-between card-spacer flex-grow-1">
                 <div className="d-flex flex-column mr-2">
                   <a
-                    href="#"
+                    href="/"
                     className="text-dark-75 text-hover-primary font-weight-bolder font-size-h5"
                   >
                     Applications
@@ -169,93 +143,31 @@ const Team = () => {
               </div>
             </div>
           </div>
-        </Col>
-        <Col lg={3}>
-          <div className="card card-custom p-8 bg-info text-white">
-            <h2
-              style={{
-                marginBottom: 0,
-                fontSize: '2rem',
-                fontWeight: 800,
-              }}
-            >
-              J7HC6D
-              <span className="float-right">
-                <i
-                  className="fas fa-retweet text-white"
-                  style={{
-                    fontSize: '2.5rem',
-                  }}
-                ></i>
-              </span>
-            </h2>
-          </div>
-          <div className="card card-custom p-8 bg-primary text-white mt-8">
-            <Row>
-              <Col sm={9}>
-                <h2
-                  style={{
-                    marginBottom: 0,
-                    fontSize: '1.5rem',
-                    fontWeight: 800,
-                  }}
-                >
-                  SE
-                </h2>
-                Software Engineering
-              </Col>
-              <Col sm={3}>
-                <span className="float-right">
-                  <i
-                    className="fas fa-hotel text-white"
-                    style={{
-                      fontSize: '3rem',
-                    }}
-                  ></i>
-                </span>
-              </Col>
-            </Row>
-          </div>
-          <div className="card card-custom p-8 bg-danger text-white mt-8">
-            <h2
-              style={{
-                marginBottom: 0,
-                fontSize: '2rem',
-                fontWeight: 800,
-              }}
-            >
-              Locked
-              <span className="float-right">
-                <i
-                  className="fas fa-lock text-white"
-                  style={{
-                    fontSize: '2.5rem',
-                  }}
-                ></i>
-              </span>
-            </h2>
-          </div>
-          <div className="card card-custom p-8 bg-warning text-white mt-8">
-            <h2
-              style={{
-                marginBottom: 0,
-                fontSize: '2rem',
-                fontWeight: 800,
-              }}
-            >
-              Settings
-              <span className="float-right">
-                <i
-                  className="fas fa-cogs text-white"
-                  style={{
-                    fontSize: '2.5rem',
-                  }}
-                ></i>
-              </span>
-            </h2>
-          </div>
-        </Col>
-      </Row>
+        </div>
+        <div className="col-lg-12 col-xxl-3">
+          <UtilityButtonTile
+            className="gutter-b"
+            smallTitle="Private code"
+            baseColor="info"
+            label="JUJAKSS"
+            tooltipMsg={
+              <>
+                You can give this code to another student for joining.
+                <br />
+                <br /> Click the refresh button to get new code.
+              </>
+            }
+            buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Update.svg')}
+          />
+          <UtilityButtonTile
+            className="gutter-b"
+            smallTitle="Team state"
+            baseColor="danger"
+            label="Locked"
+            buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Lock.svg')}
+          />
+        </div>
+      </div>
     </>
   );
 };
