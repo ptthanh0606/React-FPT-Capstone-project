@@ -378,7 +378,6 @@ export default function Checkpoints({ semester }) {
           setSortOrder={setSortOrder}
           defaultSorted={defaultSorted}
           pageSizeList={sizePerPageList}
-          selectable
         />
       </CardBody>
       <ConfirmRemoveModal

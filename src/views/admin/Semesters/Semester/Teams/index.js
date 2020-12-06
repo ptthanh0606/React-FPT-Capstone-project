@@ -277,7 +277,6 @@ export default function Teams({ semester }) {
           setSortOrder={setSortOrder}
           defaultSorted={constants.defaultSorted}
           pageSizeList={constants.sizePerPageList}
-          selectable
         />
       </CardBody>
       <CMSModal
