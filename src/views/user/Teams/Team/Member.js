@@ -1,5 +1,6 @@
 import React from 'react';
 import { Dropdown } from 'react-bootstrap';
+import md5 from 'utils/md5';
 
 import { toAbsoluteUrl } from '_metronic/_helpers/AssetsHelpers';
 
@@ -18,29 +19,33 @@ const DropdownCustomToggler = React.forwardRef((props, ref) => {
   );
 });
 
-const Member = () => {
+const Member = ({ email = '', name = '', isLeader = false }) => {
   return (
     <>
       <div class="d-flex justify-content-between mb-4">
         <div class="d-flex align-items-center">
           <div class="flex-shrink-0 mr-4 mt-lg-0 mt-3">
-            <div class="symbol symbol-rounded symbol-lg-75">
-              <img src={toAbsoluteUrl('/media/users/300_1.jpg')} alt="image" />
-            </div>
-            <div class="symbol symbol-lg-75 symbol-circle symbol-primary d-none">
-              <span class="font-size-h3 font-weight-boldest">JM</span>
+            <div className="symbol symbol-100 mr-5">
+              <div
+                className="symbol-label"
+                style={{
+                  backgroundImage: `url(https://www.gravatar.com/avatar/${md5(
+                    email.toLowerCase()
+                  )})`,
+                }}
+              />
             </div>
           </div>
-          <div class="d-flex flex-column">
+          <div class="d-flex flex-column align-items-start">
             <a
-              href="#"
+              href="/"
               class="text-dark font-weight-bold text-hover-primary font-size-h4 mb-0"
             >
-              Huynh Duc Duy
+              {name}
             </a>
-            <span class="text-muted font-weight-bold">SE130491</span>
-            <span class="text-muted font-weight-bold">
-              duyhdse130491@fpt.edu.vn
+            <span class="text-muted font-weight-bold">{email}</span>
+            <span class="label label-inline label-danger font-weight-bold">
+              {isLeader && 'Leader'}
             </span>
           </div>
         </div>
@@ -57,7 +62,7 @@ const Member = () => {
             <Dropdown.Menu className="dropdown-menu dropdown-menu-sm dropdown-menu-right">
               <ul className="navi navi-hover">
                 <li className="navi-item">
-                  <a href="#" className="navi-link">
+                  <a href="/" className="navi-link">
                     <span className="navi-icon">
                       <i className="flaticon2-drop"></i>
                     </span>
@@ -65,7 +70,7 @@ const Member = () => {
                   </a>
                 </li>
                 <li className="navi-item">
-                  <a href="#" className="navi-link">
+                  <a href="/" className="navi-link">
                     <span className="navi-icon">
                       <i className="flaticon2-list-3"></i>
                     </span>

@@ -137,16 +137,33 @@ const Team = () => {
                 </div>
                 <span className="symbol symbol-light-success symbol-45">
                   <span className="symbol-label font-weight-bolder font-size-h6">
-                    4/5
+                    {currentTeam?.members?.length}/{currentTeam?.maxMembers}
                   </span>
                 </span>
               </div>
               <Row className="d-flex flex-grow-1 px-8 pb-4">
-                {members.map(i => (
+                {currentTeam?.members?.length ? (
+                  <>
+                    <Col sm={12} md={6} lg={6} xl={4}>
+                      <Member
+                        name={currentTeam.leader.label}
+                        email={currentTeam.leader.email}
+                        isLeader
+                      />
+                    </Col>
+                    {currentTeam?.members
+                      .filter(({ value }) => value !== currentTeam.leader.value)
+                      .map(member => (
+                        <Col sm={12} md={6} lg={6} xl={4}>
+                          <Member name={member.name} email={member.email} />
+                        </Col>
+                      ))}
+                  </>
+                ) : (
                   <Col sm={12} md={6} lg={6} xl={4}>
-                    <Member />
+                    No member available, this might be a problem
                   </Col>
-                ))}
+                )}
               </Row>
             </div>
           </div>
@@ -166,7 +183,7 @@ const Team = () => {
                 </div>
                 <span className="symbol symbol-light-success symbol-45">
                   <span className="symbol-label font-weight-bolder font-size-h6">
-                    4/5
+                    {currentTeam?.applications?.length}
                   </span>
                 </span>
               </div>
@@ -185,9 +202,15 @@ const Team = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {applications.map(i => (
-                        <Application />
-                      ))}
+                      {currentTeam?.applications?.length ? (
+                        currentTeam?.applications.map(i => <Application />)
+                      ) : (
+                        <tr>
+                          <td className="text-muted">
+                            This team currently don't have any applications yet.
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -196,7 +219,7 @@ const Team = () => {
           </div>
         </div>
         <div className="col-lg-12 col-xxl-3">
-          {currentTeam?.lock && (
+          {!currentTeam?.privacy && (
             <UtilityButtonTile
               className="gutter-b"
               smallTitle="Private code"

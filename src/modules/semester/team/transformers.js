@@ -6,6 +6,7 @@ export function down(i) {
     i?.teamMembers?.map(j => {
       const obj = {
         value: j?.id || console.log('team member id field not found'),
+        email: j?.email || console.log('team member email field not found'),
         label:
           j?.code && j?.name
             ? '[' + j.code + '] ' + j.name
@@ -61,6 +62,9 @@ export function down(i) {
       i?.teamDetail?.maxMembers !== undefined
         ? i?.teamDetail?.maxMembers
         : console.log('team max members field not found'),
+    applications:
+      i?.topicApplications ||
+      console.log('Topic applications field not found!'),
   };
 }
 
