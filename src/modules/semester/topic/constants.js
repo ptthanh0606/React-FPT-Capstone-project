@@ -53,7 +53,7 @@ export const modalConfigs = [
   },
   {
     name: 'description',
-    type: 'textarea',
+    type: 'markdown',
     label: 'Description',
     smallLabel: 'Brief description for this topic',
     placeholder: 'Description...',
@@ -208,11 +208,7 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
       sort: true,
       formatter: function StatusColumnFormatter(cellContent, row) {
         return (
-          <div
-            className="text-dark font-weight-bold"
-            data-id={row.id}
-            onClick={handleEdit}
-          >
+          <Link className="text-dark font-weight-bold" to={'./topic/' + row.id}>
             <div>
               <div className="text-nowrap text-dark-75 font-weight-bolder font-size-lg mb-0">
                 {row.name}
@@ -221,7 +217,7 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
                 {row.abstract}
               </span>
             </div>
-          </div>
+          </Link>
         );
       },
     },

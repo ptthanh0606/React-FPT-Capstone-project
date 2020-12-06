@@ -16,10 +16,11 @@ import styles from './styles.module.scss';
 
 import Information from './Information';
 import Topics from './Topics';
+import Topic from './Topics/Topic';
 import ActiveStudents from './ActiveStudents';
 import Councils from './Councils';
 import Teams from './Teams';
-import Checkpoints from './Checkpoints';
+import Checkpoints from '../../CheckpointTemplates';
 
 import request from 'utils/request';
 import { READ_SEMESTER } from 'endpoints';
@@ -48,6 +49,10 @@ const Semester = () => {
 
   const TopicsWithSemester = React.useCallback(() => {
     return withSemesterInfo(data, Topics);
+  }, [data]);
+
+  const TopicWithSemester = React.useCallback(() => {
+    return withSemesterInfo(data, Topic);
   }, [data]);
 
   const ActiveStudentsWithSemester = React.useCallback(() => {
@@ -157,13 +162,6 @@ const Semester = () => {
                 Information
               </NavLink>
               <NavLink
-                to={'/semester/' + id + '/checkpoint'}
-                activeClassName={styles['active']}
-                className={styles['menu-item']}
-              >
-                Checkpoints
-              </NavLink>
-              <NavLink
                 to={'/semester/' + id + '/topic' + '?dep=all&status=all'}
                 activeClassName={styles['active']}
                 className={styles['menu-item']}
@@ -207,6 +205,10 @@ const Semester = () => {
               path="/semester/:id/information"
               component={WrappedInformation}
             />
+            <Route
+              path="/semester/:id/topic/:topicId"
+              component={TopicWithSemester}
+            />
             <Route path="/semester/:id/topic" component={TopicsWithSemester} />
             <Route
               path="/semester/:id/active-student"
@@ -217,10 +219,6 @@ const Semester = () => {
               component={CouncilsWithSemester}
             />
             <Route path="/semester/:id/team" component={TeamsWithSemester} />
-            <Route
-              path="/semester/:id/checkpoint"
-              component={CheckpointsWithSemester}
-            />
             <Route>
               <Redirect to={'/semester/' + id + '/information'} />
             </Route>

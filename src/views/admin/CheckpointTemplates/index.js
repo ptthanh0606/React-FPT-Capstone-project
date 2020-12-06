@@ -1,11 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardHeaderToolbar,
-} from '_metronic/_partials/controls';
+import { Card, CardBody } from '_metronic/_partials/controls';
 import Table from 'components/Table';
 import Filters from './Filters';
 
@@ -19,15 +13,14 @@ import { useDebounce } from 'use-debounce';
 import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
+import Checkpoints from './Checkpoints';
 
-import * as transformers from '../../../../../modules/semester/topic/transformers';
-import * as constants from '../../../../../modules/semester/topic/constants';
+import * as transformers from '../../../modules/checkpointTemplates/transformers';
+import * as constants from '../../../modules/checkpointTemplates/constants';
 
-export default function Topics({ semester }) {
+export default function CheckpointTemplates() {
   const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
-  const { id: semId } = useParams();
-  // const [modalConfigs, setModalConfigs] = React.useState([]);
 
   const [l, loadData] = React.useReducer(() => ({}), {});
 
@@ -53,6 +46,9 @@ export default function Topics({ semester }) {
   const [editId, setEditId] = React.useState(0);
   const [isProcessing, setIsProcessing] = React.useState(false);
 
+  const [isShowCheckpoints, setIsShowCheckpoints] = React.useState(false);
+  const [showCheckpointsForId, setShowCheckpointsForId] = React.useState(0);
+
   // ---------------------------------------------------------------------------
 
   const showCreateModal = React.useCallback(() => {
@@ -63,28 +59,35 @@ export default function Topics({ semester }) {
     setShowCreate(false);
   }, []);
 
-  const handleCreate = React.useCallback(
-    fieldData => {
-      setIsProcessing(true);
-      request({
-        to: endpoints.CREATE_TOPIC.url,
-        method: endpoints.CREATE_TOPIC.method,
-        data: { ...transformers.up(fieldData), semester: Number(semId) },
-        params: {
-          semesterId: semId,
-        },
+  const handleCreate = React.useCallback(fieldData => {
+    setIsProcessing(true);
+    request({
+      to: endpoints.CREATE_CHECKPOINT_TEMPLATE.url,
+      method: endpoints.CREATE_CHECKPOINT_TEMPLATE.method,
+      data: transformers.up(fieldData),
+    })
+      .then(res => {
+        toast.success('Create checkpoint template successfully');
+        setShowCreate(false);
+        loadData();
+        setFieldTemplate({});
       })
-        .then(res => {
-          toast.success('Create topic successfully');
-          setShowCreate(false);
-          loadData();
-          setFieldTemplate({});
-        })
-        .catch(handleErrors)
-        .finally(() => setIsProcessing(false));
-    },
-    [semId]
-  );
+      .catch(handleErrors)
+      .finally(() => setIsProcessing(false));
+  }, []);
+
+  // ---------------------------------------------------------------------------
+
+  const handleShowCheckpoints = React.useCallback(e => {
+    e.preventDefault();
+    const id = Number(e.currentTarget.getAttribute('data-id'));
+    if (!Number.isInteger(id)) {
+      toast.error('Internal Server Error');
+      return;
+    }
+    setShowCheckpointsForId(id);
+    setIsShowCheckpoints(true);
+  }, []);
 
   // ---------------------------------------------------------------------------
 
@@ -96,15 +99,12 @@ export default function Topics({ semester }) {
     fieldData => {
       setIsProcessing(true);
       request({
-        to: endpoints.UPDATE_TOPIC(editId).url,
-        method: endpoints.UPDATE_TOPIC(editId).method,
-        params: {
-          topicId: editId,
-        },
+        to: endpoints.UPDATE_CHECKPOINT_TEMPLATE(editId).url,
+        method: endpoints.UPDATE_CHECKPOINT_TEMPLATE(editId).method,
         data: transformers.up(fieldData),
       })
         .then(res => {
-          toast.success('Update topic successfully');
+          toast.success('Update checkpoint template successfully');
           setShowUpdate(false);
           loadData();
         })
@@ -122,15 +122,12 @@ export default function Topics({ semester }) {
       return;
     }
     request({
-      to: endpoints.READ_TOPIC(id).url,
-      method: endpoints.READ_TOPIC(id).method,
-      params: {
-        topicId: id,
-      },
+      to: endpoints.READ_CHECKPOINT_TEMPLATE(id).url,
+      method: endpoints.READ_CHECKPOINT_TEMPLATE(id).method,
     })
       .then(res => {
         setEditId(id);
-        setUpdateFieldTemplate(transformers.downRead(res.data?.data) || {});
+        setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
         setShowUpdate(true);
       })
       .catch(handleErrors);
@@ -148,23 +145,20 @@ export default function Topics({ semester }) {
         title: 'Removal Confirmation',
         body: (
           <>
-            Do you wanna remove this topic?
+            Do you wanna remove this checkpoint template?
             <br />
-            This topic will be <b>permanently removed</b>, and all historical
-            data belong to this topic too.
+            This checkpoint template will be <b>permanently removed</b>, and all
+            historical data belong to this checkpoint template too.
           </>
         ),
         onConfirm: () =>
           request({
-            to: endpoints.DELETE_TOPIC(id).url,
-            method: endpoints.DELETE_TOPIC(id).method,
-            params: {
-              topicId: id,
-            },
+            to: endpoints.DELETE_CHECKPOINT_TEMPLATE(id).url,
+            method: endpoints.DELETE_CHECKPOINT_TEMPLATE(id).method,
           })
             .then(res => {
               loadData();
-              toast.success('Successfully remove topic');
+              toast.success('Successfully remove checkpoint template');
             })
             .catch(handleErrors),
       });
@@ -175,31 +169,55 @@ export default function Topics({ semester }) {
   // ---------------------------------------------------------------------------
 
   const columns = React.useMemo(
-    () => constants.createColumns({ handleEdit, handleRemove }),
-    [handleEdit, handleRemove]
+    () =>
+      constants.createColumns({
+        handleEdit,
+        handleRemove,
+        handleShowCheckpoints,
+      }),
+    [handleEdit, handleRemove, handleShowCheckpoints]
   );
 
   // ---------------------------------------------------------------------------
+
+  React.useEffect(() => {
+    setMeta({
+      title: 'All checkpoint templates',
+      breadcrumb: [
+        { title: 'Checkpoint templates', path: '/checkpoint-tempalte' },
+        { title: 'All', path: '/checkpoint template/#' },
+      ],
+      toolbar: (
+        <button
+          type="button"
+          className="btn btn-primary font-weight-bold btn-sm"
+          onClick={showCreateModal}
+        >
+          <i className="fas fa-plus mr-2"></i>
+          New
+        </button>
+      ),
+    });
+  }, [setMeta, showCreateModal]);
 
   React.useEffect(() => {
     setIsLoading(true);
     const source = {};
 
     request({
-      to: endpoints.LIST_TOPIC.url,
-      method: endpoints.LIST_TOPIC.method,
+      to: endpoints.LIST_CHECKPOINT_TEMPLATE.url,
+      method: endpoints.LIST_CHECKPOINT_TEMPLATE.method,
       params: {
         ...debouncedFilters,
         pageNumber: page,
         pageSize: pageSize,
         sortField: sortField,
         sortOrder: sortOrder,
-        semesterId: semId,
       },
       source,
     })
       .then(res => {
-        setData(res.data?.data?.map(transformers.downList));
+        setData(res.data?.data?.map(transformers.down));
         setTotal(res.data?.totalRecords);
         setPage(res.data?.pageNumber);
         setPageSize(res.data?.pageSize);
@@ -213,43 +231,10 @@ export default function Topics({ semester }) {
     return () => {
       source.cancel();
     };
-  }, [l, debouncedFilters, page, pageSize, sortField, sortOrder, semId]);
-  React.useEffect(() => {
-    setMeta(meta => ({
-      ...meta,
-      title: 'Topics of ' + semester.name,
-      breadcrumb: [
-        { title: 'Semester', path: '/semester' },
-        { title: semester.name, path: '/semester/' + semId },
-        { title: 'Topic', path: '/semester/' + semId + '/topic' },
-      ],
-    }));
-  }, [setMeta, semId, semester.name]);
+  }, [l, debouncedFilters, page, pageSize, sortField, sortOrder]);
 
   return (
     <Card>
-      <CardHeader title="All topics">
-        <CardHeaderToolbar className="text-nowrap">
-          <button
-            type="button"
-            className="btn btn-danger font-weight-bold"
-            disabled={Array.isArray(selected) && selected.length === 0}
-            // onClick={}
-          >
-            <i className="fas fa-trash mr-2"></i>
-            Remove ({(Array.isArray(selected) && selected.length) || 0})
-          </button>
-          &nbsp;
-          <button
-            type="button"
-            className="btn btn-primary font-weight-bold"
-            onClick={showCreateModal}
-          >
-            <i className="fas fa-plus mr2"></i>
-            New
-          </button>
-        </CardHeaderToolbar>
-      </CardHeader>
       <CardBody>
         <Filters filters={filters} setFilters={setFilters} />
         <Table
@@ -269,15 +254,14 @@ export default function Topics({ semester }) {
           setSortOrder={setSortOrder}
           defaultSorted={constants.defaultSorted}
           pageSizeList={constants.sizePerPageList}
-          selectable
         />
       </CardBody>
       <CMSModal
         isShowFlg={showCreate}
         onHide={hideCreateModal}
         configs={constants.modalConfigs}
-        title="Create new topic"
-        subTitle="Submit new topic to this capstone semester"
+        title="Create checkpoint template"
+        subTitle="Add new checkpoint template to this system"
         onConfirmForm={handleCreate}
         fieldTemplate={fieldTemplate}
         isProcessing={isProcessing}
@@ -286,12 +270,17 @@ export default function Topics({ semester }) {
         isShowFlg={showUpdate}
         onHide={hideUpdateModal}
         configs={constants.modalConfigs}
-        title="Update topic"
-        subTitle="Change this topic info"
+        title="Update this checkpoint template"
+        subTitle="Change this checkpoint template info"
         onConfirmForm={edit}
         fieldTemplate={updateFieldTemplate}
         primaryButtonLabel="Update"
         isProcessing={isProcessing}
+      />
+      <Checkpoints
+        isShowFlg={isShowCheckpoints}
+        setIsShowFlg={setIsShowCheckpoints}
+        id={showCheckpointsForId}
       />
     </Card>
   );
