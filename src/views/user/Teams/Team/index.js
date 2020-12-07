@@ -110,7 +110,7 @@ const Team = () => {
       request({
         to: endpoints.UPDATE_TEAM(id).url,
         method: endpoints.UPDATE_TEAM(id).method,
-        data,
+        data: transformers.up(data),
       })
         .then(() => {
           toast.success('Updated team info.');
