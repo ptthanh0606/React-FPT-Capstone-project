@@ -163,7 +163,6 @@ const Team = () => {
       method: endpoints.LEAVE_TEAM(id).method,
       params: {
         teamId: id,
-        forcedOut: currentUser.id,
         semesterId: currentSemester.id,
       },
     })
@@ -174,7 +173,7 @@ const Team = () => {
       .catch(err => {
         handleErrors(err);
       });
-  }, [currentSemester.id, currentUser.id, fetchTeam, history, id]);
+  }, [currentSemester.id, fetchTeam, history, id]);
 
   const handleJoinTeam = React.useCallback(() => {
     request({

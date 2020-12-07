@@ -56,6 +56,7 @@ const Member = ({
       method: endpoints.LEAVE_TEAM(teamId).method,
       params: {
         forcedOut: id,
+        teamId: teamId,
         semesterId: currentSemester.id,
       },
     })

@@ -4,6 +4,7 @@ import { useHistory, useParams } from 'react-router-dom';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import metaAtom from 'store/meta';
+import semesterAtom from 'store/semester';
 import userAtom from 'store/user';
 import { role } from 'auth/recoil/selectors';
 
@@ -28,12 +29,18 @@ const Topic = () => {
   // ----------------------------------------------------------
 
   const setMeta = useSetRecoilState(metaAtom);
-  const currentRole = useRecoilValue(role);
+  const currentSemester = useRecoilValue(semesterAtom);
   const currentUser = useRecoilValue(userAtom);
+  const currentRole = useRecoilValue(role);
 
   // ----------------------------------------------------------
 
   const [currentTopic, setCurrentTopic] = React.useState({});
+  const [isStudentUserHaveTeam, setIsStudentUserHaveTeam] = React.useState(
+    true
+  );
+  const [isUserMentor, setIsUserMentor] = React.useState(false);
+  const [isUserMentorLeader, setIsUserMentorLeader] = React.useState(false);
 
   // ----------------------------------------------------------
 
@@ -55,14 +62,56 @@ const Topic = () => {
       method: endpoints.READ_TOPIC(id).method,
     })
       .then(res => {
-        console.log(transformers.downRead(res.data.data));
-        setCurrentTopic(transformers.downRead(res.data.data));
+        const transformedRes = transformers.downRead(res.data.data);
+        console.log(transformedRes);
+        console.log(
+          !!transformedRes.mentorMembers?.filter(
+            ({ value }) => value === currentUser.id
+          ).length
+            ? 'User is mentor'
+            : 'User not mentor'
+        );
+        console.log(
+          transformedRes.mentorMembers?.filter(
+            ({ isLeader }) => isLeader === true
+          )[0]?.id === currentUser.id
+            ? 'User is lead mentor'
+            : 'Not lead mentor'
+        );
+        setIsUserMentor(
+          !!transformedRes.mentorMembers?.filter(
+            ({ value }) => value === currentUser.id
+          ).length
+        );
+        setIsUserMentorLeader(
+          transformedRes.mentorMembers?.filter(
+            ({ isLeader }) => isLeader === true
+          )[0]?.id === currentUser.id
+        );
+        setCurrentTopic(transformedRes);
       })
       .catch(err => {
-        history.goBack();
+        console.log(err);
+        history.push('/topic');
         handleErrors(err);
       });
-  }, [history, id]);
+  }, [currentUser.id, history, id]);
+
+  const fetchUserTeam = React.useCallback(() => {
+    request({
+      to: endpoints.READ_TEAM(1).url,
+      method: endpoints.READ_TEAM(1).method,
+      params: {
+        semesterId: currentSemester.id,
+      },
+    })
+      .then(res => {
+        setIsStudentUserHaveTeam(true);
+      })
+      .catch(err => {
+        setIsStudentUserHaveTeam(false);
+      });
+  }, [currentSemester.id]);
 
   // ----------------------------------------------------------
 
@@ -103,18 +152,19 @@ const Topic = () => {
     if (currentTopic) {
       switch (currentRole) {
         case 'student':
-          buttons = (
-            <>
-              <button
-                type="button"
-                className="btn btn-primary btn-success font-weight-bold btn-sm "
-                onClick={() => {}}
-              >
-                <i className="fas fa-sign-in-alt mr-2"></i>
-                Apply for matching
-              </button>
-            </>
-          );
+          buttons =
+            !isStudentUserHaveTeam &&
+            statusTitles[currentTopic.status] ===
+              'Ready'(
+                <button
+                  type="button"
+                  className="btn btn-primary btn-success font-weight-bold btn-sm "
+                  onClick={() => {}}
+                >
+                  <i className="fas fa-sign-in-alt mr-2"></i>
+                  Apply for matching
+                </button>
+              );
           break;
 
         case 'admin':
@@ -154,7 +204,7 @@ const Topic = () => {
                     Settings
                   </button>
                 )}
-              {statusTitles[currentTopic.status] === 'Pending' && (
+              {statusTitles[currentTopic.status] === 'Approved' && (
                 <button
                   type="button"
                   className="btn btn-primary btn-success font-weight-bold btn-sm mr-2"
@@ -184,7 +234,13 @@ const Topic = () => {
       }
     }
     return buttons;
-  }, [currentRole, currentTopic, currentUser, statusTitles]);
+  }, [
+    currentRole,
+    currentTopic,
+    currentUser.id,
+    isStudentUserHaveTeam,
+    statusTitles,
+  ]);
 
   const mentorCardToolbar = React.useCallback(() => {
     if (currentTopic?.mentorMembers?.length) {
@@ -231,7 +287,8 @@ const Topic = () => {
 
   React.useEffect(() => {
     fetchTopic();
-  }, [fetchTopic]);
+    fetchUserTeam();
+  }, [fetchTopic, fetchUserTeam]);
 
   React.useEffect(() => {
     setModalConfigs(SETTING_MODAL_CONFIG);
@@ -301,16 +358,18 @@ const Topic = () => {
           />
         </div>
         <div className="col-lg-6 col-xxl-3">
-          {statusTitles[currentTopic.status] === 'Ready' && (
-            <CMSList
-              className="gutter-b"
-              title="Applying teams"
-              subTitle="Consider approve team to topic"
-              rows={currentTopic.applications}
-              rowActions={rowActionFormatter()}
-              fallbackMsg="Awaiting for application..."
-            />
-          )}
+          {currentRole === 'lecturer' &&
+            isUserMentor &&
+            statusTitles[currentTopic.status] === 'Ready' && (
+              <CMSList
+                className="gutter-b"
+                title="Applying teams"
+                subTitle="Consider approve team to topic"
+                rows={currentTopic.applications}
+                rowActions={isUserMentorLeader ? rowActionFormatter() : <></>}
+                fallbackMsg="Awaiting for application..."
+              />
+            )}
 
           {statusTitles[currentTopic.status] === 'Matched' && (
             <GroupCard
@@ -318,7 +377,7 @@ const Topic = () => {
               title="Assigned team"
               role="student"
               group={currentTopic.team?.members}
-              fallbackMsg={'Awaiting for team...'}
+              fallbackMsg={'Matched but no team? This might be a problem...'}
               toolBar={
                 !!currentTopic.team?.members.length && (
                   <button
@@ -340,7 +399,7 @@ const Topic = () => {
             role="lecturer"
             fallbackMsg={'Become a leader mentor for this topic now!'}
             group={currentTopic.mentorMembers}
-            toolBar={mentorCardToolbar()}
+            toolBar={isUserMentorLeader ? mentorCardToolbar() : <></>}
             booleanFlg={editWeightFlg}
           />
         </div>
