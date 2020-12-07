@@ -23,6 +23,8 @@ import * as endpoints from 'endpoints';
 import * as transformers from '../../../../../modules/semester/topic/transformers';
 import * as constants from '../../../../../modules/semester/topic/constants';
 
+import AssignCheckpointTemplateModal from './AssignCheckpointTemplateModal';
+
 export default function Topics({ semester }) {
   const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
@@ -52,6 +54,13 @@ export default function Topics({ semester }) {
   const [showUpdate, setShowUpdate] = React.useState(false);
   const [editId, setEditId] = React.useState(0);
   const [isProcessing, setIsProcessing] = React.useState(false);
+
+  // ---------------------------------------------------------------------------
+
+  const [
+    isShowAssignCheckpointTemplate,
+    setIsShowAssignCheckpointTemplate,
+  ] = React.useState(false);
 
   // ---------------------------------------------------------------------------
 
@@ -174,13 +183,10 @@ export default function Topics({ semester }) {
 
   // ---------------------------------------------------------------------------
 
-  const handleAssignCheckpointTemplate = React.useCallback(
-    e => {
-      e.preventDefault();
-      console.log(selected);
-    },
-    [selected]
-  );
+  const handleAssignCheckpointTemplate = React.useCallback(e => {
+    e.preventDefault();
+    setIsShowAssignCheckpointTemplate(true);
+  }, []);
 
   const columns = React.useMemo(
     () => constants.createColumns({ handleEdit, handleRemove }),
@@ -301,6 +307,11 @@ export default function Topics({ semester }) {
         fieldTemplate={updateFieldTemplate}
         primaryButtonLabel="Update"
         isProcessing={isProcessing}
+      />
+      <AssignCheckpointTemplateModal
+        isShowFlg={isShowAssignCheckpointTemplate}
+        setIsShowFlg={setIsShowAssignCheckpointTemplate}
+        onOk={data => console.log(data)}
       />
     </Card>
   );

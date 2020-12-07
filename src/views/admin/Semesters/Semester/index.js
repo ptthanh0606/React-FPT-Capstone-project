@@ -162,13 +162,6 @@ const Semester = () => {
                 Information
               </NavLink>
               <NavLink
-                to={'/semester/' + id + '/topic' + '?dep=all&status=all'}
-                activeClassName={styles['active']}
-                className={styles['menu-item']}
-              >
-                Topics
-              </NavLink>
-              <NavLink
                 to={
                   '/semester/' + id + '/active-student' + '?dep=all&status=all'
                 }
@@ -183,6 +176,13 @@ const Semester = () => {
                 className={styles['menu-item']}
               >
                 Councils
+              </NavLink>
+              <NavLink
+                to={'/semester/' + id + '/topic' + '?dep=all&status=all'}
+                activeClassName={styles['active']}
+                className={styles['menu-item']}
+              >
+                Topics
               </NavLink>
               <NavLink
                 to={

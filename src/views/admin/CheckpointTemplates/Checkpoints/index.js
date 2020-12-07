@@ -153,7 +153,7 @@ const UpdateCouncil = ({
             classes="table table-head-custom table-vertical-center overflow-hidden"
             bootstrap4
             remote
-            keyField="value"
+            keyField="id"
             data={checkpoints && Array.isArray(checkpoints) ? checkpoints : []}
             columns={columns}
             noDataIndication={() => (

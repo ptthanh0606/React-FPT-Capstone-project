@@ -13,9 +13,18 @@ export function down(i) {
             : console.log('team member name and code field not found'),
       };
 
-      if (j?.id === teamLeadId) leader = obj;
+      if (j?.id === teamLeadId) {
+        leader = obj;
+        obj.isLeader = true;
+      }
       return obj;
     }) || (console.log('teamMembers field not found'), []);
+
+  teamMembers.sort((a, b) => {
+    if (a.isLeader) return -1;
+    if (b.isLeader) return 1;
+    return 0;
+  });
 
   return {
     id: i?.teamDetail?.id || console.log('id field not found'),

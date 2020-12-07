@@ -5,6 +5,7 @@ import makeAnimated from 'react-select/animated';
 const animatedComponents = makeAnimated();
 
 const colourStyles = {
+  menuPortal: base => ({ ...base, zIndex: 9999 }),
   container: styles => ({
     ...styles,
   }),
@@ -73,6 +74,7 @@ const SelectTagInput = ({
   placeholder = '',
   isMulti = false,
   readOnly = false,
+  ...rest
 }) => {
   return (
     <>
@@ -83,6 +85,7 @@ const SelectTagInput = ({
       )}
 
       <AsyncSelect
+        {...rest}
         isMulti={isMulti} // Not sure
         placeholder={placeholder}
         k={k}
