@@ -5,12 +5,22 @@ import { toAbsoluteUrl } from '_metronic/_helpers';
 
 const UtilityButtonTile = ({
   className = '',
-  smallTitle = 'Private code',
-  label = 'UASJDASDK',
-  baseColor = 'primary',
+  smallTitle = '',
+  label = '',
+  baseColor = '',
   tooltipMsg,
+  clickAbleIcon = false,
+  onIconClick = () => {},
   buttonIcon = toAbsoluteUrl('/media/svg/icons/Code/Lock-overturning.svg'),
 }) => {
+  const handleIconClick = React.useCallback(
+    e => {
+      e.preventDefault();
+      onIconClick();
+    },
+    [onIconClick]
+  );
+
   return (
     <div
       className={`card card-custom bg-diagonal bg-diagonal-${baseColor} ${className}`}
@@ -35,13 +45,15 @@ const UtilityButtonTile = ({
             )}
           </div>
 
-          <div className="ml-6 flex-shrink-0">
-            <a href="/" className="py-3 px-6">
-              <span className="svg-icon svg-icon-white svg-icon-4x">
-                <SVG src={buttonIcon}></SVG>
-              </span>
-            </a>
-          </div>
+          {clickAbleIcon && (
+            <div className="ml-6 flex-shrink-0">
+              <a href="/" onClick={handleIconClick} className="py-3 px-6">
+                <span className="svg-icon svg-icon-white svg-icon-4x">
+                  <SVG src={buttonIcon}></SVG>
+                </span>
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </div>

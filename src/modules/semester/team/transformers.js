@@ -42,6 +42,7 @@ export function down(i) {
                 '[' + i.topic.code + '] ' + i.topic.name) ||
               console.log('topic code and name field not found'),
             value: i.topic.id || console.log('topic id field not found'),
+            code: i.topic.code || console.log('topic code field not found'),
             abstract:
               i.topic.abstract || console.log('topic abstract field not found'),
           }
