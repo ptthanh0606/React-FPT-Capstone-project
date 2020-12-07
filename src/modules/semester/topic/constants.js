@@ -149,27 +149,6 @@ export const modalConfigs = [
     isMulti: false,
   },
   {
-    name: 'mentorMembers',
-    type: 'selectBoxAsync',
-    label: 'Mentor',
-    smallLabel: 'Mentor for this topic',
-    load: (input, callback) => {
-      request({
-        to: endpoints.LIST_LECTURER.url,
-        method: endpoints.LIST_LECTURER.method,
-        params: {
-          term: input,
-          pageSize: 10,
-        },
-      })
-        .then(res => {
-          callback(res.data.data?.map(mDownLec) || []);
-        })
-        .catch(() => callback([]));
-    },
-    isMulti: true,
-  },
-  {
     name: 'keywords',
     type: 'text',
     label: 'Keywords',
