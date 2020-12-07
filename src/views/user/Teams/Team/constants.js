@@ -13,7 +13,7 @@ export const modalConfigs = [
     placeholder: '10',
   },
   {
-    name: 'isPublic',
+    name: 'privacy',
     type: 'toggle',
     label: 'Public team',
     smallLabel: 'Is this team private',

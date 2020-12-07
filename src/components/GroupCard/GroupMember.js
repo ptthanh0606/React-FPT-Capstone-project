@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import md5 from 'utils/md5';
 
 const GroupMember = ({
@@ -15,14 +15,6 @@ const GroupMember = ({
 }) => {
   const history = useHistory();
   const [textBoxValue, setTextBoxValue] = React.useState(value);
-
-  const handleClick = React.useCallback(
-    e => {
-      e.preventDefault();
-      history.push(`/profile/${role}/${id}`);
-    },
-    [history, id, role]
-  );
 
   const rowTool = React.useCallback(() => {
     let el = <></>;
@@ -65,13 +57,12 @@ const GroupMember = ({
           ></div>
         </div>
         <div className="d-flex flex-column font-weight-bold">
-          <a
-            onClick={handleClick}
-            href="/"
+          <Link
+            to={`/profile/${role}/${id}`}
             className="text-dark text-hover-primary mb-1 font-size-lg"
           >
             {label}
-          </a>
+          </Link>
           <span className="text-muted">{subLabel}</span>
         </div>
       </div>

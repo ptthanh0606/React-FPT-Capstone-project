@@ -110,7 +110,7 @@ const Team = () => {
       request({
         to: endpoints.UPDATE_TEAM(id).url,
         method: endpoints.UPDATE_TEAM(id).method,
-        data,
+        data: data,
       })
         .then(() => {
           toast.success('Updated team info.');
@@ -163,7 +163,6 @@ const Team = () => {
       method: endpoints.LEAVE_TEAM(id).method,
       params: {
         teamId: id,
-        forcedOut: currentUser.id,
         semesterId: currentSemester.id,
       },
     })
@@ -174,7 +173,7 @@ const Team = () => {
       .catch(err => {
         handleErrors(err);
       });
-  }, [currentSemester.id, currentUser.id, fetchTeam, history, id]);
+  }, [currentSemester.id, fetchTeam, history, id]);
 
   const handleJoinTeam = React.useCallback(() => {
     request({
@@ -451,7 +450,7 @@ const Team = () => {
               smallTitle="Team state"
               baseColor="danger"
               label="Locked"
-              clickAbleIcon={isUserLeader}
+              clickAbleIcon={isUserLeader && currentTeam?.topic}
               buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Lock.svg')}
             />
           ) : (
