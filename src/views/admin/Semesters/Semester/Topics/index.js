@@ -195,6 +195,16 @@ export default function Topics({ semester }) {
 
   // ---------------------------------------------------------------------------
 
+  const onAssignCheckpointTemplate = React.useCallback(
+    data => {
+      console.log({
+        ...data,
+        topicIds: selected,
+      });
+    },
+    [selected]
+  );
+
   React.useEffect(() => {
     setIsLoading(true);
     const source = {};
@@ -311,7 +321,7 @@ export default function Topics({ semester }) {
       <AssignCheckpointTemplateModal
         isShowFlg={isShowAssignCheckpointTemplate}
         setIsShowFlg={setIsShowAssignCheckpointTemplate}
-        onOk={data => console.log(data)}
+        onOk={onAssignCheckpointTemplate}
       />
     </Card>
   );

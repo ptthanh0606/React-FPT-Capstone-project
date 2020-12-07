@@ -102,6 +102,26 @@ export const READ_CHECKPOINT_TEMPLATE = id => ({
   method: METHOD.GET,
 });
 
+export const CREATE_CHECKPOINT = id => ({
+  url: LIST_CHECKPOINT_TEMPLATE.url + '/' + id + '/checkpoints',
+  method: METHOD.POST,
+});
+
+export const READ_CHECKPOINT = (id, id2) => ({
+  url: LIST_CHECKPOINT_TEMPLATE.url + '/' + id + '/checkpoints/' + id2,
+  method: METHOD.GET,
+});
+
+export const UPDATE_CHECKPOINT = (id, id2) => ({
+  url: LIST_CHECKPOINT_TEMPLATE.url + '/' + id + '/checkpoints/' + id2,
+  method: METHOD.PUT,
+});
+
+export const DELETE_CHECKPOINT = (id, id2) => ({
+  url: LIST_CHECKPOINT_TEMPLATE.url + '/' + id + '/checkpoints/' + id2,
+  method: METHOD.DELETE,
+});
+
 export const UPDATE_CHECKPOINT_TEMPLATE = id => ({
   url: READ_CHECKPOINT_TEMPLATE(id).url,
   method: METHOD.PUT,

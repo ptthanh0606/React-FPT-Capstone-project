@@ -8,16 +8,6 @@ import { mDown as mDownLec } from 'modules/lecturer/transformers';
 
 //------------------------------------------------------------------------------
 
-const mockData = [
-  {
-    id: 0,
-    name: 'Checkpoint 1',
-    description: 'This is the first checkpoint',
-    attachment: 'http://google.com',
-    count: 10,
-  },
-];
-
 export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 export const sizePerPageList = [
   { text: '10', value: 10 },
@@ -25,6 +15,10 @@ export const sizePerPageList = [
   { text: '50', value: 50 },
   { text: '100', value: 100 },
 ];
+
+export const statusClasses = ['danger', 'success'];
+export const statusTitles = ['Deactivated', 'Activated'];
+
 export const createColumns = ({
   handleEdit,
   handleRemove,
@@ -57,9 +51,21 @@ export const createColumns = ({
       sort: true,
     },
     {
-      dataField: 'isDisabled',
-      text: 'Disabled',
+      dataField: 'status',
+      text: 'status',
       sort: true,
+      formatter: (cellContent, row) => {
+        const getLabelCssClasses = () => {
+          return `label label-lg label-light-${
+            statusClasses[row.status === true ? 1 : 0]
+          } label-inline text-nowrap`;
+        };
+        return (
+          <span className={getLabelCssClasses()}>
+            {statusTitles[row.status === true ? 1 : 0]}
+          </span>
+        );
+      },
     },
     {
       dataField: 'action',
@@ -125,9 +131,9 @@ export const modalConfigs = [
     smallLabel: '.pdf, .docx',
   },
   {
-    name: 'isDisabled',
+    name: 'status',
     type: 'toggle',
-    label: 'Disabled',
+    label: 'Activated',
     smallLabel: 'Is this checkpoint template available for future use?',
   },
 ];
