@@ -151,9 +151,9 @@ export function up(i) {
     note: i?.note,
     maxMembers: Number(i?.maxMembers),
     minMembers: Number(i?.minMembers),
-    departmentId: Number(i?.department?.value),
+    departmentId: i?.department?.value && Number(i?.department?.value),
     submitByStudent: !!i?.submitByStudent,
-    teamId: Number(i?.team?.value),
+    teamId: i?.team?.value && Number(i?.team?.value),
     mentorMembers: newLecturers?.map(j => ({
       id: Number(j.value),
       weight: Number(j.weight),

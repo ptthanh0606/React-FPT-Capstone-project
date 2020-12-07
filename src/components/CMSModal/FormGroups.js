@@ -3,7 +3,12 @@ import CreateableTagInput from 'components/TagInput/CreateableTagInput';
 import SelectTagInput from 'components/TagInput/SelectTagInput';
 import ToggleSwitch from 'components/ToggleSwitch/ToggleSwitch';
 import React from 'react';
+import MdEditor from 'react-markdown-editor-lite';
+import 'react-markdown-editor-lite/lib/index.css';
 import { Col, Form, Row } from 'react-bootstrap';
+import MarkdownIt from 'markdown-it';
+
+const mdParser = new MarkdownIt();
 
 const FormGroups = ({
   config = {},
@@ -14,6 +19,13 @@ const FormGroups = ({
   const handleChange = React.useCallback(
     event => {
       handleChangeFields(event.currentTarget.value, config.name);
+    },
+    [config.name, handleChangeFields]
+  );
+
+  const handleEditorChange = React.useCallback(
+    event => {
+      handleChangeFields(event.text, config.name);
     },
     [config.name, handleChangeFields]
   );
@@ -58,6 +70,24 @@ const FormGroups = ({
               defaultValue={config.defaultValue}
               name={config.name}
               onChange={handleChange}
+            />
+            <small className="form-text text-muted">{config.smallLabel}</small>
+          </Col>
+        </Form.Group>
+      );
+    case 'markdown':
+      return (
+        <Form.Group as={Row}>
+          <Form.Label column sm={3}>
+            {config.label}
+          </Form.Label>
+          <Col sm={9}>
+            <MdEditor
+              style={{ height: '200px' }}
+              value={value}
+              defaultValue={config.defaultValue}
+              renderHTML={text => mdParser.render(text)}
+              onChange={handleEditorChange}
             />
             <small className="form-text text-muted">{config.smallLabel}</small>
           </Col>
@@ -185,6 +215,7 @@ const FormGroups = ({
           <Col sm={9}>
             <Form.File
               {...config}
+              label={undefined}
               onChange={event =>
                 handleChangeFields(event.currentTarget.files, config.name)
               }

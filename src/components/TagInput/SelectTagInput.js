@@ -109,4 +109,4 @@ const SelectTagInput = ({
   );
 };
 
-export default SelectTagInput;
+export default React.memo(SelectTagInput);

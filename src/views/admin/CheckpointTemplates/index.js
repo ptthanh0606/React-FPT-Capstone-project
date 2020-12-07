@@ -1,34 +1,26 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardHeaderToolbar,
-} from '_metronic/_partials/controls';
+import { Card, CardBody } from '_metronic/_partials/controls';
 import Table from 'components/Table';
 import Filters from './Filters';
 
 import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
 import useConfirm from 'utils/confirm';
+import CMSModal from 'components/CMSModal/CMSModal';
 
 import toast from 'utils/toast';
 import { useDebounce } from 'use-debounce';
 import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
+import Checkpoints from './Checkpoints';
 
-import * as transformers from '../../../../../modules/semester/council/transformers';
-import * as constants from '../../../../../modules/semester/council/constants';
+import * as transformers from '../../../modules/checkpointTemplates/transformers';
+import * as constants from '../../../modules/checkpointTemplates/constants';
 
-import Create from './Create';
-import Update from './Update';
-
-export default function Councils({ semester }) {
+export default function CheckpointTemplates() {
   const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
-  const { id: semId } = useParams();
 
   const [l, loadData] = React.useReducer(() => ({}), {});
 
@@ -54,6 +46,9 @@ export default function Councils({ semester }) {
   const [editId, setEditId] = React.useState(0);
   const [isProcessing, setIsProcessing] = React.useState(false);
 
+  const [isShowCheckpoints, setIsShowCheckpoints] = React.useState(false);
+  const [showCheckpointsForId, setShowCheckpointsForId] = React.useState(0);
+
   // ---------------------------------------------------------------------------
 
   const showCreateModal = React.useCallback(() => {
@@ -64,25 +59,35 @@ export default function Councils({ semester }) {
     setShowCreate(false);
   }, []);
 
-  const handleCreate = React.useCallback(
-    fieldData => {
-      setIsProcessing(true);
-      return request({
-        to: endpoints.CREATE_COUNCIL(semId).url,
-        method: endpoints.CREATE_COUNCIL(semId).method,
-        data: transformers.up(fieldData),
+  const handleCreate = React.useCallback(fieldData => {
+    setIsProcessing(true);
+    request({
+      to: endpoints.CREATE_CHECKPOINT_TEMPLATE.url,
+      method: endpoints.CREATE_CHECKPOINT_TEMPLATE.method,
+      data: transformers.up(fieldData),
+    })
+      .then(res => {
+        toast.success('Create checkpoint template successfully');
+        setShowCreate(false);
+        loadData();
+        setFieldTemplate({});
       })
-        .then(res => {
-          toast.success('Create council successfully');
-          setShowCreate(false);
-          loadData();
-          setFieldTemplate({});
-        })
-        .catch(handleErrors)
-        .finally(() => setIsProcessing(false));
-    },
-    [semId]
-  );
+      .catch(handleErrors)
+      .finally(() => setIsProcessing(false));
+  }, []);
+
+  // ---------------------------------------------------------------------------
+
+  const handleShowCheckpoints = React.useCallback(e => {
+    e.preventDefault();
+    const id = Number(e.currentTarget.getAttribute('data-id'));
+    if (!Number.isInteger(id)) {
+      toast.error('Internal Server Error');
+      return;
+    }
+    setShowCheckpointsForId(id);
+    setIsShowCheckpoints(true);
+  }, []);
 
   // ---------------------------------------------------------------------------
 
@@ -94,42 +99,39 @@ export default function Councils({ semester }) {
     fieldData => {
       setIsProcessing(true);
       request({
-        to: endpoints.UPDATE_COUNCIL(semId, editId).url,
-        method: endpoints.UPDATE_COUNCIL(semId, editId).method,
+        to: endpoints.UPDATE_CHECKPOINT_TEMPLATE(editId).url,
+        method: endpoints.UPDATE_CHECKPOINT_TEMPLATE(editId).method,
         data: transformers.up(fieldData),
       })
         .then(res => {
-          toast.success('Update council successfully');
+          toast.success('Update checkpoint template successfully');
           setShowUpdate(false);
           loadData();
         })
         .catch(handleErrors)
         .finally(() => setIsProcessing(false));
     },
-    [editId, semId]
+    [editId]
   );
 
-  const handleEdit = React.useCallback(
-    e => {
-      e.preventDefault();
-      const id = Number(e.currentTarget.getAttribute('data-id'));
-      if (!Number.isInteger(id)) {
-        toast.error('Internal Server Error');
-        return;
-      }
-      request({
-        to: endpoints.READ_COUNCIL(semId, id).url,
-        method: endpoints.READ_COUNCIL(semId, id).method,
+  const handleEdit = React.useCallback(e => {
+    e.preventDefault();
+    const id = Number(e.currentTarget.getAttribute('data-id'));
+    if (!Number.isInteger(id)) {
+      toast.error('Internal Server Error');
+      return;
+    }
+    request({
+      to: endpoints.READ_CHECKPOINT_TEMPLATE(id).url,
+      method: endpoints.READ_CHECKPOINT_TEMPLATE(id).method,
+    })
+      .then(res => {
+        setEditId(id);
+        setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
+        setShowUpdate(true);
       })
-        .then(res => {
-          setEditId(id);
-          setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
-          setShowUpdate(true);
-        })
-        .catch(handleErrors);
-    },
-    [semId]
-  );
+      .catch(handleErrors);
+  }, []);
 
   const handleRemove = React.useCallback(
     e => {
@@ -143,43 +145,68 @@ export default function Councils({ semester }) {
         title: 'Removal Confirmation',
         body: (
           <>
-            Do you wanna remove this council?
+            Do you wanna remove this checkpoint template?
             <br />
-            This council will be <b>permanently removed</b>, and all historical
-            data belong to this council too.
+            This checkpoint template will be <b>permanently removed</b>, and all
+            historical data belong to this checkpoint template too.
           </>
         ),
         onConfirm: () =>
           request({
-            to: endpoints.DELETE_COUNCIL(semId, id).url,
-            method: endpoints.DELETE_COUNCIL(semId, id).method,
+            to: endpoints.DELETE_CHECKPOINT_TEMPLATE(id).url,
+            method: endpoints.DELETE_CHECKPOINT_TEMPLATE(id).method,
           })
             .then(res => {
               loadData();
-              toast.success('Successfully remove council');
+              toast.success('Successfully remove checkpoint template');
             })
             .catch(handleErrors),
       });
     },
-    [confirm, semId]
+    [confirm]
   );
 
   // ---------------------------------------------------------------------------
 
   const columns = React.useMemo(
-    () => constants.createColumns({ handleEdit, handleRemove }),
-    [handleEdit, handleRemove]
+    () =>
+      constants.createColumns({
+        handleEdit,
+        handleRemove,
+        handleShowCheckpoints,
+      }),
+    [handleEdit, handleRemove, handleShowCheckpoints]
   );
 
   // ---------------------------------------------------------------------------
+
+  React.useEffect(() => {
+    setMeta({
+      title: 'All checkpoint templates',
+      breadcrumb: [
+        { title: 'Checkpoint templates', path: '/checkpoint-tempalte' },
+        { title: 'All', path: '/checkpoint template/#' },
+      ],
+      toolbar: (
+        <button
+          type="button"
+          className="btn btn-primary font-weight-bold btn-sm"
+          onClick={showCreateModal}
+        >
+          <i className="fas fa-plus mr-2"></i>
+          New
+        </button>
+      ),
+    });
+  }, [setMeta, showCreateModal]);
 
   React.useEffect(() => {
     setIsLoading(true);
     const source = {};
 
     request({
-      to: endpoints.LIST_COUNCIL(semId).url,
-      method: endpoints.LIST_COUNCIL(semId).method,
+      to: endpoints.LIST_CHECKPOINT_TEMPLATE.url,
+      method: endpoints.LIST_CHECKPOINT_TEMPLATE.method,
       params: {
         ...debouncedFilters,
         pageNumber: page,
@@ -204,44 +231,10 @@ export default function Councils({ semester }) {
     return () => {
       source.cancel();
     };
-  }, [l, debouncedFilters, page, pageSize, sortField, sortOrder, semId]);
-
-  React.useEffect(() => {
-    setMeta(meta => ({
-      ...meta,
-      title: 'Councils of ' + semester.name,
-      breadcrumb: [
-        { title: 'Semester', path: '/semester' },
-        { title: semester.name, path: '/semester/' + semId },
-        { title: 'Council', path: '/semester/' + semId + '/council' },
-      ],
-    }));
-  }, [semId, semester.name, setMeta]);
+  }, [l, debouncedFilters, page, pageSize, sortField, sortOrder]);
 
   return (
     <Card>
-      <CardHeader title="All councils">
-        <CardHeaderToolbar className="text-nowrap">
-          <button
-            type="button"
-            className="btn btn-danger font-weight-bold"
-            disabled={Array.isArray(selected) && selected.length === 0}
-            // onClick={handleShowRemoveCouncilsModal}
-          >
-            <i className="fas fa-trash mr-2"></i>
-            Remove ({(Array.isArray(selected) && selected.length) || 0})
-          </button>
-          &nbsp;
-          <button
-            type="button"
-            className="btn btn-primary font-weight-bold"
-            onClick={showCreateModal}
-          >
-            <i className="fas fa-plus mr-2"></i>
-            New
-          </button>
-        </CardHeaderToolbar>
-      </CardHeader>
       <CardBody>
         <Filters filters={filters} setFilters={setFilters} />
         <Table
@@ -263,20 +256,31 @@ export default function Councils({ semester }) {
           pageSizeList={constants.sizePerPageList}
         />
       </CardBody>
-      <Create
+      <CMSModal
         isShowFlg={showCreate}
         onHide={hideCreateModal}
+        configs={constants.modalConfigs}
+        title="Create checkpoint template"
+        subTitle="Add new checkpoint template to this system"
         onConfirmForm={handleCreate}
-        isProcessing={isProcessing}
         fieldTemplate={fieldTemplate}
-      />
-      <Update
-        isShowFlg={showUpdate}
-        setIsShowFlg={setShowUpdate}
-        onHide={hideUpdateModal}
-        onConfirmForm={edit}
         isProcessing={isProcessing}
+      />
+      <CMSModal
+        isShowFlg={showUpdate}
+        onHide={hideUpdateModal}
+        configs={constants.modalConfigs}
+        title="Update this checkpoint template"
+        subTitle="Change this checkpoint template info"
+        onConfirmForm={edit}
         fieldTemplate={updateFieldTemplate}
+        primaryButtonLabel="Update"
+        isProcessing={isProcessing}
+      />
+      <Checkpoints
+        isShowFlg={isShowCheckpoints}
+        setIsShowFlg={setIsShowCheckpoints}
+        id={showCheckpointsForId}
       />
     </Card>
   );

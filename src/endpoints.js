@@ -87,6 +87,33 @@ export const DELETE_LECTURER = id => ({
 
 // -----------------------------------------------------------------------------
 
+export const LIST_CHECKPOINT_TEMPLATE = {
+  url: config.api + 'lecturers',
+  method: METHOD.GET,
+};
+
+export const CREATE_CHECKPOINT_TEMPLATE = {
+  url: LIST_CHECKPOINT_TEMPLATE.url,
+  method: METHOD.POST,
+};
+
+export const READ_CHECKPOINT_TEMPLATE = id => ({
+  url: LIST_CHECKPOINT_TEMPLATE.url + '/' + id,
+  method: METHOD.GET,
+});
+
+export const UPDATE_CHECKPOINT_TEMPLATE = id => ({
+  url: READ_CHECKPOINT_TEMPLATE(id).url,
+  method: METHOD.PUT,
+});
+
+export const DELETE_CHECKPOINT_TEMPLATE = id => ({
+  url: READ_CHECKPOINT_TEMPLATE(id).url,
+  method: METHOD.DELETE,
+});
+
+// -----------------------------------------------------------------------------
+
 export const LIST_ADMIN = {
   url: config.api + 'admins',
   method: METHOD.GET,

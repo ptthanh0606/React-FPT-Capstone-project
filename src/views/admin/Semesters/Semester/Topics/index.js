@@ -69,7 +69,7 @@ export default function Topics({ semester }) {
       request({
         to: endpoints.CREATE_TOPIC.url,
         method: endpoints.CREATE_TOPIC.method,
-        data: transformers.up(fieldData),
+        data: { ...transformers.up(fieldData), semester: Number(semId) },
         params: {
           semesterId: semId,
         },
@@ -174,6 +174,14 @@ export default function Topics({ semester }) {
 
   // ---------------------------------------------------------------------------
 
+  const handleAssignCheckpointTemplate = React.useCallback(
+    e => {
+      e.preventDefault();
+      console.log(selected);
+    },
+    [selected]
+  );
+
   const columns = React.useMemo(
     () => constants.createColumns({ handleEdit, handleRemove }),
     [handleEdit, handleRemove]
@@ -232,12 +240,13 @@ export default function Topics({ semester }) {
         <CardHeaderToolbar className="text-nowrap">
           <button
             type="button"
-            className="btn btn-danger font-weight-bold"
+            className="btn btn-success font-weight-bold"
             disabled={Array.isArray(selected) && selected.length === 0}
-            // onClick={}
+            onClick={handleAssignCheckpointTemplate}
           >
-            <i className="fas fa-trash mr-2"></i>
-            Remove ({(Array.isArray(selected) && selected.length) || 0})
+            <i className="fas fa-puzzle-piece mr-2"></i>
+            Assign checkpoint template (
+            {(Array.isArray(selected) && selected.length) || 0})
           </button>
           &nbsp;
           <button

@@ -183,7 +183,7 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  // background: url('/arrow.png') center right 10px/10px no-repeat #eee;
+  background: url('/arrow.png') center right 10px/10px no-repeat #eee;
   padding-right: 10px;
 }
 
@@ -196,4 +196,8 @@ select::-ms-expand {
     background: none\9;
     padding: 5px\9;
   }
+}
+
+.modal-xxl {
+  min-width: 95vw;
 }

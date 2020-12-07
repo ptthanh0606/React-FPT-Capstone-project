@@ -18,6 +18,10 @@ const menusOfAdmin = [
     title: 'Semester',
   },
   {
+    path: '/checkpoint-template',
+    title: 'Checkpoint Template',
+  },
+  {
     path: '/department',
     title: 'Department',
   },

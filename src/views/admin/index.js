@@ -21,6 +21,14 @@ const Admin = () => {
           )}
         />
         <Route
+          path={'/checkpoint-template'}
+          component={lazy(() =>
+            import(
+              'views/admin/CheckpointTemplates' /* webpackChunkName: "checkpoint-template" */
+            )
+          )}
+        />
+        <Route
           path={'/department'}
           component={lazy(() =>
             import(
