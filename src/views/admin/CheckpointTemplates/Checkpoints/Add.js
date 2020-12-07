@@ -1,16 +1,9 @@
 import React from 'react';
 import Button from 'components/Button';
 import FormGroups from 'components/CMSModal/FormGroups';
-import SelectTagInput from 'components/TagInput/SelectTagInput';
-import { Col, Form, Modal, Row } from 'react-bootstrap';
-import { mDown as mDownDep } from 'modules/department/transformers';
-import { mDown as mDownLec } from 'modules/lecturer/transformers';
-import request from 'utils/request';
-import * as endpoints from 'endpoints';
+import { Form, Modal } from 'react-bootstrap';
 import { columnsTransformer } from 'utils/common';
-import { Link } from 'react-router-dom';
 import BootstrapTable from 'react-bootstrap-table-next';
-import toast from 'utils/toast';
 import cellEditFactory from 'react-bootstrap-table2-editor';
 
 class NumberEditor extends React.Component {
@@ -59,7 +52,6 @@ const AddCheckpoint = ({
   isShowFlg = false,
   setIsShowFlg = function () {},
   onOk = function () {},
-  parentId = 0,
 }) => {
   const onHide = React.useCallback(() => {
     setIsShowFlg(false);
@@ -79,7 +71,6 @@ const AddCheckpoint = ({
 
   const handleTableChange = React.useCallback((type, { cellEdit = {} }) => {
     if (type === 'cellEdit') {
-      console.log(cellEdit);
       setCols(i => {
         const index = i.findIndex(x => x.id === cellEdit.rowId);
         const newI = [...i];
@@ -121,26 +112,23 @@ const AddCheckpoint = ({
     });
   }, []);
 
-  const onUpdate = React.useCallback(() => {
-    console.log('add new checkpoint for', parentId, 'with', {
-      name,
-      description,
-      weight,
-      marginPass,
-      cols,
-    });
-    onOk();
-    setIsShowFlg(false);
-  }, [
-    cols,
-    description,
-    marginPass,
-    name,
-    onOk,
-    parentId,
-    setIsShowFlg,
-    weight,
-  ]);
+  const onAdd = React.useCallback(
+    e => {
+      e.preventDefault();
+      setIsLoading(true);
+      onOk({
+        name,
+        description,
+        weight,
+        marginPass,
+        cols,
+      })
+        .then(() => setIsShowFlg(false))
+        .catch(() => {})
+        .finally(() => setIsLoading(false));
+    },
+    [cols, description, marginPass, name, onOk, setIsShowFlg, weight]
+  );
   //----------------------------------------------------------------------------
 
   const columns = React.useMemo(
@@ -218,6 +206,17 @@ const AddCheckpoint = ({
     event.preventDefault();
   }, []);
 
+  React.useEffect(() => {
+    if (isShowFlg === true) {
+      setName('');
+      setDescription('');
+      setWeight(0);
+      setMarginPass(0);
+      setNewNum(1);
+      setCols([]);
+    }
+  }, [isShowFlg]);
+
   return (
     <Modal
       size="xl"
@@ -284,7 +283,7 @@ const AddCheckpoint = ({
             marginTop: '2rem',
           }}
         >
-          Checkpoint columns
+          Mark columns
           <div
             style={{
               float: 'right',
@@ -326,11 +325,11 @@ const AddCheckpoint = ({
         <Button
           type="submit"
           variant="primary"
-          onClick={onUpdate}
+          onClick={onAdd}
           form="test-form"
           isLoading={isLoading}
         >
-          Update
+          Add
         </Button>
       </Modal.Footer>
     </Modal>

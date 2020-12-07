@@ -11,6 +11,8 @@ export function handleErrors(err) {
       for (const i of Object.entries(err.response.data.errors)) {
         for (const j of i[1]) toast.error(j);
       }
+    } else if (err?.response?.data?.message) {
+      toast.error(err.response.data?.message);
     } else {
       if (err?.response?.status === 401) {
         toast.error('Unauthorized');

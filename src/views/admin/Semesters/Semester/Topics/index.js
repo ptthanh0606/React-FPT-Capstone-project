@@ -23,6 +23,8 @@ import * as endpoints from 'endpoints';
 import * as transformers from '../../../../../modules/semester/topic/transformers';
 import * as constants from '../../../../../modules/semester/topic/constants';
 
+import AssignCheckpointTemplateModal from './AssignCheckpointTemplateModal';
+
 export default function Topics({ semester }) {
   const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
@@ -55,6 +57,13 @@ export default function Topics({ semester }) {
 
   // ---------------------------------------------------------------------------
 
+  const [
+    isShowAssignCheckpointTemplate,
+    setIsShowAssignCheckpointTemplate,
+  ] = React.useState(false);
+
+  // ---------------------------------------------------------------------------
+
   const showCreateModal = React.useCallback(() => {
     setShowCreate(true);
   }, []);
@@ -69,7 +78,7 @@ export default function Topics({ semester }) {
       request({
         to: endpoints.CREATE_TOPIC.url,
         method: endpoints.CREATE_TOPIC.method,
-        data: { ...transformers.up(fieldData), semester: Number(semId) },
+        data: { ...transformers.up(fieldData), semesterId: Number(semId) },
         params: {
           semesterId: semId,
         },
@@ -174,13 +183,10 @@ export default function Topics({ semester }) {
 
   // ---------------------------------------------------------------------------
 
-  const handleAssignCheckpointTemplate = React.useCallback(
-    e => {
-      e.preventDefault();
-      console.log(selected);
-    },
-    [selected]
-  );
+  const handleAssignCheckpointTemplate = React.useCallback(e => {
+    e.preventDefault();
+    setIsShowAssignCheckpointTemplate(true);
+  }, []);
 
   const columns = React.useMemo(
     () => constants.createColumns({ handleEdit, handleRemove }),
@@ -188,6 +194,16 @@ export default function Topics({ semester }) {
   );
 
   // ---------------------------------------------------------------------------
+
+  const onAssignCheckpointTemplate = React.useCallback(
+    data => {
+      console.log({
+        ...data,
+        topicIds: selected,
+      });
+    },
+    [selected]
+  );
 
   React.useEffect(() => {
     setIsLoading(true);
@@ -301,6 +317,11 @@ export default function Topics({ semester }) {
         fieldTemplate={updateFieldTemplate}
         primaryButtonLabel="Update"
         isProcessing={isProcessing}
+      />
+      <AssignCheckpointTemplateModal
+        isShowFlg={isShowAssignCheckpointTemplate}
+        setIsShowFlg={setIsShowAssignCheckpointTemplate}
+        onOk={onAssignCheckpointTemplate}
       />
     </Card>
   );

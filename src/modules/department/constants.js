@@ -20,10 +20,6 @@ export const sizePerPageList = [
 export const statusClasses = ['danger', 'success'];
 export const statusTitles = ['Deactivated', 'Activated'];
 
-// export const createColumns = ({ handleEdit, handleRemove }) =>
-//   columnsTransformer();
-// xóa caret, sortheader, constant.
-
 export const createColumns = ({ handleEdit, handleRemove }) =>
   columnsTransformer([
     {

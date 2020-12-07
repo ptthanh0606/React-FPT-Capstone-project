@@ -1,37 +1,81 @@
 export function down(i) {
   return {
     id: i?.id || console.log('id field not found'),
-    code: i?.code || console.log('code field not found'),
     status:
       i?.isDisabled !== undefined
         ? !i?.isDisabled
         : !!console.log('isDisabled field not found'),
     name: i?.name || console.log('name field not found'),
-    approvers:
-      i?.approvers?.map(j => ({
-        value: j?.id || console.log('approver id field not found'),
-        label: j?.code || console.log('approver code field not found'),
-        isDisabled:
-          j?.isDisabled !== undefined
-            ? j?.isDisabled
-            : console.log('approvers isDisabled field not found'),
-      })) || (console.log('approvers field not found'), []),
+    description:
+      i?.description !== undefined
+        ? i?.description
+        : console.log('description field not found'),
+    attachment:
+      i?.attachment !== undefined
+        ? i?.attachment
+        : console.log('attachment field not found'),
+    count: i?.totalCheckpoints !== undefined ? i?.totalCheckpoints : 0,
+    checkpoints:
+      i?.checkpoints?.map(downCheckpoints) ||
+      (console.log('checkpoints field not found'), []),
+  };
+}
+
+export function downCheckpoints(i) {
+  return {
+    id: i?.id || console.log('id field not found'),
+    name: i?.name || console.log('name field not found'),
+    description: i?.description || console.log('description field not found'),
+    count:
+      i?.markColumns?.length !== undefined
+        ? i?.markColumns?.length
+        : console.log('count field not found'),
+    weight:
+      i?.weight !== undefined
+        ? i?.weight
+        : console.log('weight field not found'),
+    marginPass:
+      i?.marginPass !== undefined
+        ? i?.marginPass
+        : console.log('marginPass field not found'),
+    cols:
+      i?.markColumns?.map(j => ({
+        id: j?.id || console.log('id field not found'),
+        name: j?.name || console.log('name field not found'),
+        description:
+          j?.description || console.log('description field not found'),
+        weight:
+          j?.weight !== undefined
+            ? j?.weight
+            : console.log('weight field not found'),
+      })) || (console.log('markColumns field not found'), []),
   };
 }
 
 export function mDown(i) {
   return {
     value: i?.id || console.log('id field not found'),
-    label: i?.code || console.log('code field not found'),
+    label: i?.name || console.log('code field not found'),
   };
 }
 
 export function up(i) {
   return {
-    code: i?.code,
     name: i?.name,
+    description: i?.description,
     isDisabled: !i?.status,
-    approverIDs: i?.approvers?.map(j => j?.value) || [],
+    attachment: i?.attachment,
+  };
+}
+
+export function upCheckpoints(i) {
+  return {
+    id: i?.id,
+    name: i?.name,
+    description: i?.description,
+    weight: i?.weight,
+    marginPass: i?.marginPass,
+    markColumns: i?.cols,
   };
 }
 

@@ -303,6 +303,13 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
       },
     },
     {
+      dataField: 'checkpointTemplate',
+      text: 'Checkpoint Template',
+      formatter: function StatusColumnFormatter(cellContent, row) {
+        return cellContent && cellContent.label;
+      },
+    },
+    {
       dataField: 'submitter',
       text: 'Submitter',
       formatter: function StatusColumnFormatter(cellContent, row) {

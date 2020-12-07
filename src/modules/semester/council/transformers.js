@@ -30,7 +30,7 @@ export function down(i) {
 export function mDown(i) {
   return {
     value: i?.id || console.log('id field not found'),
-    label: i?.code || console.log('code field not found'),
+    label: i?.name || console.log('code field not found'),
   };
 }
 
