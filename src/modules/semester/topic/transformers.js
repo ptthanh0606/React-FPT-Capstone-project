@@ -144,7 +144,7 @@ export function mDown(i) {
 }
 
 export function up(i) {
-  const newLecturers = [...(i?.lecturers || [])].sort(function (a, b) {
+  const mentorMembers = [...(i?.mentorMembers || [])].sort(function (a, b) {
     if (a.isLeader) return -1;
     if (b.isLeader) return 1;
     return 0;
@@ -161,7 +161,7 @@ export function up(i) {
     departmentId: i?.department?.value && Number(i?.department?.value),
     submitByStudent: !!i?.submitByStudent,
     teamId: i?.team?.value && Number(i?.team?.value),
-    mentorMembers: newLecturers?.map(j => ({
+    mentorMembers: mentorMembers?.map(j => ({
       id: Number(j.value),
       weight: Number(j.weight),
     })),
