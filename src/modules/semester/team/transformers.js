@@ -83,8 +83,8 @@ export function up(i) {
   return {
     name: String(i?.name),
     maxMembers: Number(i?.maxMembers),
-    isPublic: !!i?.isPublic,
-    isLocked: !!i?.isLocked,
+    isPublic: !!i?.privacy,
+    isLocked: !!i?.lock,
     departmentId: Number(i?.department?.value),
     topicId: Number(i?.topic?.value),
     memberIds: i?.members?.map(j => Number(j.value)),

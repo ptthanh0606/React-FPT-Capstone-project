@@ -104,4 +104,4 @@ const CreateableTagInput = ({
   );
 };
 
-export default CreateableTagInput;
+export default React.memo(CreateableTagInput);
