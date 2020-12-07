@@ -242,10 +242,10 @@ export const LOCK_TEAM = id => ({
   method: METHOD.PUT,
 });
 
-export const REFRESH_CODE_TEAM = {
-  url: LIST_TEAM.url + '/refreshCode',
+export const REFRESH_CODE_TEAM = id => ({
+  url: READ_TEAM(id).url + '/refreshCode',
   method: METHOD.PUT,
-};
+});
 
 // -----------------------------------------------------------------------------
 
