@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import md5 from 'utils/md5';
 
 const GroupMember = ({
@@ -13,7 +13,6 @@ const GroupMember = ({
   booleanFlg,
   value,
 }) => {
-  const history = useHistory();
   const [textBoxValue, setTextBoxValue] = React.useState(value);
 
   const rowTool = React.useCallback(() => {
@@ -35,13 +34,16 @@ const GroupMember = ({
               value={textBoxValue}
               className="form-control form-control-solid"
               style={{ width: '80px' }}
+              data-weight={textBoxValue}
+              data-weight-id={id}
+              onChange={e => setTextBoxValue(e.currentTarget.value)}
             />
           </div>
         );
       }
     }
     return el;
-  }, [booleanFlg, role, textBoxValue, value]);
+  }, [booleanFlg, id, role, textBoxValue, value]);
 
   return (
     <div className={'d-flex justify-content-between mb-5 ' + className}>
