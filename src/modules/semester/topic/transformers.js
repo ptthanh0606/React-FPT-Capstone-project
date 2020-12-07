@@ -41,6 +41,13 @@ export function downList(i) {
           : console.log('team member code and name field not found'),
       value: j?.id || console.log('team member id field not found'),
     })),
+    checkpointTemplate:
+      (i?.checkpointTemplate && {
+        label:
+          i?.checkpointTemplate?.name || console.log('name field not found'),
+        value: i?.checkpointTemplate?.id || console.log('id field not found'),
+      }) ||
+      console.log('checkpoint template not found'),
   };
 }
 

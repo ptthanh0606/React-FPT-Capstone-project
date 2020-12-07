@@ -78,7 +78,7 @@ export default function Topics({ semester }) {
       request({
         to: endpoints.CREATE_TOPIC.url,
         method: endpoints.CREATE_TOPIC.method,
-        data: { ...transformers.up(fieldData), semester: Number(semId) },
+        data: { ...transformers.up(fieldData), semesterId: Number(semId) },
         params: {
           semesterId: semId,
         },

@@ -88,7 +88,7 @@ export const DELETE_LECTURER = id => ({
 // -----------------------------------------------------------------------------
 
 export const LIST_CHECKPOINT_TEMPLATE = {
-  url: config.api + 'lecturers',
+  url: config.api + 'checkpointTemplates',
   method: METHOD.GET,
 };
 

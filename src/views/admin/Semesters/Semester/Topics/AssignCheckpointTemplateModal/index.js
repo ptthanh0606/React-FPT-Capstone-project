@@ -3,13 +3,16 @@ import Button from 'components/Button';
 import { Modal } from 'react-bootstrap';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
-import { columnsTransformer } from 'utils/common';
+import { columnsTransformer, handleErrors } from 'utils/common';
 import BootstrapTable from 'react-bootstrap-table-next';
 import toast from 'utils/toast';
 import cellEditFactory from 'react-bootstrap-table2-editor';
 import { addMinutes, format, subMinutes } from 'date-fns';
 import SelectTagInput from 'components/TagInput/SelectTagInput';
-import { mDown as mDownCouncil } from 'modules/semester/council/transformers';
+import {
+  mDown as mDownCt,
+  downCheckpoints as downC,
+} from 'modules/checkpointTemplates/transformers';
 import { useParams } from 'react-router-dom';
 
 export function convertDateDown(dateInput) {
@@ -75,7 +78,7 @@ class CouncilEditor extends React.Component {
               callback(
                 [
                   { label: 'Topic mentors', value: 0 },
-                  ...res.data.data?.map(mDownCouncil),
+                  ...res.data.data?.map(mDownCt),
                 ] || [{ label: 'Topic mentors', value: 0 }]
               );
             })
@@ -94,40 +97,35 @@ const AssignCheckpointTemplateModal = ({
   onOk = function () {},
 }) => {
   const { id: semId } = useParams();
+
   const onHide = React.useCallback(() => {
     setIsShowFlg(false);
   }, [setIsShowFlg]);
 
-  const [checkpoints, setCheckpoints] = React.useState([]);
+  const [checkpointTemplate, setCheckpointTemplate] = React.useState({});
+  const [isLoading, setIsLoading] = React.useState(false);
 
-  const [isShowAdd, setIsShowAdd] = React.useState(false);
-  const [isShowEdit, setIsShowEdit] = React.useState(false);
+  const [checkpoints, setCheckpoints] = React.useState([]);
+  const handleSelectCheckpointTemplate = React.useCallback(
+    v => setCheckpointTemplate(v),
+    []
+  );
 
   React.useEffect(() => {
-    setCheckpoints([{ id: 1, name: 'haha' }]);
-  }, []);
-
-  //----------------------------------------------------------------------------
-
-  const showAdd = React.useCallback(e => {
-    e.preventDefault();
-    setIsShowAdd(true);
-  }, []);
-
-  const hideAdd = React.useCallback(e => {
-    e.preventDefault();
-    setIsShowAdd(false);
-  }, []);
-
-  //----------------------------------------------------------------------------
-
-  const handleEdit = React.useCallback(e => {
-    e.preventDefault();
-  }, []);
-
-  const handleRemove = React.useCallback(e => {
-    e.preventDefault();
-  }, []);
+    if (checkpointTemplate.value) {
+      setIsLoading(true);
+      request({
+        to: endpoints.READ_CHECKPOINT_TEMPLATE(checkpointTemplate.value).url,
+        method: endpoints.READ_CHECKPOINT_TEMPLATE(checkpointTemplate.value)
+          .method,
+      })
+        .then(res => {
+          setCheckpoints(res.data?.data?.checkpoints?.map(downC) || []);
+        })
+        .catch(handleErrors)
+        .finally(_ => setIsLoading(false));
+    }
+  }, [checkpointTemplate.value]);
 
   //----------------------------------------------------------------------------
 
@@ -235,6 +233,14 @@ const AssignCheckpointTemplateModal = ({
     [semId]
   );
 
+  const onSubmit = React.useCallback(() => {
+    setIsShowFlg(false);
+    onOk({
+      checkpointTemplateId: checkpointTemplate.value,
+      checkpoints,
+    });
+  }, [checkpointTemplate.value, checkpoints, onOk, setIsShowFlg]);
+
   return (
     <>
       <Modal
@@ -243,38 +249,89 @@ const AssignCheckpointTemplateModal = ({
         aria-labelledby="example-modal-sizes-title-lg"
         dialogClassName="modal-xxl"
       >
+        <Modal.Header closeButton>
+          <Modal.Title id="example-modal-sizes-title-lg">
+            Assign checkpoint template
+            <small className="form-text text-muted">
+              Assign a checkpoint template with due dates, council for these
+              topics
+            </small>
+          </Modal.Title>
+        </Modal.Header>
         <Modal.Body style={{}}>
-          <div
-            style={{
-              fontSize: '1.4rem',
-              textAlign: 'center',
-              borderBottom: '1.5px solid #eaedf2',
-              paddingBottom: '1.5rem',
-              marginTop: '.5rem',
+          <SelectTagInput
+            onChange={handleSelectCheckpointTemplate}
+            isMulti={false}
+            load={(input, callback) => {
+              request({
+                to: endpoints.LIST_CHECKPOINT_TEMPLATE.url,
+                method: endpoints.LIST_CHECKPOINT_TEMPLATE.method,
+                params: {
+                  term: input,
+                  pageSize: 10,
+                },
+              })
+                .then(res => {
+                  callback(res.data.data?.map(mDownCt) || []);
+                })
+                .catch(() => callback([]));
             }}
-          >
-            Checkpoints of xxx
-          </div>
-          <BootstrapTable
-            wrapperClasses="table-responsive"
-            bordered={false}
-            classes="table table-head-custom table-vertical-center overflow-hidden"
-            bootstrap4
-            remote
-            keyField="id"
-            data={checkpoints && Array.isArray(checkpoints) ? checkpoints : []}
-            columns={columns}
-            noDataIndication={() => (
-              <div style={{ textAlign: 'center' }} className="mt-5">
-                No records found
-              </div>
-            )}
-            onTableChange={handleTableChange}
-            headerClasses="text-nowrap"
-            cellEdit={cellEditFactory({ mode: 'click', blurToSave: true })}
+            value={checkpointTemplate}
           />
+          {checkpointTemplate?.value && (
+            <>
+              <div
+                style={{
+                  fontSize: '1.4rem',
+                  textAlign: 'center',
+                  borderBottom: '1.5px solid #eaedf2',
+                  paddingBottom: '1.5rem',
+                  marginTop: '2rem',
+                }}
+              >
+                Checkpoints of {checkpointTemplate?.label}
+              </div>
+              {isLoading ? (
+                <div
+                  style={{
+                    textAlign: 'center',
+                    marginTop: '1.5rem',
+                  }}
+                >
+                  Loading...
+                </div>
+              ) : (
+                <BootstrapTable
+                  wrapperClasses="table-responsive"
+                  bordered={false}
+                  classes="table table-head-custom table-vertical-center overflow-hidden"
+                  bootstrap4
+                  remote
+                  keyField="id"
+                  data={
+                    checkpoints && Array.isArray(checkpoints) ? checkpoints : []
+                  }
+                  columns={columns}
+                  noDataIndication={() => (
+                    <div style={{ textAlign: 'center' }} className="mt-5">
+                      No checkpoints found
+                    </div>
+                  )}
+                  onTableChange={handleTableChange}
+                  headerClasses="text-nowrap"
+                  cellEdit={cellEditFactory({
+                    mode: 'click',
+                    blurToSave: true,
+                  })}
+                />
+              )}
+            </>
+          )}
         </Modal.Body>
         <Modal.Footer>
+          <Button variant="primary" onClick={onSubmit}>
+            Save
+          </Button>
           <Button variant="secondary" onClick={onHide}>
             Close
           </Button>

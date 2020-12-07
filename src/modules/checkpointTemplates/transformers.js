@@ -19,10 +19,30 @@ export function down(i) {
   };
 }
 
+export function downCheckpoints(i) {
+  return {
+    id: i?.id || console.log('id field not found'),
+    name: i?.name || console.log('name field not found'),
+    description: i?.description || console.log('description field not found'),
+    count:
+      i?.markColumns?.length !== undefined
+        ? i?.markColumns?.length
+        : console.log('count field not found'),
+    weight:
+      i?.weight !== undefined
+        ? i?.weight
+        : console.log('weight field not found'),
+    marginPass:
+      i?.marginPass !== undefined
+        ? i?.marginPass
+        : console.log('marginPass field not found'),
+  };
+}
+
 export function mDown(i) {
   return {
     value: i?.id || console.log('id field not found'),
-    label: i?.code || console.log('code field not found'),
+    label: i?.name || console.log('code field not found'),
   };
 }
 
@@ -32,6 +52,15 @@ export function up(i) {
     name: i?.name,
     isDisabled: !i?.status,
     approverIDs: i?.approvers?.map(j => j?.value) || [],
+  };
+}
+
+export function upCheckpoints(i) {
+  return {
+    id: i?.id,
+    description: i?.description,
+    weight: i?.weight,
+    marginPass: i?.marginPass,
   };
 }
 
