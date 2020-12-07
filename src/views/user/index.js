@@ -107,10 +107,6 @@ const User = () => {
               path="/council"
               component={lazy(() => import('views/user/Councils'))}
             />
-            <Route.SemesterSelected
-              path="/my-council"
-              component={lazy(() => import('views/user/Councils/Council'))}
-            />
             <Route.RedirectRoute to="/dashboard" />
           </Switch>
         </Layout>

@@ -17,10 +17,15 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import request from 'utils/request';
 import toast from 'utils/toast';
 import CMSAnotherList from 'components/CMSAnotherList';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
+import { down } from 'modules/semester/council/transformers';
 
 const Council = () => {
   const history = useHistory();
+  const { id } = useParams();
+
+  // --------------------------------------------------------------------
+
   const setMeta = useSetRecoilState(metaAtom);
   const currentUser = useRecoilValue(userAtom);
   const currenSem = useRecoilValue(semesterAtom);
@@ -30,18 +35,23 @@ const Council = () => {
   // --------------------------------------------------------------------
 
   const [showUpdate, setShowUpdate] = React.useState(false);
-  const [incomingTopic, setIncomingTopic] = React.useState([]);
-  const [members, setMembers] = React.useState([]);
-  const [isProcessing, setIsProcessing] = React.useState(false);
   const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
-  const [currenCouncilId, setCurrentCouncilId] = React.useState(0);
+
+  // --------------------------------------------------------------------
+
+  const [currentCouncil, setCurrentCouncil] = React.useState({});
+  const [isUserInCouncil, setIsUserInCouncil] = React.useState(false);
+  const [isUserLeadCouncil, setIsUserLeadCouncil] = React.useState(false);
+
+  const [incomingTopic, setIncomingTopic] = React.useState([]);
+  const [isProcessing, setIsProcessing] = React.useState(false);
 
   // --------------------------------------------------------------------
 
   const showUpdateModal = React.useCallback(() => {
     request({
-      to: endpoints.READ_COUNCIL(currenSem.id, currenCouncilId).url,
-      method: endpoints.READ_COUNCIL(currenSem.id, currenCouncilId).method,
+      to: endpoints.READ_COUNCIL(currenSem.id, id).url,
+      method: endpoints.READ_COUNCIL(currenSem.id, id).method,
     })
       .then(res => {
         setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
@@ -49,7 +59,7 @@ const Council = () => {
       })
       .catch(handleErrors);
     setShowUpdate(true);
-  }, [currenCouncilId, currenSem.id]);
+  }, [currenSem.id, id]);
 
   const hideUpdateModal = React.useCallback(() => {
     setShowUpdate(false);
@@ -59,8 +69,8 @@ const Council = () => {
     fieldData => {
       setIsProcessing(true);
       request({
-        to: endpoints.UPDATE_COUNCIL(currenSem.id, currenCouncilId).url,
-        method: endpoints.UPDATE_COUNCIL(currenSem.id, currenCouncilId).method,
+        to: endpoints.UPDATE_COUNCIL(currenSem.id, id).url,
+        method: endpoints.UPDATE_COUNCIL(currenSem.id, id).method,
         data: transformers.up(fieldData),
       })
         .then(res => {
@@ -71,19 +81,21 @@ const Council = () => {
         .catch(handleErrors)
         .finally(() => setIsProcessing(false));
     },
-    [currenCouncilId, currenSem.id]
+    [currenSem.id, id]
   );
 
   // --------------------------------------------------------------------
 
   React.useEffect(() => {
     setMeta({
-      title: 'My council ',
+      title: currentCouncil?.name,
       breadcrumb: [
-        { title: 'Dashboard', path: '/dashboard' },
-        { title: 'My council', path: '/my-council' },
+        { title: 'Semester', path: '/select-semester' },
+        { title: currenSem.name, path: '/dashboard' },
+        { title: 'Council', path: '/council' },
+        { title: currentCouncil?.name, path: `/council/${currentCouncil?.id}` },
       ],
-      toolbar: (
+      toolbar: isUserInCouncil && isUserLeadCouncil && (
         <>
           <button
             type="button"
@@ -101,21 +113,18 @@ const Council = () => {
             isProcessing={isProcessing}
             fieldTemplate={updateFieldTemplate}
           />
-          <button
-            type="button"
-            className="btn btn-primary btn-danger font-weight-bold btn-sm "
-            onClick={() => {}}
-          >
-            <i className="fas fa-sign-out-alt mr-2"></i>
-            Leave
-          </button>
         </>
       ),
     });
   }, [
+    currenSem.name,
+    currentCouncil.id,
+    currentCouncil.name,
     edit,
     hideUpdateModal,
     isProcessing,
+    isUserInCouncil,
+    isUserLeadCouncil,
     setMeta,
     showUpdate,
     showUpdateModal,
@@ -160,48 +169,28 @@ const Council = () => {
       },
     ];
     setIncomingTopic(response);
-  }, [history, history.push]);
 
-  React.useEffect(() => {
-    const response = [
-      {
-        id: '0',
-        name: 'Thay Thong',
-        email: 'phanthongthanh0606@gmail.com',
-        weight: 0,
-        isLead: true,
-      },
-      {
-        id: '1',
-        name: 'Thay Hung',
-        email: 'yorkittran@gmail.com',
-        weight: 0,
-        isLead: false,
-      },
-      {
-        id: '2',
-        name: 'Thay Khanh',
-        email: 'thaitrung1604@gmail.com',
-        weight: 0,
-        isLead: false,
-      },
-      {
-        id: '3',
-        name: 'Thay Hoang',
-        email: 'duuuuuuuuy@gmail.com',
-        weight: 0,
-        isLead: false,
-      },
-    ];
-    setMembers(response);
-  }, []);
-
-  React.useEffect(() => {
-    // Get council based on current lecturer id
-    console.log(currentUser);
-    const response = 0;
-    setCurrentCouncilId(response);
-  }, [currentUser]);
+    request({
+      to: endpoints.READ_COUNCIL(currenSem.id, id).url,
+      method: endpoints.READ_COUNCIL(currenSem.id, id).method,
+    })
+      .then(res => {
+        const transformedRes = down(res.data.data);
+        console.log(transformedRes);
+        setCurrentCouncil(transformedRes);
+        setIsUserInCouncil(
+          !!transformedRes.members.filter(({ value }) => currentUser.id).length
+        );
+        setIsUserLeadCouncil(
+          transformedRes.members.filter(({ isLeader }) => isLeader === true)[0]
+            ?.value === currentUser.id
+        );
+      })
+      .catch(err => {
+        history.push('/council');
+        handleErrors(err);
+      });
+  }, [currenSem.id, currentUser.id, history, history.push, id]);
 
   // ---------------------------------------------------------
 
@@ -209,23 +198,46 @@ const Council = () => {
     <>
       <div className="row">
         <div className="col-lg-12 col-xxl-12">
-          <TeamHeader />
+          <TeamHeader
+            teamName={currentCouncil?.name}
+            department={currentCouncil?.department?.fullLabel}
+            teamStatus=""
+          />
         </div>
       </div>
       <div className="row">
         <div className="col-lg-12 col-xxl-9">
           <Row>
-            {members.map(i => (
-              <Col key={i.id} sm={12} md={6} lg={6} xl={4}>
-                <UserCard
-                  id={i.id}
-                  email={i.email}
-                  name={i.name}
-                  isLead={i.isLead}
-                  role="lecturer"
-                />
-              </Col>
-            ))}
+            {(currentCouncil?.members?.length &&
+              currentCouncil?.members
+                .filter(({ isLeader }) => isLeader === true)
+                .map(i => (
+                  <Col key={i.value} sm={12} md={6} lg={6} xl={4}>
+                    <UserCard
+                      id={i.value}
+                      code={i.label}
+                      email={i.email || ''}
+                      name={i.name}
+                      isLead={i.isLeader}
+                      role="lecturer"
+                    />
+                  </Col>
+                ))) || <Col>No member</Col>}
+            {(currentCouncil?.members?.length &&
+              currentCouncil?.members
+                .filter(({ isLeader }) => isLeader !== true)
+                .map(i => (
+                  <Col key={i.value} sm={12} md={6} lg={6} xl={4}>
+                    <UserCard
+                      id={i.value}
+                      code={i.label}
+                      email={i.email || ''}
+                      name={i.name}
+                      isLead={i.isLeader}
+                      role="lecturer"
+                    />
+                  </Col>
+                ))) || <Col></Col>}
           </Row>
         </div>
         <div className="col-lg-12 col-xxl-3">

@@ -70,7 +70,7 @@ const Team = () => {
         const transformedRes = transformers.down(res.data.data);
         console.log(transformedRes);
         // Check user co phai la leader trong team khong
-        setIsUserLeader(transformedRes.leader.value === currentUser.id);
+        setIsUserLeader(transformedRes.leader?.value === currentUser.id);
         // Check user co phai la member trong team khong
         processCheckCurrentStudentInTeam(transformedRes.members);
         setSettingFieldTemplate(createTeamSettingFieldTemplate(transformedRes));
@@ -332,17 +332,19 @@ const Team = () => {
                   <>
                     <Col sm={12} md={6} lg={6} xl={4}>
                       <Member
-                        id={currentTeam.leader.value}
+                        id={currentTeam?.leader?.value}
                         teamId={id}
-                        name={currentTeam.leader.label}
-                        email={currentTeam.leader.email}
+                        name={currentTeam?.leader?.label}
+                        email={currentTeam?.leader?.email}
                         isLeader
-                        leaderId={currentTeam.leader.value}
+                        leaderId={currentTeam?.leader?.value}
                         onOperationSuccess={fetchTeam}
                       />
                     </Col>
                     {currentTeam?.members
-                      .filter(({ value }) => value !== currentTeam.leader.value)
+                      .filter(
+                        ({ value }) => value !== currentTeam?.leader?.value
+                      )
                       .map(member => (
                         <Col sm={12} md={6} lg={6} xl={4}>
                           <Member
@@ -350,7 +352,7 @@ const Team = () => {
                             teamId={id}
                             name={member.label}
                             email={member.email}
-                            leaderId={currentTeam.leader.value}
+                            leaderId={currentTeam?.leader?.value}
                             onOperationSuccess={fetchTeam}
                           />
                         </Col>
@@ -407,7 +409,7 @@ const Team = () => {
                             topicName={app.topic.name}
                             abstract={app.topic.abstract}
                             status={app.status}
-                            leaderId={currentTeam.leader.value}
+                            leaderId={currentTeam?.leader?.value}
                             onOperationSuccess={fetchTeam}
                           />
                         ))

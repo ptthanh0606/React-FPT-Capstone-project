@@ -56,10 +56,6 @@ const menusOfLecturer = [
     path: '/council',
     title: 'Council',
   },
-  {
-    path: '/my-council',
-    title: 'My council',
-  },
 ];
 
 const menusOfStudent = [
