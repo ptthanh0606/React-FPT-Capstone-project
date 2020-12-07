@@ -169,20 +169,16 @@ const Topic = () => {
     [id]
   );
 
-  const onDumpConfirm = React.useCallback(
-    e => {
-      e.preventDefault();
-      request({
-        to: endpoints.DELETE_TOPIC(id).url,
-        method: endpoints.DELETE_TOPIC(id).method,
+  const onDumpConfirm = React.useCallback(() => {
+    request({
+      to: endpoints.DELETE_TOPIC(id).url,
+      method: endpoints.DELETE_TOPIC(id).method,
+    })
+      .then(res => {
+        history.push('/topic');
       })
-        .then(res => {
-          history.push('/topic');
-        })
-        .catch(handleErrors);
-    },
-    [history, id]
-  );
+      .catch(handleErrors);
+  }, [history, id]);
 
   const handleConfirmDumpTopic = React.useCallback(() => {
     confirm({
@@ -191,6 +187,26 @@ const Topic = () => {
       onConfirm: onDumpConfirm,
     });
   }, [confirm, onDumpConfirm]);
+
+  const onConfirmApply = React.useCallback(() => {
+    // request({
+    //   to: endpoints.APP(id).url,
+    //   method: endpoints.DELETE_TOPIC(id).method,
+    // })
+    //   .then(res => {
+    //     history.push('/topic');
+    //   })
+    //   .catch(handleErrors);
+    toast.success('You are now a mentor of this topic!');
+  }, []);
+
+  const handleApplyMentor = React.useCallback(() => {
+    confirm({
+      title: 'Confirm required',
+      body: 'Are you sure you want to be a mentor of this topic?',
+      onConfirm: onConfirmApply,
+    });
+  }, [confirm, onConfirmApply]);
 
   // ----------------------------------------------------------
 
@@ -268,7 +284,7 @@ const Topic = () => {
                 <button
                   type="button"
                   className="btn btn-primary btn-success font-weight-bold btn-sm mr-2"
-                  onClick={() => {}}
+                  onClick={handleApplyMentor}
                 >
                   <i className="fas fa-sign-in-alt mr-2"></i>
                   Apply for mentoring
@@ -298,6 +314,7 @@ const Topic = () => {
     currentRole,
     currentTopic,
     currentUser.id,
+    handleApplyMentor,
     handleConfirmDumpTopic,
     handleConfirmSettingModal,
     handleShowSettingModal,
