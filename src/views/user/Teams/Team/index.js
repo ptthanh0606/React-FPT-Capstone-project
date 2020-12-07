@@ -27,6 +27,7 @@ import toast from 'utils/toast';
 const Team = () => {
   const history = useHistory();
   const [currentTeam, setCurrentTeam] = React.useState({});
+  const [isTeamMatched, setIsTeamMatched] = React.useState(false);
   const [isUserHaveTeam, setIsUserHaveTeam] = React.useState(true);
   const [isUserInTeam, setIsUserInTeam] = React.useState(false);
   const [isUserLeader, setIsUserLeader] = React.useState(false);
@@ -73,6 +74,7 @@ const Team = () => {
         processCheckCurrentStudentInTeam(transformedRes.members);
         setSettingFieldTemplate(createTeamSettingFieldTemplate(transformedRes));
         setCurrentTeam(transformedRes);
+        setIsTeamMatched(transformedRes.status);
       })
       .catch(err => {
         handleErrors(err);
@@ -233,14 +235,18 @@ const Team = () => {
                 </>
               )}
               {isUserInTeam ? (
-                <button
-                  type="button"
-                  className="btn btn-light-danger font-weight-bold btn-sm ml-2"
-                  onClick={handleLeaveTeam}
-                >
-                  <i className="fas fa-sign-out-alt mr-2"></i>
-                  Leave
-                </button>
+                <>
+                  {!isTeamMatched && (
+                    <button
+                      type="button"
+                      className="btn btn-light-danger font-weight-bold btn-sm ml-2"
+                      onClick={handleLeaveTeam}
+                    >
+                      <i className="fas fa-sign-out-alt mr-2"></i>
+                      Leave
+                    </button>
+                  )}
+                </>
               ) : (
                 <>
                   {!isUserHaveTeam && (
@@ -270,6 +276,7 @@ const Team = () => {
     handleJoinTeam,
     handleLeaveTeam,
     id,
+    isTeamMatched,
     isUserHaveTeam,
     isUserInTeam,
     isUserLeader,
