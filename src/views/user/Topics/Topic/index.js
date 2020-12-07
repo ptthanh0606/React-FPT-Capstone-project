@@ -344,6 +344,7 @@ const Topic = () => {
       <div className="row">
         <div className="col-lg-12 col-xxl-9">
           <TopicDetailCard
+            topicId={currentTopic.id || ''}
             topicCode={currentTopic.code || ''}
             topicName={currentTopic.name || ''}
             fullDesc={currentTopic.description || ''}
@@ -354,6 +355,7 @@ const Topic = () => {
             mentorMembers={currentTopic.mentorMembers}
             applications={currentTopic.applications}
             feedbacks={currentTopic.feedbacks}
+            submitter={currentTopic.submitter}
             onFeedbackSuccess={onFeedbackSuccess}
           />
         </div>
