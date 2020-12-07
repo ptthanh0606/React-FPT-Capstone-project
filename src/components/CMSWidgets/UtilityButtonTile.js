@@ -47,8 +47,12 @@ const UtilityButtonTile = ({
 
           {clickAbleIcon && (
             <div className="ml-6 flex-shrink-0">
-              <a href="/" onClick={handleIconClick} className="py-3 px-6">
-                <span className="svg-icon svg-icon-white svg-icon-4x">
+              <a
+                href="/"
+                onClick={handleIconClick}
+                className="btn btn-light py-3 px-6"
+              >
+                <span className={`svg-icon svg-icon-${baseColor} svg-icon-4x`}>
                   <SVG src={buttonIcon}></SVG>
                 </span>
               </a>

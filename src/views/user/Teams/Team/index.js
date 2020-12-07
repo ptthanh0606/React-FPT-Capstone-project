@@ -110,7 +110,7 @@ const Team = () => {
       request({
         to: endpoints.UPDATE_TEAM(id).url,
         method: endpoints.UPDATE_TEAM(id).method,
-        data: transformers.up(data),
+        data: data,
       })
         .then(() => {
           toast.success('Updated team info.');
@@ -450,7 +450,7 @@ const Team = () => {
               smallTitle="Team state"
               baseColor="danger"
               label="Locked"
-              clickAbleIcon={isUserLeader}
+              clickAbleIcon={isUserLeader && currentTeam?.topic}
               buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Lock.svg')}
             />
           ) : (
