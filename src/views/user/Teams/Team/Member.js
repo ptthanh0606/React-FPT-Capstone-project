@@ -52,8 +52,12 @@ const Member = ({
 
   const forceLeaveMember = React.useCallback(() => {
     request({
-      to: endpoints.LEAVE_TEAM(id).url,
-      method: endpoints.LEAVE_TEAM(id).method,
+      to: endpoints.LEAVE_TEAM(teamId).url,
+      method: endpoints.LEAVE_TEAM(teamId).method,
+      params: {
+        forcedOut: id,
+        semesterId: currentSemester.id,
+      },
     })
       .then(res => {
         toast.success('Team members updated!');
@@ -62,7 +66,7 @@ const Member = ({
       .catch(err => {
         handleErrors(err);
       });
-  }, [id, onOperationSuccess]);
+  }, [currentSemester.id, id, onOperationSuccess, teamId]);
 
   // -----------------------------------------------------------------------------
 

@@ -68,6 +68,7 @@ const Team = () => {
     })
       .then(res => {
         const transformedRes = transformers.down(res.data.data);
+        console.log(transformedRes);
         // Check user co phai la leader trong team khong
         setIsUserLeader(transformedRes.leader.value === currentUser.id);
         // Check user co phai la member trong team khong
@@ -213,7 +214,7 @@ const Team = () => {
         <>
           {userRole === 'student' && (
             <>
-              {isUserLeader && (
+              {isUserLeader && !isTeamMatched && (
                 <>
                   <button
                     type="button"
@@ -431,6 +432,7 @@ const Team = () => {
             smallTitle="Join code"
             baseColor="info"
             label={currentTeam?.code}
+            clickAbleIcon={isUserLeader}
             onIconClick={handleRefreshJoinCode}
             tooltipMsg={
               <>
