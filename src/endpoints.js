@@ -271,7 +271,7 @@ export const DELETE_TEAM = id => ({
 
 export const JOIN_TEAM = id => ({
   url: READ_TEAM(id).url + '/join',
-  method: METHOD.POST,
+  method: METHOD.PUT,
 });
 
 export const TRANSFER_LEADER_TEAM = id => ({
