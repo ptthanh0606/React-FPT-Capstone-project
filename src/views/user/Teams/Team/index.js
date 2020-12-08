@@ -141,23 +141,33 @@ const Team = () => {
   const handleConfirmSetting = React.useCallback(
     data => {
       request({
-        to: endpoints.UPDATE_TEAM(id).url,
-        method: endpoints.UPDATE_TEAM(id).method,
+        to: endpoints.UPDATE_TEAM(currentTeam.id).url,
+        method: endpoints.UPDATE_TEAM(currentTeam.id).method,
         data: {
           ...data,
           smesterId: currentSemester.id,
-          teamId: id,
+          teamId: currentTeam.id,
         },
       })
         .then(() => {
           toast.success('Updated team info.');
-          fetchTeam();
+          if (id) {
+            fetchTeam();
+            checkUserInTeam();
+          } else fetchOwnTeam();
         })
         .catch(err => {
           handleErrors(err);
         });
     },
-    [currentSemester.id, fetchTeam, id]
+    [
+      checkUserInTeam,
+      currentSemester.id,
+      currentTeam.id,
+      fetchOwnTeam,
+      fetchTeam,
+      id,
+    ]
   );
 
   const handleRefreshJoinCode = React.useCallback(() => {
