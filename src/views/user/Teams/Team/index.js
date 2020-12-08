@@ -91,10 +91,41 @@ const Team = () => {
     processCheckCurrentStudentInTeam,
   ]);
 
-  const fetchUserTeam = React.useCallback(() => {
+  const fetchOwnTeam = React.useCallback(() => {
     request({
-      to: endpoints.READ_TEAM(1).url,
-      method: endpoints.READ_TEAM(1).method,
+      to: endpoints.READ_TEAM(0).url,
+      method: endpoints.READ_TEAM(0).method,
+      params: {
+        semesterId: currentSemester.id,
+      },
+    })
+      .then(res => {
+        const transformedRes = transformers.down(res.data.data);
+        console.log(transformedRes);
+        // Check user co phai la leader trong team khong
+        setIsUserLeader(transformedRes.leader?.value === currentUser.id);
+        // Check user co phai la member trong team khong
+        processCheckCurrentStudentInTeam(transformedRes.members);
+        setSettingFieldTemplate(createTeamSettingFieldTemplate(transformedRes));
+        setCurrentTeam(transformedRes);
+        setIsTeamMatched(transformedRes.status);
+      })
+      .catch(err => {
+        // handleErrors(err);
+        toast.error("You don't have a team yet...Please create or join a team");
+        history.push('/team');
+      });
+  }, [
+    currentSemester.id,
+    currentUser.id,
+    history,
+    processCheckCurrentStudentInTeam,
+  ]);
+
+  const checkUserInTeam = React.useCallback(() => {
+    request({
+      to: endpoints.READ_TEAM(0).url,
+      method: endpoints.READ_TEAM(0).method,
       params: {
         semesterId: currentSemester.id,
       },
@@ -115,16 +146,18 @@ const Team = () => {
         data: {
           ...data,
           smesterId: currentSemester.id,
+          teamId: id,
         },
       })
         .then(() => {
           toast.success('Updated team info.');
+          fetchTeam();
         })
         .catch(err => {
           handleErrors(err);
         });
     },
-    [currentSemester.id, id]
+    [currentSemester.id, fetchTeam, id]
   );
 
   const handleRefreshJoinCode = React.useCallback(() => {
@@ -193,12 +226,12 @@ const Team = () => {
       .then(() => {
         toast.success('Welcome to our team!');
         fetchTeam();
-        fetchUserTeam();
+        checkUserInTeam();
       })
       .catch(err => {
         handleErrors(err);
       });
-  }, [currentSemester.id, currentTeam.code, fetchTeam, fetchUserTeam, id]);
+  }, [currentSemester.id, currentTeam.code, fetchTeam, checkUserInTeam, id]);
 
   const handleConfirmDumpTeam = React.useCallback(() => {
     request({
@@ -326,9 +359,11 @@ const Team = () => {
   // ------------------------------------------------------------------
 
   React.useEffect(() => {
-    fetchTeam();
-    fetchUserTeam();
-  }, [fetchTeam, fetchUserTeam]);
+    if (id) {
+      fetchTeam();
+      checkUserInTeam();
+    } else fetchOwnTeam();
+  }, [fetchTeam, checkUserInTeam, id, fetchOwnTeam]);
 
   // ------------------------------------------------------------------
 

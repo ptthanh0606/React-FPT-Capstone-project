@@ -116,10 +116,28 @@ const Topic = () => {
     setEditWeightFlg(editWeightFlg => !editWeightFlg);
   }, []);
 
-  const handleChangeWeight = React.useCallback(weightData => {
-    console.log(weightData);
-    setEditWeightFlg(editWeightFlg => !editWeightFlg);
-  }, []);
+  const handleChangeWeight = React.useCallback(
+    weightData => {
+      console.log(weightData);
+      request({
+        to: endpoints.UPDATE_WEIGHT(id).url,
+        method: endpoints.UPDATE_WEIGHT(id).method,
+        data: {
+          topicId: currentTopic?.id,
+          mentorMembers: weightData,
+        },
+      })
+        .then(res => {
+          fetchTopic();
+          toast.success('Mentor weights updated!');
+          setEditWeightFlg(editWeightFlg => !editWeightFlg);
+        })
+        .catch(err => {
+          handleErrors(err);
+        });
+    },
+    [currentTopic.id, fetchTopic, id]
+  );
 
   const onFeedbackSuccess = React.useCallback(
     e => {
@@ -175,10 +193,10 @@ const Topic = () => {
       method: endpoints.DELETE_TOPIC(id).method,
     })
       .then(res => {
-        history.push('/topic');
+        fetchTopic();
       })
       .catch(handleErrors);
-  }, [history, id]);
+  }, [fetchTopic, id]);
 
   const handleConfirmDumpTopic = React.useCallback(() => {
     confirm({
@@ -189,16 +207,16 @@ const Topic = () => {
   }, [confirm, onDumpConfirm]);
 
   const onConfirmApply = React.useCallback(() => {
-    // request({
-    //   to: endpoints.APP(id).url,
-    //   method: endpoints.DELETE_TOPIC(id).method,
-    // })
-    //   .then(res => {
-    //     history.push('/topic');
-    //   })
-    //   .catch(handleErrors);
+    request({
+      to: endpoints.APPLY_MENTOR(id).url,
+      method: endpoints.APPLY_MENTOR(id).method,
+    })
+      .then(res => {
+        fetchTopic();
+      })
+      .catch(handleErrors);
     toast.success('You are now a mentor of this topic!');
-  }, []);
+  }, [fetchTopic, id]);
 
   const handleApplyMentor = React.useCallback(() => {
     confirm({
@@ -215,19 +233,17 @@ const Topic = () => {
     if (currentTopic) {
       switch (currentRole) {
         case 'student':
-          buttons =
-            !isStudentUserHaveTeam &&
-            statusTitles[currentTopic.status] ===
-              'Ready'(
-                <button
-                  type="button"
-                  className="btn btn-primary btn-success font-weight-bold btn-sm "
-                  onClick={() => {}}
-                >
-                  <i className="fas fa-sign-in-alt mr-2"></i>
-                  Apply for matching
-                </button>
-              );
+          buttons = !isStudentUserHaveTeam &&
+            statusTitles[currentTopic.status] === 'Ready' && (
+              <button
+                type="button"
+                className="btn btn-primary btn-success font-weight-bold btn-sm "
+                onClick={() => {}}
+              >
+                <i className="fas fa-sign-in-alt mr-2"></i>
+                Apply for matching
+              </button>
+            );
           break;
 
         case 'admin':
@@ -280,16 +296,17 @@ const Topic = () => {
                     />
                   </>
                 )}
-              {statusTitles[currentTopic.status] === 'Approved' && (
-                <button
-                  type="button"
-                  className="btn btn-primary btn-success font-weight-bold btn-sm mr-2"
-                  onClick={handleApplyMentor}
-                >
-                  <i className="fas fa-sign-in-alt mr-2"></i>
-                  Apply for mentoring
-                </button>
-              )}
+              {statusTitles[currentTopic.status] === 'Approved' &&
+                !isUserMentor && (
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-success font-weight-bold btn-sm mr-2"
+                    onClick={handleApplyMentor}
+                  >
+                    <i className="fas fa-sign-in-alt mr-2"></i>
+                    Apply for mentoring
+                  </button>
+                )}
               {statusTitles[currentTopic.status] === 'Pending' &&
                 currentTopic.submitter.value === currentUser.id && (
                   <button
@@ -320,6 +337,7 @@ const Topic = () => {
     handleShowSettingModal,
     isProcessing,
     isStudentUserHaveTeam,
+    isUserMentor,
     showUpdate,
     statusTitles,
     updateFieldTemplate,

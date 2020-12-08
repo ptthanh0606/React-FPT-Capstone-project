@@ -174,12 +174,14 @@ const TopicDetailCard = ({
                   <div
                     className="symbol symbol-30 symbol-circle"
                     data-toggle="tooltip"
-                    style={{
-                      backgroundImage: `url(https://www.gravatar.com/avatar/${md5(
-                        mentor.email ? mentor.email.toLowerCase() : 'c'
-                      )})`,
-                    }}
-                  ></div>
+                  >
+                    <img
+                      alt="Pic"
+                      src={`https://www.gravatar.com/avatar/${md5(
+                        mentor.email ? mentor.email.toLowerCase() : ''
+                      )}`}
+                    />
+                  </div>
                 ))
               ) : (
                 <>Not yet</>

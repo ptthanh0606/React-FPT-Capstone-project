@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 import md5 from 'utils/md5';
 
 const GroupMember = ({
-  id,
-  role,
-  className,
-  label,
-  subLabel,
-  email,
+  id = '',
+  role = '',
+  className = '',
+  label = '',
+  subLabel = '',
+  email = '',
   booleanFlg,
   value,
 }) => {

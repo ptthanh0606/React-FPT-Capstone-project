@@ -352,3 +352,13 @@ export const FEEDBACK_TOPIC = id => ({
   url: READ_TOPIC(id).url + '/feedback',
   method: METHOD.POST,
 });
+
+export const APPLY_MENTOR = id => ({
+  url: READ_TOPIC(id).url + '/mentor',
+  method: METHOD.POST,
+});
+
+export const UPDATE_WEIGHT = id => ({
+  url: READ_TOPIC(id).url + '/mentors/updateweight',
+  method: METHOD.PUT,
+});

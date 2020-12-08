@@ -88,6 +88,7 @@ export function downRead(i) {
         value: j.id,
         weight: j.weight,
         isLeader: j.isLeader,
+        email: j.email,
         name: j.name,
       })) || console.log('mentor members field not found'),
     status:

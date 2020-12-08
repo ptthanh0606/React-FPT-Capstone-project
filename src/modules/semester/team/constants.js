@@ -390,7 +390,7 @@ export const createTeamAsStudentModalConfigs = semId => [
     name: 'isPublic',
     type: 'toggle',
     label: 'Public team',
-    smallLabel: 'Is this team private',
+    smallLabel: 'Is this team public',
   },
   {
     name: 'isLocked',

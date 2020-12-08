@@ -72,7 +72,7 @@ const menusOfStudent = [
     title: 'Team',
   },
   {
-    path: '/team/4',
+    path: '/my-team',
     title: 'My Team',
   },
   {

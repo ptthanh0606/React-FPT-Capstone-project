@@ -50,6 +50,7 @@ const GroupCard = ({
             {group?.length ? (
               group.map(member => (
                 <GroupMember
+                  email={member.email}
                   key={member.id}
                   id={member.id}
                   role={role}
