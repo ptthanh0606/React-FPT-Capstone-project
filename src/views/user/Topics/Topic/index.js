@@ -39,8 +39,11 @@ const Topic = () => {
   // ----------------------------------------------------------
 
   const [currentTopic, setCurrentTopic] = React.useState({});
-  const [isStudentUserHaveTeam, setIsStudentUserHaveTeam] = React.useState(
+  const [isStudentUserIsMember, setIsStudentUserIsMember] = React.useState(
     true
+  );
+  const [isStudentUserHaveTeam, setIsStudentUserHaveTeam] = React.useState(
+    false
   );
   const [isUserMentor, setIsUserMentor] = React.useState(false);
   const [isUserMentorLeader, setIsUserMentorLeader] = React.useState(false);
@@ -73,10 +76,10 @@ const Topic = () => {
         .then(res => {
           const transformedRes = teamTransformers.down(res.data.data);
           setStudentLeaderId(transformedRes.leader.value);
-          setIsStudentUserHaveTeam(true);
+          setIsStudentUserIsMember(true);
         })
         .catch(err => {
-          setIsStudentUserHaveTeam(false);
+          setIsStudentUserIsMember(false);
         });
     },
     [currentSemester.id]
@@ -129,10 +132,10 @@ const Topic = () => {
       },
     })
       .then(res => {
-        setIsStudentUserHaveTeam(true);
+        setIsStudentUserIsMember(true);
       })
       .catch(err => {
-        setIsStudentUserHaveTeam(false);
+        setIsStudentUserIsMember(false);
       });
   }, [currentSemester.id]);
 
@@ -260,23 +263,43 @@ const Topic = () => {
     });
   }, [confirm, onConfirmApplyMentor]);
 
-  const onConfirmApplyMatching = React.useCallback(() => {
+  const fetchOwnTeamAndSend = React.useCallback(() => {
     request({
-      to: endpoints.SEND_APPLICATION.url,
-      method: endpoints.SEND_APPLICATION.method,
-      data: {
-        // teamId: 0,
-        // topicId: 0,
+      to: endpoints.READ_TEAM(0).url,
+      method: endpoints.READ_TEAM(0).method,
+      params: {
+        semesterId: currentSemester.id,
       },
     })
       .then(res => {
-        fetchTopic();
+        const transformedRes = teamTransformers.down(res.data.data);
+        console.log(transformedRes);
+        request({
+          to: endpoints.SEND_APPLICATION.url,
+          method: endpoints.SEND_APPLICATION.method,
+          data: {
+            teamId: transformedRes.id,
+            topicId: id,
+          },
+        })
+          .then(res => {
+            fetchTopic();
+          })
+          .catch(handleErrors);
+        toast.success(
+          'Your team application sent, please wait for mentor to confirm!'
+        );
       })
-      .catch(handleErrors);
-    toast.success(
-      'Your team application sent, please wait for mentor to confirm!'
-    );
-  }, [fetchTopic]);
+      .catch(err => {
+        toast.error(
+          'You might be not in a team to apply, try create a team or join existing team!'
+        );
+      });
+  }, [currentSemester.id, fetchTopic, id]);
+
+  const onConfirmApplyMatching = React.useCallback(() => {
+    fetchOwnTeamAndSend();
+  }, [fetchOwnTeamAndSend]);
 
   const handleStudentApplyForMatching = React.useCallback(() => {
     confirm({
@@ -293,7 +316,7 @@ const Topic = () => {
     if (currentTopic) {
       switch (currentRole) {
         case 'student':
-          buttons = !isStudentUserHaveTeam &&
+          buttons = !isStudentUserIsMember &&
             statusTitles[currentTopic.status] === 'Ready' && (
               <button
                 type="button"
@@ -397,7 +420,7 @@ const Topic = () => {
     handleShowSettingModal,
     handleStudentApplyForMatching,
     isProcessing,
-    isStudentUserHaveTeam,
+    isStudentUserIsMember,
     isUserMentor,
     showUpdate,
     statusTitles,

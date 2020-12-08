@@ -4,7 +4,7 @@ import md5 from 'utils/md5';
 import userAtom from 'store/user';
 import { useRecoilValue } from 'recoil';
 import { role } from 'auth/recoil/selectors';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
 import { handleErrors } from 'utils/common';
