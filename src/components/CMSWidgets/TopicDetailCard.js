@@ -146,12 +146,14 @@ const TopicDetailCard = ({
                   <div
                     className="symbol symbol-30 symbol-circle"
                     data-toggle="tooltip"
-                    style={{
-                      backgroundImage: `url(https://www.gravatar.com/avatar/${md5(
+                  >
+                    <img
+                      alt="Pic"
+                      src={`https://www.gravatar.com/avatar/${md5(
                         student.email ? student.email.toLowerCase() : ''
-                      )})`,
-                    }}
-                  ></div>
+                      )}`}
+                    />
+                  </div>
                 ))
               ) : (
                 <>Not yet</>
