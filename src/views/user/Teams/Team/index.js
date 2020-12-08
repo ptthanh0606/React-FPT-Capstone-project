@@ -23,6 +23,7 @@ import UtilityButtonTile from 'components/CMSWidgets/UtilityButtonTile';
 import CMSModal from 'components/CMSModal/CMSModal';
 import { createTeamSettingFieldTemplate, modalConfigs } from './constants';
 import toast from 'utils/toast';
+import useConfirm from 'utils/confirm';
 
 const Team = () => {
   const history = useHistory();
@@ -37,6 +38,7 @@ const Team = () => {
   // ------------------------------------------------------------------
 
   const { id } = useParams();
+  const confirm = useConfirm();
 
   // ------------------------------------------------------------------
 
@@ -110,7 +112,10 @@ const Team = () => {
       request({
         to: endpoints.UPDATE_TEAM(id).url,
         method: endpoints.UPDATE_TEAM(id).method,
-        data: data,
+        data: {
+          ...data,
+          smesterId: currentSemester.id,
+        },
       })
         .then(() => {
           toast.success('Updated team info.');
@@ -119,7 +124,7 @@ const Team = () => {
           handleErrors(err);
         });
     },
-    [id]
+    [currentSemester.id, id]
   );
 
   const handleRefreshJoinCode = React.useCallback(() => {
@@ -149,7 +154,7 @@ const Team = () => {
       },
     })
       .then(() => {
-        toast.success('Locked team.');
+        toast.success('Lock state changed!');
         fetchTeam();
       })
       .catch(err => {
@@ -195,6 +200,20 @@ const Team = () => {
       });
   }, [currentSemester.id, currentTeam.code, fetchTeam, fetchUserTeam, id]);
 
+  const handleConfirmDumpTeam = React.useCallback(() => {
+    request({
+      to: endpoints.DELETE_TEAM(id).url,
+      method: endpoints.DELETE_TEAM(id).method,
+    })
+      .then(() => {
+        toast.success('Team dumped!');
+        history.push('/team');
+      })
+      .catch(err => {
+        handleErrors(err);
+      });
+  }, [history, id]);
+
   // ------------------------------------------------------------------
 
   React.useEffect(() => {
@@ -223,9 +242,25 @@ const Team = () => {
                     <i className="fas fa-cog mr-2"></i>
                     Settings
                   </button>
+                  <button
+                    type="button"
+                    className="btn btn-light-danger font-weight-bold btn-sm ml-2"
+                    onClick={() =>
+                      confirm({
+                        title: 'Confirm required',
+                        body:
+                          'Are you sure you want to dump this team (All member will be disposed!)',
+                        onConfirm: handleConfirmDumpTeam,
+                      })
+                    }
+                  >
+                    <i className="fas fa-trash mr-2"></i>
+                    Dump team
+                  </button>
                   <CMSModal
                     title="Settings"
                     subTitle="Update for this team"
+                    primaryButtonLabel="Save changes"
                     configs={modalConfigs}
                     isShowFlg={showSetting}
                     fieldTemplate={settingFieldTemplate}
@@ -236,7 +271,7 @@ const Team = () => {
               )}
               {isUserInTeam ? (
                 <>
-                  {!isTeamMatched && (
+                  {!isTeamMatched && !isUserLeader && (
                     <button
                       type="button"
                       className="btn btn-light-danger font-weight-bold btn-sm ml-2"
@@ -267,11 +302,13 @@ const Team = () => {
       ),
     });
   }, [
+    confirm,
     currentSemester.id,
     currentSemester.name,
     currentTeam.leader,
     currentTeam.name,
     currentUser.id,
+    handleConfirmDumpTeam,
     handleConfirmSetting,
     handleJoinTeam,
     handleLeaveTeam,
@@ -452,6 +489,7 @@ const Team = () => {
               smallTitle="Team state"
               baseColor="danger"
               label="Locked"
+              onIconClick={handleChangeLockTeam}
               clickAbleIcon={isUserLeader && currentTeam?.topic}
               buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Lock.svg')}
             />

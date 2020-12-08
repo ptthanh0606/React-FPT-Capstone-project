@@ -80,6 +80,47 @@ export default function Teams() {
 
   // --------------------------------------------------------------------
 
+  const fetchTeams = React.useCallback(() => {
+    setIsLoading(true);
+    const source = {};
+
+    request({
+      to: endpoints.LIST_TEAM.url,
+      method: endpoints.LIST_TEAM.method,
+      params: {
+        ...debouncedFilters,
+        pageNumber: page,
+        pageSize: pageSize,
+        sortField: sortField,
+        sortOrder: sortOrder,
+        semesterId: currentSemester.id,
+      },
+      source,
+    })
+      .then(res => {
+        setData(res.data?.data?.map(transformers.down));
+        setTotal(res.data?.totalRecords);
+        setPage(res.data?.pageNumber);
+        setPageSize(res.data?.pageSize);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        handleErrors(err);
+        if (!err.isCancel) setIsLoading(false);
+      });
+
+    return () => {
+      source.cancel();
+    };
+  }, [
+    currentSemester.id,
+    debouncedFilters,
+    page,
+    pageSize,
+    sortField,
+    sortOrder,
+  ]);
+
   const toolBar = React.useCallback(() => {
     let buttons = <></>;
     switch (currentRole) {
@@ -134,12 +175,13 @@ export default function Teams() {
           toast.success('Create team successfully');
           setShowCreateStudentTeamModalFlg(false);
           loadData();
+          fetchTeams();
           setFieldTemplate({});
         })
         .catch(handleErrors)
         .finally(() => setIsProcessing(false));
     },
-    [currentSemester.id]
+    [currentSemester.id, fetchTeams]
   );
 
   const handleJoin = React.useCallback(
@@ -147,6 +189,7 @@ export default function Teams() {
       e.preventDefault();
       const teamId = e.currentTarget.getAttribute('data-id');
       const teamCode = e.currentTarget.getAttribute('data-code');
+      const teamName = e.currentTarget.getAttribute('data-name');
       request({
         to: endpoints.JOIN_TEAM(teamId).url,
         method: endpoints.JOIN_TEAM(teamId).method,
@@ -157,9 +200,8 @@ export default function Teams() {
         },
       })
         .then(res => {
-          console.log(res);
-          history.push(`/team/${res.data.data.id}`);
-          toast.success('Joined!');
+          history.push(`/team/${teamId}`);
+          toast.success(`Joined, you are now a member of ${teamName}!`);
         })
         .catch(err => {
           handleErrors(err);
@@ -224,39 +266,8 @@ export default function Teams() {
   }, [setMeta, id, toolBar, currentSemester.name, currentSemester.id]);
 
   React.useEffect(() => {
-    setIsLoading(true);
-    const source = {};
-
-    request({
-      to: endpoints.LIST_TEAM.url,
-      method: endpoints.LIST_TEAM.method,
-      params: {
-        ...debouncedFilters,
-        pageNumber: page,
-        pageSize: pageSize,
-        sortField: sortField,
-        sortOrder: sortOrder,
-        semesterId: currentSemester.id,
-      },
-      source,
-    })
-      .then(res => {
-        console.log(res.data?.data?.map(transformers.down));
-        setData(res.data?.data?.map(transformers.down));
-        setTotal(res.data?.totalRecords);
-        setPage(res.data?.pageNumber);
-        setPageSize(res.data?.pageSize);
-        setIsLoading(false);
-      })
-      .catch(err => {
-        handleErrors(err);
-        if (!err.isCancel) setIsLoading(false);
-      });
-
-    return () => {
-      source.cancel();
-    };
-  }, [currentSemester, debouncedFilters, page, pageSize, sortField, sortOrder]);
+    fetchTeams();
+  }, [fetchTeams]);
 
   return (
     <Card>

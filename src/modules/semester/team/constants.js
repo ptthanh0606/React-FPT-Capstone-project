@@ -270,6 +270,7 @@ export const createColumnsForStudentRole = ({ handleJoin }) =>
             className="btn btn-icon btn-light btn-hover-primary btn-sm"
             data-id={row.id}
             data-code={row.code}
+            data-name={row.name}
             onClick={handleJoin}
           >
             <i className="fas fa-play icon-sm"></i>
