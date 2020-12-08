@@ -161,6 +161,69 @@ export const modalConfigs = [
   },
 ];
 
+export const submitterModalConfigs = [
+  {
+    name: 'code',
+    type: 'text',
+    label: 'Code',
+    smallLabel: 'Specify a code for this topic',
+    placeholder: 'Code...',
+  },
+  {
+    name: 'name',
+    type: 'text',
+    label: 'Name',
+    smallLabel: 'Give this topic a name',
+    placeholder: 'Name...',
+  },
+  {
+    name: 'abstract',
+    type: 'textarea',
+    label: 'Abstract',
+    smallLabel: 'Brief description for this topic',
+    placeholder: 'Description...',
+  },
+  {
+    name: 'description',
+    type: 'markdown',
+    label: 'Description',
+    smallLabel: 'Brief description for this topic',
+    placeholder: 'Description...',
+  },
+  {
+    name: 'note',
+    type: 'text',
+    label: 'Note',
+    smallLabel: 'Special note for this topic',
+    placeholder: 'Note...',
+  },
+  {
+    name: 'minMembers',
+    type: 'number',
+    label: 'Minimum team members',
+    smallLabel: 'Minimum team member for this topic',
+    placeholder: '0',
+  },
+  {
+    name: 'maxMembers',
+    type: 'number',
+    label: 'Maximum team members',
+    smallLabel: 'Maximum team member for this topic',
+    placeholder: '4',
+  },
+  {
+    name: 'keywords',
+    type: 'text',
+    label: 'Keywords',
+  },
+  {
+    name: 'attachment',
+    type: 'file',
+    label: 'Attachment',
+    smallLabel: '.pdf, .docx',
+  },
+];
+
 export const createColumns = ({ handleEdit, handleRemove }) => {
   return columnsTransformer([
     {

@@ -23,6 +23,7 @@ import UtilityButtonTile from 'components/CMSWidgets/UtilityButtonTile';
 import CMSModal from 'components/CMSModal/CMSModal';
 import { createTeamSettingFieldTemplate, modalConfigs } from './constants';
 import toast from 'utils/toast';
+import useConfirm from 'utils/confirm';
 
 const Team = () => {
   const history = useHistory();
@@ -37,6 +38,7 @@ const Team = () => {
   // ------------------------------------------------------------------
 
   const { id } = useParams();
+  const confirm = useConfirm();
 
   // ------------------------------------------------------------------
 
@@ -70,7 +72,7 @@ const Team = () => {
         const transformedRes = transformers.down(res.data.data);
         console.log(transformedRes);
         // Check user co phai la leader trong team khong
-        setIsUserLeader(transformedRes.leader.value === currentUser.id);
+        setIsUserLeader(transformedRes.leader?.value === currentUser.id);
         // Check user co phai la member trong team khong
         processCheckCurrentStudentInTeam(transformedRes.members);
         setSettingFieldTemplate(createTeamSettingFieldTemplate(transformedRes));
@@ -89,10 +91,41 @@ const Team = () => {
     processCheckCurrentStudentInTeam,
   ]);
 
-  const fetchUserTeam = React.useCallback(() => {
+  const fetchOwnTeam = React.useCallback(() => {
     request({
-      to: endpoints.READ_TEAM(1).url,
-      method: endpoints.READ_TEAM(1).method,
+      to: endpoints.READ_TEAM(0).url,
+      method: endpoints.READ_TEAM(0).method,
+      params: {
+        semesterId: currentSemester.id,
+      },
+    })
+      .then(res => {
+        const transformedRes = transformers.down(res.data.data);
+        console.log(transformedRes);
+        // Check user co phai la leader trong team khong
+        setIsUserLeader(transformedRes.leader?.value === currentUser.id);
+        // Check user co phai la member trong team khong
+        processCheckCurrentStudentInTeam(transformedRes.members);
+        setSettingFieldTemplate(createTeamSettingFieldTemplate(transformedRes));
+        setCurrentTeam(transformedRes);
+        setIsTeamMatched(transformedRes.status);
+      })
+      .catch(err => {
+        // handleErrors(err);
+        toast.error("You don't have a team yet...Please create or join a team");
+        history.push('/team');
+      });
+  }, [
+    currentSemester.id,
+    currentUser.id,
+    history,
+    processCheckCurrentStudentInTeam,
+  ]);
+
+  const checkUserInTeam = React.useCallback(() => {
+    request({
+      to: endpoints.READ_TEAM(0).url,
+      method: endpoints.READ_TEAM(0).method,
       params: {
         semesterId: currentSemester.id,
       },
@@ -110,16 +143,21 @@ const Team = () => {
       request({
         to: endpoints.UPDATE_TEAM(id).url,
         method: endpoints.UPDATE_TEAM(id).method,
-        data: data,
+        data: {
+          ...data,
+          smesterId: currentSemester.id,
+          teamId: id,
+        },
       })
         .then(() => {
           toast.success('Updated team info.');
+          fetchTeam();
         })
         .catch(err => {
           handleErrors(err);
         });
     },
-    [id]
+    [currentSemester.id, fetchTeam, id]
   );
 
   const handleRefreshJoinCode = React.useCallback(() => {
@@ -149,7 +187,7 @@ const Team = () => {
       },
     })
       .then(() => {
-        toast.success('Locked team.');
+        toast.success('Lock state changed!');
         fetchTeam();
       })
       .catch(err => {
@@ -188,12 +226,26 @@ const Team = () => {
       .then(() => {
         toast.success('Welcome to our team!');
         fetchTeam();
-        fetchUserTeam();
+        checkUserInTeam();
       })
       .catch(err => {
         handleErrors(err);
       });
-  }, [currentSemester.id, currentTeam.code, fetchTeam, fetchUserTeam, id]);
+  }, [currentSemester.id, currentTeam.code, fetchTeam, checkUserInTeam, id]);
+
+  const handleConfirmDumpTeam = React.useCallback(() => {
+    request({
+      to: endpoints.DELETE_TEAM(id).url,
+      method: endpoints.DELETE_TEAM(id).method,
+    })
+      .then(() => {
+        toast.success('Team dumped!');
+        history.push('/team');
+      })
+      .catch(err => {
+        handleErrors(err);
+      });
+  }, [history, id]);
 
   // ------------------------------------------------------------------
 
@@ -223,9 +275,25 @@ const Team = () => {
                     <i className="fas fa-cog mr-2"></i>
                     Settings
                   </button>
+                  <button
+                    type="button"
+                    className="btn btn-light-danger font-weight-bold btn-sm ml-2"
+                    onClick={() =>
+                      confirm({
+                        title: 'Confirm required',
+                        body:
+                          'Are you sure you want to dump this team (All member will be disposed!)',
+                        onConfirm: handleConfirmDumpTeam,
+                      })
+                    }
+                  >
+                    <i className="fas fa-trash mr-2"></i>
+                    Dump team
+                  </button>
                   <CMSModal
                     title="Settings"
                     subTitle="Update for this team"
+                    primaryButtonLabel="Save changes"
                     configs={modalConfigs}
                     isShowFlg={showSetting}
                     fieldTemplate={settingFieldTemplate}
@@ -236,7 +304,7 @@ const Team = () => {
               )}
               {isUserInTeam ? (
                 <>
-                  {!isTeamMatched && (
+                  {!isTeamMatched && !isUserLeader && (
                     <button
                       type="button"
                       className="btn btn-light-danger font-weight-bold btn-sm ml-2"
@@ -267,11 +335,13 @@ const Team = () => {
       ),
     });
   }, [
+    confirm,
     currentSemester.id,
     currentSemester.name,
     currentTeam.leader,
     currentTeam.name,
     currentUser.id,
+    handleConfirmDumpTeam,
     handleConfirmSetting,
     handleJoinTeam,
     handleLeaveTeam,
@@ -289,9 +359,11 @@ const Team = () => {
   // ------------------------------------------------------------------
 
   React.useEffect(() => {
-    fetchTeam();
-    fetchUserTeam();
-  }, [fetchTeam, fetchUserTeam]);
+    if (id) {
+      fetchTeam();
+      checkUserInTeam();
+    } else fetchOwnTeam();
+  }, [fetchTeam, checkUserInTeam, id, fetchOwnTeam]);
 
   // ------------------------------------------------------------------
 
@@ -332,17 +404,19 @@ const Team = () => {
                   <>
                     <Col sm={12} md={6} lg={6} xl={4}>
                       <Member
-                        id={currentTeam.leader.value}
+                        id={currentTeam?.leader?.value}
                         teamId={id}
-                        name={currentTeam.leader.label}
-                        email={currentTeam.leader.email}
+                        name={currentTeam?.leader?.label}
+                        email={currentTeam?.leader?.email}
                         isLeader
-                        leaderId={currentTeam.leader.value}
+                        leaderId={currentTeam?.leader?.value}
                         onOperationSuccess={fetchTeam}
                       />
                     </Col>
                     {currentTeam?.members
-                      .filter(({ value }) => value !== currentTeam.leader.value)
+                      .filter(
+                        ({ value }) => value !== currentTeam?.leader?.value
+                      )
                       .map(member => (
                         <Col sm={12} md={6} lg={6} xl={4}>
                           <Member
@@ -350,7 +424,7 @@ const Team = () => {
                             teamId={id}
                             name={member.label}
                             email={member.email}
-                            leaderId={currentTeam.leader.value}
+                            leaderId={currentTeam?.leader?.value}
                             onOperationSuccess={fetchTeam}
                           />
                         </Col>
@@ -407,7 +481,7 @@ const Team = () => {
                             topicName={app.topic.name}
                             abstract={app.topic.abstract}
                             status={app.status}
-                            leaderId={currentTeam.leader.value}
+                            leaderId={currentTeam?.leader?.value}
                             onOperationSuccess={fetchTeam}
                           />
                         ))
@@ -450,6 +524,7 @@ const Team = () => {
               smallTitle="Team state"
               baseColor="danger"
               label="Locked"
+              onIconClick={handleChangeLockTeam}
               clickAbleIcon={isUserLeader && currentTeam?.topic}
               buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Lock.svg')}
             />

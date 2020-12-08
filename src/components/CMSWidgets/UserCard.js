@@ -1,20 +1,9 @@
 import React from 'react';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import md5 from 'utils/md5';
 
-const UserCard = ({ id, name, email, isLead, role }) => {
-  const history = useHistory();
+const UserCard = ({ id, name, email, code, isLead, role }) => {
   // ------------------------------------------------------------
-
-  const handleRouteToUser = React.useCallback(
-    e => {
-      e.preventDefault();
-      // Route to user id
-      history.push(`/profile/${role}/${id}`);
-    },
-    [history, id, role]
-  );
 
   const handleMakeLeader = React.useCallback(e => {
     e.preventDefault();
@@ -32,9 +21,10 @@ const UserCard = ({ id, name, email, isLead, role }) => {
     <>
       <div class="card card-custom gutter-b card-stretch">
         <div class="card-body d-flex flex-column text-center">
-          <div class="mt-7">
+          <div class="">
             <div class="symbol symbol-circle symbol-lg-75">
-              <div
+              <Link
+                to={`/profile/${role}/${id}`}
                 className="symbol-label"
                 style={{
                   backgroundImage: `url(https://www.gravatar.com/avatar/${md5(
@@ -46,16 +36,15 @@ const UserCard = ({ id, name, email, isLead, role }) => {
           </div>
 
           <div class="mt-2">
-            <a
-              href="/"
-              onClick={handleRouteToUser}
+            <Link
+              to={`/profile/${role}/${id}`}
               class="text-dark font-weight-bold text-hover-primary font-size-h4"
             >
               {name}
-            </a>
+            </Link>
           </div>
 
-          <span className="text-muted label-block">{email}</span>
+          <span className="text-muted label-block">{code}</span>
 
           <div className="mt-5">
             <span
@@ -67,7 +56,7 @@ const UserCard = ({ id, name, email, isLead, role }) => {
             </span>
           </div>
 
-          <div class="mt-9 mb-4 d-flex justify-content-center">
+          {/* <div class="mt-9 mb-4 d-flex justify-content-center">
             <OverlayTrigger
               placement="bottom"
               overlay={<Tooltip id="quick-user-tooltip">Make Leader</Tooltip>}
@@ -94,7 +83,7 @@ const UserCard = ({ id, name, email, isLead, role }) => {
                 </span>
               </a>
             </OverlayTrigger>
-          </div>
+          </div> */}
         </div>
       </div>
     </>

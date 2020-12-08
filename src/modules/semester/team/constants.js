@@ -176,6 +176,16 @@ export const createColumnsForStudentRole = ({ handleJoin }) =>
       dataField: 'name',
       text: 'Name',
       sort: true,
+      formatter: function (cellContent, row) {
+        return (
+          <Link
+            className={'text-dark font-weight-bold'}
+            to={'/team/' + row?.id}
+          >
+            {cellContent}
+          </Link>
+        );
+      },
     },
     {
       dataField: 'leader',
@@ -217,10 +227,13 @@ export const createColumnsForStudentRole = ({ handleJoin }) =>
       text: 'Topic',
       formatter: function (cellContent, row) {
         return (
-          <div>
-            <div className="text-nowrap text-dark-75 font-weight-bold font-size-lg mb-0">
+          <div className="d-flex flex-column">
+            <Link
+              to={`/topic/${row.topic.value}`}
+              className="text-nowrap text-dark-75 font-weight-bold font-size-lg mb-0"
+            >
               {cellContent?.label}
-            </div>
+            </Link>
             <span className="text-muted font-weight-bold text-hover-primary">
               {cellContent?.abstract}
             </span>
@@ -257,6 +270,7 @@ export const createColumnsForStudentRole = ({ handleJoin }) =>
             className="btn btn-icon btn-light btn-hover-primary btn-sm"
             data-id={row.id}
             data-code={row.code}
+            data-name={row.name}
             onClick={handleJoin}
           >
             <i className="fas fa-play icon-sm"></i>
@@ -358,7 +372,7 @@ export const createModalConfigs = semId => [
   },
 ];
 
-export const createTeamAsStudent = [
+export const createTeamAsStudentModalConfigs = semId => [
   {
     name: 'name',
     type: 'text',
@@ -366,9 +380,22 @@ export const createTeamAsStudent = [
     placeholder: 'Give this team a name...',
   },
   {
-    name: 'isPrivate',
+    name: 'maxMembers',
+    type: 'number',
+    label: 'Maximum member',
+    smallLabel: 'Maximum member can join this team',
+    placeholder: '10',
+  },
+  {
+    name: 'isPublic',
     type: 'toggle',
-    label: 'Privacy',
-    smallLabel: 'Is your team private',
+    label: 'Public team',
+    smallLabel: 'Is this team public',
+  },
+  {
+    name: 'isLocked',
+    type: 'toggle',
+    label: 'Lock team',
+    smallLabel: 'Lock this team',
   },
 ];

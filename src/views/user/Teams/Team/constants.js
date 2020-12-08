@@ -13,10 +13,16 @@ export const modalConfigs = [
     placeholder: '10',
   },
   {
-    name: 'privacy',
+    name: 'isPublic',
     type: 'toggle',
     label: 'Public team',
     smallLabel: 'Is this team private',
+  },
+  {
+    name: 'isLocked',
+    type: 'toggle',
+    label: 'Locked',
+    smallLabel: 'Is this team locked',
   },
 ];
 
@@ -25,5 +31,6 @@ export const createTeamSettingFieldTemplate = teamDetail => {
     name: teamDetail.name,
     maxMembers: teamDetail.maxMembers,
     isPublic: teamDetail.privacy,
+    isLocked: teamDetail.lock,
   };
 };
