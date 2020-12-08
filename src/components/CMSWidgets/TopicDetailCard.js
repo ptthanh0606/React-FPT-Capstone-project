@@ -76,6 +76,7 @@ const TopicDetailCard = ({
 
             <div className="d-flex flex-column align-items-start flex-wrap justify-content-between mb-10">
               <div className="flex-grow-1 py-5 py-lg-2 mr-5 mb-10">
+                <div className="font-weight-bolder mb-2">Description</div>
                 <ReactMarkdown>{fullDesc}</ReactMarkdown>
               </div>
 
