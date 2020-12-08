@@ -29,6 +29,7 @@ import Member from 'views/user/Teams/Team/Member';
 import Comment from 'components/CMSWidgets/FeedbackSection/Comment';
 import * as constants from 'modules/semester/team/application/constants';
 import * as appTransformers from 'modules/semester/team/application/transformers';
+import useConfirm from 'utils/confirm';
 
 const mdParser = new MarkdownIt();
 
@@ -36,10 +37,43 @@ const Topic = ({ semester }) => {
   const { id: semId, topicId } = useParams();
   const history = useHistory();
   const setMeta = useSetRecoilState(metaAtom);
+  const [l, loadData] = React.useReducer(() => ({}), {});
+  const confirm = useConfirm();
+
+  const handleReject = React.useCallback(
+    e => {
+      e.preventDefault();
+      request({
+        to: endpoints.REJECT_TOPIC(topicId).url,
+        method: endpoints.REJECT_TOPIC(topicId).method,
+      })
+        .then(() => {
+          loadData();
+        })
+        .catch(handleErrors);
+    },
+    [topicId]
+  );
+
+  const handleApprove = React.useCallback(
+    e => {
+      e.preventDefault();
+      request({
+        to: endpoints.APPROVE_TOPIC(topicId).url,
+        method: endpoints.APPROVE_TOPIC(topicId).method,
+      })
+        .then(() => {
+          loadData();
+        })
+        .catch(handleErrors);
+    },
+    [topicId]
+  );
 
   const [isLoading, setIsLoading] = React.useState(false);
 
   const [data, setData] = React.useReducer((state, action) => {
+    if (action.name === 'all') return { ...state, ...action.value };
     return {
       ...state,
       [action.name]: action.value,
@@ -62,6 +96,53 @@ const Topic = ({ semester }) => {
     });
   }, []);
 
+  const handleUpdate = React.useCallback(
+    e => {
+      e.preventDefault();
+      request({
+        to: endpoints.UPDATE_TOPIC(topicId).url,
+        method: endpoints.UPDATE_TOPIC(topicId).method,
+        params: {
+          topicId,
+        },
+        data: transformers.up(data),
+      })
+        .then(loadData)
+        .catch(handleErrors);
+    },
+    [data, topicId]
+  );
+
+  const handleDelete = React.useCallback(
+    e => {
+      e.preventDefault();
+      confirm({
+        title: 'Removal Confirmation',
+        body: (
+          <>
+            Do you wanna remove this topic?
+            <br />
+            This topic will be <b>permanently removed</b>, and all historical
+            data belong to this topic too.
+          </>
+        ),
+        onConfirm: () =>
+          request({
+            to: endpoints.DELETE_TOPIC(topicId).url,
+            method: endpoints.DELETE_TOPIC(topicId).method,
+            params: {
+              topicId,
+            },
+          })
+            .then(res => {
+              history.push('/semester/' + semId + '/topic');
+            })
+            .catch(handleErrors),
+      });
+    },
+    [confirm, history, semId, topicId]
+  );
+
   React.useEffect(() => {
     setIsLoading(true);
     request({
@@ -71,72 +152,8 @@ const Topic = ({ semester }) => {
       .then(res => {
         const d = transformers.downRead(res?.data?.data);
         setData({
-          name: 'name',
-          value: d.name,
-        });
-        setData({
-          name: 'code',
-          value: d.code,
-        });
-        setData({
-          name: 'abstract',
-          value: d.abstract,
-        });
-        setData({
-          name: 'description',
-          value: d.description,
-        });
-        setData({
-          name: 'department',
-          value: d.department,
-        });
-        setData({
-          name: 'note',
-          value: d.note,
-        });
-        setData({
-          name: 'minMembers',
-          value: d.minMembers,
-        });
-        setData({
-          name: 'maxMembers',
-          value: d.maxMembers,
-        });
-        setData({
-          name: 'isByStudent',
-          value: d.isByStudent,
-        });
-        setData({
-          name: 'abstract',
-          value: d.abstract,
-        });
-        setData({
-          name: 'submitter',
-          value: d.submitter,
-        });
-        setData({
-          name: 'keyword',
-          value: d.keyword,
-        });
-        setData({
-          name: 'attachment',
-          value: d.attachment,
-        });
-        setData({
-          name: 'team',
-          value: d.team,
-        });
-        setData({
-          name: 'mentorMembers',
-          value: d.mentorMembers,
-        });
-        setData({
-          name: 'feedbacks',
-          value: d.feedbacks,
-        });
-        setData({
-          name: 'applications',
-          value: d.applications,
+          name: 'all',
+          value: d,
         });
       })
       .catch(err => {
@@ -144,7 +161,7 @@ const Topic = ({ semester }) => {
         history.go(-1);
       })
       .finally(() => setIsLoading(false));
-  }, [history, semId, topicId]);
+  }, [history, semId, topicId, l]);
 
   React.useEffect(() => {
     if (data?.team?.value) {
@@ -184,14 +201,19 @@ const Topic = ({ semester }) => {
             title="Information of topic"
             toolbar={
               <>
-                <Button variant="danger" className="mr-2" size="sm">
+                <Button
+                  variant="danger"
+                  className="mr-2"
+                  size="sm"
+                  onClick={handleDelete}
+                >
                   <i
                     className="fas fa-trash mr-1"
                     style={{ fontSize: '1rem' }}
                   ></i>
                   Delete topic
                 </Button>
-                <Button size="sm">
+                <Button size="sm" onClick={handleUpdate}>
                   <i
                     className="fas fa-save mr-1"
                     style={{ fontSize: '1rem' }}
@@ -212,7 +234,6 @@ const Topic = ({ semester }) => {
                   className="form-control form-control-md form-control-solid"
                   value={data?.department?.fullName}
                 />
-                <small className="form-text text-muted">hahah</small>
               </Col>
             </Form.Group>
             <Form.Group as={Row}>
@@ -227,7 +248,6 @@ const Topic = ({ semester }) => {
                   data-name="code"
                   onChange={handleChangeField}
                 />
-                <small className="form-text text-muted">hahah</small>
               </Col>
             </Form.Group>
             <Form.Group as={Row}>
@@ -242,7 +262,6 @@ const Topic = ({ semester }) => {
                   data-name="name"
                   onChange={handleChangeField}
                 />
-                <small className="form-text text-muted">hahah</small>
               </Col>
             </Form.Group>
             <Form.Group as={Row}>
@@ -257,7 +276,6 @@ const Topic = ({ semester }) => {
                   data-name="abstract"
                   onChange={handleChangeField}
                 />
-                <small className="form-text text-muted">hahah</small>
               </Col>
             </Form.Group>
             <Form.Group as={Row}>
@@ -272,7 +290,6 @@ const Topic = ({ semester }) => {
                   data-name="description"
                   onChange={handleDescriptionChange}
                 />
-                <small className="form-text text-muted">hahah</small>
               </Col>
             </Form.Group>
             <Form.Group as={Row}>
@@ -287,7 +304,6 @@ const Topic = ({ semester }) => {
                   data-name="note"
                   onChange={handleChangeField}
                 />
-                <small className="form-text text-muted">hahah</small>
               </Col>
             </Form.Group>
             <Form.Group as={Row}>
@@ -302,7 +318,6 @@ const Topic = ({ semester }) => {
                   data-name="note"
                   onChange={handleChangeField}
                 />
-                <small className="form-text text-muted">hahah</small>
               </Col>
             </Form.Group>
             <Form.Group as={Row}>
@@ -317,7 +332,6 @@ const Topic = ({ semester }) => {
                   data-name="minMembers"
                   onChange={handleChangeField}
                 />
-                <small className="form-text text-muted">hahah</small>
               </Col>
             </Form.Group>
             <Form.Group as={Row}>
@@ -332,7 +346,6 @@ const Topic = ({ semester }) => {
                   data-name="maxMembers"
                   onChange={handleChangeField}
                 />
-                <small className="form-text text-muted">hahah</small>
               </Col>
             </Form.Group>
             <Form.Group as={Row}>
@@ -349,7 +362,6 @@ const Topic = ({ semester }) => {
                   }
                   isActive={data.isByStudent}
                 />
-                <small className="form-text text-muted">hahah</small>
               </Col>
             </Form.Group>
             <Form.Group as={Row}>
@@ -364,7 +376,6 @@ const Topic = ({ semester }) => {
                   data-name="keywords"
                   onChange={handleChangeField}
                 />
-                <small className="form-text text-muted">hahah</small>
               </Col>
             </Form.Group>
             <Form.Group as={Row}>
@@ -390,12 +401,11 @@ const Topic = ({ semester }) => {
                   }}
                   value={data.submitter}
                 />
-                <small className="form-text text-muted">hahah</small>
               </Col>
             </Form.Group>
             <Form.Group as={Row}>
               <Form.Label column sm={3}>
-                Submitter
+                Team
               </Form.Label>
               <Col sm={9}>
                 <SelectTagInput
@@ -417,7 +427,6 @@ const Topic = ({ semester }) => {
                   }}
                   value={data.team}
                 />
-                <small className="form-text text-muted">hahah</small>
               </Col>
             </Form.Group>
             <Form.Group as={Row}>
@@ -432,7 +441,6 @@ const Topic = ({ semester }) => {
                   data-name="attachment"
                   onChange={handleChangeField}
                 />
-                <small className="form-text text-muted">hahah</small>
               </Col>
             </Form.Group>
           </Card>
@@ -470,37 +478,53 @@ const Topic = ({ semester }) => {
             isLoading={isLoading}
             title="Feedbacks"
             toolbar={
-              <>
-                <Button variant="danger" className="mr-2" size="sm">
-                  <i
-                    className="fas fa-thumbs-up mr-1"
-                    style={{ fontSize: '1rem' }}
-                  ></i>
-                  Reject
-                </Button>
-                <Button variant="success" size="sm">
-                  <i
-                    className="fas fa-thumbs-down mr-1"
-                    style={{ fontSize: '1rem' }}
-                  ></i>
-                  Approve
-                </Button>
-              </>
+              data?.status === 0 ? (
+                <>
+                  <Button
+                    variant="danger"
+                    className="mr-2"
+                    size="sm"
+                    onClick={handleReject}
+                  >
+                    <i
+                      className="fas fa-thumbs-down mr-1"
+                      style={{ fontSize: '1rem' }}
+                    ></i>
+                    Reject
+                  </Button>
+                  <Button variant="success" size="sm" onClick={handleApprove}>
+                    <i
+                      className="fas fa-thumbs-up mr-1"
+                      style={{ fontSize: '1rem' }}
+                    ></i>
+                    Approve
+                  </Button>
+                </>
+              ) : data?.status === 1 ? (
+                <span class="label label-inline label-danger font-weight-bold ">
+                  Rejected
+                </span>
+              ) : (
+                <span class="label label-inline label-success font-weight-bold ">
+                  Approved
+                </span>
+              )
             }
           >
             <div className="timeline timeline-3">
               <div className="timeline-items">
-                {data?.feedbacks?.map(i => {
-                  return (
-                    <Comment
-                      key={i.id}
-                      email={i.approver.email || ''}
-                      name={i.approver.name}
-                      date={i.date}
-                      content={i.content}
-                    />
-                  );
-                })}
+                {(data?.feedbacks?.length > 0 &&
+                  data?.feedbacks?.map(i => {
+                    return (
+                      <Comment
+                        key={i.id}
+                        email={i.approver.email || ''}
+                        name={i.approver.name}
+                        date={i.date}
+                        content={i.content}
+                      />
+                    );
+                  })) || <>No feedback</>}
               </div>
             </div>
           </Card>

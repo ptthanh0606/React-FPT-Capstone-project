@@ -362,7 +362,7 @@ export const createModalConfigs = semId => [
     name: 'privacy',
     type: 'toggle',
     label: 'Public team',
-    smallLabel: 'Is this team private',
+    smallLabel: 'Is this team public?',
   },
   {
     name: 'lock',
