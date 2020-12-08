@@ -10,6 +10,7 @@ import Button from 'components/Button';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import metaAtom from 'store/meta';
+import { format } from 'date-fns';
 
 import * as transformers from 'modules/semester/topic/transformers';
 
@@ -18,9 +19,16 @@ import ToggleSwitch from 'components/ToggleSwitch/ToggleSwitch';
 import SelectTagInput from 'components/TagInput/SelectTagInput';
 
 import { mDown as mDownDep } from 'modules/department/transformers';
-import { mDown as mDownTeam } from 'modules/semester/team/transformers';
+import {
+  mDown as mDownTeam,
+  down as downTeam,
+} from 'modules/semester/team/transformers';
 import { mDown as mDownLec } from 'modules/lecturer/transformers';
 import { useSetRecoilState } from 'recoil';
+import Member from 'views/user/Teams/Team/Member';
+import Comment from 'components/CMSWidgets/FeedbackSection/Comment';
+import * as constants from 'modules/semester/team/application/constants';
+import * as appTransformers from 'modules/semester/team/application/transformers';
 
 const mdParser = new MarkdownIt();
 
@@ -29,12 +37,16 @@ const Topic = ({ semester }) => {
   const history = useHistory();
   const setMeta = useSetRecoilState(metaAtom);
 
+  const [isLoading, setIsLoading] = React.useState(false);
+
   const [data, setData] = React.useReducer((state, action) => {
     return {
       ...state,
       [action.name]: action.value,
     };
   }, {});
+
+  const [teamMembers, setTeamMembers] = React.useState([]);
 
   const handleChangeField = React.useCallback(e => {
     setData({
@@ -51,7 +63,7 @@ const Topic = ({ semester }) => {
   }, []);
 
   React.useEffect(() => {
-    console.log(semId, topicId);
+    setIsLoading(true);
     request({
       to: endpoints.READ_TOPIC(topicId).url,
       method: endpoints.READ_TOPIC(topicId).method,
@@ -110,12 +122,45 @@ const Topic = ({ semester }) => {
           name: 'attachment',
           value: d.attachment,
         });
+        setData({
+          name: 'team',
+          value: d.team,
+        });
+        setData({
+          name: 'mentorMembers',
+          value: d.mentorMembers,
+        });
+        setData({
+          name: 'feedbacks',
+          value: d.feedbacks,
+        });
+        setData({
+          name: 'applications',
+          value: d.applications,
+        });
       })
       .catch(err => {
         handleErrors(err);
         history.go(-1);
-      });
+      })
+      .finally(() => setIsLoading(false));
   }, [history, semId, topicId]);
+
+  React.useEffect(() => {
+    if (data?.team?.value) {
+      setIsLoading(true);
+      request({
+        to: endpoints.READ_TEAM(data.team.value).url,
+        method: endpoints.READ_TEAM(data.team.value).method,
+      })
+        .then(res => {
+          const data = downTeam(res?.data?.data);
+          setTeamMembers(data.members);
+        })
+        .catch(handleErrors)
+        .finally(() => setIsLoading(false));
+    }
+  }, [data]);
 
   React.useEffect(() => {
     setMeta(meta => ({
@@ -135,6 +180,7 @@ const Topic = ({ semester }) => {
       <Row>
         <Col lg={12}>
           <Card
+            isLoading={isLoading}
             title="Information of topic"
             toolbar={
               <>
@@ -349,6 +395,33 @@ const Topic = ({ semester }) => {
             </Form.Group>
             <Form.Group as={Row}>
               <Form.Label column sm={3}>
+                Submitter
+              </Form.Label>
+              <Col sm={9}>
+                <SelectTagInput
+                  onChange={value => setData({ value, name: 'team' })}
+                  load={(input, callback) => {
+                    request({
+                      to: endpoints.LIST_TEAM.url,
+                      method: endpoints.LIST_TEAM.method,
+                      params: {
+                        term: input,
+                        pageSize: 10,
+                        semesterId: semId,
+                      },
+                    })
+                      .then(res => {
+                        callback(res.data.data?.map(mDownTeam) || []);
+                      })
+                      .catch(() => callback([]));
+                  }}
+                  value={data.team}
+                />
+                <small className="form-text text-muted">hahah</small>
+              </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+              <Form.Label column sm={3}>
                 Attachment
               </Form.Label>
               <Col sm={9}>
@@ -367,15 +440,34 @@ const Topic = ({ semester }) => {
       </Row>
       <Row>
         <Col lg={6}>
-          <Card title="Team" />
+          <Card isLoading={isLoading} title="Team">
+            {teamMembers?.map(i => (
+              <Member
+                id={i?.value}
+                name={i?.label}
+                email={i?.email}
+                isLeader={i?.isLeader}
+              />
+            ))}
+          </Card>
         </Col>
         <Col lg={6}>
-          <Card title="Mentors" />
+          <Card isLoading={isLoading} title="Mentors">
+            {data?.mentorMembers?.map(i => (
+              <Member
+                id={i?.value}
+                name={i?.label}
+                email={i?.email}
+                isLeader={i?.isLeader}
+              />
+            ))}
+          </Card>
         </Col>
       </Row>
       <Row>
         <Col lg={6}>
           <Card
+            isLoading={isLoading}
             title="Feedbacks"
             toolbar={
               <>
@@ -395,15 +487,89 @@ const Topic = ({ semester }) => {
                 </Button>
               </>
             }
-          />
+          >
+            <div className="timeline timeline-3">
+              <div className="timeline-items">
+                {data?.feedbacks?.map(i => {
+                  return (
+                    <Comment
+                      key={i.id}
+                      email={i.approver.email || ''}
+                      name={i.approver.name}
+                      date={i.date}
+                      content={i.content}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </Card>
         </Col>
         <Col lg={6}>
-          <Card title="Application" />
+          <Card isLoading={isLoading} title="Application">
+            <div className="table-responsive">
+              <table className="table table-head-custom table-head-bg table-borderless table-vertical-center">
+                <thead>
+                  <tr className="text-left text-uppercase">
+                    <th className="pl-4">
+                      <span className="text-dark-75">Team</span>
+                    </th>
+                    <th>Sent at</th>
+                    <th>Updated at</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data?.applications?.length ? (
+                    data?.applications.map(app => (
+                      <tr>
+                        <td className="pl-4">
+                          <a
+                            href="/"
+                            // onClick={handleRouteToTopic}
+                            className="text-dark-75 text-nowrap font-weight-bolder text-hover-primary mb-1 font-size-lg"
+                          >
+                            {app.team.name}
+                          </a>
+                        </td>
+                        <td className="text-left pl-0">
+                          <span className="text-muted font-weight-500">
+                            {appTransformers.convertDateDown(app.createdAt)}
+                          </span>
+                        </td>
+                        <td className="text-left pl-0">
+                          <span className="text-muted font-weight-500">
+                            {appTransformers.convertDateDown(app.updatedAt)}
+                          </span>
+                        </td>
+                        <td className="text-left pl-0">
+                          <span
+                            className={`label label-lg label-light-${
+                              constants.statusClass[app.status]
+                            } label-inline`}
+                          >
+                            {constants.statusTitles[app.status]}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td className="text-muted">
+                        This team currently don't have any applications yet.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </Card>
         </Col>
       </Row>
       <Row>
         <Col lg={12}>
           <Card
+            isLoading={isLoading}
             title="Checkpoints"
             toolbar={
               <>
