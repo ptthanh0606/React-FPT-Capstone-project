@@ -35,17 +35,16 @@ const Member = ({
   name = '',
   isLeader = false,
   leaderId = '',
-  role = '',
+  roleProp = '',
   onOperationSuccess = () => {},
 }) => {
-  const currentSemester = useRecoilValue(semesterAtom);
   // -----------------------------------------------------------------------------
 
-  const history = useHistory();
   const showConfirm = useConfirm();
 
   // -----------------------------------------------------------------------------
 
+  const currentSemester = useRecoilValue(semesterAtom);
   const currentUser = useRecoilValue(userAtom);
   const userRole = useRecoilValue(role);
 
@@ -114,7 +113,10 @@ const Member = ({
       <div class="d-flex justify-content-between mb-4">
         <div class="d-flex align-items-start justify-content-start">
           <div class="flex-shrink-0 mr-4 mt-lg-0 mt-3">
-            <Link to={`/profile/${role}/${id}`} class="symbol symbol-70 ml-3">
+            <Link
+              to={`/profile/${roleProp}/${id}`}
+              class="symbol symbol-70 ml-3"
+            >
               <span
                 class="symbol-label"
                 style={{
@@ -127,7 +129,7 @@ const Member = ({
           </div>
           <div class="d-flex flex-column align-items-start">
             <Link
-              to={`/profile/${role}/${id}`}
+              to={`/profile/${roleProp}/${id}`}
               class="text-dark font-weight-bold text-hover-primary font-size-h5 mb-0"
             >
               {name}
