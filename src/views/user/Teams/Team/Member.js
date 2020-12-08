@@ -4,7 +4,7 @@ import md5 from 'utils/md5';
 import userAtom from 'store/user';
 import { useRecoilValue } from 'recoil';
 import { role } from 'auth/recoil/selectors';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
 import { handleErrors } from 'utils/common';
@@ -35,6 +35,7 @@ const Member = ({
   name = '',
   isLeader = false,
   leaderId = '',
+  role = '',
   onOperationSuccess = () => {},
 }) => {
   const currentSemester = useRecoilValue(semesterAtom);
@@ -70,14 +71,6 @@ const Member = ({
   }, [currentSemester.id, id, onOperationSuccess, teamId]);
 
   // -----------------------------------------------------------------------------
-
-  const handleRoute = React.useCallback(
-    e => {
-      e.preventDefault();
-      history.push(`/profile/${id}`);
-    },
-    [history, id]
-  );
 
   const handleMakeLeader = React.useCallback(
     e => {
@@ -121,7 +114,7 @@ const Member = ({
       <div class="d-flex justify-content-between mb-4">
         <div class="d-flex align-items-start justify-content-start">
           <div class="flex-shrink-0 mr-4 mt-lg-0 mt-3">
-            <a href="/" onClick={handleRoute} class="symbol symbol-70 ml-3">
+            <Link to={`/profile/${role}/${id}`} class="symbol symbol-70 ml-3">
               <span
                 class="symbol-label"
                 style={{
@@ -130,16 +123,15 @@ const Member = ({
                   )})`,
                 }}
               ></span>
-            </a>
+            </Link>
           </div>
           <div class="d-flex flex-column align-items-start">
-            <a
-              href="/"
-              onClick={handleRoute}
+            <Link
+              to={`/profile/${role}/${id}`}
               class="text-dark font-weight-bold text-hover-primary font-size-h5 mb-0"
             >
               {name}
-            </a>
+            </Link>
             <span class="text-muted font-weight-bold">{email}</span>
             <div className="mt-2">
               {isLeader && (

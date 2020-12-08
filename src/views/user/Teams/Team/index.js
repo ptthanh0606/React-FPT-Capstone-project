@@ -426,6 +426,7 @@ const Team = () => {
                             email={member.email}
                             leaderId={currentTeam?.leader?.value}
                             onOperationSuccess={fetchTeam}
+                            role="student"
                           />
                         </Col>
                       ))}
@@ -449,9 +450,17 @@ const Team = () => {
                     Topic that this team applied
                   </span>
                 </div>
-                <span className="symbol symbol-light-success symbol-45">
+                <span
+                  className={`symbol symbol-light-${
+                    (currentTeam?.applications?.length ===
+                      currentSemester.maxApplications &&
+                      'danger') ||
+                    'success'
+                  } symbol-45`}
+                >
                   <span className="symbol-label font-weight-bolder font-size-h6">
-                    {currentTeam?.applications?.length}
+                    {currentTeam?.applications?.length}/
+                    {currentSemester.maxApplications}
                   </span>
                 </span>
               </div>
