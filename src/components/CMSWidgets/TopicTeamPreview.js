@@ -1,6 +1,5 @@
 import React from 'react';
 import { toAbsoluteUrl } from '_metronic/_helpers';
-import MessageTile from './MessageTile';
 
 const TopicTeamPreview = () => {
   return (

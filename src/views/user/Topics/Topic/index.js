@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Link, useHistory, useParams } from 'react-router-dom';
+import SVG from 'react-inlinesvg';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import metaAtom from 'store/meta';
@@ -24,7 +25,8 @@ import CMSList from 'components/CMSList';
 import GroupCard from 'components/GroupCard';
 import TopicDetailCard from 'components/CMSWidgets/TopicDetailCard';
 import useConfirm from 'utils/confirm';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { toAbsoluteUrl } from '_metronic/_helpers';
 
 const Topic = () => {
   const history = useHistory();
@@ -114,6 +116,9 @@ const Topic = () => {
 
   const checkPreConditions = React.useCallback(
     data => {
+      setMentorLeaderId(
+        data.mentorMembers?.filter(({ isLeader }) => isLeader === true)[0]?.id
+      );
       if (currentRole === 'lecturer') {
         setIsUserMentor(
           data.mentorMembers?.some(({ value }) => value === currentUser.id)
@@ -122,10 +127,6 @@ const Topic = () => {
         setIsUserMentorLeader(
           data.mentorMembers?.filter(({ isLeader }) => isLeader === true)[0]
             ?.id === currentUser.id
-        );
-
-        setMentorLeaderId(
-          data.mentorMembers?.filter(({ isLeader }) => isLeader === true)[0]?.id
         );
 
         fetchDepartment(data.department.value);
@@ -176,7 +177,7 @@ const Topic = () => {
       .then(res => {
         const transformedRes = transformers.downRead(res.data.data);
         checkPreConditions(transformedRes);
-
+        console.log(transformedRes);
         setCurrentTopic(transformedRes);
       })
       .catch(err => {
@@ -212,13 +213,57 @@ const Topic = () => {
 
   // ----------------------------------------------------------
 
-  const handleApproveTeam = React.useCallback(id => {
-    toast.success('Approved selected team to topic');
+  const handleConfirmApproveTeam = React.useCallback(appId => {
+    return () => {
+      request({
+        to: endpoints.APPROVE_APPLICATION(appId).url,
+        method: endpoints.APPROVE_APPLICATION(appId).method,
+      })
+        .then(res => {
+          toast.success('Approved selected team to topic.');
+        })
+        .catch(err => {
+          handleErrors(err);
+        });
+    };
   }, []);
 
-  const handleRejectTeam = React.useCallback(id => {
-    toast.success('Rejected selected team');
+  const handleConfirmRejectTeam = React.useCallback(appId => {
+    return () => {
+      request({
+        to: endpoints.REJECT_APPLICATION(appId).url,
+        method: endpoints.REJECT_APPLICATION(appId).method,
+      })
+        .then(res => {
+          toast.success('Rejected selected team.');
+        })
+        .catch(err => {
+          handleErrors(err);
+        });
+    };
   }, []);
+
+  const handleApproveTeam = React.useCallback(
+    appId => {
+      confirm({
+        title: 'Confirm required',
+        body: 'Are you sure you want to match this team to topic?',
+        onConfirm: handleConfirmApproveTeam(appId),
+      });
+    },
+    [confirm, handleConfirmApproveTeam]
+  );
+
+  const handleRejectTeam = React.useCallback(
+    appId => {
+      confirm({
+        title: 'Confirm required',
+        body: 'Are you sure you want to reject this team to application?',
+        onConfirm: handleConfirmRejectTeam(appId),
+      });
+    },
+    [confirm, handleConfirmRejectTeam]
+  );
 
   const handleShowEditWeight = React.useCallback(e => {
     e.preventDefault();
@@ -433,7 +478,9 @@ const Topic = () => {
                     />
                   </>
                 )}
-              {statusTitles[currentTopic.status] === 'Approved' &&
+              {!['Pending', 'Rejected'].includes(
+                statusTitles[currentTopic.status]
+              ) &&
                 !isUserMentor && (
                   <button
                     type="button"
@@ -545,6 +592,60 @@ const Topic = () => {
     fetchTopic();
   }, [currentRole, fetchCouncil, fetchTopic, fetchUserTeam]);
 
+  const applicationsMap = React.useCallback(
+    applications => {
+      return applications.map(application => ({
+        id: application.id,
+        label: application.team?.name,
+        subLabel: (
+          <>
+            <span className="font-weight-bolder">Leader: </span>
+            {
+              application.team?.members?.filter(
+                member => member.id === application.team.leaderId
+              )[0]?.name
+            }
+          </>
+        ),
+        actions: (() => (
+          <>
+            <OverlayTrigger
+              placement="bottom"
+              overlay={<Tooltip>Approve selected team</Tooltip>}
+            >
+              <Button
+                className="btn btn-primary btn-success font-weight-bold btn-sm mr-2"
+                onClick={() => handleApproveTeam(application.id)}
+              >
+                <span class="svg-icon mr-0">
+                  <SVG
+                    src={toAbsoluteUrl('/media/svg/icons/General/Smile.svg')}
+                  ></SVG>
+                </span>
+              </Button>
+            </OverlayTrigger>
+            <OverlayTrigger
+              placement="bottom"
+              overlay={<Tooltip>Reject selected team</Tooltip>}
+            >
+              <Button
+                className="btn btn-light-danger font-weight-bold btn-sm "
+                onClick={() => handleRejectTeam(application.id)}
+              >
+                <span class="svg-icon mr-0 svg-icon-red">
+                  <SVG
+                    src={toAbsoluteUrl('/media/svg/icons/General/Sad.svg')}
+                  ></SVG>
+                </span>
+              </Button>
+            </OverlayTrigger>
+          </>
+        ))(),
+      }));
+    },
+    [handleApproveTeam, handleRejectTeam]
+  );
+
   return (
     <>
       <div className="row">
@@ -580,7 +681,7 @@ const Topic = () => {
                 className="gutter-b"
                 title="Applying teams"
                 subTitle="Consider approve team to topic"
-                rows={currentTopic.applications}
+                rows={applicationsMap(currentTopic.applications)}
                 rowActions={
                   (isUserMentorLeader &&
                     rowActionFormatter(

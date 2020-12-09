@@ -2,7 +2,6 @@ import React from 'react';
 import { toAbsoluteUrl } from '_metronic/_helpers/AssetsHelpers';
 import SVG from 'react-inlinesvg';
 import * as constants from '../../../../modules/semester/team/application/constants';
-import * as transformers from '../../../../modules/semester/team/application/transformers';
 import { Link, useHistory } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import userAtom from 'store/user';

@@ -380,7 +380,19 @@ export const LIST_NOTIFICATION = {
   method: METHOD.GET,
 };
 
+// -----------------------------------------------------------------------------
+
 export const SEND_APPLICATION = {
   url: config.api + 'topicapplications',
   method: METHOD.POST,
 };
+
+export const APPROVE_APPLICATION = id => ({
+  url: SEND_APPLICATION.url + '/' + id + '/accept',
+  method: METHOD.PUT,
+});
+
+export const REJECT_APPLICATION = id => ({
+  url: SEND_APPLICATION.url + '/' + id + '/reject',
+  method: METHOD.PUT,
+});

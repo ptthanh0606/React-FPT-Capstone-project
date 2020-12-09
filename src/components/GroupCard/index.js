@@ -43,7 +43,7 @@ const GroupCard = ({
             {subTitle}
           </span>
         </h3>
-        <div className="card-toolbar">{toolBar}</div>
+        <div className="card-toolbar align-items-start">{toolBar}</div>
       </div>
       <div className="card-body pt-2">
         <div className={'d-flex-column align-items-center' + className}>
@@ -73,7 +73,7 @@ const GroupCard = ({
                       id={mem.id}
                       role={role}
                       label={mem.name}
-                      subLabel={'Leader'}
+                      subLabel={''}
                       booleanFlg={booleanFlg}
                       value={mem.weight}
                     />
