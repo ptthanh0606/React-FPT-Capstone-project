@@ -332,6 +332,7 @@ const Topic = () => {
                   type="button"
                   className="btn btn-primary btn-success font-weight-bold btn-sm "
                   onClick={handleStudentApplyForMatching}
+                  disabled={!isTeamLocked}
                 >
                   <i className="fas fa-sign-in-alt mr-2"></i>
                   Send application
@@ -421,6 +422,7 @@ const Topic = () => {
     isStudentUserHaveTeam,
     isTeamApplied,
     isTeamInTopic,
+    isTeamLocked,
     isUserMentor,
     showUpdate,
     statusTitles,
