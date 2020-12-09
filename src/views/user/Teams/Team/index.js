@@ -52,8 +52,7 @@ const Team = () => {
   const processCheckCurrentStudentInTeam = React.useCallback(
     studentTeam => {
       let isIn = false;
-      isIn = !!studentTeam.filter(member => member.value === currentUser.id)
-        .length;
+      isIn = studentTeam.some(member => member.value === currentUser.id);
       setIsUserInTeam(isIn);
     },
     [currentUser.id]

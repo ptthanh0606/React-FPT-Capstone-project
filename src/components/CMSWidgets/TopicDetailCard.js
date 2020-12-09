@@ -7,11 +7,8 @@ import * as constants from '../../modules/semester/topic/constants';
 import md5 from 'utils/md5';
 import userAtom from 'store/user';
 import { useRecoilValue } from 'recoil';
-import { Link, useHistory } from 'react-router-dom';
-import MarkdownIt from 'markdown-it';
+import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-
-const mdParser = new MarkdownIt();
 
 const TopicDetailCard = ({
   className,
@@ -28,6 +25,7 @@ const TopicDetailCard = ({
   feedbacks,
   onFeedbackSuccess,
   submitter = {},
+  isUserApprover = false,
 }) => {
   const currentUser = useRecoilValue(userAtom);
 
@@ -214,11 +212,10 @@ const TopicDetailCard = ({
             feedbacks={feedbacks}
             onSuccess={onFeedbackSuccess}
             topicStatus={statusTitles[status]}
-            isInDep={
-              !!currentUser.department.filter(
-                ({ name }) => name === department.fullName
-              ).length
-            }
+            isInDep={currentUser.department.some(
+              ({ name }) => name === department.fullName
+            )}
+            isUserApprover={isUserApprover}
           />
         )}
       </div>

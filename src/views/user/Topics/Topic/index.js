@@ -16,6 +16,7 @@ import * as endpoints from 'endpoints';
 import * as transformers from '../../../../modules/semester/topic/transformers';
 import * as constants from '../../../../modules/semester/topic/constants';
 import * as teamTransformers from '../../../../modules/semester/team/transformers';
+import * as departmentTransformers from '../../../../modules/department/transformers';
 import { rowActionFormatter } from './constants';
 
 import CMSModal from 'components/CMSModal/CMSModal';
@@ -51,6 +52,7 @@ const Topic = () => {
   const [isUserMentor, setIsUserMentor] = React.useState(false);
   const [isUserMentorLeader, setIsUserMentorLeader] = React.useState(false);
   const [mentorLeaderId, setMentorLeaderId] = React.useState();
+  const [isUserApprover, setIsUserApprover] = React.useState();
   const [studentLeaderId, setStudentLeaderId] = React.useState();
   const [guestStudentTeamId, setGuestStudentTeamId] = React.useState();
 
@@ -68,7 +70,28 @@ const Topic = () => {
 
   // ----------------------------------------------------------
 
-  const fetchTopicTeam = React.useCallback(
+  const fetchDepartment = React.useCallback(
+    depId => {
+      request({
+        to: endpoints.READ_DEPARTMENT(depId).url,
+        method: endpoints.READ_DEPARTMENT(depId).method,
+      })
+        .then(res => {
+          const transformedRes = departmentTransformers.down(res.data.data);
+          setIsUserApprover(
+            transformedRes.approvers.some(
+              approver => approver.value === currentUser.id
+            )
+          );
+        })
+        .catch(err => {
+          handleErrors(err);
+        });
+    },
+    [currentUser.id]
+  );
+
+  const fetchLeaderTeam = React.useCallback(
     teamId => {
       request({
         to: endpoints.READ_TEAM(teamId).url,
@@ -86,6 +109,42 @@ const Topic = () => {
     [currentSemester.id]
   );
 
+  const checkPreConditions = React.useCallback(
+    data => {
+      if (currentRole === 'lecturer') {
+        setIsUserMentor(
+          data.mentorMembers?.some(({ value }) => value === currentUser.id)
+        );
+
+        setIsUserMentorLeader(
+          data.mentorMembers?.filter(({ isLeader }) => isLeader === true)[0]
+            ?.id === currentUser.id
+        );
+
+        setMentorLeaderId(
+          data.mentorMembers?.filter(({ isLeader }) => isLeader === true)[0]?.id
+        );
+
+        fetchDepartment(data.department.value);
+      } else {
+        if (
+          !['Pending', 'Approved', 'Rejected', 'Ready'].includes(
+            statusTitles[data.status]
+          )
+        ) {
+          fetchLeaderTeam(data.team.value);
+        }
+      }
+    },
+    [
+      currentRole,
+      currentUser.id,
+      fetchDepartment,
+      fetchLeaderTeam,
+      statusTitles,
+    ]
+  );
+
   const fetchTopic = React.useCallback(() => {
     // fetch Topic
     request({
@@ -95,32 +154,7 @@ const Topic = () => {
       .then(res => {
         const transformedRes = transformers.downRead(res.data.data);
         console.log(transformedRes);
-
-        setIsUserMentor(
-          !!transformedRes.mentorMembers?.filter(
-            ({ value }) => value === currentUser.id
-          ).length
-        );
-
-        setIsUserMentorLeader(
-          transformedRes.mentorMembers?.filter(
-            ({ isLeader }) => isLeader === true
-          )[0]?.id === currentUser.id
-        );
-
-        setMentorLeaderId(
-          transformedRes.mentorMembers?.filter(
-            ({ isLeader }) => isLeader === true
-          )[0]?.id
-        );
-
-        if (
-          !['Pending', 'Approved', 'Rejected', 'Ready'].includes(
-            statusTitles[transformedRes.status]
-          )
-        ) {
-          fetchTopicTeam(transformedRes.team.value);
-        }
+        checkPreConditions(transformedRes);
 
         setCurrentTopic(transformedRes);
       })
@@ -128,7 +162,7 @@ const Topic = () => {
         history.push('/topic');
         handleErrors(err);
       });
-  }, [currentUser.id, fetchTopicTeam, history, id, statusTitles]);
+  }, [checkPreConditions, history, id]);
 
   const fetchUserTeam = React.useCallback(() => {
     request({
@@ -469,9 +503,11 @@ const Topic = () => {
   });
 
   React.useEffect(() => {
+    if (currentRole === 'student') {
+      fetchUserTeam();
+    }
     fetchTopic();
-    fetchUserTeam();
-  }, [fetchTopic, fetchUserTeam]);
+  }, [currentRole, fetchTopic, fetchUserTeam]);
 
   return (
     <>
@@ -496,6 +532,7 @@ const Topic = () => {
             applications={currentTopic.applications}
             feedbacks={currentTopic.feedbacks}
             submitter={currentTopic.submitter}
+            isUserApprover={isUserApprover}
             onFeedbackSuccess={onFeedbackSuccess}
           />
         </div>

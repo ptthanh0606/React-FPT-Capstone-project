@@ -7,6 +7,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import userAtom from 'store/user';
 import { role } from 'auth/recoil/selectors';
+import { formatRelative, subMinutes } from 'date-fns';
 
 const Application = ({
   createdAt = '',
@@ -54,12 +55,18 @@ const Application = ({
       </td>
       <td className="text-left pl-0">
         <span className="text-muted font-weight-500">
-          {transformers.convertDateDown(createdAt)}
+          {formatRelative(
+            subMinutes(new Date(createdAt), new Date().getTimezoneOffset()),
+            new Date()
+          )}
         </span>
       </td>
       <td className="text-left pl-0">
         <span className="text-muted font-weight-500">
-          {transformers.convertDateDown(updatedAt)}
+          {formatRelative(
+            subMinutes(new Date(updatedAt), new Date().getTimezoneOffset()),
+            new Date()
+          )}
         </span>
       </td>
       <td className="text-left pl-0">

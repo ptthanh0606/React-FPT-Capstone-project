@@ -27,6 +27,7 @@ const FeedbackSection = ({
   onSuccess,
   topicStatus,
   isInDep = false,
+  isUserApprover = false,
 }) => {
   const { id } = useParams();
   const statusTitles = React.useMemo(() => constants.statusTitles, []);
@@ -76,7 +77,7 @@ const FeedbackSection = ({
           </span>
         </div>
 
-        {topicStatus === 'Pending' && isInDep && (
+        {topicStatus === 'Pending' && isUserApprover && isInDep && (
           <>
             <form className="form">
               <div className="form-group">
@@ -110,6 +111,14 @@ const FeedbackSection = ({
           <MessageTile
             iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Stop.svg')}
             content="You are not belong to this department"
+            baseColor="warning"
+          />
+        )}
+
+        {!isUserApprover && (
+          <MessageTile
+            iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Stop.svg')}
+            content="You are not an approver of this topic departments"
             baseColor="warning"
           />
         )}

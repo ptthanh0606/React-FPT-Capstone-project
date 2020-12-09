@@ -24,6 +24,7 @@ const UtilityButtonTile = ({
   return (
     <div
       className={`card card-custom bg-diagonal bg-diagonal-${baseColor} ${className}`}
+      style={{ zIndex: '0' }}
     >
       <div className="card-body">
         <div className="d-flex align-items-center justify-content-between p-4">
