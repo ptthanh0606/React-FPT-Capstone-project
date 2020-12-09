@@ -86,50 +86,50 @@ export default function ActiveStudents({ semester }) {
 
   // ---------------------------------------------------------------------------
 
-  const hideUpdateModal = React.useCallback(() => {
-    setShowUpdate(false);
-  }, []);
+  // const hideUpdateModal = React.useCallback(() => {
+  //   setShowUpdate(false);
+  // }, []);
 
-  const edit = React.useCallback(
-    fieldData => {
-      setIsProcessing(true);
-      request({
-        to: endpoints.UPDATE_ACTIVE_STUDENTS(semId, editId).url,
-        method: endpoints.UPDATE_ACTIVE_STUDENTS(semId, editId).method,
-        data: transformers.up(fieldData),
-      })
-        .then(res => {
-          toast.success('Update active student successfully');
-          setShowUpdate(false);
-          loadData();
-        })
-        .catch(handleErrors)
-        .finally(() => setIsProcessing(false));
-    },
-    [editId, semId]
-  );
+  // const edit = React.useCallback(
+  //   fieldData => {
+  //     setIsProcessing(true);
+  //     request({
+  //       to: endpoints.UPDATE_ACTIVE_STUDENTS(semId, editId).url,
+  //       method: endpoints.UPDATE_ACTIVE_STUDENTS(semId, editId).method,
+  //       data: transformers.up(fieldData),
+  //     })
+  //       .then(res => {
+  //         toast.success('Update active student successfully');
+  //         setShowUpdate(false);
+  //         loadData();
+  //       })
+  //       .catch(handleErrors)
+  //       .finally(() => setIsProcessing(false));
+  //   },
+  //   [editId, semId]
+  // );
 
-  const handleEdit = React.useCallback(
-    e => {
-      e.preventDefault();
-      const id = Number(e.currentTarget.getAttribute('data-id'));
-      if (!Number.isInteger(id)) {
-        toast.error('Internal Server Error');
-        return;
-      }
-      request({
-        to: endpoints.READ_ACTIVE_STUDENTS(semId, id).url,
-        method: endpoints.READ_ACTIVE_STUDENTS(semId, id).method,
-      })
-        .then(res => {
-          setEditId(id);
-          setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
-          setShowUpdate(true);
-        })
-        .catch(handleErrors);
-    },
-    [semId]
-  );
+  // const handleEdit = React.useCallback(
+  //   e => {
+  //     e.preventDefault();
+  //     const id = Number(e.currentTarget.getAttribute('data-id'));
+  //     if (!Number.isInteger(id)) {
+  //       toast.error('Internal Server Error');
+  //       return;
+  //     }
+  //     request({
+  //       to: endpoints.READ_ACTIVE_STUDENTS(semId, id).url,
+  //       method: endpoints.READ_ACTIVE_STUDENTS(semId, id).method,
+  //     })
+  //       .then(res => {
+  //         setEditId(id);
+  //         setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
+  //         setShowUpdate(true);
+  //       })
+  //       .catch(handleErrors);
+  //   },
+  //   [semId]
+  // );
 
   const handleRemove = React.useCallback(
     e => {
@@ -204,8 +204,8 @@ export default function ActiveStudents({ semester }) {
   // ---------------------------------------------------------------------------
 
   const columns = React.useMemo(
-    () => constants.createColumns({ handleEdit, handleRemove }),
-    [handleEdit, handleRemove]
+    () => constants.createColumns({ handleRemove }),
+    [handleRemove]
   );
 
   // ---------------------------------------------------------------------------
@@ -261,7 +261,7 @@ export default function ActiveStudents({ semester }) {
     <Card>
       <CardHeader title="All active students">
         <CardHeaderToolbar className="text-nowrap">
-          <button
+          {/* <button
             type="button"
             className="btn btn-danger font-weight-bold"
             disabled={Array.isArray(selected) && selected.length === 0}
@@ -270,7 +270,7 @@ export default function ActiveStudents({ semester }) {
             <i className="fas fa-trash mr-2"></i>
             Remove ({(Array.isArray(selected) && selected.length) || 0})
           </button>
-          &nbsp;
+          &nbsp; */}
           <button
             type="button"
             className="btn btn-primary font-weight-bold"
@@ -308,8 +308,7 @@ export default function ActiveStudents({ semester }) {
         onHide={hideCreateModal}
         onAdd={handleCreate}
       />
-
-      <CMSModal
+      {/* <CMSModal
         isShowFlg={showUpdate}
         onHide={hideUpdateModal}
         configs={constants.modalConfigs}
@@ -319,7 +318,7 @@ export default function ActiveStudents({ semester }) {
         fieldTemplate={updateFieldTemplate}
         primaryButtonLabel="Update"
         isProcessing={isProcessing}
-      />
+      /> */}
     </Card>
   );
 }

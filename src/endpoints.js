@@ -343,6 +343,16 @@ export const UPDATE_TOPIC = id => ({
   method: METHOD.PUT,
 });
 
+export const REJECT_TOPIC = id => ({
+  url: READ_TOPIC(id).url + '/reject',
+  method: METHOD.PUT,
+});
+
+export const APPROVE_TOPIC = id => ({
+  url: READ_TOPIC(id).url + '/approve',
+  method: METHOD.PUT,
+});
+
 export const DELETE_TOPIC = id => ({
   url: READ_TOPIC(id).url,
   method: METHOD.DELETE,
@@ -364,6 +374,11 @@ export const UPDATE_WEIGHT = id => ({
 });
 
 // -----------------------------------------------------------------------------
+
+export const LIST_NOTIFICATION = {
+  url: config.api + 'notifications',
+  method: METHOD.GET,
+};
 
 export const SEND_APPLICATION = {
   url: config.api + 'topicapplications',

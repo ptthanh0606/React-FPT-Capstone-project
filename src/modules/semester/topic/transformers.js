@@ -120,6 +120,7 @@ export function downRead(i) {
       status: j.status,
       createdAt: j.createdAt,
       updatedAt: j.updatedAt,
+      team: j.team,
     })),
     feedbacks: i?.topicFeedbacks?.map(j => ({
       id: j.id,
@@ -129,6 +130,7 @@ export function downRead(i) {
         id: j.approver?.id,
         code: j.approver?.code,
         name: j.approver?.name,
+        email: j.approver?.email,
       },
     })),
   };

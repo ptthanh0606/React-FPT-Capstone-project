@@ -4,7 +4,6 @@ import SelectTagInput from 'components/TagInput/SelectTagInput';
 import ToggleSwitch from 'components/ToggleSwitch/ToggleSwitch';
 import React from 'react';
 import MdEditor from 'react-markdown-editor-lite';
-import 'react-markdown-editor-lite/lib/index.css';
 import { Col, Form, Row } from 'react-bootstrap';
 import MarkdownIt from 'markdown-it';
 
