@@ -16,10 +16,11 @@ import styles from './styles.module.scss';
 
 import Information from './Information';
 import Topics from './Topics';
+import Topic from './Topics/Topic';
 import ActiveStudents from './ActiveStudents';
 import Councils from './Councils';
 import Teams from './Teams';
-import Checkpoints from './Checkpoints';
+import Checkpoints from '../../CheckpointTemplates';
 
 import request from 'utils/request';
 import { READ_SEMESTER } from 'endpoints';
@@ -48,6 +49,10 @@ const Semester = () => {
 
   const TopicsWithSemester = React.useCallback(() => {
     return withSemesterInfo(data, Topics);
+  }, [data]);
+
+  const TopicWithSemester = React.useCallback(() => {
+    return withSemesterInfo(data, Topic);
   }, [data]);
 
   const ActiveStudentsWithSemester = React.useCallback(() => {
@@ -143,7 +148,7 @@ const Semester = () => {
   return (
     <Tab.Container id="left-tabs-example" defaultActiveKey="first">
       <Row>
-        <Col sm={3} className="mb-4">
+        <Col lg={3} className="mb-8">
           <div className={'alert-shadow bg-white p-5 rounded'}>
             <span className="font-size-h2">{data.name}</span>
             <br />
@@ -155,20 +160,6 @@ const Semester = () => {
                 className={styles['menu-item']}
               >
                 Information
-              </NavLink>
-              <NavLink
-                to={'/semester/' + id + '/checkpoint'}
-                activeClassName={styles['active']}
-                className={styles['menu-item']}
-              >
-                Checkpoints
-              </NavLink>
-              <NavLink
-                to={'/semester/' + id + '/topic' + '?dep=all&status=all'}
-                activeClassName={styles['active']}
-                className={styles['menu-item']}
-              >
-                Topics
               </NavLink>
               <NavLink
                 to={
@@ -187,6 +178,13 @@ const Semester = () => {
                 Councils
               </NavLink>
               <NavLink
+                to={'/semester/' + id + '/topic' + '?dep=all&status=all'}
+                activeClassName={styles['active']}
+                className={styles['menu-item']}
+              >
+                Topics
+              </NavLink>
+              <NavLink
                 to={
                   '/semester/' +
                   id +
@@ -201,11 +199,15 @@ const Semester = () => {
             </div>
           </div>
         </Col>
-        <Col sm={9}>
+        <Col lg={9}>
           <Switch>
             <Route
               path="/semester/:id/information"
               component={WrappedInformation}
+            />
+            <Route
+              path="/semester/:id/topic/:topicId"
+              component={TopicWithSemester}
             />
             <Route path="/semester/:id/topic" component={TopicsWithSemester} />
             <Route
@@ -217,10 +219,6 @@ const Semester = () => {
               component={CouncilsWithSemester}
             />
             <Route path="/semester/:id/team" component={TeamsWithSemester} />
-            <Route
-              path="/semester/:id/checkpoint"
-              component={CheckpointsWithSemester}
-            />
             <Route>
               <Redirect to={'/semester/' + id + '/information'} />
             </Route>

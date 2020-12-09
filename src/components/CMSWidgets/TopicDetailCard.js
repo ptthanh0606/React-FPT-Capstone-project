@@ -1,17 +1,42 @@
 import React from 'react';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 import SVG from 'react-inlinesvg';
-import Feedback from './Feedback';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import FeedbackSection from './FeedbackSection';
+import * as constants from '../../modules/semester/topic/constants';
+import md5 from 'utils/md5';
+import userAtom from 'store/user';
+import { useRecoilValue } from 'recoil';
+import { Link, useHistory } from 'react-router-dom';
+import MarkdownIt from 'markdown-it';
+import ReactMarkdown from 'react-markdown';
 
-const TopicDetailCard = ({ className, topicCode, topicName, fullDesc }) => {
-  const handleShowTeamDetail = React.useCallback(event => {
-    event.preventDefault();
-  }, []);
+const mdParser = new MarkdownIt();
 
-  const handleShowMentorDetail = React.useCallback(event => {
-    event.preventDefault();
-  }, []);
+const TopicDetailCard = ({
+  className,
+  topicId,
+  topicCode,
+  topicName,
+  fullDesc,
+  department,
+  status,
+  maxMember,
+  mentorMembers = [],
+  studentMembers = [],
+  applications,
+  feedbacks,
+  onFeedbackSuccess,
+  submitter = {},
+}) => {
+  const currentUser = useRecoilValue(userAtom);
+
+  // -----------------------------------------------------------------------------
+
+  const statusTitles = React.useMemo(() => constants.statusTitles, []);
+  const statusClasses = React.useMemo(() => constants.statusClasses, []);
+
+  // -----------------------------------------------------------------------------
 
   return (
     <div className={className + ' card card-custom gutter-b'}>
@@ -20,26 +45,23 @@ const TopicDetailCard = ({ className, topicCode, topicName, fullDesc }) => {
           <div className="flex-grow-1">
             <div className="d-flex align-items-center justify-content-between flex-wrap mb-10">
               <div className="mr-3">
-                <a
-                  href="/"
+                <Link
+                  to={`/topic/${topicId}`}
                   className="d-flex align-items-center text-dark text-hover-primary font-size-h3 font-weight-bolder mr-3"
                 >
                   {`${topicName}`}{' '}
-                </a>
+                </Link>
                 <div className="d-flex flex-wrap my-2">
-                  <a
-                    href="/"
+                  <Link
+                    to={`/topic/${topicId}`}
                     className="text-muted text-hover-primary font-weight-bold mr-lg-8 mr-5 mb-lg-0 mb-2"
                   >
                     {topicCode}
-                  </a>
+                  </Link>
                 </div>
               </div>
               <div className="my-lg-0 my-1">
-                <a
-                  href="/"
-                  className="btn btn-sm btn-light-primary font-weight-bolder text-uppercase"
-                >
+                <button className="btn btn-sm btn-light-primary font-weight-bolder text-uppercase">
                   <span className="svg-icon svg-icon-md">
                     <SVG
                       src={toAbsoluteUrl(
@@ -48,30 +70,41 @@ const TopicDetailCard = ({ className, topicCode, topicName, fullDesc }) => {
                     ></SVG>
                   </span>
                   Attachment
-                </a>
+                </button>
               </div>
             </div>
 
-            <div className="d-flex align-items-center flex-wrap justify-content-between mb-10">
-              <div className="flex-grow-1 font-weight-bold text-dark-50 py-5 py-lg-2 mr-5 mb-10">
-                {fullDesc}
+            <div className="d-flex flex-column align-items-start flex-wrap justify-content-between mb-10">
+              <div className="flex-grow-1 py-5 py-lg-2 mr-5 mb-10">
+                <div className="font-weight-bolder mb-2">Description</div>
+                <ReactMarkdown>{fullDesc}</ReactMarkdown>
               </div>
 
               <div className="d-flex flex-wrap align-items-center py-2">
                 <div className="d-flex align-items-center">
                   <div className="mr-10">
                     <div className="font-weight-bolder mb-2">Department</div>
-                    <span className="label label-xl label-light label-inline text-nowrap mr-2">
-                      Software Engineer
-                    </span>
-                    <span className="label label-xl label-light label-inline text-nowrap">
-                      Software Engineer
-                    </span>
+                    {department && (
+                      <span className="label label-xl label-light label-inline text-nowrap mr-2">
+                        {department.fullName}
+                      </span>
+                    )}
                   </div>
-                  <div className="">
+                  <div className="mr-10">
+                    <div className="font-weight-bolder mb-2">Submit by</div>
+                    <Link
+                      to={`/profile/lecturer/${submitter.value}`}
+                      className={`text-dark-50 text-hover-primary`}
+                    >
+                      {submitter.label}
+                    </Link>
+                  </div>
+                  <div className="mr-10">
                     <div className="font-weight-bolder mb-2">Status</div>
-                    <span className="label label-xl label-light-danger label-inline text-nowrap">
-                      Rejected
+                    <span
+                      className={`label label-xl label-light-${statusClasses[status]} label-inline text-nowrap`}
+                    >
+                      {statusTitles[status]}
                     </span>
                   </div>
                 </div>
@@ -92,7 +125,9 @@ const TopicDetailCard = ({ className, topicCode, topicName, fullDesc }) => {
                 Max members
               </span>
               <span className="font-weight-bolder font-size-h5">
-                <span className="text-dark-50 font-weight-bold">5</span>
+                <span className="text-dark-50 font-weight-bold">
+                  {maxMember}
+                </span>
               </span>
             </div>
           </div>
@@ -102,43 +137,28 @@ const TopicDetailCard = ({ className, topicCode, topicName, fullDesc }) => {
               placement="bottom"
               overlay={<Tooltip id="quick-user-tooltip">Team members</Tooltip>}
             >
-              <a href="/" className="mr-4" onClick={handleShowTeamDetail}>
+              <span className="mr-4">
                 <i className="flaticon-users icon-2x text-muted font-weight-bold"></i>
-              </a>
+              </span>
             </OverlayTrigger>
             <div className="symbol-group symbol-hover">
-              <div
-                className="symbol symbol-30 symbol-circle"
-                data-toggle="tooltip"
-                title=""
-                data-original-title="Mark Stone"
-              >
-                <img alt="Pic" src="/media/users/300_25.jpg" />
-              </div>
-              <div
-                className="symbol symbol-30 symbol-circle"
-                data-toggle="tooltip"
-                title=""
-                data-original-title="Charlie Stone"
-              >
-                <img alt="Pic" src="/media/users/300_19.jpg" />
-              </div>
-              <div
-                className="symbol symbol-30 symbol-circle"
-                data-toggle="tooltip"
-                title=""
-                data-original-title="Luca Doncic"
-              >
-                <img alt="Pic" src="/media/users/300_22.jpg" />
-              </div>
-              <div
-                className="symbol symbol-30 symbol-circle"
-                data-toggle="tooltip"
-                title=""
-                data-original-title="Nick Mana"
-              >
-                <img alt="Pic" src={toAbsoluteUrl('/media/users/300_23.jpg')} />
-              </div>
+              {studentMembers?.length ? (
+                studentMembers.map(student => (
+                  <div
+                    className="symbol symbol-30 symbol-circle"
+                    data-toggle="tooltip"
+                  >
+                    <img
+                      alt="Pic"
+                      src={`https://www.gravatar.com/avatar/${md5(
+                        student.email ? student.email.toLowerCase() : ''
+                      )}`}
+                    />
+                  </div>
+                ))
+              ) : (
+                <>Not yet</>
+              )}
             </div>
           </div>
 
@@ -147,52 +167,60 @@ const TopicDetailCard = ({ className, topicCode, topicName, fullDesc }) => {
               placement="bottom"
               overlay={<Tooltip id="quick-user-tooltip">Mentors</Tooltip>}
             >
-              <a href="/" className="mr-4" onClick={handleShowMentorDetail}>
+              <span className="mr-4">
                 <i className="flaticon-profile-1 icon-2x text-muted font-weight-bold"></i>
-              </a>
+              </span>
             </OverlayTrigger>
             <div className="symbol-group symbol-hover">
-              <div
-                className="symbol symbol-30 symbol-circle"
-                data-toggle="tooltip"
-                title=""
-                data-original-title="Mark Stone"
-              >
-                <img alt="Pic" src="/media/users/300_25.jpg" />
-              </div>
-              <div
-                className="symbol symbol-30 symbol-circle"
-                data-toggle="tooltip"
-                title=""
-                data-original-title="Charlie Stone"
-              >
-                <img alt="Pic" src="/media/users/300_19.jpg" />
-              </div>
+              {mentorMembers?.length ? (
+                mentorMembers.map(mentor => (
+                  <div
+                    className="symbol symbol-30 symbol-circle"
+                    data-toggle="tooltip"
+                  >
+                    <img
+                      alt="Pic"
+                      src={`https://www.gravatar.com/avatar/${md5(
+                        mentor.email ? mentor.email.toLowerCase() : ''
+                      )}`}
+                    />
+                  </div>
+                ))
+              ) : (
+                <>Not yet</>
+              )}
             </div>
           </div>
 
-          <div className="d-flex align-items-center flex-lg-fill my-1">
-            <span className="mr-4">
-              <i className="flaticon-file-2 icon-2x text-muted font-weight-bold"></i>
-            </span>
-            <div className="d-flex flex-column flex-lg-fill">
-              <span className="text-dark-75 font-weight-bolder font-size-sm">
-                73 Applications
+          {statusTitles[status] !== 'Matched' && (
+            <div className="d-flex align-items-center flex-lg-fill my-1">
+              <span className="mr-4">
+                <i className="flaticon-file-2 icon-2x text-muted font-weight-bold"></i>
               </span>
-              {/* <a
-                href="/"
-                className="text-primary font-weight-bolder"
-                onClick={handleShowApplicationModal}
-              >
-                View
-              </a> */}
+              <div className="d-flex flex-column flex-lg-fill">
+                <span className="text-dark-75 font-weight-bolder font-size-sm">
+                  {applications?.length} Applications
+                </span>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="separator separator-solid my-7"></div>
 
-        <Feedback className="" />
+        {['Pending', 'Approved'].includes(statusTitles[status]) && (
+          <FeedbackSection
+            className=""
+            feedbacks={feedbacks}
+            onSuccess={onFeedbackSuccess}
+            topicStatus={statusTitles[status]}
+            isInDep={
+              !!currentUser.department.filter(
+                ({ name }) => name === department.fullName
+              ).length
+            }
+          />
+        )}
       </div>
     </div>
   );

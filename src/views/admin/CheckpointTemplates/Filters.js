@@ -23,23 +23,21 @@ export default function CustomersFilter({ filters, setFilters }) {
               <div className="col-lg-3">
                 <select
                   className="form-control form-control-solid"
-                  name="status"
-                  placeholder="Filter by Department"
+                  name="isDisabled"
+                  placeholder="Filter by status"
                   onChange={e => {
-                    setFieldValue('status', e.target.value);
+                    setFieldValue('isDisabled', e.target.value);
                     handleSubmit();
                   }}
                   onBlur={handleBlur}
-                  value={values.status}
+                  value={values.isDisabled}
                 >
                   <option value="">All</option>
-                  <option value="0">SE</option>
-                  <option value="1">BA</option>
-                  <option value="2">SS</option>
-                  <option value="2">JP</option>
+                  <option value="false">Activated</option>
+                  <option value="true">Deactivated</option>
                 </select>
                 <small className="form-text text-muted">
-                  Filter by <b>department</b>
+                  Filter by <b>status</b>
                 </small>
               </div>
               <div className="col-lg-9">

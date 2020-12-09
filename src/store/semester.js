@@ -7,6 +7,7 @@ const semester = atom({
     id: LocalStorage.get('semester_id', 0),
     name: '',
     status: 0,
+    maxApplications: 0,
   },
 });
 

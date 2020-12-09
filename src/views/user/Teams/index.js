@@ -1,192 +1,64 @@
 import React from 'react';
+
+import { useHistory, useParams } from 'react-router-dom';
+
+import * as endpoints from 'endpoints';
+import * as transformers from '../../../modules/semester/team/transformers';
+import {
+  createColumnsForStudentRole,
+  createTeamAsStudentModalConfigs,
+  defaultSorted,
+  sizePerPageList,
+} from 'modules/semester/team/constants';
+
+import Table from 'components/Table';
+import Filters from './Filters';
+
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import semesterAtom from 'store/semester';
+import metaAtom from 'store/meta';
+import { role } from 'auth/recoil/selectors';
+
 import {
   Card,
   CardBody,
   CardHeader,
   CardHeaderToolbar,
 } from '_metronic/_partials/controls';
-
-import {
-  sortCaret,
-  headerSortingClasses,
-  toAbsoluteUrl,
-} from '_metronic/_helpers';
-import Table from 'components/Table';
-import SVG from 'react-inlinesvg';
-import Filters from './Filters';
-import { Link } from 'react-router-dom';
-import metaAtom from 'store/meta';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { role } from 'auth/recoil/selectors';
-import { useParams } from 'react-router-dom';
-import CreateTeamStudentModal from 'components/CreateTeamStudentModal/CreateTeamStudentModal';
 import CMSModal from 'components/CMSModal/CMSModal';
-
-export const statusClasses = ['info', 'success', ''];
-export const statusTitles = ['Matching', 'Matched', ''];
-export const lockClasses = ['success', 'danger'];
-export const lockTitles = ['Unlocked', 'Locked'];
-export const privateClasses = ['success', 'danger'];
-export const privateTitles = ['Public', 'Private'];
-
-export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
-export const sizePerPageList = [
-  { text: '10', value: 10 },
-  { text: '20', value: 20 },
-  { text: '50', value: 50 },
-  { text: '100', value: 100 },
-];
-
-const mockData = [
-  {
-    id: 0,
-    name: 'HKT',
-    code: 'JDNU8KD',
-    department: 'SE',
-    leader: ['Duy Duc Huynh'],
-    members: ['Huynh Duc Duy', 'Phan Thong Thanh'],
-    topic: 'FPT CMS',
-    status: 0,
-    lock: false,
-    private: false,
-  },
-];
-
-function ActionsColumnFormatter(
-  cellContent,
-  row,
-  rowIndex,
-  { openEditCustomerDialog, openDeleteCustomerDialog }
-) {
-  return (
-    <span className="text-nowrap">
-      <a
-        href="/"
-        title="Edit"
-        className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-        onClick={event => {
-          event.preventDefault();
-          openEditCustomerDialog(row.id);
-        }}
-      >
-        <i className="fas fa-pencil-alt mx-2"></i>
-      </a>
-      <a
-        href="/"
-        title="Remove"
-        className="btn btn-icon btn-light btn-hover-primary btn-sm"
-        onClick={event => {
-          event.preventDefault();
-          openDeleteCustomerDialog(row.id);
-        }}
-      >
-        <i className="fas fa-trash mx-2"></i>
-      </a>
-    </span>
-  );
-}
-
-function ColumnFormatter(classes, titles) {
-  return function (cellContent, row) {
-    const getLabelCssClasses = () => {
-      return `label label-lg label-light-${
-        classes[row.status]
-      } label-inline text-nowrap text-nowrap`;
-    };
-    return <span className={getLabelCssClasses()}>{titles[row.status]}</span>;
-  };
-}
-
-const columns = [
-  {
-    dataField: 'department',
-    text: 'DEP',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'code',
-    text: 'Code',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'name',
-    text: 'Name',
-    sort: true,
-    sortCaret: sortCaret,
-    formatter: function StatusColumnFormatter(cellContent, row) {
-      return (
-        <Link className="text-dark font-weight-bold" to={'/team/' + row.id}>
-          {cellContent}
-        </Link>
-      );
-    },
-    headerSortingClasses,
-  },
-  {
-    dataField: 'leader',
-    text: 'Leader',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'members',
-    text: 'Members',
-    formatter: function StatusColumnFormatter(cellContent, row) {
-      return (
-        <Link className="text-dark font-weight-bold" to={'/semester/' + row.id}>
-          {cellContent.join(', ')}
-        </Link>
-      );
-    },
-  },
-  {
-    dataField: 'topic',
-    text: 'Topic',
-    sort: true,
-    sortCaret: sortCaret,
-    headerSortingClasses,
-  },
-  {
-    dataField: 'status',
-    text: 'Status',
-    sort: true,
-    sortCaret: sortCaret,
-    formatter: ColumnFormatter(statusClasses, statusTitles),
-    headerSortingClasses,
-  },
-  {
-    dataField: 'lock',
-    text: 'Lock',
-    sort: true,
-    sortCaret: sortCaret,
-    formatter: ColumnFormatter(lockClasses, lockTitles),
-    headerSortingClasses,
-  },
-  {
-    dataField: 'private',
-    text: 'Private',
-    sort: true,
-    sortCaret: sortCaret,
-    formatter: ColumnFormatter(privateClasses, privateTitles),
-    headerSortingClasses,
-  },
-];
+import toast from 'utils/toast';
+import { useDebounce } from 'use-debounce/lib';
+import { handleErrors } from 'utils/common';
+import request from 'utils/request';
 
 export default function Teams() {
+  const history = useHistory();
+  const [l, loadData] = React.useReducer(() => ({}), {});
+  // ------------------------------------------------------------------
+
+  const currentSemester = useRecoilValue(semesterAtom);
+
+  // ------------------------------------------------------------------
+
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
-  const [isLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [filters, setFilters] = React.useState({});
+  const [debouncedFilters] = useDebounce(filters, 500);
   const [page, setPage] = React.useState(1);
-  const [pageSize, setPageSize] = React.useState(10);
+  const [pageSize, setPageSize] = React.useState(sizePerPageList[0].value);
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+  const [isProcessing, setIsProcessing] = React.useState(false);
+
+  // ------------------------------------------------------------------
+
+  const [fieldTemplate, setFieldTemplate] = React.useState({});
+  const [modalConfigs, setModalConfigs] = React.useState([]);
+
+  // ------------------------------------------------------------------
+
   const currentRole = useRecoilValue(role);
   const [joinTeamModalShowFlg, setJoinTeamModalShowFlg] = React.useState(false);
 
@@ -198,15 +70,56 @@ export default function Teams() {
   const { id } = useParams();
   const setMeta = useSetRecoilState(metaAtom);
 
-  const handleShowCreateStudentTeamModal = () => {
+  const handleShowCreateStudentTeamModal = React.useCallback(() => {
     setShowCreateStudentTeamModalFlg(true);
-  };
+  }, []);
 
-  const handleHideCreateStudentTeamModal = () => {
+  const handleHideCreateStudentTeamModal = React.useCallback(() => {
     setShowCreateStudentTeamModalFlg(false);
-  };
+  }, []);
 
   // --------------------------------------------------------------------
+
+  const fetchTeams = React.useCallback(() => {
+    setIsLoading(true);
+    const source = {};
+
+    request({
+      to: endpoints.LIST_TEAM.url,
+      method: endpoints.LIST_TEAM.method,
+      params: {
+        ...debouncedFilters,
+        pageNumber: page,
+        pageSize: pageSize,
+        sortField: sortField,
+        sortOrder: sortOrder,
+        semesterId: currentSemester.id,
+      },
+      source,
+    })
+      .then(res => {
+        setData(res.data?.data?.map(transformers.down));
+        setTotal(res.data?.totalRecords);
+        setPage(res.data?.pageNumber);
+        setPageSize(res.data?.pageSize);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        handleErrors(err);
+        if (!err.isCancel) setIsLoading(false);
+      });
+
+    return () => {
+      source.cancel();
+    };
+  }, [
+    currentSemester.id,
+    debouncedFilters,
+    page,
+    pageSize,
+    sortField,
+    sortOrder,
+  ]);
 
   const toolBar = React.useCallback(() => {
     let buttons = <></>;
@@ -219,11 +132,7 @@ export default function Teams() {
               className="btn btn-light-info font-weight-bold mr-2"
               onClick={() => setJoinTeamModalShowFlg(true)}
             >
-              <span className="svg-icon svg-icon-md">
-                <SVG
-                  src={toAbsoluteUrl('/media/svg/icons/Media/Forward.svg')}
-                ></SVG>
-              </span>
+              <i className="fas fa-arrow-circle-right mr-2"></i>
               Join with code
             </button>
             <button
@@ -231,11 +140,7 @@ export default function Teams() {
               className="btn btn-primary font-weight-bold"
               onClick={handleShowCreateStudentTeamModal}
             >
-              <span className="svg-icon svg-icon-md">
-                <SVG
-                  src={toAbsoluteUrl('/media/svg/icons/Navigation/Plus.svg')}
-                ></SVG>
-              </span>
+              <i className="fas fa-plus-circle mr-2"></i>
               Create a team
             </button>
           </>
@@ -250,27 +155,120 @@ export default function Teams() {
         break;
     }
     return buttons;
-  }, [currentRole]);
+  }, [currentRole, handleShowCreateStudentTeamModal]);
+
+  const handleConfirmCreate = React.useCallback(
+    fieldData => {
+      setIsProcessing(true);
+      request({
+        to: endpoints.CREATE_TEAM.url,
+        method: endpoints.CREATE_TEAM.method,
+        data: {
+          ...fieldData,
+          semesterId: Number(currentSemester.id),
+        },
+        params: {
+          semesterId: currentSemester.id,
+        },
+      })
+        .then(res => {
+          toast.success('Create team successfully');
+          setShowCreateStudentTeamModalFlg(false);
+          loadData();
+          fetchTeams();
+          setFieldTemplate({});
+        })
+        .catch(handleErrors)
+        .finally(() => setIsProcessing(false));
+    },
+    [currentSemester.id, fetchTeams]
+  );
+
+  const handleJoin = React.useCallback(
+    e => {
+      e.preventDefault();
+      const teamId = e.currentTarget.getAttribute('data-id');
+      const teamCode = e.currentTarget.getAttribute('data-code');
+      const teamName = e.currentTarget.getAttribute('data-name');
+      request({
+        to: endpoints.JOIN_TEAM(teamId).url,
+        method: endpoints.JOIN_TEAM(teamId).method,
+        params: {
+          teamId: teamId,
+          semesterId: currentSemester.id,
+          teamCode: teamCode,
+        },
+      })
+        .then(res => {
+          history.push(`/team/${teamId}`);
+          toast.success(`Joined, you are now a member of ${teamName}!`);
+        })
+        .catch(err => {
+          handleErrors(err);
+          if (!err.isCancel) setIsLoading(false);
+        });
+    },
+    [currentSemester.id, history]
+  );
+
+  const handleJoinWithCode = React.useCallback(
+    data => {
+      request({
+        to: endpoints.JOIN_TEAM(0).url,
+        method: endpoints.JOIN_TEAM(0).method,
+        params: {
+          semesterId: currentSemester.id,
+          teamCode: data.code,
+        },
+      })
+        .then(res => {
+          setJoinTeamModalShowFlg(false);
+          history.push(`/team/${res.data.data.id}`);
+          toast.success(`Joined, you are now a member of ${''}!`);
+        })
+        .catch(err => {
+          handleErrors(err);
+          if (!err.isCancel) setIsLoading(false);
+        });
+    },
+    [currentSemester.id, history]
+  );
+
+  // ---------------------------------------------------------------------------
+
+  const columns = React.useMemo(
+    () => createColumnsForStudentRole({ handleJoin }),
+    [handleJoin]
+  );
 
   // --------------------------------------------------------------------
 
   React.useEffect(() => {
     setMeta(meta => ({
       ...meta,
-      title: 'Teams of Fall 2020',
+      title: `Teams of ${currentSemester.name}`,
       breadcrumb: [
         { title: 'Semester', path: '/semester' },
-        { title: 'Fall 2020', path: '/semester/' + id },
-        { title: 'Team', path: '/semester/' + id + '/team' },
+        {
+          title: currentSemester.name,
+          path: '/semester/' + currentSemester.id,
+        },
+        { title: 'Team', path: '/team' },
       ],
       toolbar: toolBar(),
     }));
-  }, [setMeta, id, toolBar]);
+    setModalConfigs(createTeamAsStudentModalConfigs(currentSemester.id));
+    setFieldTemplate({
+      name: '',
+      maxMembers: 0,
+      isLocked: false,
+      isPublic: false,
+    });
+  }, [setMeta, id, toolBar, currentSemester.name, currentSemester.id]);
 
   React.useEffect(() => {
-    setData(mockData);
-    setTotal(100);
-  }, []);
+    fetchTeams();
+  }, [fetchTeams]);
 
   return (
     <Card>
@@ -296,12 +294,18 @@ export default function Teams() {
           setSortOrder={setSortOrder}
           defaultSorted={defaultSorted}
           pageSizeList={sizePerPageList}
+          selectable
         />
       </CardBody>
-      <CreateTeamStudentModal
+      <CMSModal
         isShowFlg={showCreateStudentTeamModalFlg}
         onHide={handleHideCreateStudentTeamModal}
-        onCreate={() => {}}
+        title="Create your team"
+        subTitle="Before you can match a topic in this semester is you have to have a team"
+        configs={modalConfigs}
+        fieldTemplate={fieldTemplate}
+        onConfirmForm={handleConfirmCreate}
+        isProcessing={isProcessing}
       />
       <CMSModal
         isShowFlg={joinTeamModalShowFlg}
@@ -318,6 +322,7 @@ export default function Teams() {
             smallLabel: 'Enter team code to quickly join a team',
           },
         ]}
+        onConfirmForm={handleJoinWithCode}
         primaryButtonLabel="Join"
       />
     </Card>

@@ -5,12 +5,13 @@ import makeAnimated from 'react-select/animated';
 const animatedComponents = makeAnimated();
 
 const colourStyles = {
+  menuPortal: base => ({ ...base, zIndex: 9999 }),
   container: styles => ({
     ...styles,
   }),
   control: (styles, { isFocused }) => ({
     ...styles,
-    backgroundColor: '#edf2f7',
+    backgroundColor: !isFocused ? '#f3f6f9' : '#ebedf3',
     border: 'none',
     boxShadow: isFocused ? '0 0 0 2px #69b3ff' : 'none',
   }),
@@ -20,11 +21,11 @@ const colourStyles = {
       backgroundColor: isDisabled
         ? null
         : isSelected
-        ? '#69b3ff'
+        ? '#3699ff'
         : isFocused
-        ? '#edf2f7'
+        ? '#f3f6f9'
         : null,
-      color: isDisabled ? '#757575' : '#00003b',
+      color: isDisabled ? '#757575' : isSelected ? '#fff' : '#00003b',
       cursor: isDisabled ? 'not-allowed' : 'default',
       ':active': {
         ...styles[':active'],
@@ -35,22 +36,23 @@ const colourStyles = {
   multiValue: styles => {
     return {
       ...styles,
-      backgroundColor: 'rgba(0, 184, 217, 0.1)',
+      backgroundColor: '#3699ff',
       marginRight: 3,
       borderRadius: 3,
     };
   },
   multiValueLabel: styles => ({
     ...styles,
-    color: 'rgb(0, 184, 217)',
+    color: '#fff',
     padding: '5px 6px 5px 6px',
   }),
   multiValueRemove: styles => ({
     ...styles,
-    color: 'rgb(0, 184, 217)',
+    color: '#fff',
+    backgroundColor: '#3699ff',
     ':hover': {
-      backgroundColor: '#69b3ff',
-      color: '#00003b',
+      backgroundColor: '#fff',
+      color: '#3699ff',
     },
   }),
 };
@@ -71,6 +73,8 @@ const SelectTagInput = ({
   isClearable = true,
   placeholder = '',
   isMulti = false,
+  readOnly = false,
+  ...rest
 }) => {
   return (
     <>
@@ -81,6 +85,7 @@ const SelectTagInput = ({
       )}
 
       <AsyncSelect
+        {...rest}
         isMulti={isMulti} // Not sure
         placeholder={placeholder}
         k={k}
@@ -88,7 +93,6 @@ const SelectTagInput = ({
         required={required}
         aria-label={label}
         value={value}
-        isClearable={isClearable}
         autoFocus={autofocus}
         onChange={onChange}
         name={name}
@@ -99,10 +103,13 @@ const SelectTagInput = ({
         loadOptions={load}
         createOptionPosition="first"
         allowCreateWhileLoading={true}
+        isClearable={isClearable && !readOnly}
+        isSearchable={!readOnly}
+        openMenuOnClick={!readOnly}
       />
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </>
   );
 };
 
-export default SelectTagInput;
+export default React.memo(SelectTagInput);

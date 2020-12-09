@@ -30,6 +30,7 @@ function fetchSemester(
           id: data.id,
           name: data.name,
           status: data.status,
+          maxApplications: data.maxApplication,
         });
         setLastSemester(data.id);
       })
@@ -106,10 +107,6 @@ const User = () => {
             <Route.SemesterSelected
               path="/council"
               component={lazy(() => import('views/user/Councils'))}
-            />
-            <Route.SemesterSelected
-              path="/my-council"
-              component={lazy(() => import('views/user/Councils/Council'))}
             />
             <Route.RedirectRoute to="/dashboard" />
           </Switch>

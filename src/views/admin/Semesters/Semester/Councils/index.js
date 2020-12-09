@@ -261,7 +261,6 @@ export default function Councils({ semester }) {
           setSortOrder={setSortOrder}
           defaultSorted={constants.defaultSorted}
           pageSizeList={constants.sizePerPageList}
-          selectable
         />
       </CardBody>
       <Create

@@ -68,6 +68,7 @@ const CreateableTagInput = ({
   autofocus = false,
   error = '',
   load = function () {},
+  readOnly = false,
 }) => {
   return (
     <>
@@ -94,10 +95,13 @@ const CreateableTagInput = ({
         loadOptions={load}
         createOptionPosition="first"
         allowCreateWhileLoading={true}
+        isClearable={!readOnly}
+        isSearchable={!readOnly}
+        openMenuOnClick={!readOnly}
       />
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </>
   );
 };
 
-export default CreateableTagInput;
+export default React.memo(CreateableTagInput);

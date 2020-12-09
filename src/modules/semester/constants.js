@@ -126,6 +126,7 @@ export const modalConfigs = [
     label: 'Matching',
     smallLabel:
       'Ending date of Matching-phase, all team must matched with a topic before this day',
+    step: 3600,
   },
   {
     name: 'inprogressDate',
@@ -133,6 +134,7 @@ export const modalConfigs = [
     label: 'In progress',
     smallLabel:
       'Ending date of In-progress-phase, all team must have done the capstone project and waiting for final evaluation',
+    step: 3600,
   },
   {
     name: 'finishedDate',
@@ -140,5 +142,6 @@ export const modalConfigs = [
     label: 'Finished',
     smallLabel:
       'Ending date of Finished-phase (and semester as well), all evaluation is published.',
+    step: 3600,
   },
 ];

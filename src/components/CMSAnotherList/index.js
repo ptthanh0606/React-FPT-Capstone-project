@@ -2,7 +2,7 @@ import React from 'react';
 import Row from './Row';
 
 const CMSAnotherList = ({
-  darkMode = true,
+  darkMode = false,
   className,
   title,
   subTitle,
@@ -55,6 +55,7 @@ const CMSAnotherList = ({
               emailAvatar={row.emailAvatar}
               altLabel={row.altLabel}
               darkMode={darkMode}
+              onLabelClick={row.onLabelClick}
             />
           ))}
       </div>

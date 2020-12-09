@@ -48,6 +48,9 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       dataField: 'name',
       text: 'Name',
       sort: true,
+      style: {
+        minWidth: 200,
+      },
     },
     {
       dataField: 'leader',
@@ -57,7 +60,7 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
           cellContent?.label &&
           cellContent?.value && (
             <Link
-              className={'text-dark font-weight-bold'}
+              className={'text-dark font-weight-bold text-nowrap'}
               to={'/profile/student/' + cellContent?.value}
             >
               {cellContent?.label}
@@ -74,7 +77,7 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
           ? cellContent
               ?.map(i => (
                 <Link
-                  className={'text-dark font-weight-bold'}
+                  className={'text-dark font-weight-bold text-nowrap'}
                   to={'/profile/student/' + i?.value}
                 >
                   {i?.label}
@@ -153,6 +156,133 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
     },
   ]);
 
+export const createColumnsForStudentRole = ({ handleJoin }) =>
+  columnsTransformer([
+    {
+      dataField: 'id',
+      text: 'ID',
+      sort: true,
+    },
+    {
+      dataField: 'department',
+      text: 'DEP',
+      sort: true,
+      formatter: cellContent => cellContent?.label,
+    },
+    {
+      dataField: 'code',
+      text: 'Code',
+      sort: true,
+      hidden: true,
+    },
+    {
+      dataField: 'name',
+      text: 'Name',
+      sort: true,
+      formatter: function (cellContent, row) {
+        return (
+          <Link
+            className={'text-dark font-weight-bold'}
+            to={'/team/' + row?.id}
+          >
+            {cellContent}
+          </Link>
+        );
+      },
+    },
+    {
+      dataField: 'leader',
+      text: 'Leader',
+      formatter: function (cellContent, row) {
+        return (
+          cellContent?.label &&
+          cellContent?.value && (
+            <Link
+              className={'text-dark font-weight-bold'}
+              to={'/profile/student/' + cellContent?.value}
+            >
+              {cellContent?.label}
+            </Link>
+          )
+        );
+      },
+    },
+    {
+      dataField: 'members',
+      text: 'Members',
+      formatter: function (cellContent, row) {
+        return cellContent?.length > 0
+          ? cellContent
+              ?.map(i => (
+                <Link
+                  className={'text-dark font-weight-bold text-nowrap'}
+                  to={'/profile/student/' + i?.value}
+                >
+                  {i?.label}
+                </Link>
+              ))
+              ?.reduce((prev, curr) => [prev, ', ', curr])
+          : '';
+      },
+    },
+    {
+      dataField: 'topic',
+      text: 'Topic',
+      formatter: function (cellContent, row) {
+        return (
+          <div className="d-flex flex-column">
+            <Link
+              to={`/topic/${row.topic.value}`}
+              className="text-nowrap text-dark-75 font-weight-bold font-size-lg mb-0"
+            >
+              {cellContent?.label}
+            </Link>
+            <span className="text-muted font-weight-bold text-hover-primary">
+              {cellContent?.abstract}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      dataField: 'status',
+      text: 'Status',
+      sort: true,
+      formatter: columnFormatter(statusClasses, statusTitles),
+    },
+    {
+      dataField: 'lock',
+      text: 'Lock',
+      sort: true,
+      formatter: columnFormatter(lockClasses, lockTitles),
+    },
+    {
+      dataField: 'privacy',
+      text: 'privacy',
+      sort: true,
+      formatter: columnFormatter(privacyClasses, privacyTitles),
+    },
+    {
+      dataField: 'action',
+      text: 'Action',
+      formatter: (cellContent, row) => {
+        return (
+          <a
+            href="/"
+            title="Join team"
+            className="btn btn-icon btn-light btn-hover-primary btn-sm"
+            data-id={row.id}
+            data-code={row.code}
+            data-name={row.name}
+            onClick={handleJoin}
+          >
+            <i className="fas fa-play icon-sm"></i>
+          </a>
+        );
+      },
+    },
+  ]);
+
 export const createModalConfigs = semId => [
   {
     name: 'name',
@@ -171,7 +301,8 @@ export const createModalConfigs = semId => [
     name: 'department',
     type: 'selectBoxAsync',
     label: 'Department',
-    smallLabel: 'This team belong to which department',
+    smallLabel: 'This team belong to which department, cannot update',
+    readOnlyWhenEdit: true,
     load: (input, callback) => {
       request({
         to: endpoints.LIST_DEPARTMENT.url,
@@ -234,10 +365,38 @@ export const createModalConfigs = semId => [
     name: 'privacy',
     type: 'toggle',
     label: 'Public team',
-    smallLabel: 'Is this team private',
+    smallLabel: 'Is this team public?',
   },
   {
     name: 'lock',
+    type: 'toggle',
+    label: 'Lock team',
+    smallLabel: 'Lock this team',
+  },
+];
+
+export const createTeamAsStudentModalConfigs = semId => [
+  {
+    name: 'name',
+    type: 'text',
+    label: 'Team name',
+    placeholder: 'Give this team a name...',
+  },
+  {
+    name: 'maxMembers',
+    type: 'number',
+    label: 'Maximum member',
+    smallLabel: 'Maximum member can join this team',
+    placeholder: '10',
+  },
+  {
+    name: 'isPublic',
+    type: 'toggle',
+    label: 'Public team',
+    smallLabel: 'Is this team public',
+  },
+  {
+    name: 'isLocked',
     type: 'toggle',
     label: 'Lock team',
     smallLabel: 'Lock this team',

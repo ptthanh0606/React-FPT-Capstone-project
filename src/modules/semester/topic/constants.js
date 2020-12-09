@@ -1,9 +1,26 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { columnsTransformer } from 'utils/common';
+import request from 'utils/request';
+import * as endpoints from 'endpoints';
+import { mDown as mDownDep } from 'modules/department/transformers';
+import { mDown as mDownTeam } from 'modules/semester/team/transformers';
+import { mDown as mDownLec } from 'modules/lecturer/transformers';
 
-const statusClasses = ['warning', 'danger', 'success', 'primary', 'info'];
-const statusTitles = ['Pending', 'Rejected', 'Approved', 'Ready', 'Matched'];
+export const statusClasses = [
+  'warning',
+  'danger',
+  'success',
+  'primary',
+  'info',
+];
+export const statusTitles = [
+  'Pending',
+  'Rejected',
+  'Approved',
+  'Ready',
+  'Matched',
+];
 export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 export const sizePerPageList = [
   { text: '10', value: 10 },
@@ -28,8 +45,15 @@ export const modalConfigs = [
     placeholder: 'Name...',
   },
   {
-    name: 'description',
+    name: 'abstract',
     type: 'textarea',
+    label: 'Abstract',
+    smallLabel: 'Brief description for this topic',
+    placeholder: 'Description...',
+  },
+  {
+    name: 'description',
+    type: 'markdown',
     label: 'Description',
     smallLabel: 'Brief description for this topic',
     placeholder: 'Description...',
@@ -57,24 +81,24 @@ export const modalConfigs = [
   },
   {
     name: 'department',
-    type: 'selectBox',
-    label: 'From department',
-    smallLabel: 'Topic in which department',
-    placeholder: 'Select a department',
-    options: [
-      {
-        label: 'SE',
-        value: 'se',
-      },
-      {
-        label: 'GD',
-        value: 'gd',
-      },
-      {
-        label: 'CC',
-        value: 'cc',
-      },
-    ],
+    type: 'selectBoxAsync',
+    label: 'Department',
+    smallLabel: 'This team belong to which department, cannot update',
+    readOnlyWhenEdit: true,
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_DEPARTMENT.url,
+        method: endpoints.LIST_DEPARTMENT.method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownDep) || []);
+        })
+        .catch(() => callback([]));
+    },
   },
   {
     name: 'isByStudent',
@@ -84,86 +108,113 @@ export const modalConfigs = [
     isChecked: false,
   },
   {
-    name: 'studentTeam',
+    name: 'team',
     type: 'selectBoxAsync',
     label: 'Student team',
     smallLabel: 'Student team taking this topic',
-    load: (studentInput, callback) => {
-      setTimeout(() => {
-        callback([
-          {
-            label: 'Phan Thong Thanh',
-            value: 'Phan Thong Thanh',
-          },
-          {
-            label: 'Tran Thai Trung',
-            value: 'Tran Thai Trung',
-          },
-          {
-            label: 'Nguyen Hoang Dung',
-            value: 'Nguyen Hoang Dung',
-          },
-          {
-            label: 'Le Huu Mon',
-            value: 'Le Huu Mon',
-          },
-        ]);
-      }, 2000);
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_TEAM.url,
+        method: endpoints.LIST_TEAM.method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownTeam) || []);
+        })
+        .catch(() => callback([]));
     },
-    isMulti: true,
   },
   {
-    name: 'mentorGroup',
+    name: 'submitter',
     type: 'selectBoxAsync',
-    label: 'Mentor Group',
-    smallLabel: 'Mentor group for this topic',
-    load: (mentorInput, callback) => {
-      setTimeout(() => {
-        callback([
-          {
-            label: 'Huynh Duc Duy',
-            value: 'Huynh Duc Duy',
-          },
-          {
-            label: 'Tran Tuan Anh',
-            value: 'Tran Tuan Anh',
-          },
-          {
-            label: 'Dinh Ngoc Hai',
-            value: 'Dinh Ngoc Hai',
-          },
-          {
-            label: 'Ly Phuoc Hiep',
-            value: 'Ly Phuoc Hiep',
-          },
-        ]);
-      }, 2000);
+    label: 'Submitter',
+    smallLabel: 'Owner of this topic',
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_LECTURER.url,
+        method: endpoints.LIST_LECTURER.method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownLec) || []);
+        })
+        .catch(() => callback([]));
     },
-    isMulti: true,
+    isMulti: false,
   },
   {
     name: 'keywords',
-    type: 'creatableSelectBoxAsync',
+    type: 'text',
     label: 'Keywords',
-    smallLabel: 'Some keywords for this topic',
-    load: (keyword, callback) => {
-      setTimeout(() => {
-        callback([
-          {
-            label: 'capstone',
-            value: 'capstone',
-          },
-          {
-            label: 'management',
-            value: 'management',
-          },
-          {
-            label: 'system',
-            value: 'system',
-          },
-        ]);
-      }, 2000);
-    },
+  },
+  {
+    name: 'attachment',
+    type: 'file',
+    label: 'Attachment',
+    smallLabel: '.pdf, .docx',
+  },
+];
+
+export const submitterModalConfigs = [
+  {
+    name: 'code',
+    type: 'text',
+    label: 'Code',
+    smallLabel: 'Specify a code for this topic',
+    placeholder: 'Code...',
+  },
+  {
+    name: 'name',
+    type: 'text',
+    label: 'Name',
+    smallLabel: 'Give this topic a name',
+    placeholder: 'Name...',
+  },
+  {
+    name: 'abstract',
+    type: 'textarea',
+    label: 'Abstract',
+    smallLabel: 'Brief description for this topic',
+    placeholder: 'Description...',
+  },
+  {
+    name: 'description',
+    type: 'markdown',
+    label: 'Description',
+    smallLabel: 'Brief description for this topic',
+    placeholder: 'Description...',
+  },
+  {
+    name: 'note',
+    type: 'text',
+    label: 'Note',
+    smallLabel: 'Special note for this topic',
+    placeholder: 'Note...',
+  },
+  {
+    name: 'minMembers',
+    type: 'number',
+    label: 'Minimum team members',
+    smallLabel: 'Minimum team member for this topic',
+    placeholder: '0',
+  },
+  {
+    name: 'maxMembers',
+    type: 'number',
+    label: 'Maximum team members',
+    smallLabel: 'Maximum team member for this topic',
+    placeholder: '4',
+  },
+  {
+    name: 'keywords',
+    type: 'text',
+    label: 'Keywords',
   },
   {
     name: 'attachment',
@@ -195,14 +246,11 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
     },
     {
       text: 'Information',
+      dataField: 'topic',
       sort: true,
       formatter: function StatusColumnFormatter(cellContent, row) {
         return (
-          <div
-            className="text-dark font-weight-bold"
-            data-id={row.id}
-            onClick={handleEdit}
-          >
+          <Link className="text-dark font-weight-bold" to={'./topic/' + row.id}>
             <div>
               <div className="text-nowrap text-dark-75 font-weight-bolder font-size-lg mb-0">
                 {row.name}
@@ -211,7 +259,7 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
                 {row.abstract}
               </span>
             </div>
-          </div>
+          </Link>
         );
       },
     },
@@ -231,6 +279,13 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
             <i className="fas fa-download my-2"></i>
           </a>
         );
+      },
+    },
+    {
+      dataField: 'checkpointTemplate',
+      text: 'Checkpoint Template',
+      formatter: function StatusColumnFormatter(cellContent, row) {
+        return cellContent && cellContent.label;
       },
     },
     {
@@ -285,6 +340,9 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
           </>
         );
       },
+      style: {
+        minWidth: '200px',
+      },
     },
     {
       dataField: 'mentorMembers',
@@ -307,10 +365,16 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
           </>
         );
       },
+      style: {
+        minWidth: '200px',
+      },
     },
     {
       dataField: 'note',
       text: 'Note',
+      style: {
+        minWidth: '200px',
+      },
     },
     {
       dataField: 'action',

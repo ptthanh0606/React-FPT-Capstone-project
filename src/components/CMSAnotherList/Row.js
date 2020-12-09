@@ -10,14 +10,6 @@ const Row = ({
   onLabelClick,
   darkMode,
 }) => {
-  const handleRoute = React.useCallback(
-    event => {
-      event.preventDefault();
-      onLabelClick();
-    },
-    [onLabelClick]
-  );
-
   return (
     <div
       className={`d-flex align-items-start list-item py-4 ${className}`}
@@ -26,7 +18,7 @@ const Row = ({
       <div className="flex-grow-1 mt-1 mr-2" data-toggle="view">
         <a
           href="/"
-          onClick={handleRoute}
+          onClick={onLabelClick}
           className={`text-${
             darkMode && 'light-primary'
           } text-hover-primary font-weight-bold mr-2`}
@@ -57,16 +49,18 @@ const Row = ({
           {altLabel}
         </a>
 
-        <a href="/" className="symbol symbol-30 ml-3">
-          <span
-            className="symbol-label"
-            style={{
-              backgroundImage: `url(https://www.gravatar.com/avatar/${md5(
-                emailAvatar.toLowerCase()
-              )})`,
-            }}
-          ></span>
-        </a>
+        {emailAvatar && (
+          <a href="/" className="symbol symbol-30 ml-3">
+            <span
+              className="symbol-label"
+              style={{
+                backgroundImage: `url(https://www.gravatar.com/avatar/${md5(
+                  emailAvatar.toLowerCase()
+                )})`,
+              }}
+            ></span>
+          </a>
+        )}
       </div>
     </div>
   );

@@ -1,50 +1,88 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
-import GroupInfo from './GroupInfo';
+import { Form } from 'react-bootstrap';
 import GroupMember from './GroupMember';
 
-const GroupCard = ({ group, groupId, className, title }) => {
-  const history = useHistory();
-
-  const handleClick = React.useCallback(
+const GroupCard = ({
+  group = [],
+  role,
+  className,
+  title,
+  subTitle,
+  toolBar = <></>,
+  booleanFlg = false,
+  fallbackMsg,
+  leaderId,
+  handleSubmitRowData = () => {},
+}) => {
+  const handleSubmit = React.useCallback(
     e => {
       e.preventDefault();
-      history.push(`/team/${groupId}`);
+      let payload = [];
+
+      document.querySelectorAll('*[data-weight]').forEach(el => {
+        payload = [
+          ...payload,
+          {
+            id: el.getAttribute('data-weight-id'),
+            weight: el.getAttribute('data-weight'),
+          },
+        ];
+      });
+
+      handleSubmitRowData(payload);
     },
-    [groupId, history]
+    [handleSubmitRowData]
   );
 
   return (
     <div className={`card card-custom ${className}`}>
-      <div className="card-header align-items-center border-0 mt-4">
-        <h3 className="card-title font-weight-bolder text-dark">{title}</h3>
-        <div className="card-toolbar">
-          <a
-            href="/"
-            onClick={handleClick}
-            className="btn btn-sm btn-light-primary font-weight-bolder"
-          >
-            More
-          </a>
-        </div>
+      <div className="card-header d-flex align-items-center border-0 mt-4">
+        <h3 className="card-title font-weight-bolder align-items-start text-dark flex-column">
+          {title}
+          <span className="text-muted mt-3 font-weight-bold font-size-sm mb-5">
+            {subTitle}
+          </span>
+        </h3>
+        <div className="card-toolbar">{toolBar}</div>
       </div>
       <div className="card-body pt-2">
         <div className={'d-flex-column align-items-center' + className}>
-          <GroupInfo
-            name={group.name}
-            department={group.department}
-            leader={group.leader}
-          />
-          {group.members &&
-            group.members.map(member => (
-              <GroupMember
-                key={member.id}
-                id={member.id}
-                role={member.role}
-                label={member.name}
-                subLabel={member.code}
-              />
-            ))}
+          <Form id="change-weight-form" onSubmit={handleSubmit}>
+            {group?.length ? (
+              <>
+                {group
+                  .filter(member => member.id === leaderId)
+                  .map(leader => (
+                    <GroupMember
+                      email={leader.email}
+                      key={leader.id}
+                      id={leader.id}
+                      role={role}
+                      label={leader.name}
+                      subLabel={'Leader'}
+                      booleanFlg={booleanFlg}
+                      value={leader.weight}
+                    />
+                  ))}
+                {group
+                  .filter(member => member.id !== leaderId)
+                  .map(mem => (
+                    <GroupMember
+                      email={mem.email}
+                      key={mem.id}
+                      id={mem.id}
+                      role={role}
+                      label={mem.name}
+                      subLabel={'Leader'}
+                      booleanFlg={booleanFlg}
+                      value={mem.weight}
+                    />
+                  ))}
+              </>
+            ) : (
+              <>{fallbackMsg}</>
+            )}
+          </Form>
         </div>
       </div>
     </div>

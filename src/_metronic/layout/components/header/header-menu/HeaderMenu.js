@@ -18,6 +18,10 @@ const menusOfAdmin = [
     title: 'Semester',
   },
   {
+    path: '/checkpoint-template',
+    title: 'Checkpoint Template',
+  },
+  {
     path: '/department',
     title: 'Department',
   },
@@ -51,10 +55,6 @@ const menusOfLecturer = [
   {
     path: '/council',
     title: 'Council',
-  },
-  {
-    path: '/my-council',
-    title: 'My council',
   },
 ];
 

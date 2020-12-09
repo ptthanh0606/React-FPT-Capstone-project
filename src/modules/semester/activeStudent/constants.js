@@ -24,7 +24,7 @@ export const statusTitles = ['Not in a team', 'Matching', 'Matched'];
 //   columnsTransformer();
 // xóa caret, sortheader, constant.
 
-export const createColumns = ({ handleEdit, handleRemove }) =>
+export const createColumns = ({ handleRemove }) =>
   columnsTransformer([
     {
       dataField: 'id',
@@ -93,15 +93,6 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       formatter: (cellContent, row, rowIndex) => {
         return (
           <span className="text-nowrap">
-            <a
-              href="/"
-              title="Edit"
-              className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-              onClick={handleEdit}
-              data-id={row.id}
-            >
-              <i className="fas fa-pencil-alt mx-2"></i>
-            </a>
             <a
               href="/"
               title="Remove"
