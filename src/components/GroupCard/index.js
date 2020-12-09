@@ -11,6 +11,7 @@ const GroupCard = ({
   toolBar = <></>,
   booleanFlg = false,
   fallbackMsg,
+  leaderId,
   handleSubmitRowData = () => {},
 }) => {
   const handleSubmit = React.useCallback(
@@ -48,18 +49,36 @@ const GroupCard = ({
         <div className={'d-flex-column align-items-center' + className}>
           <Form id="change-weight-form" onSubmit={handleSubmit}>
             {group?.length ? (
-              group.map(member => (
-                <GroupMember
-                  email={member.email}
-                  key={member.id}
-                  id={member.id}
-                  role={role}
-                  label={member.name}
-                  subLabel={member.isLeader && 'Leader'}
-                  booleanFlg={booleanFlg}
-                  value={member.weight}
-                />
-              ))
+              <>
+                {group
+                  .filter(member => member.id === leaderId)
+                  .map(leader => (
+                    <GroupMember
+                      email={leader.email}
+                      key={leader.id}
+                      id={leader.id}
+                      role={role}
+                      label={leader.name}
+                      subLabel={'Leader'}
+                      booleanFlg={booleanFlg}
+                      value={leader.weight}
+                    />
+                  ))}
+                {group
+                  .filter(member => member.id !== leaderId)
+                  .map(mem => (
+                    <GroupMember
+                      email={mem.email}
+                      key={mem.id}
+                      id={mem.id}
+                      role={role}
+                      label={mem.name}
+                      subLabel={'Leader'}
+                      booleanFlg={booleanFlg}
+                      value={mem.weight}
+                    />
+                  ))}
+              </>
             ) : (
               <>{fallbackMsg}</>
             )}

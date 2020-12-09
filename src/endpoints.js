@@ -271,7 +271,7 @@ export const DELETE_TEAM = id => ({
 
 export const JOIN_TEAM = id => ({
   url: READ_TEAM(id).url + '/join',
-  method: METHOD.POST,
+  method: METHOD.PUT,
 });
 
 export const TRANSFER_LEADER_TEAM = id => ({
@@ -378,4 +378,9 @@ export const UPDATE_WEIGHT = id => ({
 export const LIST_NOTIFICATION = {
   url: config.api + 'notifications',
   method: METHOD.GET,
+};
+
+export const SEND_APPLICATION = {
+  url: config.api + 'topicapplications',
+  method: METHOD.POST,
 };

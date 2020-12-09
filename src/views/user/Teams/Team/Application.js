@@ -3,7 +3,7 @@ import { toAbsoluteUrl } from '_metronic/_helpers/AssetsHelpers';
 import SVG from 'react-inlinesvg';
 import * as constants from '../../../../modules/semester/team/application/constants';
 import * as transformers from '../../../../modules/semester/team/application/transformers';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import userAtom from 'store/user';
 import { role } from 'auth/recoil/selectors';
@@ -37,26 +37,17 @@ const Application = ({
     onOperationSuccess();
   }, [onOperationSuccess]);
 
-  const handleRouteToTopic = React.useCallback(
-    e => {
-      e.preventDefault();
-      history.push(`/topic/${topicId}`);
-    },
-    [history, topicId]
-  );
-
   // -----------------------------------------------------------------------------
 
   return (
     <tr>
       <td className="pl-4">
-        <a
-          href="/"
-          onClick={handleRouteToTopic}
+        <Link
+          to={`/topic/${topicId}`}
           className="text-dark-75 text-nowrap font-weight-bolder text-hover-primary mb-1 font-size-lg"
         >
           {topicName}
-        </a>
+        </Link>
         <div>
           <span className="text-muted font-weight-bold">{abstract}</span>
         </div>

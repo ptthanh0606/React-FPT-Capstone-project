@@ -76,6 +76,7 @@ const TopicDetailCard = ({
 
             <div className="d-flex flex-column align-items-start flex-wrap justify-content-between mb-10">
               <div className="flex-grow-1 py-5 py-lg-2 mr-5 mb-10">
+                <div className="font-weight-bolder mb-2">Description</div>
                 <ReactMarkdown>{fullDesc}</ReactMarkdown>
               </div>
 
@@ -146,12 +147,14 @@ const TopicDetailCard = ({
                   <div
                     className="symbol symbol-30 symbol-circle"
                     data-toggle="tooltip"
-                    style={{
-                      backgroundImage: `url(https://www.gravatar.com/avatar/${md5(
+                  >
+                    <img
+                      alt="Pic"
+                      src={`https://www.gravatar.com/avatar/${md5(
                         student.email ? student.email.toLowerCase() : ''
-                      )})`,
-                    }}
-                  ></div>
+                      )}`}
+                    />
+                  </div>
                 ))
               ) : (
                 <>Not yet</>

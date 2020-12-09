@@ -30,6 +30,7 @@ function fetchSemester(
           id: data.id,
           name: data.name,
           status: data.status,
+          maxApplications: data.maxApplication,
         });
         setLastSemester(data.id);
       })

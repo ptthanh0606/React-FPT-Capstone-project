@@ -211,27 +211,28 @@ export default function Teams() {
     [currentSemester.id, history]
   );
 
-  const handleJoinWithCode = React.useCallback(e => {
-    e.preventDefault();
-    // request({
-    //   to: endpoints.JOIN_TEAM(teamId).url,
-    //   method: endpoints.JOIN_TEAM(teamId).method,
-    //   params: {
-    //     teamId: teamId,
-    //     semesterId: currentSemester.id,
-    //     teamCode: teamCode,
-    //   },
-    // })
-    //   .then(res => {
-    //     console.log(res);
-    //     history.push(`/team/${res.data.data.id}`);
-    //     toast.success('Joined!');
-    //   })
-    //   .catch(err => {
-    //     handleErrors(err);
-    //     if (!err.isCancel) setIsLoading(false);
-    //   });
-  }, []);
+  const handleJoinWithCode = React.useCallback(
+    data => {
+      request({
+        to: endpoints.JOIN_TEAM(0).url,
+        method: endpoints.JOIN_TEAM(0).method,
+        params: {
+          semesterId: currentSemester.id,
+          teamCode: data.code,
+        },
+      })
+        .then(res => {
+          setJoinTeamModalShowFlg(false);
+          history.push(`/team/${res.data.data.id}`);
+          toast.success(`Joined, you are now a member of ${''}!`);
+        })
+        .catch(err => {
+          handleErrors(err);
+          if (!err.isCancel) setIsLoading(false);
+        });
+    },
+    [currentSemester.id, history]
+  );
 
   // ---------------------------------------------------------------------------
 
