@@ -51,8 +51,10 @@ const Topic = () => {
 
   const [isUserMentor, setIsUserMentor] = React.useState(false);
   const [isUserMentorLeader, setIsUserMentorLeader] = React.useState(false);
+  const [isUserApprover, setIsUserApprover] = React.useState(false);
+  const [isUserCouncilMember, setIsUserCouncilMember] = React.useState(false);
+
   const [mentorLeaderId, setMentorLeaderId] = React.useState();
-  const [isUserApprover, setIsUserApprover] = React.useState();
   const [studentLeaderId, setStudentLeaderId] = React.useState();
   const [guestStudentTeamId, setGuestStudentTeamId] = React.useState();
 
@@ -144,6 +146,25 @@ const Topic = () => {
       statusTitles,
     ]
   );
+
+  const fetchCouncil = React.useCallback(() => {
+    // fetch Topic
+    request({
+      to: endpoints.READ_TOPIC(id).url,
+      method: endpoints.READ_TOPIC(id).method,
+    })
+      .then(res => {
+        const transformedRes = transformers.downRead(res.data.data);
+        console.log(transformedRes);
+        checkPreConditions(transformedRes);
+
+        setCurrentTopic(transformedRes);
+      })
+      .catch(err => {
+        history.push('/topic');
+        handleErrors(err);
+      });
+  }, [checkPreConditions, history, id]);
 
   const fetchTopic = React.useCallback(() => {
     // fetch Topic
@@ -411,15 +432,35 @@ const Topic = () => {
                     />
                   </>
                 )}
-              {statusTitles[currentTopic.status] === 'Approved' &&
+              {(statusTitles[currentTopic.status] === 'Approved' &&
                 !isUserMentor && (
                   <button
                     type="button"
-                    className="btn btn-primary btn-success font-weight-bold btn-sm mr-2"
+                    className="btn btn-primary btn-success font-weight-bold btn-sm ml-2"
                     onClick={handleApplyMentor}
                   >
                     <i className="fas fa-sign-in-alt mr-2"></i>
-                    Apply for mentoring
+                    Become a mentor
+                  </button>
+                )) || (
+                <button
+                  type="button"
+                  className="btn btn-primary btn-danger font-weight-bold btn-sm ml-2"
+                  onClick={() => {}}
+                >
+                  <i className="fas fa-sign-out-alt mr-2"></i>
+                  Leave topic
+                </button>
+              )}
+              {statusTitles[currentTopic.status] === 'Matched' &&
+                !isUserCouncilMember && (
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-info font-weight-bold btn-sm ml-2"
+                    onClick={() => {}}
+                  >
+                    <i className="fas fa-sign-out-alt mr-2"></i>
+                    Evaluate
                   </button>
                 )}
               {statusTitles[currentTopic.status] === 'Pending' &&
@@ -457,6 +498,7 @@ const Topic = () => {
     isTeamApplied,
     isTeamInTopic,
     isTeamLocked,
+    isUserCouncilMember,
     isUserMentor,
     showUpdate,
     statusTitles,
@@ -505,9 +547,11 @@ const Topic = () => {
   React.useEffect(() => {
     if (currentRole === 'student') {
       fetchUserTeam();
+    } else {
+      // fetchCouncil();
     }
     fetchTopic();
-  }, [currentRole, fetchTopic, fetchUserTeam]);
+  }, [currentRole, fetchCouncil, fetchTopic, fetchUserTeam]);
 
   return (
     <>
