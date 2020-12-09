@@ -10,6 +10,7 @@ import Button from 'components/Button';
 import MdEditor from 'react-markdown-editor-lite';
 import metaAtom from 'store/meta';
 import { format } from 'date-fns';
+import Datasheet from 'react-datasheet';
 
 import * as transformers from 'modules/semester/topic/transformers';
 
@@ -608,6 +609,35 @@ const Topic = ({ semester }) => {
               </>
             }
           />
+        </Col>
+      </Row>
+      <Row>
+        <Col lg={12}>
+          <Card
+            isLoading={isLoading}
+            title="Evaluations"
+            toolbar={
+              <>
+                <Button>
+                  <i className="fas fa-trash mr-2"></i>Save
+                </Button>
+              </>
+            }
+          >
+            <Datasheet
+              data={[
+                [{ readOnly: true, colSpan: 2, value: 'Shopping List' }],
+                [
+                  { readOnly: true, value: 'ahihih' },
+                  {
+                    value: 'Grocery Item',
+                  },
+                ],
+              ]}
+              valueRenderer={cell => cell.value}
+              onChange={() => {}}
+            />
+          </Card>
         </Col>
       </Row>
     </>
