@@ -48,6 +48,9 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       dataField: 'name',
       text: 'Name',
       sort: true,
+      style: {
+        minWidth: 200,
+      },
     },
     {
       dataField: 'leader',
@@ -57,7 +60,7 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
           cellContent?.label &&
           cellContent?.value && (
             <Link
-              className={'text-dark font-weight-bold'}
+              className={'text-dark font-weight-bold text-nowrap'}
               to={'/profile/student/' + cellContent?.value}
             >
               {cellContent?.label}
@@ -74,7 +77,7 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
           ? cellContent
               ?.map(i => (
                 <Link
-                  className={'text-dark font-weight-bold'}
+                  className={'text-dark font-weight-bold text-nowrap'}
                   to={'/profile/student/' + i?.value}
                 >
                   {i?.label}
@@ -212,7 +215,7 @@ export const createColumnsForStudentRole = ({ handleJoin }) =>
           ? cellContent
               ?.map(i => (
                 <Link
-                  className={'text-dark font-weight-bold'}
+                  className={'text-dark font-weight-bold text-nowrap'}
                   to={'/profile/student/' + i?.value}
                 >
                   {i?.label}

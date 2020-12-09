@@ -372,3 +372,10 @@ export const UPDATE_WEIGHT = id => ({
   url: READ_TOPIC(id).url + '/mentors/updateweight',
   method: METHOD.PUT,
 });
+
+// -----------------------------------------------------------------------------
+
+export const LIST_NOTIFICATION = {
+  url: config.api + 'notifications',
+  method: METHOD.GET,
+};
