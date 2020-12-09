@@ -8,7 +8,6 @@ import { Row, Col, Form } from 'react-bootstrap';
 import Card from 'components/Card';
 import Button from 'components/Button';
 import MdEditor from 'react-markdown-editor-lite';
-import 'react-markdown-editor-lite/lib/index.css';
 import metaAtom from 'store/meta';
 import { format } from 'date-fns';
 
@@ -449,26 +448,30 @@ const Topic = ({ semester }) => {
       <Row>
         <Col lg={6}>
           <Card isLoading={isLoading} title="Team">
-            {teamMembers?.map(i => (
-              <Member
-                id={i?.value}
-                name={i?.label}
-                email={i?.email}
-                isLeader={i?.isLeader}
-              />
-            ))}
+            {teamMembers && teamMembers.length > 0
+              ? teamMembers?.map(i => (
+                  <Member
+                    id={i?.value}
+                    name={i?.label}
+                    email={i?.email}
+                    isLeader={i?.isLeader}
+                  />
+                ))
+              : 'This topic does not have team yet.'}
           </Card>
         </Col>
         <Col lg={6}>
           <Card isLoading={isLoading} title="Mentors">
-            {data?.mentorMembers?.map(i => (
-              <Member
-                id={i?.value}
-                name={i?.label}
-                email={i?.email}
-                isLeader={i?.isLeader}
-              />
-            ))}
+            {data && data.mentorMembers && data.mentorMembers.length > 0
+              ? data?.mentorMembers?.map(i => (
+                  <Member
+                    id={i?.value}
+                    name={i?.label}
+                    email={i?.email}
+                    isLeader={i?.isLeader}
+                  />
+                ))
+              : 'This topic does not have any mentor'}
           </Card>
         </Col>
       </Row>
@@ -501,11 +504,17 @@ const Topic = ({ semester }) => {
                   </Button>
                 </>
               ) : data?.status === 1 ? (
-                <span class="label label-inline label-danger font-weight-bold ">
+                <span
+                  class="label label-inline label-danger font-weight-bold"
+                  style={{ fontSize: '1.25rem', padding: '1rem' }}
+                >
                   Rejected
                 </span>
               ) : (
-                <span class="label label-inline label-success font-weight-bold ">
+                <span
+                  class="label label-inline label-success font-weight-bold"
+                  style={{ fontSize: '1.25rem', padding: '1rem' }}
+                >
                   Approved
                 </span>
               )
@@ -532,60 +541,56 @@ const Topic = ({ semester }) => {
         <Col lg={6}>
           <Card isLoading={isLoading} title="Application">
             <div className="table-responsive">
-              <table className="table table-head-custom table-head-bg table-borderless table-vertical-center">
-                <thead>
-                  <tr className="text-left text-uppercase">
-                    <th className="pl-4">
-                      <span className="text-dark-75">Team</span>
-                    </th>
-                    <th>Sent at</th>
-                    <th>Updated at</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data?.applications?.length ? (
-                    data?.applications.map(app => (
-                      <tr>
-                        <td className="pl-4">
-                          <a
-                            href="/"
-                            // onClick={handleRouteToTopic}
-                            className="text-dark-75 text-nowrap font-weight-bolder text-hover-primary mb-1 font-size-lg"
-                          >
-                            {app.team.name}
-                          </a>
-                        </td>
-                        <td className="text-left pl-0">
-                          <span className="text-muted font-weight-500">
-                            {appTransformers.convertDateDown(app.createdAt)}
-                          </span>
-                        </td>
-                        <td className="text-left pl-0">
-                          <span className="text-muted font-weight-500">
-                            {appTransformers.convertDateDown(app.updatedAt)}
-                          </span>
-                        </td>
-                        <td className="text-left pl-0">
-                          <span
-                            className={`label label-lg label-light-${
-                              constants.statusClass[app.status]
-                            } label-inline`}
-                          >
-                            {constants.statusTitles[app.status]}
-                          </span>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td className="text-muted">
-                        This team currently don't have any applications yet.
-                      </td>
+              {data?.applications?.length > 0 ? (
+                <table className="table table-head-custom table-head-bg table-borderless table-vertical-center">
+                  <thead>
+                    <tr className="text-left text-uppercase">
+                      <th className="pl-4">
+                        <span className="text-dark-75">Team</span>
+                      </th>
+                      <th>Sent at</th>
+                      <th>Updated at</th>
+                      <th>Status</th>
                     </tr>
-                  )}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {data?.applications?.length &&
+                      data?.applications.map(app => (
+                        <tr>
+                          <td className="pl-4">
+                            <a
+                              href="/"
+                              className="text-dark-75 text-nowrap font-weight-bolder text-hover-primary mb-1 font-size-lg"
+                            >
+                              {app.team.name}
+                            </a>
+                          </td>
+                          <td className="text-left pl-0">
+                            <span className="text-muted font-weight-500 text-nowrap">
+                              {appTransformers.convertDateDown(app.createdAt)}
+                            </span>
+                          </td>
+                          <td className="text-left pl-0">
+                            <span className="text-muted font-weight-500 text-nowrap">
+                              {appTransformers.convertDateDown(app.updatedAt)}
+                            </span>
+                          </td>
+                          <td className="text-left pl-0 text-nowrap">
+                            <span
+                              className={`label label-lg label-light-${
+                                constants.statusClass[app.status]
+                              } label-inline`}
+                            >
+                              {constants.statusTitles[app.status]}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              ) : (
+                "This topic don't have any application from teams"
+              )}
             </div>
           </Card>
         </Col>

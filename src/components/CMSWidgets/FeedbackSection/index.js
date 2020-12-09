@@ -1,7 +1,6 @@
 import React from 'react';
 import MdEditor from 'react-markdown-editor-lite';
 import MarkdownIt from 'markdown-it';
-import 'react-markdown-editor-lite/lib/index.css';
 import Comment from './Comment';
 import Button from 'components/Button';
 import MessageTile from '../MessageTile';
