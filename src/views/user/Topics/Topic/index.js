@@ -30,6 +30,7 @@ const Topic = () => {
   const history = useHistory();
   const { id } = useParams();
   const confirm = useConfirm();
+  const [l, loadData] = React.useReducer(() => ({}), {});
 
   // ----------------------------------------------------------
 
@@ -174,7 +175,6 @@ const Topic = () => {
     })
       .then(res => {
         const transformedRes = transformers.downRead(res.data.data);
-        console.log(transformedRes);
         checkPreConditions(transformedRes);
 
         setCurrentTopic(transformedRes);
@@ -320,10 +320,10 @@ const Topic = () => {
       method: endpoints.APPLY_MENTOR(id).method,
     })
       .then(res => {
+        toast.success('You are now a mentor of this topic!');
         fetchTopic();
       })
       .catch(handleErrors);
-    toast.success('You are now a mentor of this topic!');
   }, [fetchTopic, id]);
 
   const handleApplyMentor = React.useCallback(() => {
@@ -345,6 +345,7 @@ const Topic = () => {
     })
       .then(res => {
         fetchTopic();
+        loadData();
         toast.success(
           'Your team application sent, please wait for mentor to confirm!'
         );
@@ -432,7 +433,7 @@ const Topic = () => {
                     />
                   </>
                 )}
-              {(statusTitles[currentTopic.status] === 'Approved' &&
+              {statusTitles[currentTopic.status] === 'Approved' &&
                 !isUserMentor && (
                   <button
                     type="button"
@@ -442,16 +443,7 @@ const Topic = () => {
                     <i className="fas fa-sign-in-alt mr-2"></i>
                     Become a mentor
                   </button>
-                )) || (
-                <button
-                  type="button"
-                  className="btn btn-primary btn-danger font-weight-bold btn-sm ml-2"
-                  onClick={() => {}}
-                >
-                  <i className="fas fa-sign-out-alt mr-2"></i>
-                  Leave topic
-                </button>
-              )}
+                )}
               {statusTitles[currentTopic.status] === 'Matched' &&
                 !isUserCouncilMember && (
                   <button

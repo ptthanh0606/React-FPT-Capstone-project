@@ -9,28 +9,18 @@ import request from 'utils/request';
 import * as endpoints from 'endpoints';
 import { handleErrors } from 'utils/common';
 import { useParams } from 'react-router-dom';
-import * as constants from '../../../modules/semester/topic/constants';
 
 const mdParser = new MarkdownIt();
 
 const FeedbackSection = ({
   className,
-  feedbacks = [
-    {
-      approver: { id: 3, code: 'TrungTTLecturer', name: 'Tran Thai Trung' },
-      content: 'THIS IS CONTENT',
-      date: '2020-12-03T16:48:49.272724',
-      id: 6,
-    },
-  ],
+  feedbacks = [],
   onSuccess,
   topicStatus,
   isInDep = false,
   isUserApprover = false,
 }) => {
   const { id } = useParams();
-  const statusTitles = React.useMemo(() => constants.statusTitles, []);
-  const statusClasses = React.useMemo(() => constants.statusClasses, []);
   // ------------------------------------------------------------------------------
 
   const [commentValue, setCommentValue] = React.useState('');
@@ -96,9 +86,13 @@ const FeedbackSection = ({
                   >
                     Submit
                   </Button>
-                  <a href="/" className="btn btn-clean font-weight-bold">
+                  <button
+                    type="button"
+                    onClick={() => setCommentValue('')}
+                    className="btn btn-clean font-weight-bold ml-2"
+                  >
                     Cancel
-                  </a>
+                  </button>
                 </div>
               </div>
             </form>
@@ -109,7 +103,7 @@ const FeedbackSection = ({
         {!isInDep && (
           <MessageTile
             iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Stop.svg')}
-            content="You are not belong to this department"
+            content="You are not belong to this department."
             baseColor="warning"
           />
         )}
@@ -117,7 +111,7 @@ const FeedbackSection = ({
         {!isUserApprover && (
           <MessageTile
             iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Stop.svg')}
-            content="You are not an approver of this topic departments"
+            content="You are not an approver of this topic department."
             baseColor="warning"
           />
         )}
