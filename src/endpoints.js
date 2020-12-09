@@ -396,3 +396,8 @@ export const REJECT_APPLICATION = id => ({
   url: SEND_APPLICATION.url + '/' + id + '/reject',
   method: METHOD.PUT,
 });
+
+export const CANCEL_APPLICATION = id => ({
+  url: SEND_APPLICATION.url + '/' + id + '/cancel',
+  method: METHOD.PUT,
+});
