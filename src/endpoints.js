@@ -365,7 +365,7 @@ export const UPDATE_WEIGHT = id => ({
 
 // -----------------------------------------------------------------------------
 
-export const SEND_APPLICATION = () => ({
+export const SEND_APPLICATION = {
   url: config.api + 'topicapplications',
   method: METHOD.POST,
-});
+};
