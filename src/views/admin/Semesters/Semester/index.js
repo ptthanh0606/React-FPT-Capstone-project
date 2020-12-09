@@ -148,7 +148,7 @@ const Semester = () => {
   return (
     <Tab.Container id="left-tabs-example" defaultActiveKey="first">
       <Row>
-        <Col sm={3} className="mb-4">
+        <Col lg={3} className="mb-8">
           <div className={'alert-shadow bg-white p-5 rounded'}>
             <span className="font-size-h2">{data.name}</span>
             <br />
@@ -199,7 +199,7 @@ const Semester = () => {
             </div>
           </div>
         </Col>
-        <Col sm={9}>
+        <Col lg={9}>
           <Switch>
             <Route
               path="/semester/:id/information"

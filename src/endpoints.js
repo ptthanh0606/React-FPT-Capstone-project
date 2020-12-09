@@ -271,7 +271,7 @@ export const DELETE_TEAM = id => ({
 
 export const JOIN_TEAM = id => ({
   url: READ_TEAM(id).url + '/join',
-  method: METHOD.POST,
+  method: METHOD.PUT,
 });
 
 export const TRANSFER_LEADER_TEAM = id => ({
@@ -343,6 +343,16 @@ export const UPDATE_TOPIC = id => ({
   method: METHOD.PUT,
 });
 
+export const REJECT_TOPIC = id => ({
+  url: READ_TOPIC(id).url + '/reject',
+  method: METHOD.PUT,
+});
+
+export const APPROVE_TOPIC = id => ({
+  url: READ_TOPIC(id).url + '/approve',
+  method: METHOD.PUT,
+});
+
 export const DELETE_TOPIC = id => ({
   url: READ_TOPIC(id).url,
   method: METHOD.DELETE,
@@ -352,3 +362,25 @@ export const FEEDBACK_TOPIC = id => ({
   url: READ_TOPIC(id).url + '/feedback',
   method: METHOD.POST,
 });
+
+export const APPLY_MENTOR = id => ({
+  url: READ_TOPIC(id).url + '/mentor',
+  method: METHOD.POST,
+});
+
+export const UPDATE_WEIGHT = id => ({
+  url: READ_TOPIC(id).url + '/mentors/updateweight',
+  method: METHOD.PUT,
+});
+
+// -----------------------------------------------------------------------------
+
+export const LIST_NOTIFICATION = {
+  url: config.api + 'notifications',
+  method: METHOD.GET,
+};
+
+export const SEND_APPLICATION = {
+  url: config.api + 'topicapplications',
+  method: METHOD.POST,
+};

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Form } from 'react-bootstrap';
 import GroupMember from './GroupMember';
 
 const GroupCard = ({
@@ -10,10 +11,32 @@ const GroupCard = ({
   toolBar = <></>,
   booleanFlg = false,
   fallbackMsg,
+  leaderId,
+  handleSubmitRowData = () => {},
 }) => {
+  const handleSubmit = React.useCallback(
+    e => {
+      e.preventDefault();
+      let payload = [];
+
+      document.querySelectorAll('*[data-weight]').forEach(el => {
+        payload = [
+          ...payload,
+          {
+            id: el.getAttribute('data-weight-id'),
+            weight: el.getAttribute('data-weight'),
+          },
+        ];
+      });
+
+      handleSubmitRowData(payload);
+    },
+    [handleSubmitRowData]
+  );
+
   return (
     <div className={`card card-custom ${className}`}>
-      <div className="card-header align-items-center border-0 mt-4">
+      <div className="card-header d-flex align-items-center border-0 mt-4">
         <h3 className="card-title font-weight-bolder align-items-start text-dark flex-column">
           {title}
           <span className="text-muted mt-3 font-weight-bold font-size-sm mb-5">
@@ -24,21 +47,42 @@ const GroupCard = ({
       </div>
       <div className="card-body pt-2">
         <div className={'d-flex-column align-items-center' + className}>
-          {group?.length ? (
-            group.map(member => (
-              <GroupMember
-                key={member.id}
-                id={member.id}
-                role={role}
-                label={member.name}
-                subLabel={member.isLeader && 'Leader'}
-                booleanFlg={booleanFlg}
-                value={member.weight}
-              />
-            ))
-          ) : (
-            <>{fallbackMsg}</>
-          )}
+          <Form id="change-weight-form" onSubmit={handleSubmit}>
+            {group?.length ? (
+              <>
+                {group
+                  .filter(member => member.id === leaderId)
+                  .map(leader => (
+                    <GroupMember
+                      email={leader.email}
+                      key={leader.id}
+                      id={leader.id}
+                      role={role}
+                      label={leader.name}
+                      subLabel={'Leader'}
+                      booleanFlg={booleanFlg}
+                      value={leader.weight}
+                    />
+                  ))}
+                {group
+                  .filter(member => member.id !== leaderId)
+                  .map(mem => (
+                    <GroupMember
+                      email={mem.email}
+                      key={mem.id}
+                      id={mem.id}
+                      role={role}
+                      label={mem.name}
+                      subLabel={'Leader'}
+                      booleanFlg={booleanFlg}
+                      value={mem.weight}
+                    />
+                  ))}
+              </>
+            ) : (
+              <>{fallbackMsg}</>
+            )}
+          </Form>
         </div>
       </div>
     </div>

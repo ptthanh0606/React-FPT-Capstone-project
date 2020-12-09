@@ -8,6 +8,8 @@ export function down(i) {
             i.department.code || console.log('deparment code field not found'),
           value:
             i.department.id || console.log('department id field not found'),
+          fullLabel:
+            i.department.name || console.log('department name field not found'),
         }
       : console.log('department field not found'),
     members:

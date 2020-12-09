@@ -8,7 +8,7 @@ const TeamHeader = ({
   teamName = '',
   department = '',
   teamType = '',
-  teamStatus = false,
+  teamStatus = '',
   withTopic = {},
 }) => {
   const history = useHistory();
@@ -146,16 +146,18 @@ const TeamHeader = ({
                   )}
                 </>
               ) : (
-                <>
-                  <MessageTile
-                    className="mt-10"
-                    baseColor="warning"
-                    content="Awaiting for topic match."
-                    iconSrc={toAbsoluteUrl(
-                      '/media/svg/icons/General/Other2.svg'
-                    )}
-                  />
-                </>
+                teamStatus && (
+                  <>
+                    <MessageTile
+                      className="mt-10"
+                      baseColor="warning"
+                      content="Awaiting for topic match."
+                      iconSrc={toAbsoluteUrl(
+                        '/media/svg/icons/General/Other2.svg'
+                      )}
+                    />
+                  </>
+                )
               )}
             </>
           ) : (

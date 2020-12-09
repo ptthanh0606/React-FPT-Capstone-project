@@ -8,6 +8,10 @@ import md5 from 'utils/md5';
 import userAtom from 'store/user';
 import { useRecoilValue } from 'recoil';
 import { Link, useHistory } from 'react-router-dom';
+import MarkdownIt from 'markdown-it';
+import ReactMarkdown from 'react-markdown';
+
+const mdParser = new MarkdownIt();
 
 const TopicDetailCard = ({
   className,
@@ -25,31 +29,12 @@ const TopicDetailCard = ({
   onFeedbackSuccess,
   submitter = {},
 }) => {
-  const history = useHistory();
   const currentUser = useRecoilValue(userAtom);
 
   // -----------------------------------------------------------------------------
 
   const statusTitles = React.useMemo(() => constants.statusTitles, []);
   const statusClasses = React.useMemo(() => constants.statusClasses, []);
-
-  // -----------------------------------------------------------------------------
-
-  const handleShowTeamDetail = React.useCallback(event => {
-    event.preventDefault();
-  }, []);
-
-  const handleShowMentorDetail = React.useCallback(event => {
-    event.preventDefault();
-  }, []);
-
-  const handleRouteToSubmitter = React.useCallback(
-    event => {
-      event.preventDefault();
-      history.push(`/profile/lecturer/${submitter.value}`);
-    },
-    [history, submitter.value]
-  );
 
   // -----------------------------------------------------------------------------
 
@@ -89,9 +74,10 @@ const TopicDetailCard = ({
               </div>
             </div>
 
-            <div className="d-flex align-items-center flex-wrap justify-content-between mb-10">
-              <div className="flex-grow-1 font-weight-bold text-dark-50 py-5 py-lg-2 mr-5 mb-10">
-                {fullDesc}
+            <div className="d-flex flex-column align-items-start flex-wrap justify-content-between mb-10">
+              <div className="flex-grow-1 py-5 py-lg-2 mr-5 mb-10">
+                <div className="font-weight-bolder mb-2">Description</div>
+                <ReactMarkdown>{fullDesc}</ReactMarkdown>
               </div>
 
               <div className="d-flex flex-wrap align-items-center py-2">
@@ -161,12 +147,14 @@ const TopicDetailCard = ({
                   <div
                     className="symbol symbol-30 symbol-circle"
                     data-toggle="tooltip"
-                    style={{
-                      backgroundImage: `url(https://www.gravatar.com/avatar/${md5(
+                  >
+                    <img
+                      alt="Pic"
+                      src={`https://www.gravatar.com/avatar/${md5(
                         student.email ? student.email.toLowerCase() : ''
-                      )})`,
-                    }}
-                  ></div>
+                      )}`}
+                    />
+                  </div>
                 ))
               ) : (
                 <>Not yet</>
@@ -189,12 +177,14 @@ const TopicDetailCard = ({
                   <div
                     className="symbol symbol-30 symbol-circle"
                     data-toggle="tooltip"
-                    style={{
-                      backgroundImage: `url(https://www.gravatar.com/avatar/${md5(
-                        mentor.email ? mentor.email.toLowerCase() : 'c'
-                      )})`,
-                    }}
-                  ></div>
+                  >
+                    <img
+                      alt="Pic"
+                      src={`https://www.gravatar.com/avatar/${md5(
+                        mentor.email ? mentor.email.toLowerCase() : ''
+                      )}`}
+                    />
+                  </div>
                 ))
               ) : (
                 <>Not yet</>
@@ -202,16 +192,18 @@ const TopicDetailCard = ({
             </div>
           </div>
 
-          <div className="d-flex align-items-center flex-lg-fill my-1">
-            <span className="mr-4">
-              <i className="flaticon-file-2 icon-2x text-muted font-weight-bold"></i>
-            </span>
-            <div className="d-flex flex-column flex-lg-fill">
-              <span className="text-dark-75 font-weight-bolder font-size-sm">
-                {applications?.length} Applications
+          {statusTitles[status] !== 'Matched' && (
+            <div className="d-flex align-items-center flex-lg-fill my-1">
+              <span className="mr-4">
+                <i className="flaticon-file-2 icon-2x text-muted font-weight-bold"></i>
               </span>
+              <div className="d-flex flex-column flex-lg-fill">
+                <span className="text-dark-75 font-weight-bolder font-size-sm">
+                  {applications?.length} Applications
+                </span>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="separator separator-solid my-7"></div>
@@ -223,8 +215,9 @@ const TopicDetailCard = ({
             onSuccess={onFeedbackSuccess}
             topicStatus={statusTitles[status]}
             isInDep={
-              !!currentUser.department.filter(({ name }) => name === department)
-                .length
+              !!currentUser.department.filter(
+                ({ name }) => name === department.fullName
+              ).length
             }
           />
         )}

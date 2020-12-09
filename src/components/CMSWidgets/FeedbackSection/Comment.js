@@ -1,6 +1,5 @@
 import { formatRelative, subMinutes } from 'date-fns';
 import React from 'react';
-import 'react-markdown-editor-lite/lib/index.css';
 import md5 from 'utils/md5';
 
 const Comment = ({ className, email, name, date, content }) => {

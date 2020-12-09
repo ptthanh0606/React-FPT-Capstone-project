@@ -88,6 +88,7 @@ export function downRead(i) {
         value: j.id,
         weight: j.weight,
         isLeader: j.isLeader,
+        email: j.email,
         name: j.name,
       })) || console.log('mentor members field not found'),
     status:
@@ -119,6 +120,7 @@ export function downRead(i) {
       status: j.status,
       createdAt: j.createdAt,
       updatedAt: j.updatedAt,
+      team: j.team,
     })),
     feedbacks: i?.topicFeedbacks?.map(j => ({
       id: j.id,
@@ -128,6 +130,7 @@ export function downRead(i) {
         id: j.approver?.id,
         code: j.approver?.code,
         name: j.approver?.name,
+        email: j.approver?.email,
       },
     })),
   };
@@ -144,7 +147,7 @@ export function mDown(i) {
 }
 
 export function up(i) {
-  const newLecturers = [...(i?.lecturers || [])].sort(function (a, b) {
+  const mentorMembers = [...(i?.mentorMembers || [])].sort(function (a, b) {
     if (a.isLeader) return -1;
     if (b.isLeader) return 1;
     return 0;
@@ -161,7 +164,7 @@ export function up(i) {
     departmentId: i?.department?.value && Number(i?.department?.value),
     submitByStudent: !!i?.submitByStudent,
     teamId: i?.team?.value && Number(i?.team?.value),
-    mentorMembers: newLecturers?.map(j => ({
+    mentorMembers: mentorMembers?.map(j => ({
       id: Number(j.value),
       weight: Number(j.weight),
     })),
