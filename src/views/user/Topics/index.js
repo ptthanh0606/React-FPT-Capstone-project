@@ -243,27 +243,31 @@ export default function Topics() {
     <Card>
       <CardHeader title="All topics">
         <CardHeaderToolbar className="text-nowrap">
-          <Button
-            className={`ml-1 ${isSubmittedTopics && 'font-weight-bolder'}`}
-            variant={(isSubmittedTopics && 'primary') || 'link'}
-            onClick={handleLoadAllSubmitted}
-          >
-            Submitted
-          </Button>
-          <Button
-            className={`ml-1 ${isMentoringTopics && 'font-weight-bolder'}`}
-            variant={(isMentoringTopics && 'primary') || 'link'}
-            onClick={handleLoadAllMentoring}
-          >
-            Mentoring
-          </Button>
-          <Button
-            className={`ml-1 ${isAllTopics && 'font-weight-bolder'}`}
-            variant={(isAllTopics && 'primary') || 'link'}
-            onClick={handleLoadAllTopics}
-          >
-            All topic
-          </Button>
+          {role === 'lecturer' && (
+            <>
+              <Button
+                className={`ml-1 ${isSubmittedTopics && 'font-weight-bolder'}`}
+                variant={(isSubmittedTopics && 'primary') || 'link'}
+                onClick={handleLoadAllSubmitted}
+              >
+                Submitted
+              </Button>
+              <Button
+                className={`ml-1 ${isMentoringTopics && 'font-weight-bolder'}`}
+                variant={(isMentoringTopics && 'primary') || 'link'}
+                onClick={handleLoadAllMentoring}
+              >
+                Mentoring
+              </Button>
+              <Button
+                className={`ml-1 ${isAllTopics && 'font-weight-bolder'}`}
+                variant={(isAllTopics && 'primary') || 'link'}
+                onClick={handleLoadAllTopics}
+              >
+                All topic
+              </Button>
+            </>
+          )}
         </CardHeaderToolbar>
       </CardHeader>
       <CardBody>
