@@ -161,8 +161,8 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
     },
   ]);
 
-export const createColumnsForStudentRole = ({ handleJoin }) =>
-  columnsTransformer([
+export const createColumnsForStudentRole = ({ handleJoin }, role) => {
+  const cols = [
     {
       dataField: 'id',
       text: 'ID',
@@ -261,32 +261,39 @@ export const createColumnsForStudentRole = ({ handleJoin }) =>
       sort: true,
       formatter: columnFormatter(lockClasses, lockTitles),
     },
-    {
+  ];
+
+  if (role !== 'student') {
+    cols.push({
       dataField: 'privacy',
       text: 'privacy',
       sort: true,
       formatter: columnFormatter(privacyClasses, privacyTitles),
+    });
+  }
+
+  cols.push({
+    dataField: 'action',
+    text: 'Action',
+    formatter: (cellContent, row) => {
+      return (
+        <a
+          href="/"
+          title="Join team"
+          className="btn btn-icon btn-light btn-hover-primary btn-sm"
+          data-id={row.id}
+          data-code={row.code}
+          data-name={row.name}
+          onClick={handleJoin}
+        >
+          <i className="fas fa-play icon-sm"></i>
+        </a>
+      );
     },
-    {
-      dataField: 'action',
-      text: 'Action',
-      formatter: (cellContent, row) => {
-        return (
-          <a
-            href="/"
-            title="Join team"
-            className="btn btn-icon btn-light btn-hover-primary btn-sm"
-            data-id={row.id}
-            data-code={row.code}
-            data-name={row.name}
-            onClick={handleJoin}
-          >
-            <i className="fas fa-play icon-sm"></i>
-          </a>
-        );
-      },
-    },
-  ]);
+  });
+
+  return columnsTransformer(cols);
+};
 
 export const createModalConfigs = semId => [
   {

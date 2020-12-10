@@ -237,8 +237,9 @@ export default function Teams() {
   // ---------------------------------------------------------------------------
 
   const columns = React.useMemo(
-    () => createColumnsForStudentRole({ handleJoin }),
-    [handleJoin]
+    () => createColumnsForStudentRole({ handleJoin }, currentRole),
+    [currentRole, handleJoin],
+    []
   );
 
   // --------------------------------------------------------------------
@@ -294,7 +295,6 @@ export default function Teams() {
           setSortOrder={setSortOrder}
           defaultSorted={defaultSorted}
           pageSizeList={sizePerPageList}
-          selectable
         />
       </CardBody>
       <CMSModal
