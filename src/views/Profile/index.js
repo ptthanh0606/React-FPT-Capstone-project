@@ -16,10 +16,7 @@ const Profile = () => {
         <Route path="/profile/admin/:id(\d+)">
           <NotOwnProfilePage />
         </Route>
-        <Route path="/profile/lecturer/:id(\d+)">
-          <NotOwnProfilePage />
-        </Route>
-        <Route path="/profile/student/:id(\d+)">
+        <Route path="/profile/:role/:id(\d+)">
           <NotOwnProfilePage />
         </Route>
       </Switch>
