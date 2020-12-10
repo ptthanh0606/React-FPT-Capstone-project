@@ -25,6 +25,7 @@ import * as constants from 'modules/semester/topic/constants';
 
 import semesterStore from 'store/semester';
 import roleSelector from 'auth/recoil/selectors/role';
+import { Button } from 'react-bootstrap';
 
 export default function Topics() {
   const confirm = useConfirm();
@@ -32,7 +33,11 @@ export default function Topics() {
   const semester = useRecoilValue(semesterStore);
   const role = useRecoilValue(roleSelector);
 
+  //----------------------------------------------------------------------------
+
   const [l, loadData] = React.useReducer(() => ({}), {});
+
+  //----------------------------------------------------------------------------
 
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
@@ -52,6 +57,12 @@ export default function Topics() {
   const [fieldTemplate, setFieldTemplate] = React.useState({});
   const [showCreate, setShowCreate] = React.useState(false);
   const [isProcessing, setIsProcessing] = React.useState(false);
+
+  // ---------------------------------------------------------------------------
+
+  const [isAllTopics, setIsAllTopics] = React.useState(true);
+  const [isMentoringTopics, setIsMentoringTopics] = React.useState(false);
+  const [isSubmittedTopics, setIsSubmittedTopics] = React.useState(false);
 
   // ---------------------------------------------------------------------------
 
@@ -89,6 +100,106 @@ export default function Topics() {
     [semester.id]
   );
 
+  const loadTopics = React.useCallback(
+    state => {
+      const source = {};
+
+      let callConfigs = {};
+      switch (state) {
+        case 'all':
+          callConfigs = {
+            to: endpoints.LIST_TOPIC.url,
+            method: endpoints.LIST_TOPIC.method,
+            params: {
+              ...debouncedFilters,
+              pageNumber: page,
+              pageSize: pageSize,
+              sortField: sortField,
+              sortOrder: sortOrder,
+              semesterId: semester.id,
+            },
+            source,
+          };
+          break;
+        case 'mentoring':
+          callConfigs = {
+            to: endpoints.LIST_TOPIC.url,
+            method: endpoints.LIST_TOPIC.method,
+            params: {
+              ...debouncedFilters,
+              pageNumber: page,
+              pageSize: pageSize,
+              sortField: sortField,
+              sortOrder: sortOrder,
+              semesterId: semester.id,
+              isOwnMentorTopic: true,
+            },
+            source,
+          };
+          break;
+        case 'submitted':
+          callConfigs = {
+            to: endpoints.LIST_TOPIC.url,
+            method: endpoints.LIST_TOPIC.method,
+            params: {
+              ...debouncedFilters,
+              pageNumber: page,
+              pageSize: pageSize,
+              sortField: sortField,
+              sortOrder: sortOrder,
+              semesterId: semester.id,
+              isOwnSubmit: true,
+            },
+            source,
+          };
+          break;
+
+        default:
+          break;
+      }
+      setIsLoading(true);
+
+      request(callConfigs)
+        .then(res => {
+          setData(res.data?.data?.map(transformers.downList));
+          setTotal(res.data?.totalRecords);
+          setPage(res.data?.pageNumber);
+          setPageSize(res.data?.pageSize);
+          setIsLoading(false);
+        })
+        .catch(err => {
+          handleErrors(err);
+          if (!err.isCancel) setIsLoading(false);
+        });
+
+      return () => {
+        source.cancel();
+      };
+    },
+    [debouncedFilters, page, pageSize, semester.id, sortField, sortOrder]
+  );
+
+  const handleLoadAllSubmitted = React.useCallback(() => {
+    setIsMentoringTopics(false);
+    setIsAllTopics(false);
+    setIsSubmittedTopics(true);
+    loadTopics('submitted');
+  }, [loadTopics]);
+
+  const handleLoadAllMentoring = React.useCallback(() => {
+    setIsMentoringTopics(true);
+    setIsAllTopics(false);
+    setIsSubmittedTopics(false);
+    loadTopics('mentoring');
+  }, [loadTopics]);
+
+  const handleLoadAllTopics = React.useCallback(() => {
+    setIsMentoringTopics(false);
+    setIsAllTopics(true);
+    setIsSubmittedTopics(false);
+    loadTopics('all');
+  }, [loadTopics]);
+
   // ---------------------------------------------------------------------------
 
   const columns = React.useMemo(() => constants.createColumns({}, role), [
@@ -108,38 +219,9 @@ export default function Topics() {
   );
 
   React.useEffect(() => {
-    setIsLoading(true);
-    const source = {};
+    loadTopics('all');
+  }, [loadTopics]);
 
-    request({
-      to: endpoints.LIST_TOPIC.url,
-      method: endpoints.LIST_TOPIC.method,
-      params: {
-        ...debouncedFilters,
-        pageNumber: page,
-        pageSize: pageSize,
-        sortField: sortField,
-        sortOrder: sortOrder,
-        semesterId: semester.id,
-      },
-      source,
-    })
-      .then(res => {
-        setData(res.data?.data?.map(transformers.downList));
-        setTotal(res.data?.totalRecords);
-        setPage(res.data?.pageNumber);
-        setPageSize(res.data?.pageSize);
-        setIsLoading(false);
-      })
-      .catch(err => {
-        handleErrors(err);
-        if (!err.isCancel) setIsLoading(false);
-      });
-
-    return () => {
-      source.cancel();
-    };
-  }, [l, debouncedFilters, page, pageSize, sortField, sortOrder, semester.id]);
   React.useEffect(() => {
     setMeta(meta => ({
       ...meta,
@@ -170,7 +252,29 @@ export default function Topics() {
   return (
     <Card>
       <CardHeader title="All topics">
-        <CardHeaderToolbar className="text-nowrap"></CardHeaderToolbar>
+        <CardHeaderToolbar className="text-nowrap">
+          <Button
+            className={`ml-2 ${isSubmittedTopics && 'font-weight-bolder'}`}
+            variant={(isSubmittedTopics && 'primary') || 'link'}
+            onClick={handleLoadAllSubmitted}
+          >
+            Submitted
+          </Button>
+          <Button
+            className={`ml-2 ${isMentoringTopics && 'font-weight-bolder'}`}
+            variant={(isMentoringTopics && 'primary') || 'link'}
+            onClick={handleLoadAllMentoring}
+          >
+            Mentoring
+          </Button>
+          <Button
+            className={`ml-2 ${isAllTopics && 'font-weight-bolder'}`}
+            variant={(isAllTopics && 'primary') || 'link'}
+            onClick={handleLoadAllTopics}
+          >
+            All topic
+          </Button>
+        </CardHeaderToolbar>
       </CardHeader>
       <CardBody>
         <Filters filters={filters} setFilters={setFilters} />
