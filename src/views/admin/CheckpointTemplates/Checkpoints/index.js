@@ -11,15 +11,12 @@ import Add from './Add';
 
 import * as transformers from 'modules/checkpointTemplates/transformers';
 
-const UpdateCouncil = ({
+const ListCheckpoints = ({
   isShowFlg = false,
   setIsShowFlg = function () {},
   id,
+  onEdit = function () {},
 }) => {
-  const onHide = React.useCallback(() => {
-    setIsShowFlg(false);
-  }, [setIsShowFlg]);
-
   const [checkpoints, setCheckpoints] = React.useState([]);
   const [templateName, setTemplateName] = React.useState('...');
 
@@ -30,7 +27,12 @@ const UpdateCouncil = ({
   const [isShowEdit, setIsShowEdit] = React.useState(false);
   const [editId, setEditId] = React.useState(0);
   const [updateData, setUpdateData] = React.useState(0);
+  const [edited, setEdited] = React.useState(false);
 
+  const onHide = React.useCallback(() => {
+    setIsShowFlg(false);
+    if (edited) onEdit();
+  }, [edited, onEdit, setIsShowFlg]);
   //----------------------------------------------------------------------------
 
   const showAdd = React.useCallback(e => {
@@ -47,6 +49,7 @@ const UpdateCouncil = ({
       })
         .then(() => {
           loadData();
+          setEdited(true);
         })
         .catch(e => {
           handleErrors(e);
@@ -58,7 +61,7 @@ const UpdateCouncil = ({
 
   //----------------------------------------------------------------------------
 
-  const onEdit = React.useCallback(
+  const onEdit2 = React.useCallback(
     data => {
       return request({
         to: endpoints.UPDATE_CHECKPOINT(id, editId).url,
@@ -67,6 +70,7 @@ const UpdateCouncil = ({
       })
         .then(() => {
           loadData();
+          setEdited(true);
         })
         .catch(e => {
           handleErrors(e);
@@ -260,10 +264,10 @@ const UpdateCouncil = ({
         isShowFlg={isShowEdit}
         setIsShowFlg={setIsShowEdit}
         data={updateData}
-        onOk={onEdit}
+        onOk={onEdit2}
       />
     </>
   );
 };
 
-export default UpdateCouncil;
+export default ListCheckpoints;

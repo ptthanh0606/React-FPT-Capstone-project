@@ -260,6 +260,7 @@ const AddCheckpoint = ({
             config={{
               label: 'Weight',
               placeholder: 'Give this checkpoint a weight...',
+              min: 0,
             }}
             value={weight}
             handleChangeFields={value => setWeight(value)}
@@ -269,6 +270,9 @@ const AddCheckpoint = ({
             config={{
               label: 'Margin pass',
               placeholder: 'Minimum mark to pass this checkpoint',
+              min: 0,
+              max: 10,
+              step: 0.01,
             }}
             value={marginPass}
             handleChangeFields={value => setMarginPass(value)}
