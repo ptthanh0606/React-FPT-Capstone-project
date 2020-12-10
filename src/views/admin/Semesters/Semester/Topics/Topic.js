@@ -114,23 +114,37 @@ const fakeData = {
           id: 1,
           weight: 10,
           name: 'Col 1',
-          grade: [
-            // Cột: evaluator, Hàng: student, số cuối: total
-            [1, 2, 3],
-            [4, 5, 6],
+          marks: [
+            {
+              id: 1,
+              totalForStudent: 30,
+              lecturers: [
+                {
+                  id: 1,
+                  value: 10,
+                },
+                {
+                  id: 2,
+                  value: 20,
+                },
+              ],
+            },
+            {
+              id: 2,
+              totalForStudent: 30,
+              lecturers: [
+                {
+                  id: 1,
+                  value: 10,
+                },
+                {
+                  id: 2,
+                  value: 20,
+                },
+              ],
+            },
           ],
           total: 10,
-        },
-        {
-          id: 2,
-          weight: 10,
-          name: 'Col 2',
-          grade: [
-            // Cột: evaluator, Hàng: student, số cuối: total
-            [7, 8, 9],
-            [10, 11, 12],
-          ],
-          total: 100,
         },
       ],
       total: [100, 200], // total student
@@ -153,15 +167,17 @@ function transformToGrid(data) {
   ];
 
   for (const z of data.checkpoints) {
+    // z = current checkpoints
     const grid = [header];
 
-    for (const i in z.columns) {
+    for (const i of z.columns) {
+      // i = current column
       const firstEvaluator = z.council.members[0];
       const evaluatorNum = z.council.members.length;
       const toPush = [
-        { value: z.columns[i].name, readOnly: true, rowSpan: evaluatorNum },
+        { value: i.name, readOnly: true, rowSpan: evaluatorNum },
         {
-          value: z.columns[i].weight,
+          value: i.weight,
           readOnly: true,
           rowSpan: evaluatorNum,
         },
@@ -169,17 +185,20 @@ function transformToGrid(data) {
         { value: firstEvaluator.weight, readOnly: true },
       ];
 
-      for (const j in data.students) {
+      for (const j of data.students) {
+        // j = current student
         toPush.push(
           {
-            value: z.columns[i].grade[j][0],
-            studentId: data.students[j].id,
+            value: i.marks
+              .find(e => e.id === j.id)
+              .lecturers.find(e => e.id === z.council.members[0].id).value,
+            studentId: j.id,
             lecturerId: z.council.members[0].id,
-            markColumnId: z.columns[i].id,
+            markColumnId: i.id,
             evaluationId: z.id,
           },
           {
-            value: z.columns[i].grade[j][z.columns[i].grade.length],
+            value: i.marks.find(e => e.id === j.id).totalForStudent,
             rowSpan: z.council.members.length,
             readOnly: true,
           }
@@ -187,24 +206,29 @@ function transformToGrid(data) {
       }
 
       toPush.push({
-        value: z.columns[i].total,
+        value: i.total,
         rowSpan: z.council.members.length,
         readOnly: true,
       });
 
       grid.push(toPush);
 
-      for (const k in z.council.members.slice(1)) {
+      for (const k of z.council.members.slice(1)) {
+        // k: current council members
         grid.push([
-          { value: z.council.members[+k + 1].code, readOnly: true },
-          { value: z.council.members[+k + 1].weight, readOnly: true },
-          ...z.columns[i].grade.map((x, index) => ({
-            value: x[+k + 1],
-            studentId: data.students[index].id,
-            lecturerId: z.council.members[+k + 1].id,
-            markColumnId: z.columns[i].id,
-            evaluationId: z.id,
-          })),
+          { value: k.code, readOnly: true },
+          { value: k.weight, readOnly: true },
+          ...data.students.map(x => {
+            return {
+              value: i.marks
+                .find(t => t.id === x.id)
+                .lecturers.find(t => t.id === k.id).value,
+              studentId: x.id,
+              lecturerId: k.id,
+              markColumnId: i.id,
+              evaluationId: z.id,
+            };
+          }),
         ]);
       }
     }
@@ -233,15 +257,15 @@ function transformToGrid(data) {
 }
 
 function transformToData(data) {
-  const grades = [];
+  const markss = [];
   for (const k of data) {
     for (const i of k.grid) {
       for (const j of i) {
-        if (j.readOnly !== true) grades.push(j);
+        if (j.readOnly !== true) markss.push(j);
       }
     }
   }
-  return grades;
+  return markss;
 }
 
 const Topic = ({ semester }) => {
@@ -875,7 +899,7 @@ const Topic = ({ semester }) => {
                   </Card.Header>
                   <Accordion.Collapse eventKey="0">
                     <Card.Body>
-                      <div className="grade-table">
+                      <div className="marks-table">
                         <Datasheet
                           data={i.grid || []}
                           valueRenderer={cell => cell.value}
