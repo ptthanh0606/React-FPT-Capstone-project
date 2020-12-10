@@ -1,15 +1,17 @@
 import React from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import ProfileActions from '../ProfileActions';
 import metaAtom from 'store/meta';
 import { useParams } from 'react-router-dom';
-import roleSelector from 'auth/recoil/selectors/role';
 import ViewOnlyInfomation from './ViewOnlyInfomation';
+import request from 'utils/request';
+import { READ_LECTURER, READ_STUDENT } from 'endpoints';
+import { handleErrors } from 'utils/common';
 
 const ProfilePage = () => {
   const setMeta = useSetRecoilState(metaAtom);
-  const role = useRecoilValue(roleSelector);
-  const { id } = useParams();
+  const { id, role } = useParams();
+
   const [user, setUser] = React.useState({});
 
   // ----------------------------------------------------------------
@@ -20,6 +22,35 @@ const ProfilePage = () => {
       breadcrumb: [{ title: 'Profile', path: `/profile/${role}/${id}` }],
     });
   }, [id, role, setMeta]);
+
+  React.useEffect(() => {
+    if (role === 'lecturer') {
+      request({
+        to: READ_LECTURER(id).url,
+        method: READ_LECTURER(id).method,
+      })
+        .then(res => {
+          console.log(res.data.data);
+        })
+        .catch(err => {
+          handleErrors(err);
+        });
+    }
+    if (role === 'student') {
+      request({
+        to: READ_STUDENT(id).url,
+        method: READ_STUDENT(id).method,
+      })
+        .then(res => {
+          console.log(res.data.data);
+        })
+        .catch(err => {
+          handleErrors(err);
+        });
+    }
+  }, [id, role]);
+
+  // ----------------------------------------------------------------
 
   React.useEffect(() => {
     setUser({
