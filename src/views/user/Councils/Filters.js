@@ -4,12 +4,8 @@ import SelectTagInput from 'components/TagInput/SelectTagInput';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
 import { mDown as mDownDep } from 'modules/department/transformers';
-import roleSelector from 'auth/recoil/selectors/role';
-import { useRecoilValue } from 'recoil';
-
 export default function CustomersFilter({ filters, setFilters }) {
   const [selectState, setSelectState] = React.useState();
-  const role = useRecoilValue(roleSelector);
   return (
     <>
       <Formik
@@ -28,7 +24,7 @@ export default function CustomersFilter({ filters, setFilters }) {
         }) => (
           <form onSubmit={handleSubmit} className="form form-label-right">
             <div className="form-group row">
-              <div className="col-lg-3">
+              <div className="col-lg-2">
                 <SelectTagInput
                   placeholder="All"
                   onChange={e => {
@@ -56,41 +52,11 @@ export default function CustomersFilter({ filters, setFilters }) {
                   Filter by <b>department</b>
                 </small>
               </div>
-              <div className="col-lg-3">
-                <select
-                  className="form-control form-control-solid"
-                  name="status"
-                  placeholder="Filter by Department"
-                  onChange={e => {
-                    setFieldValue('status', e.target.value);
-                    handleSubmit();
-                  }}
-                  onBlur={handleBlur}
-                  value={values.status}
-                >
-                  <option value="">All</option>
-                  {role !== 'student' && (
-                    <>
-                      <option value="0">Pending</option>
-                      <option value="1">Rejected</option>
-                      <option value="2">Approved</option>
-                    </>
-                  )}
-                  <option value="3">Ready</option>
-                  <option value="4">Matched</option>
-                  <option value="5">Passed</option>
-                  <option value="6">Failed</option>
-                </select>
-                <small className="form-text text-muted">
-                  Filter by <b>status</b>
-                </small>
-              </div>
-              <div className="col-lg-6">
+              <div className="col-lg-10">
                 <div className="input-icon">
                   <input
                     type="text"
                     className="form-control form-control-solid"
-                    name="term"
                     placeholder="Search"
                     onBlur={handleBlur}
                     value={values.term}

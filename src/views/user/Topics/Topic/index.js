@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Link, useHistory, useParams } from 'react-router-dom';
+import SVG from 'react-inlinesvg';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import metaAtom from 'store/meta';
@@ -16,6 +17,7 @@ import * as endpoints from 'endpoints';
 import * as transformers from '../../../../modules/semester/topic/transformers';
 import * as constants from '../../../../modules/semester/topic/constants';
 import * as teamTransformers from '../../../../modules/semester/team/transformers';
+import * as departmentTransformers from '../../../../modules/department/transformers';
 import { rowActionFormatter } from './constants';
 
 import CMSModal from 'components/CMSModal/CMSModal';
@@ -23,12 +25,14 @@ import CMSList from 'components/CMSList';
 import GroupCard from 'components/GroupCard';
 import TopicDetailCard from 'components/CMSWidgets/TopicDetailCard';
 import useConfirm from 'utils/confirm';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { toAbsoluteUrl } from '_metronic/_helpers';
 
 const Topic = () => {
   const history = useHistory();
   const { id } = useParams();
   const confirm = useConfirm();
+  const [l, loadData] = React.useReducer(() => ({}), {});
 
   // ----------------------------------------------------------
 
@@ -50,9 +54,13 @@ const Topic = () => {
 
   const [isUserMentor, setIsUserMentor] = React.useState(false);
   const [isUserMentorLeader, setIsUserMentorLeader] = React.useState(false);
+  const [isUserApprover, setIsUserApprover] = React.useState(false);
+  const [isUserCouncilMember, setIsUserCouncilMember] = React.useState(false);
+
   const [mentorLeaderId, setMentorLeaderId] = React.useState();
   const [studentLeaderId, setStudentLeaderId] = React.useState();
   const [guestStudentTeamId, setGuestStudentTeamId] = React.useState();
+  const [studentApplicationId, setStudentApplicationId] = React.useState();
 
   const [editWeightFlg, setEditWeightFlg] = React.useState(false);
 
@@ -68,7 +76,28 @@ const Topic = () => {
 
   // ----------------------------------------------------------
 
-  const fetchTopicTeam = React.useCallback(
+  const fetchDepartment = React.useCallback(
+    depId => {
+      request({
+        to: endpoints.READ_DEPARTMENT(depId).url,
+        method: endpoints.READ_DEPARTMENT(depId).method,
+      })
+        .then(res => {
+          const transformedRes = departmentTransformers.down(res.data.data);
+          setIsUserApprover(
+            transformedRes.approvers.some(
+              approver => approver.value === currentUser.id
+            )
+          );
+        })
+        .catch(err => {
+          handleErrors(err);
+        });
+    },
+    [currentUser.id]
+  );
+
+  const fetchLeaderTeam = React.useCallback(
     teamId => {
       request({
         to: endpoints.READ_TEAM(teamId).url,
@@ -86,7 +115,42 @@ const Topic = () => {
     [currentSemester.id]
   );
 
-  const fetchTopic = React.useCallback(() => {
+  const checkPreConditions = React.useCallback(
+    data => {
+      setMentorLeaderId(
+        data.mentorMembers?.filter(({ isLeader }) => isLeader === true)[0]?.id
+      );
+      if (currentRole === 'lecturer') {
+        setIsUserMentor(
+          data.mentorMembers?.some(({ value }) => value === currentUser.id)
+        );
+
+        setIsUserMentorLeader(
+          data.mentorMembers?.filter(({ isLeader }) => isLeader === true)[0]
+            ?.id === currentUser.id
+        );
+
+        fetchDepartment(data.department.value);
+      } else {
+        if (
+          !['Pending', 'Approved', 'Rejected', 'Ready'].includes(
+            statusTitles[data.status]
+          )
+        ) {
+          fetchLeaderTeam(data.team.value);
+        }
+      }
+    },
+    [
+      currentRole,
+      currentUser.id,
+      fetchDepartment,
+      fetchLeaderTeam,
+      statusTitles,
+    ]
+  );
+
+  const fetchCouncil = React.useCallback(() => {
     // fetch Topic
     request({
       to: endpoints.READ_TOPIC(id).url,
@@ -95,32 +159,7 @@ const Topic = () => {
       .then(res => {
         const transformedRes = transformers.downRead(res.data.data);
         console.log(transformedRes);
-
-        setIsUserMentor(
-          !!transformedRes.mentorMembers?.filter(
-            ({ value }) => value === currentUser.id
-          ).length
-        );
-
-        setIsUserMentorLeader(
-          transformedRes.mentorMembers?.filter(
-            ({ isLeader }) => isLeader === true
-          )[0]?.id === currentUser.id
-        );
-
-        setMentorLeaderId(
-          transformedRes.mentorMembers?.filter(
-            ({ isLeader }) => isLeader === true
-          )[0]?.id
-        );
-
-        if (
-          !['Pending', 'Approved', 'Rejected', 'Ready'].includes(
-            statusTitles[transformedRes.status]
-          )
-        ) {
-          fetchTopicTeam(transformedRes.team.value);
-        }
+        checkPreConditions(transformedRes);
 
         setCurrentTopic(transformedRes);
       })
@@ -128,7 +167,25 @@ const Topic = () => {
         history.push('/topic');
         handleErrors(err);
       });
-  }, [currentUser.id, fetchTopicTeam, history, id, statusTitles]);
+  }, [checkPreConditions, history, id]);
+
+  const fetchTopic = React.useCallback(() => {
+    // fetch Topic
+    request({
+      to: endpoints.READ_TOPIC(id).url,
+      method: endpoints.READ_TOPIC(id).method,
+    })
+      .then(res => {
+        const transformedRes = transformers.downRead(res.data.data);
+        checkPreConditions(transformedRes);
+        console.log(transformedRes);
+        setCurrentTopic(transformedRes);
+      })
+      .catch(err => {
+        history.push('/topic');
+        handleErrors(err);
+      });
+  }, [checkPreConditions, history, id]);
 
   const fetchUserTeam = React.useCallback(() => {
     request({
@@ -142,9 +199,18 @@ const Topic = () => {
         setIsStudentUserHaveTeam(true);
         const transformedRes = teamTransformers.down(res.data.data);
 
-        setIsTeamApplied(
-          transformedRes.applications.some(({ topic }) => id * 1 === topic.id)
-        );
+        if (
+          transformedRes.applications.some(
+            app => id * 1 === app.topic.id && app.status === 0
+          )
+        ) {
+          setIsTeamApplied(true);
+          setStudentApplicationId(
+            transformedRes.applications.filter(
+              app => id * 1 === app.topic.id && app.status === 0
+            )[0].id
+          );
+        }
         setGuestStudentTeamId(transformedRes.id);
         setIsStudentTeamLead(currentUser.id === transformedRes.leader.value);
         setIsTeamInTopic(id === transformedRes.topic?.value);
@@ -157,13 +223,65 @@ const Topic = () => {
 
   // ----------------------------------------------------------
 
-  const handleApproveTeam = React.useCallback(id => {
-    toast.success('Approved selected team to topic');
-  }, []);
+  const handleConfirmApproveTeam = React.useCallback(
+    appId => {
+      return () => {
+        request({
+          to: endpoints.APPROVE_APPLICATION(appId).url,
+          method: endpoints.APPROVE_APPLICATION(appId).method,
+        })
+          .then(res => {
+            toast.success('Approved selected team to topic.');
+            fetchTopic();
+          })
+          .catch(err => {
+            handleErrors(err);
+          });
+      };
+    },
+    [fetchTopic]
+  );
 
-  const handleRejectTeam = React.useCallback(id => {
-    toast.success('Rejected selected team');
-  }, []);
+  const handleConfirmRejectTeam = React.useCallback(
+    appId => {
+      return () => {
+        request({
+          to: endpoints.REJECT_APPLICATION(appId).url,
+          method: endpoints.REJECT_APPLICATION(appId).method,
+        })
+          .then(res => {
+            toast.success('Rejected selected team.');
+            fetchTopic();
+          })
+          .catch(err => {
+            handleErrors(err);
+          });
+      };
+    },
+    [fetchTopic]
+  );
+
+  const handleApproveTeam = React.useCallback(
+    appId => {
+      confirm({
+        title: 'Confirm required',
+        body: 'Are you sure you want to match this team to topic?',
+        onConfirm: handleConfirmApproveTeam(appId),
+      });
+    },
+    [confirm, handleConfirmApproveTeam]
+  );
+
+  const handleRejectTeam = React.useCallback(
+    appId => {
+      confirm({
+        title: 'Confirm required',
+        body: 'Are you sure you want to reject this team to application?',
+        onConfirm: handleConfirmRejectTeam(appId),
+      });
+    },
+    [confirm, handleConfirmRejectTeam]
+  );
 
   const handleShowEditWeight = React.useCallback(e => {
     e.preventDefault();
@@ -265,10 +383,10 @@ const Topic = () => {
       method: endpoints.APPLY_MENTOR(id).method,
     })
       .then(res => {
+        toast.success('You are now a mentor of this topic!');
         fetchTopic();
       })
       .catch(handleErrors);
-    toast.success('You are now a mentor of this topic!');
   }, [fetchTopic, id]);
 
   const handleApplyMentor = React.useCallback(() => {
@@ -288,14 +406,41 @@ const Topic = () => {
         topicId: id,
       },
     })
-      .then(res => {
+      .then(() => {
         fetchTopic();
+        fetchUserTeam();
         toast.success(
           'Your team application sent, please wait for mentor to confirm!'
         );
       })
-      .catch(handleErrors);
-  }, [fetchTopic, guestStudentTeamId, id]);
+      .catch(err => {
+        handleErrors(err);
+      });
+  }, [fetchTopic, fetchUserTeam, guestStudentTeamId, id]);
+
+  const onConfirmCancelApplication = React.useCallback(() => {
+    request({
+      to: endpoints.CANCEL_APPLICATION(studentApplicationId).url,
+      method: endpoints.CANCEL_APPLICATION(studentApplicationId).method,
+    })
+      .then(() => {
+        fetchTopic();
+        fetchUserTeam();
+        setIsTeamApplied(false);
+        toast.success('Application canceled.');
+      })
+      .catch(err => {
+        handleErrors(err);
+      });
+  }, [fetchTopic, fetchUserTeam, studentApplicationId]);
+
+  const handleCancelApplication = React.useCallback(() => {
+    confirm({
+      title: 'Confirm required',
+      body: 'Are you sure you want to cancel this application?',
+      onConfirm: onConfirmCancelApplication,
+    });
+  }, [confirm, onConfirmCancelApplication]);
 
   const handleStudentApplyForMatching = React.useCallback(() => {
     confirm({
@@ -318,31 +463,49 @@ const Topic = () => {
             !isTeamInTopic &&
             isStudentTeamLead &&
             (!isTeamApplied ? (
-              <OverlayTrigger
-                placement="bottom"
-                overlay={
-                  <Tooltip>
-                    Apply matching for this topic, mentor will consider your
-                    application after you sent. <br />
-                    You must lock your team before you can apply.
-                  </Tooltip>
-                }
-              >
-                <button
-                  type="button"
-                  className="btn btn-primary btn-success font-weight-bold btn-sm "
-                  onClick={handleStudentApplyForMatching}
-                  disabled={!isTeamLocked}
-                >
-                  <i className="fas fa-sign-in-alt mr-2"></i>
-                  Send application
-                </button>
-              </OverlayTrigger>
+              <>
+                {isTeamLocked ? (
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={
+                      <Tooltip>
+                        Apply matching for this topic, mentor will consider your
+                        application after you sent. <br />
+                        You must lock your team before you can apply.
+                      </Tooltip>
+                    }
+                  >
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-success font-weight-bold btn-sm "
+                      onClick={handleStudentApplyForMatching}
+                      disabled={!isTeamLocked}
+                    >
+                      <i className="fas fa-sign-in-alt mr-2"></i>
+                      Send application
+                    </button>
+                  </OverlayTrigger>
+                ) : (
+                  <>
+                    <span class="svg-icon svg-icon-danger mr-2">
+                      <SVG
+                        src={toAbsoluteUrl(
+                          '/media/svg/icons/Code/Warning-1-circle.svg'
+                        )}
+                      ></SVG>
+                    </span>
+                    <span className="text-danger font-weight-bolder">
+                      You must lock your team before send application for this
+                      topic.
+                    </span>
+                  </>
+                )}
+              </>
             ) : (
               <button
                 type="button"
                 className="btn btn-primary btn-danger font-weight-bold btn-sm "
-                onClick={handleStudentApplyForMatching}
+                onClick={handleCancelApplication}
               >
                 <i className="fas fa-ban mr-2"></i>
                 Cancel application
@@ -377,15 +540,28 @@ const Topic = () => {
                     />
                   </>
                 )}
-              {statusTitles[currentTopic.status] === 'Approved' &&
+              {!['Pending', 'Rejected'].includes(
+                statusTitles[currentTopic.status]
+              ) &&
                 !isUserMentor && (
                   <button
                     type="button"
-                    className="btn btn-primary btn-success font-weight-bold btn-sm mr-2"
+                    className="btn btn-primary btn-success font-weight-bold btn-sm ml-2"
                     onClick={handleApplyMentor}
                   >
                     <i className="fas fa-sign-in-alt mr-2"></i>
-                    Apply for mentoring
+                    Become a mentor
+                  </button>
+                )}
+              {statusTitles[currentTopic.status] === 'Matched' &&
+                !isUserCouncilMember && (
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-info font-weight-bold btn-sm ml-2"
+                    onClick={() => {}}
+                  >
+                    <i className="fas fa-sign-out-alt mr-2"></i>
+                    Evaluate
                   </button>
                 )}
               {statusTitles[currentTopic.status] === 'Pending' &&
@@ -413,6 +589,7 @@ const Topic = () => {
     currentTopic,
     currentUser.id,
     handleApplyMentor,
+    handleCancelApplication,
     handleConfirmDumpTopic,
     handleConfirmSettingModal,
     handleShowSettingModal,
@@ -423,6 +600,7 @@ const Topic = () => {
     isTeamApplied,
     isTeamInTopic,
     isTeamLocked,
+    isUserCouncilMember,
     isUserMentor,
     showUpdate,
     statusTitles,
@@ -451,27 +629,91 @@ const Topic = () => {
 
   // ----------------------------------------------------------
 
-  React.useEffect(() => {
+  const setViewMeta = React.useCallback(() => {
     setMeta(meta => ({
       ...meta,
       title: 'Topic detail',
       breadcrumb: [
-        { title: 'Semester', path: '/semester' },
-        { title: 'Fall 2020', path: '/semester/' + id },
-        { title: 'Topic', path: '/semester/' + id + '/topic' },
+        { title: 'Semester', path: '/select-semester' },
+        { title: 'Fall 2020', path: '/select-semester#' + id },
+        { title: 'Topic', path: '/topic/' },
         {
           title: currentTopic.name,
-          path: '/semester/' + id + '/topic',
+          path: '/topic/' + id,
         },
       ],
       toolbar: toolBar(),
     }));
+  }, [currentTopic.name, id, setMeta, toolBar]);
+
+  React.useEffect(() => {
+    setViewMeta();
   });
 
   React.useEffect(() => {
+    if (currentRole === 'student') {
+      fetchUserTeam();
+    } else {
+      // fetchCouncil();
+    }
     fetchTopic();
-    fetchUserTeam();
-  }, [fetchTopic, fetchUserTeam]);
+  }, [currentRole, fetchCouncil, fetchTopic, fetchUserTeam]);
+
+  const applicationsMap = React.useCallback(
+    applications => {
+      return applications
+        .filter(application => application.status === 0)
+        .map(application => ({
+          id: application.id,
+          label: application.team?.name,
+          subLabel: (
+            <>
+              <span className="font-weight-bolder">Leader: </span>
+              {
+                application.team?.members?.filter(
+                  member => member.id === application.team.leaderId
+                )[0]?.name
+              }
+            </>
+          ),
+          actions: (() => (
+            <>
+              <OverlayTrigger
+                placement="bottom"
+                overlay={<Tooltip>Approve selected team</Tooltip>}
+              >
+                <Button
+                  className="btn btn-primary btn-light-success font-weight-bold btn-sm mr-2"
+                  onClick={() => handleApproveTeam(application.id)}
+                >
+                  <span class="svg-icon mr-0">
+                    <SVG
+                      src={toAbsoluteUrl('/media/svg/icons/General/Smile.svg')}
+                    ></SVG>
+                  </span>
+                </Button>
+              </OverlayTrigger>
+              <OverlayTrigger
+                placement="bottom"
+                overlay={<Tooltip>Reject selected team</Tooltip>}
+              >
+                <Button
+                  className="btn btn-light-danger font-weight-bold btn-sm "
+                  onClick={() => handleRejectTeam(application.id)}
+                >
+                  <span class="svg-icon mr-0 svg-icon-red">
+                    <SVG
+                      src={toAbsoluteUrl('/media/svg/icons/General/Sad.svg')}
+                    ></SVG>
+                  </span>
+                </Button>
+              </OverlayTrigger>
+            </>
+          ))(),
+        }));
+    },
+    [handleApproveTeam, handleRejectTeam]
+  );
 
   return (
     <>
@@ -490,12 +732,14 @@ const Topic = () => {
             fullDesc={currentTopic.description || ''}
             department={currentTopic.department || ''}
             status={currentTopic.status}
+            minMembers={currentTopic.minMembers || ''}
             maxMember={currentTopic.maxMembers || ''}
             studentMembers={currentTopic.team?.members}
             mentorMembers={currentTopic.mentorMembers}
             applications={currentTopic.applications}
             feedbacks={currentTopic.feedbacks}
             submitter={currentTopic.submitter}
+            isUserApprover={isUserApprover}
             onFeedbackSuccess={onFeedbackSuccess}
           />
         </div>
@@ -507,7 +751,7 @@ const Topic = () => {
                 className="gutter-b"
                 title="Applying teams"
                 subTitle="Consider approve team to topic"
-                rows={currentTopic.applications}
+                rows={applicationsMap(currentTopic.applications)}
                 rowActions={
                   (isUserMentorLeader &&
                     rowActionFormatter(

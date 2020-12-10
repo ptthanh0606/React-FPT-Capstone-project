@@ -94,7 +94,12 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
         return (
           <div>
             <div className="text-nowrap text-dark-75 font-weight-bold font-size-lg mb-0">
-              {cellContent?.label}
+              <Link
+                className={'text-dark font-weight-bold text-nowrap'}
+                to={'./topic/' + cellContent?.value}
+              >
+                {cellContent?.label}
+              </Link>
             </div>
             <span className="text-muted font-weight-bold text-hover-primary">
               {cellContent?.abstract}
@@ -156,8 +161,8 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
     },
   ]);
 
-export const createColumnsForStudentRole = ({ handleJoin }) =>
-  columnsTransformer([
+export const createColumnsForStudentRole = ({ handleJoin }, role) => {
+  const cols = [
     {
       dataField: 'id',
       text: 'ID',
@@ -256,13 +261,17 @@ export const createColumnsForStudentRole = ({ handleJoin }) =>
       sort: true,
       formatter: columnFormatter(lockClasses, lockTitles),
     },
-    {
+  ];
+
+  if (role !== 'student') {
+    cols.push({
       dataField: 'privacy',
       text: 'privacy',
       sort: true,
       formatter: columnFormatter(privacyClasses, privacyTitles),
-    },
-    {
+    });
+  } else
+    cols.push({
       dataField: 'action',
       text: 'Action',
       formatter: (cellContent, row) => {
@@ -280,8 +289,10 @@ export const createColumnsForStudentRole = ({ handleJoin }) =>
           </a>
         );
       },
-    },
-  ]);
+    });
+
+  return columnsTransformer(cols);
+};
 
 export const createModalConfigs = semId => [
   {

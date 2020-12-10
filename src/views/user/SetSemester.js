@@ -13,7 +13,7 @@ const SetSemester = () => {
     LocalStorage.set('semester_id', id);
 
     setSemester({
-      id: id,
+      id: Number(id),
     });
 
     history.push('/');
