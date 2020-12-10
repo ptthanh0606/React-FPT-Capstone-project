@@ -4,13 +4,14 @@ import { useHistory, useParams } from 'react-router-dom';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
 import { handleErrors } from 'utils/common';
-import { Row, Col, Form } from 'react-bootstrap';
-import Card from 'components/Card';
+import { Row, Col, Form, Card, Accordion } from 'react-bootstrap';
+import CMSCard from 'components/Card';
 import Button from 'components/Button';
 import MdEditor from 'react-markdown-editor-lite';
 import metaAtom from 'store/meta';
 import { format } from 'date-fns';
 import Datasheet from 'react-datasheet';
+import './Topic.scss';
 
 import * as transformers from 'modules/semester/topic/transformers';
 
@@ -33,12 +34,166 @@ import useConfirm from 'utils/confirm';
 
 const mdParser = new MarkdownIt();
 
+const config = [
+  // Begin header
+  [
+    { value: '', readOnly: true, colSpan: 4 },
+    { value: 'Student 1', readOnly: true, colSpan: 2, id: 1 },
+    { value: 'Student 2', readOnly: true, colSpan: 2, id: 2 },
+    { value: 'Team', readOnly: true },
+  ],
+  // Begin column 1
+  [
+    { value: 'Columns 1', readOnly: true, rowSpan: 3, id: 1 }, // rowspan = so mentor
+    { value: 50, readOnly: true, rowSpan: 3 },
+    { value: 'Evaluator 1', readOnly: true, id: 1 },
+    { value: 10, readOnly: true },
+    { value: 2 }, // student 1
+    { value: 2, rowSpan: 3, readOnly: true }, // total student 1
+    { value: 4 }, // student 2
+    { value: 2, rowSpan: 3, readOnly: true }, // total student 2
+    { value: 2, rowSpan: 3, readOnly: true }, // total team
+  ],
+  [
+    { value: 'Evaluator 2', readOnly: true },
+    { value: 100, readOnly: true },
+    { value: 2 }, // student 1
+    { value: 4 }, // student 2
+  ],
+  [
+    { value: 'Evaluator 3', readOnly: true },
+    { value: 50, readOnly: true },
+    { value: 2 }, // student 1
+    { value: 4 }, // student 2
+  ],
+  // End column 1
+  // Begin Total
+  [
+    { value: 'Total', colSpan: 4, readOnly: true },
+    { value: 2, colSpan: 2, readOnly: true },
+    { value: 2, colSpan: 2, readOnly: true },
+    { value: 2, readOnly: true },
+  ],
+];
+
+const fakeData = {
+  students: [
+    {
+      id: 1,
+      name: 'DuyHD',
+    },
+    { id: 2, name: 'ThanhPT' },
+  ],
+  evaluators: [
+    {
+      id: 1,
+      weight: 100,
+      name: 'KhanhKT',
+    },
+    {
+      id: 2,
+      weight: 10,
+      name: 'PhuongLHK',
+    },
+  ],
+  columns: [
+    {
+      id: 1,
+      weight: 10,
+      name: 'Col 1',
+      grade: [
+        // Cột: evaluator, Hàng: student, số cuối: total
+        [1, 2, 4],
+        [4, 5, 6],
+      ],
+      total: 10,
+    },
+  ],
+  total: [100, 200], // total student
+  totalTeam: 10, // total all
+};
+
+function transformToGrid(data) {
+  const header = [
+    { value: '', readOnly: true, colSpan: 4 },
+    ...data.students.map(i => ({
+      value: i.name,
+      readOnly: true,
+      colSpan: 2,
+    })),
+    { value: 'Team', readOnly: true },
+  ];
+
+  const grid = [header];
+
+  for (const i in data.columns) {
+    const firstEvaluator = data.evaluators[0];
+    const evaluatorNum = data.evaluators.length;
+    const toPush = [
+      { value: data.columns[i].name, readOnly: true, rowSpan: evaluatorNum },
+      { value: data.columns[i].weight, readOnly: true, rowSpan: evaluatorNum },
+      { value: firstEvaluator.name, readOnly: true },
+      { value: firstEvaluator.weight, readOnly: true },
+    ];
+
+    for (const j in data.students) {
+      toPush.push(
+        {
+          value: data.columns[i].grade[j][1],
+        },
+        {
+          value: data.columns[i].grade[j][data.columns[i].grade.length - 1],
+          rowSpan: data.evaluators.length,
+          readOnly: true,
+        }
+      );
+    }
+
+    toPush.push({
+      value: data.columns[i].total,
+      rowSpan: data.evaluators.length,
+      readOnly: true,
+    });
+
+    grid.push(toPush);
+
+    for (const k in data.evaluators.slice(1)) {
+      grid.push([
+        { value: data.evaluators[+k + 1].name, readOnly: true },
+        { value: data.evaluators[+k + 1].weight, readOnly: true },
+        ...data.columns[i].grade.map(x => ({ value: x[+k + 1] })),
+      ]);
+    }
+  }
+
+  grid.push([
+    { value: 'Total', colSpan: 4, readOnly: true },
+    ...data.total.map(x => ({ value: x, colSpan: 2, readOnly: true })),
+    { value: data.totalTeam, readOnly: true },
+  ]);
+
+  return grid;
+}
+
+function transformToData(grid) {}
+
 const Topic = ({ semester }) => {
   const { id: semId, topicId } = useParams();
   const history = useHistory();
   const setMeta = useSetRecoilState(metaAtom);
   const [l, loadData] = React.useReducer(() => ({}), {});
   const confirm = useConfirm();
+  const [evals, setEvals] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [data, setData] = React.useReducer((state, action) => {
+    if (action.name === 'all') return { ...state, ...action.value };
+    return {
+      ...state,
+      [action.name]: action.value,
+    };
+  }, {});
+
+  const [teamMembers, setTeamMembers] = React.useState([]);
 
   const handleReject = React.useCallback(
     e => {
@@ -69,18 +224,6 @@ const Topic = ({ semester }) => {
     },
     [topicId]
   );
-
-  const [isLoading, setIsLoading] = React.useState(false);
-
-  const [data, setData] = React.useReducer((state, action) => {
-    if (action.name === 'all') return { ...state, ...action.value };
-    return {
-      ...state,
-      [action.name]: action.value,
-    };
-  }, {});
-
-  const [teamMembers, setTeamMembers] = React.useState([]);
 
   const handleChangeField = React.useCallback(e => {
     setData({
@@ -155,6 +298,7 @@ const Topic = ({ semester }) => {
           name: 'all',
           value: d,
         });
+        setEvals(transformToGrid(fakeData));
       })
       .catch(err => {
         handleErrors(err);
@@ -162,6 +306,22 @@ const Topic = ({ semester }) => {
       })
       .finally(() => setIsLoading(false));
   }, [history, semId, topicId, l]);
+
+  const handleGradeChange = React.useCallback(
+    changes => {
+      const grid = evals.map(row => [...row]);
+      changes.forEach(({ cell, row, col, value }) => {
+        grid[row][col] = { ...grid[row][col], value };
+      });
+      setEvals(grid);
+    },
+    [evals]
+  );
+
+  const onSaveEvals = React.useCallback(e => {
+    e.preventDefault();
+    console.log(evals);
+  });
 
   React.useEffect(() => {
     if (data?.team?.value) {
@@ -196,7 +356,7 @@ const Topic = ({ semester }) => {
     <>
       <Row>
         <Col lg={12}>
-          <Card
+          <CMSCard
             isLoading={isLoading}
             title="Information of topic"
             toolbar={
@@ -443,12 +603,12 @@ const Topic = ({ semester }) => {
                 />
               </Col>
             </Form.Group>
-          </Card>
+          </CMSCard>
         </Col>
       </Row>
       <Row>
         <Col lg={6}>
-          <Card isLoading={isLoading} title="Team">
+          <CMSCard isLoading={isLoading} title="Team">
             {teamMembers && teamMembers.length > 0
               ? teamMembers?.map(i => (
                   <Member
@@ -459,10 +619,10 @@ const Topic = ({ semester }) => {
                   />
                 ))
               : 'This topic does not have team yet.'}
-          </Card>
+          </CMSCard>
         </Col>
         <Col lg={6}>
-          <Card isLoading={isLoading} title="Mentors">
+          <CMSCard isLoading={isLoading} title="Mentors">
             {data && data.mentorMembers && data.mentorMembers.length > 0
               ? data?.mentorMembers?.map(i => (
                   <Member
@@ -473,12 +633,12 @@ const Topic = ({ semester }) => {
                   />
                 ))
               : 'This topic does not have any mentor'}
-          </Card>
+          </CMSCard>
         </Col>
       </Row>
       <Row>
         <Col lg={6}>
-          <Card
+          <CMSCard
             isLoading={isLoading}
             title="Feedbacks"
             toolbar={
@@ -537,10 +697,10 @@ const Topic = ({ semester }) => {
                   })) || <>No feedback</>}
               </div>
             </div>
-          </Card>
+          </CMSCard>
         </Col>
         <Col lg={6}>
-          <Card isLoading={isLoading} title="Application">
+          <CMSCard isLoading={isLoading} title="Application">
             <div className="table-responsive">
               {data?.applications?.length > 0 ? (
                 <table className="table table-head-custom table-head-bg table-borderless table-vertical-center">
@@ -593,10 +753,98 @@ const Topic = ({ semester }) => {
                 "This topic don't have any application from teams"
               )}
             </div>
-          </Card>
+          </CMSCard>
         </Col>
       </Row>
       <Row>
+        <Col lg={12}>
+          <CMSCard
+            isLoading={isLoading}
+            title="Evaluations"
+            toolbar={
+              <>
+                <Button>
+                  <i className="fas fa-trash mr-2" onClick={onSaveEvals}></i>
+                  Save
+                </Button>
+              </>
+            }
+          >
+            <Accordion defaultActiveKey="0">
+              <Card>
+                <Card.Header>
+                  <Accordion.Toggle
+                    as={Card.Header}
+                    variant="span"
+                    eventKey="0"
+                    style={{
+                      padding: '1rem',
+                      fontSize: '1.25rem',
+                    }}
+                  >
+                    Checkpoint 1
+                    <small className="form-text text-muted">
+                      Weight: <b>10</b>, Submit at: <b>0h, 11/11/2020</b>,
+                      Evaluate at: <b>0h, 12/12/2020</b>, by:{' '}
+                      <b>Topic mentors</b>
+                    </small>
+                  </Accordion.Toggle>
+                </Card.Header>
+                <Accordion.Collapse eventKey="0">
+                  <Card.Body>
+                    <div className="grade-table">
+                      <Datasheet
+                        data={evals}
+                        valueRenderer={cell => cell.value}
+                        onCellsChanged={handleGradeChange}
+                        dataEditor={props => {
+                          return (
+                            <input
+                              onChange={e =>
+                                props.onChange(e.currentTarget.value)
+                              }
+                              value={props.value}
+                              onKeyDown={props.onKeyDown}
+                              type="number"
+                              min="0"
+                              max="10"
+                              step="0.01"
+                            />
+                          );
+                        }}
+                      />
+                    </div>
+                  </Card.Body>
+                </Accordion.Collapse>
+              </Card>
+              <Card>
+                <Card.Header>
+                  <Accordion.Toggle
+                    as={Card.Header}
+                    variant="span"
+                    eventKey="1"
+                    style={{
+                      padding: '1rem',
+                      fontSize: '1.25rem',
+                    }}
+                  >
+                    Checkpoint 2
+                    <small className="form-text text-muted">
+                      Weight: <b>10</b>, Submit at: <b>0h, 11/11/2020</b>,
+                      Evaluate at: <b>0h, 12/12/2020</b>, by:{' '}
+                      <b>Topic mentors</b>
+                    </small>
+                  </Accordion.Toggle>
+                </Card.Header>
+                <Accordion.Collapse eventKey="1">
+                  <Card.Body>Not evaluated...</Card.Body>
+                </Accordion.Collapse>
+              </Card>
+            </Accordion>
+          </CMSCard>
+        </Col>
+      </Row>
+      {/* <Row>
         <Col lg={12}>
           <Card
             isLoading={isLoading}
@@ -610,36 +858,7 @@ const Topic = ({ semester }) => {
             }
           />
         </Col>
-      </Row>
-      <Row>
-        <Col lg={12}>
-          <Card
-            isLoading={isLoading}
-            title="Evaluations"
-            toolbar={
-              <>
-                <Button>
-                  <i className="fas fa-trash mr-2"></i>Save
-                </Button>
-              </>
-            }
-          >
-            <Datasheet
-              data={[
-                [{ readOnly: true, colSpan: 2, value: 'Shopping List' }],
-                [
-                  { readOnly: true, value: 'ahihih' },
-                  {
-                    value: 'Grocery Item',
-                  },
-                ],
-              ]}
-              valueRenderer={cell => cell.value}
-              onChange={() => {}}
-            />
-          </Card>
-        </Col>
-      </Row>
+      </Row> */}
     </>
   );
 };
