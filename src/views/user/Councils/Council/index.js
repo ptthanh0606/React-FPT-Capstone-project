@@ -179,7 +179,7 @@ const Council = () => {
         console.log(transformedRes);
         setCurrentCouncil(transformedRes);
         setIsUserInCouncil(
-          !!transformedRes.members.filter(({ value }) => currentUser.id).length
+          transformedRes.members.some(({ value }) => value === currentUser.id)
         );
         setIsUserLeadCouncil(
           transformedRes.members.filter(({ isLeader }) => isLeader === true)[0]

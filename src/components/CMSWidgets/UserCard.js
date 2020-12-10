@@ -3,20 +3,6 @@ import { Link } from 'react-router-dom';
 import md5 from 'utils/md5';
 
 const UserCard = ({ id, name, email, code, isLead, role }) => {
-  // ------------------------------------------------------------
-
-  const handleMakeLeader = React.useCallback(e => {
-    e.preventDefault();
-    // Route to user id
-  }, []);
-
-  const handleForceLeave = React.useCallback(e => {
-    e.preventDefault();
-    // Route to user id
-  }, []);
-
-  // ------------------------------------------------------------
-
   return (
     <>
       <div class="card card-custom gutter-b card-stretch">

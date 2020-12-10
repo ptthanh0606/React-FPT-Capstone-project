@@ -21,8 +21,8 @@ export const sizePerPageList = [
 export const statusClasses = ['danger', 'success', 'info'];
 export const statusTitles = ['Finished', 'In progress', 'Preparing'];
 
-export const createColumns = ({ handleEdit, handleRemove }) =>
-  columnsTransformer([
+export const createColumns = ({ handleEdit, handleRemove }, role = 'admin') => {
+  const cols = [
     {
       dataField: 'id',
       text: 'ID',
@@ -38,6 +38,17 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       dataField: 'name',
       text: 'Name',
       sort: true,
+      formatter: (cellContent, row) => {
+        if (role === 'admin') return cellContent;
+        return (
+          <Link
+            className={'text-dark font-weight-bold'}
+            to={'/council/' + row.id}
+          >
+            {cellContent}
+          </Link>
+        );
+      },
     },
     {
       dataField: 'members',
@@ -61,7 +72,10 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
         );
       },
     },
-    {
+  ];
+
+  if (role === 'admin')
+    cols.push({
       dataField: 'action',
       text: 'Actions',
       formatter: (cellContent, row, rowIndex) => {
@@ -93,8 +107,10 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       style: {
         minWidth: '100px',
       },
-    },
-  ]);
+    });
+
+  return columnsTransformer(cols);
+};
 
 export const modalConfigs = [
   {

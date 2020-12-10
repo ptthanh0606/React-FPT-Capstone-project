@@ -24,6 +24,7 @@ import Button from 'components/Button';
 const Information = ({ loadData = function () {} }) => {
   const [name, setName] = React.useState('');
   const [maxApplication, setMaxApplication] = React.useState('');
+  const [marginPass, setMarginPass] = React.useState(0);
   const [matchingDate, setMatchingDate] = React.useState('');
   const [inprogressDate, setInprogressDate] = React.useState('');
   const [finishedDate, setFinishedDate] = React.useState('');
@@ -45,6 +46,7 @@ const Information = ({ loadData = function () {} }) => {
         setMatchingDate(downData?.matchingDate);
         setInprogressDate(downData?.inprogressDate);
         setFinishedDate(downData?.finishedDate);
+        setMarginPass(downData?.marginPass);
 
         setMeta(meta => ({
           ...meta,
@@ -136,6 +138,21 @@ const Information = ({ loadData = function () {} }) => {
                 placeholder="Maximum applications per team"
                 onChange={e => setMaxApplication(e.currentTarget.value)}
                 value={maxApplication}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group as={Row} controlId="formHorizontalEmail">
+            <Form.Label column sm={3}>
+              Margin pass
+            </Form.Label>
+            <Col sm={9}>
+              <Form.Control
+                className="form-control form-control-md form-control-solid"
+                type="number"
+                step="0.01"
+                placeholder="Minimum grade for student to pass this semester"
+                onChange={e => setMarginPass(e.currentTarget.value)}
+                value={marginPass}
               />
             </Col>
           </Form.Group>

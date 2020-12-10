@@ -7,11 +7,8 @@ import * as constants from '../../modules/semester/topic/constants';
 import md5 from 'utils/md5';
 import userAtom from 'store/user';
 import { useRecoilValue } from 'recoil';
-import { Link, useHistory } from 'react-router-dom';
-import MarkdownIt from 'markdown-it';
+import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-
-const mdParser = new MarkdownIt();
 
 const TopicDetailCard = ({
   className,
@@ -21,6 +18,7 @@ const TopicDetailCard = ({
   fullDesc,
   department,
   status,
+  minMembers,
   maxMember,
   mentorMembers = [],
   studentMembers = [],
@@ -28,6 +26,7 @@ const TopicDetailCard = ({
   feedbacks,
   onFeedbackSuccess,
   submitter = {},
+  isUserApprover = false,
 }) => {
   const currentUser = useRecoilValue(userAtom);
 
@@ -118,11 +117,27 @@ const TopicDetailCard = ({
         <div className="d-flex align-items-center justify-content-between flex-wrap my-7">
           <div className="d-flex align-items-center flex-lg-fill my-1">
             <span className="mr-4">
-              <i className="flaticon-pie-chart icon-2x text-muted font-weight-bold"></i>
+              <i className="flaticon-exclamation-2 icon-2x text-muted font-weight-bold"></i>
             </span>
             <div className="d-flex flex-column text-dark-75">
               <span className="font-weight-bolder font-size-sm">
-                Max members
+                Minimum members
+              </span>
+              <span className="font-weight-bolder font-size-h5">
+                <span className="text-dark-50 font-weight-bold">
+                  {minMembers}
+                </span>
+              </span>
+            </div>
+          </div>
+
+          <div className="d-flex align-items-center flex-lg-fill my-1">
+            <span className="mr-4">
+              <i className="flaticon-exclamation-2 icon-2x text-muted font-weight-bold"></i>
+            </span>
+            <div className="d-flex flex-column text-dark-75">
+              <span className="font-weight-bolder font-size-sm">
+                Maximum members
               </span>
               <span className="font-weight-bolder font-size-h5">
                 <span className="text-dark-50 font-weight-bold">
@@ -214,11 +229,10 @@ const TopicDetailCard = ({
             feedbacks={feedbacks}
             onSuccess={onFeedbackSuccess}
             topicStatus={statusTitles[status]}
-            isInDep={
-              !!currentUser.department.filter(
-                ({ name }) => name === department.fullName
-              ).length
-            }
+            isInDep={currentUser.department.some(
+              ({ name }) => name === department.fullName
+            )}
+            isUserApprover={isUserApprover}
           />
         )}
       </div>

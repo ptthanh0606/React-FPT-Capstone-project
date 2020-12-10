@@ -9,7 +9,8 @@ export default function PrivateRoute({ ...rest }) {
 
   const config = {
     ...rest,
-    condition: semester.id !== 0,
+    condition:
+      semester.id && semester.id !== 0 && Number.isInteger(semester.id),
     redirectTo: '/select-semester',
     reason: 'You must select a semester before continuing.',
   };
