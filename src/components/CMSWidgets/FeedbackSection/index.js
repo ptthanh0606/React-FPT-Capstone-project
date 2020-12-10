@@ -135,7 +135,7 @@ const FeedbackSection = ({
               feedbacks.map(fb => (
                 <Comment
                   key={feedbacks.indexOf(fb)}
-                  email={'phanthongthanh0606@gmail.com'}
+                  email={fb.approver.email || ''}
                   name={fb.approver.name}
                   date={fb.date}
                   content={fb.content}

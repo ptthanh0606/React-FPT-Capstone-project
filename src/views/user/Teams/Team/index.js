@@ -473,7 +473,6 @@ const Team = () => {
                   } symbol-45`}
                 >
                   <span className="symbol-label font-weight-bolder font-size-h6">
-                    {currentTeam?.applications?.length}/
                     {currentSemester.maxApplications}
                   </span>
                 </span>

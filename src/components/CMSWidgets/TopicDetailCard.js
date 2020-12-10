@@ -18,6 +18,7 @@ const TopicDetailCard = ({
   fullDesc,
   department,
   status,
+  minMembers,
   maxMember,
   mentorMembers = [],
   studentMembers = [],
@@ -116,11 +117,27 @@ const TopicDetailCard = ({
         <div className="d-flex align-items-center justify-content-between flex-wrap my-7">
           <div className="d-flex align-items-center flex-lg-fill my-1">
             <span className="mr-4">
-              <i className="flaticon-pie-chart icon-2x text-muted font-weight-bold"></i>
+              <i className="flaticon-exclamation-2 icon-2x text-muted font-weight-bold"></i>
             </span>
             <div className="d-flex flex-column text-dark-75">
               <span className="font-weight-bolder font-size-sm">
-                Max members
+                Minimum members
+              </span>
+              <span className="font-weight-bolder font-size-h5">
+                <span className="text-dark-50 font-weight-bold">
+                  {minMembers}
+                </span>
+              </span>
+            </div>
+          </div>
+
+          <div className="d-flex align-items-center flex-lg-fill my-1">
+            <span className="mr-4">
+              <i className="flaticon-exclamation-2 icon-2x text-muted font-weight-bold"></i>
+            </span>
+            <div className="d-flex flex-column text-dark-75">
+              <span className="font-weight-bolder font-size-sm">
+                Maximum members
               </span>
               <span className="font-weight-bolder font-size-h5">
                 <span className="text-dark-50 font-weight-bold">

@@ -406,14 +406,16 @@ const Topic = () => {
         topicId: id,
       },
     })
-      .then(res => {
+      .then(() => {
         fetchTopic();
         fetchUserTeam();
         toast.success(
           'Your team application sent, please wait for mentor to confirm!'
         );
       })
-      .catch(handleErrors);
+      .catch(err => {
+        handleErrors(err);
+      });
   }, [fetchTopic, fetchUserTeam, guestStudentTeamId, id]);
 
   const onConfirmCancelApplication = React.useCallback(() => {
@@ -424,6 +426,7 @@ const Topic = () => {
       .then(() => {
         fetchTopic();
         fetchUserTeam();
+        setIsTeamApplied(false);
         toast.success('Application canceled.');
       })
       .catch(err => {
@@ -460,26 +463,44 @@ const Topic = () => {
             !isTeamInTopic &&
             isStudentTeamLead &&
             (!isTeamApplied ? (
-              <OverlayTrigger
-                placement="bottom"
-                overlay={
-                  <Tooltip>
-                    Apply matching for this topic, mentor will consider your
-                    application after you sent. <br />
-                    You must lock your team before you can apply.
-                  </Tooltip>
-                }
-              >
-                <button
-                  type="button"
-                  className="btn btn-primary btn-success font-weight-bold btn-sm "
-                  onClick={handleStudentApplyForMatching}
-                  disabled={!isTeamLocked}
-                >
-                  <i className="fas fa-sign-in-alt mr-2"></i>
-                  Send application
-                </button>
-              </OverlayTrigger>
+              <>
+                {isTeamLocked ? (
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={
+                      <Tooltip>
+                        Apply matching for this topic, mentor will consider your
+                        application after you sent. <br />
+                        You must lock your team before you can apply.
+                      </Tooltip>
+                    }
+                  >
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-success font-weight-bold btn-sm "
+                      onClick={handleStudentApplyForMatching}
+                      disabled={!isTeamLocked}
+                    >
+                      <i className="fas fa-sign-in-alt mr-2"></i>
+                      Send application
+                    </button>
+                  </OverlayTrigger>
+                ) : (
+                  <>
+                    <span class="svg-icon svg-icon-danger mr-2">
+                      <SVG
+                        src={toAbsoluteUrl(
+                          '/media/svg/icons/Code/Warning-1-circle.svg'
+                        )}
+                      ></SVG>
+                    </span>
+                    <span className="text-danger font-weight-bolder">
+                      You must lock your team before send application for this
+                      topic.
+                    </span>
+                  </>
+                )}
+              </>
             ) : (
               <button
                 type="button"
@@ -711,6 +732,7 @@ const Topic = () => {
             fullDesc={currentTopic.description || ''}
             department={currentTopic.department || ''}
             status={currentTopic.status}
+            minMembers={currentTopic.minMembers || ''}
             maxMember={currentTopic.maxMembers || ''}
             studentMembers={currentTopic.team?.members}
             mentorMembers={currentTopic.mentorMembers}
