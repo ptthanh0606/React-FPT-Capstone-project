@@ -38,6 +38,17 @@ export const createColumns = ({ handleEdit, handleRemove }, role = 'admin') => {
       dataField: 'name',
       text: 'Name',
       sort: true,
+      formatter: (cellContent, row) => {
+        if (role === 'admin') return cellContent;
+        return (
+          <Link
+            className={'text-dark font-weight-bold'}
+            to={'/council/' + row.id}
+          >
+            {cellContent}
+          </Link>
+        );
+      },
     },
     {
       dataField: 'members',
