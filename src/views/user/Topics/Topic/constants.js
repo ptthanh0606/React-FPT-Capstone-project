@@ -9,9 +9,7 @@ export const rowActionFormatter = (handleApproveTeam, handleRejectTeam) => {
     <>
       <OverlayTrigger
         placement="bottom"
-        overlay={
-          <Tooltip id="quick-user-tooltip">Approve selected team</Tooltip>
-        }
+        overlay={<Tooltip>Approve selected team</Tooltip>}
       >
         <Button
           className="btn btn-primary btn-success font-weight-bold btn-sm mr-2"
@@ -26,9 +24,7 @@ export const rowActionFormatter = (handleApproveTeam, handleRejectTeam) => {
       </OverlayTrigger>
       <OverlayTrigger
         placement="bottom"
-        overlay={
-          <Tooltip id="quick-user-tooltip">Reject selected team</Tooltip>
-        }
+        overlay={<Tooltip>Reject selected team</Tooltip>}
       >
         <Button
           className="btn btn-light-danger font-weight-bold btn-sm "

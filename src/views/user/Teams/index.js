@@ -237,8 +237,9 @@ export default function Teams() {
   // ---------------------------------------------------------------------------
 
   const columns = React.useMemo(
-    () => createColumnsForStudentRole({ handleJoin }),
-    [handleJoin]
+    () => createColumnsForStudentRole({ handleJoin }, currentRole),
+    [currentRole, handleJoin],
+    []
   );
 
   // --------------------------------------------------------------------
@@ -248,10 +249,10 @@ export default function Teams() {
       ...meta,
       title: `Teams of ${currentSemester.name}`,
       breadcrumb: [
-        { title: 'Semester', path: '/semester' },
+        { title: 'Semester', path: '/select-semester' },
         {
           title: currentSemester.name,
-          path: '/semester/' + currentSemester.id,
+          path: '/select-semester/#',
         },
         { title: 'Team', path: '/team' },
       ],
@@ -294,7 +295,6 @@ export default function Teams() {
           setSortOrder={setSortOrder}
           defaultSorted={defaultSorted}
           pageSizeList={sizePerPageList}
-          selectable
         />
       </CardBody>
       <CMSModal

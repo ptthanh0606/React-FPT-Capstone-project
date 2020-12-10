@@ -4,14 +4,17 @@ import { useHistory, useParams } from 'react-router-dom';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
 import { handleErrors } from 'utils/common';
-import { Row, Col, Form } from 'react-bootstrap';
-import Card from 'components/Card';
+import { Row, Col, Form, Card, Accordion } from 'react-bootstrap';
+import CMSCard from 'components/Card';
 import Button from 'components/Button';
 import MdEditor from 'react-markdown-editor-lite';
 import metaAtom from 'store/meta';
 import { format } from 'date-fns';
+import Datasheet from 'react-datasheet';
+import './Topic.scss';
 
 import * as transformers from 'modules/semester/topic/transformers';
+import * as constantsCp from 'modules/semester/topic/checkpoints/constants';
 
 import MarkdownIt from 'markdown-it';
 import ToggleSwitch from 'components/ToggleSwitch/ToggleSwitch';
@@ -32,12 +35,232 @@ import useConfirm from 'utils/confirm';
 
 const mdParser = new MarkdownIt();
 
+const config = [
+  // Begin header
+  [
+    { value: '', readOnly: true, colSpan: 4 },
+    { value: 'Student 1', readOnly: true, colSpan: 2, id: 1 },
+    { value: 'Student 2', readOnly: true, colSpan: 2, id: 2 },
+    { value: 'Team', readOnly: true },
+  ],
+  // Begin column 1
+  [
+    { value: 'Columns 1', readOnly: true, rowSpan: 3, id: 1 }, // rowspan = so mentor
+    { value: 50, readOnly: true, rowSpan: 3 },
+    { value: 'Evaluator 1', readOnly: true, id: 1 },
+    { value: 10, readOnly: true },
+    { value: 2 }, // student 1
+    { value: 2, rowSpan: 3, readOnly: true }, // total student 1
+    { value: 4 }, // student 2
+    { value: 2, rowSpan: 3, readOnly: true }, // total student 2
+    { value: 2, rowSpan: 3, readOnly: true }, // total team
+  ],
+  [
+    { value: 'Evaluator 2', readOnly: true },
+    { value: 100, readOnly: true },
+    { value: 2 }, // student 1
+    { value: 4 }, // student 2
+  ],
+  [
+    { value: 'Evaluator 3', readOnly: true },
+    { value: 50, readOnly: true },
+    { value: 2 }, // student 1
+    { value: 4 }, // student 2
+  ],
+  // End column 1
+  // Begin Total
+  [
+    { value: 'Total', colSpan: 4, readOnly: true },
+    { value: 2, colSpan: 2, readOnly: true },
+    { value: 2, colSpan: 2, readOnly: true },
+    { value: 2, readOnly: true },
+  ],
+];
+
+const fakeData = {
+  students: [
+    {
+      id: 1,
+      code: 'DuyHD',
+    },
+    { id: 2, code: 'ThanhPT' },
+  ],
+  checkpoints: [
+    {
+      id: 1,
+      name: 'Checkpoint 1',
+      status: 3,
+      weight: 100,
+      submitDueDate: '2022-09-01T00:00:00',
+      evaluateDueDate: '2022-09-01T00:00:00',
+      council: {
+        id: 1,
+        name: 'Council XYZ',
+        members: [
+          {
+            id: 1,
+            weight: 100,
+            code: 'KhanhKT',
+          },
+          {
+            id: 2,
+            weight: 10,
+            code: 'PhuongLHK',
+          },
+        ],
+      },
+      columns: [
+        {
+          id: 1,
+          weight: 10,
+          name: 'Col 1',
+          grade: [
+            // Cột: evaluator, Hàng: student, số cuối: total
+            [1, 2, 3],
+            [4, 5, 6],
+          ],
+          total: 10,
+        },
+        {
+          id: 2,
+          weight: 10,
+          name: 'Col 2',
+          grade: [
+            // Cột: evaluator, Hàng: student, số cuối: total
+            [7, 8, 9],
+            [10, 11, 12],
+          ],
+          total: 100,
+        },
+      ],
+      total: [100, 200], // total student
+      totalTeam: 10, // total all
+    },
+  ],
+};
+
+function transformToGrid(data) {
+  const final = [];
+  const header = [
+    { value: '', readOnly: true, colSpan: 4 },
+    ...data.students.map(i => ({
+      value: i.code,
+      readOnly: true,
+      colSpan: 2,
+      id: i.id,
+    })),
+    { value: 'Team', readOnly: true },
+  ];
+
+  for (const z of data.checkpoints) {
+    const grid = [header];
+
+    for (const i in z.columns) {
+      const firstEvaluator = z.council.members[0];
+      const evaluatorNum = z.council.members.length;
+      const toPush = [
+        { value: z.columns[i].name, readOnly: true, rowSpan: evaluatorNum },
+        {
+          value: z.columns[i].weight,
+          readOnly: true,
+          rowSpan: evaluatorNum,
+        },
+        { value: firstEvaluator.code, readOnly: true },
+        { value: firstEvaluator.weight, readOnly: true },
+      ];
+
+      for (const j in data.students) {
+        toPush.push(
+          {
+            value: z.columns[i].grade[j][0],
+            studentId: data.students[j].id,
+            lecturerId: z.council.members[0].id,
+            markColumnId: z.columns[i].id,
+            evaluationId: z.id,
+          },
+          {
+            value: z.columns[i].grade[j][z.columns[i].grade.length],
+            rowSpan: z.council.members.length,
+            readOnly: true,
+          }
+        );
+      }
+
+      toPush.push({
+        value: z.columns[i].total,
+        rowSpan: z.council.members.length,
+        readOnly: true,
+      });
+
+      grid.push(toPush);
+
+      for (const k in z.council.members.slice(1)) {
+        grid.push([
+          { value: z.council.members[+k + 1].code, readOnly: true },
+          { value: z.council.members[+k + 1].weight, readOnly: true },
+          ...z.columns[i].grade.map((x, index) => ({
+            value: x[+k + 1],
+            studentId: data.students[index].id,
+            lecturerId: z.council.members[+k + 1].id,
+            markColumnId: z.columns[i].id,
+            evaluationId: z.id,
+          })),
+        ]);
+      }
+    }
+
+    grid.push([
+      { value: 'Total', colSpan: 4, readOnly: true },
+      ...z.total.map(x => ({ value: x, colSpan: 2, readOnly: true })),
+      { value: z.totalTeam, readOnly: true },
+    ]);
+
+    final.push({
+      id: z.id,
+      name: z.name,
+      weight: z.weight,
+      submitDueDate: z.submitDueDate,
+      evaluateDueDate: z.evaluateDueDate,
+      council: z.council,
+      status: z.status,
+      grid,
+    });
+  }
+
+  console.log(final);
+
+  return final;
+}
+
+function transformToData(data) {
+  const grades = [];
+  for (const k of data) {
+    for (const i of k.grid) {
+      for (const j of i) {
+        if (j.readOnly !== true) grades.push(j);
+      }
+    }
+  }
+  return grades;
+}
+
 const Topic = ({ semester }) => {
   const { id: semId, topicId } = useParams();
   const history = useHistory();
   const setMeta = useSetRecoilState(metaAtom);
   const [l, loadData] = React.useReducer(() => ({}), {});
   const confirm = useConfirm();
+  const [evals, setEvals] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [data, setData] = React.useReducer((state, action) => {
+    if (action.name === 'all') return { ...state, ...action.value };
+    return {
+      ...state,
+      [action.name]: action.value,
+    };
+  }, {});
+
+  const [teamMembers, setTeamMembers] = React.useState([]);
 
   const handleReject = React.useCallback(
     e => {
@@ -68,18 +291,6 @@ const Topic = ({ semester }) => {
     },
     [topicId]
   );
-
-  const [isLoading, setIsLoading] = React.useState(false);
-
-  const [data, setData] = React.useReducer((state, action) => {
-    if (action.name === 'all') return { ...state, ...action.value };
-    return {
-      ...state,
-      [action.name]: action.value,
-    };
-  }, {});
-
-  const [teamMembers, setTeamMembers] = React.useState([]);
 
   const handleChangeField = React.useCallback(e => {
     setData({
@@ -154,6 +365,7 @@ const Topic = ({ semester }) => {
           name: 'all',
           value: d,
         });
+        setEvals(transformToGrid(fakeData));
       })
       .catch(err => {
         handleErrors(err);
@@ -161,6 +373,27 @@ const Topic = ({ semester }) => {
       })
       .finally(() => setIsLoading(false));
   }, [history, semId, topicId, l]);
+
+  const handleGradeChange = React.useCallback(
+    (changes, index) => {
+      changes.forEach(({ cell, row, col, value }) => {
+        evals[index].grid[row][col] = {
+          ...evals[index].grid[row][col],
+          value: Number(value),
+        };
+      });
+      setEvals(evals);
+    },
+    [evals]
+  );
+
+  const onSaveEvals = React.useCallback(
+    e => {
+      e.preventDefault();
+      console.log(transformToData(evals));
+    },
+    [evals]
+  );
 
   React.useEffect(() => {
     if (data?.team?.value) {
@@ -195,7 +428,7 @@ const Topic = ({ semester }) => {
     <>
       <Row>
         <Col lg={12}>
-          <Card
+          <CMSCard
             isLoading={isLoading}
             title="Information of topic"
             toolbar={
@@ -442,12 +675,12 @@ const Topic = ({ semester }) => {
                 />
               </Col>
             </Form.Group>
-          </Card>
+          </CMSCard>
         </Col>
       </Row>
       <Row>
         <Col lg={6}>
-          <Card isLoading={isLoading} title="Team">
+          <CMSCard isLoading={isLoading} title="Team">
             {teamMembers && teamMembers.length > 0
               ? teamMembers?.map(i => (
                   <Member
@@ -458,10 +691,10 @@ const Topic = ({ semester }) => {
                   />
                 ))
               : 'This topic does not have team yet.'}
-          </Card>
+          </CMSCard>
         </Col>
         <Col lg={6}>
-          <Card isLoading={isLoading} title="Mentors">
+          <CMSCard isLoading={isLoading} title="Mentors">
             {data && data.mentorMembers && data.mentorMembers.length > 0
               ? data?.mentorMembers?.map(i => (
                   <Member
@@ -472,12 +705,12 @@ const Topic = ({ semester }) => {
                   />
                 ))
               : 'This topic does not have any mentor'}
-          </Card>
+          </CMSCard>
         </Col>
       </Row>
       <Row>
         <Col lg={6}>
-          <Card
+          <CMSCard
             isLoading={isLoading}
             title="Feedbacks"
             toolbar={
@@ -536,10 +769,10 @@ const Topic = ({ semester }) => {
                   })) || <>No feedback</>}
               </div>
             </div>
-          </Card>
+          </CMSCard>
         </Col>
         <Col lg={6}>
-          <Card isLoading={isLoading} title="Application">
+          <CMSCard isLoading={isLoading} title="Application">
             <div className="table-responsive">
               {data?.applications?.length > 0 ? (
                 <table className="table table-head-custom table-head-bg table-borderless table-vertical-center">
@@ -592,10 +825,89 @@ const Topic = ({ semester }) => {
                 "This topic don't have any application from teams"
               )}
             </div>
-          </Card>
+          </CMSCard>
         </Col>
       </Row>
       <Row>
+        <Col lg={12}>
+          <CMSCard
+            isLoading={isLoading}
+            title="Evaluations"
+            toolbar={
+              <>
+                <Button>
+                  <i className="fas fa-trash mr-2" onClick={onSaveEvals}></i>
+                  Save
+                </Button>
+              </>
+            }
+          >
+            <Accordion defaultActiveKey="0">
+              {evals?.map((i, index) => (
+                <Card>
+                  <Card.Header>
+                    <Accordion.Toggle
+                      as={Card.Header}
+                      variant="span"
+                      eventKey="0"
+                      style={{
+                        padding: '1rem',
+                        fontSize: '1.25rem',
+                      }}
+                    >
+                      {i.name}
+                      <span
+                        class={`label label-inline label-${
+                          constantsCp.statusClasses[i.status]
+                        } font-weight-bold float-right`}
+                        style={{ fontSize: '1.25rem', padding: '1rem' }}
+                      >
+                        {constantsCp.statusTitles[i.status]}
+                      </span>
+                      <small className="form-text text-muted">
+                        Weight: <b>{i.weight}</b>, Submit at:{' '}
+                        <b>{constantsCp.convertDateDown(i.submitDueDate)}</b>,
+                        Evaluate at:{' '}
+                        <b>{constantsCp.convertDateDown(i.evaluateDueDate)}</b>,
+                        by: <b>{i.council.name}</b>
+                      </small>
+                    </Accordion.Toggle>
+                  </Card.Header>
+                  <Accordion.Collapse eventKey="0">
+                    <Card.Body>
+                      <div className="grade-table">
+                        <Datasheet
+                          data={i.grid || []}
+                          valueRenderer={cell => cell.value}
+                          onCellsChanged={changes =>
+                            handleGradeChange(changes, index)
+                          }
+                          dataEditor={props => {
+                            return (
+                              <input
+                                onChange={e =>
+                                  props.onChange(e.currentTarget.value)
+                                }
+                                value={props.value}
+                                onKeyDown={props.onKeyDown}
+                                type="number"
+                                min="0"
+                                max="10"
+                                step="0.01"
+                              />
+                            );
+                          }}
+                        />
+                      </div>
+                    </Card.Body>
+                  </Accordion.Collapse>
+                </Card>
+              ))}
+            </Accordion>
+          </CMSCard>
+        </Col>
+      </Row>
+      {/* <Row>
         <Col lg={12}>
           <Card
             isLoading={isLoading}
@@ -609,7 +921,7 @@ const Topic = ({ semester }) => {
             }
           />
         </Col>
-      </Row>
+      </Row> */}
     </>
   );
 };

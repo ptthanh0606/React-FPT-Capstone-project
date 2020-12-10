@@ -1,12 +1,17 @@
 import React from 'react';
+import request from 'utils/request';
+import * as endpoints from 'endpoints';
 import { toAbsoluteUrl } from '_metronic/_helpers/AssetsHelpers';
 import SVG from 'react-inlinesvg';
 import * as constants from '../../../../modules/semester/team/application/constants';
-import * as transformers from '../../../../modules/semester/team/application/transformers';
 import { Link, useHistory } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import userAtom from 'store/user';
 import { role } from 'auth/recoil/selectors';
+import { formatRelative, subMinutes } from 'date-fns';
+import toast from 'utils/toast';
+import { handleErrors } from 'utils/common';
+import useConfirm from 'utils/confirm';
 
 const Application = ({
   createdAt = '',
@@ -20,6 +25,7 @@ const Application = ({
   onOperationSuccess = () => {},
 }) => {
   const history = useHistory();
+  const confirm = useConfirm();
 
   // -----------------------------------------------------------------------------
 
@@ -33,9 +39,27 @@ const Application = ({
 
   // -----------------------------------------------------------------------------
 
+  const onConfirmCancelApplication = React.useCallback(() => {
+    request({
+      to: endpoints.CANCEL_APPLICATION(id).url,
+      method: endpoints.CANCEL_APPLICATION(id).method,
+    })
+      .then(() => {
+        toast.success('Application canceled.');
+        onOperationSuccess();
+      })
+      .catch(err => {
+        handleErrors(err);
+      });
+  }, [id, onOperationSuccess]);
+
   const handleCancelApplication = React.useCallback(() => {
-    onOperationSuccess();
-  }, [onOperationSuccess]);
+    confirm({
+      title: 'Confirm required',
+      body: 'Are you sure you want to cancel this application?',
+      onConfirm: onConfirmCancelApplication,
+    });
+  }, [confirm, onConfirmCancelApplication]);
 
   // -----------------------------------------------------------------------------
 
@@ -54,12 +78,18 @@ const Application = ({
       </td>
       <td className="text-left pl-0">
         <span className="text-muted font-weight-500">
-          {transformers.convertDateDown(createdAt)}
+          {formatRelative(
+            subMinutes(new Date(createdAt), new Date().getTimezoneOffset()),
+            new Date()
+          )}
         </span>
       </td>
       <td className="text-left pl-0">
         <span className="text-muted font-weight-500">
-          {transformers.convertDateDown(updatedAt)}
+          {formatRelative(
+            subMinutes(new Date(updatedAt), new Date().getTimezoneOffset()),
+            new Date()
+          )}
         </span>
       </td>
       <td className="text-left pl-0">

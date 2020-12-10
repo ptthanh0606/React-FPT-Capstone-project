@@ -27,7 +27,7 @@ function fetchSemester(
       .then(res => {
         const data = down(res?.data?.data);
         setSemester({
-          id: data.id,
+          id: Number(data.id),
           name: data.name,
           status: data.status,
           maxApplications: data.maxApplication,

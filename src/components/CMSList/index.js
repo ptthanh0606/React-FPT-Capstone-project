@@ -32,7 +32,7 @@ const CMSList = ({
               key={row.label}
               label={row.label}
               subLabel={row.subLabel}
-              action={rowActions}
+              action={row.actions || rowActions}
               onLabelClick={row.onLabelClick}
             />
           ))

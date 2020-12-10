@@ -27,6 +27,7 @@ import '_metronic/_assets/plugins/flaticon/flaticon.css';
 import '_metronic/_assets/plugins/flaticon2/flaticon.css';
 import 'react-datasheet/lib/react-datasheet.css';
 import 'react-markdown-editor-lite/lib/index.css';
+import 'react-datasheet/lib/react-datasheet.css';
 
 import AuthUpdater from 'auth/AuthUpdater';
 import { Container as ToastifyContainer } from 'utils/toast';

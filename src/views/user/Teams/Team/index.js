@@ -52,8 +52,7 @@ const Team = () => {
   const processCheckCurrentStudentInTeam = React.useCallback(
     studentTeam => {
       let isIn = false;
-      isIn = !!studentTeam.filter(member => member.value === currentUser.id)
-        .length;
+      isIn = studentTeam.some(member => member.value === currentUser.id);
       setIsUserInTeam(isIn);
     },
     [currentUser.id]
@@ -265,7 +264,7 @@ const Team = () => {
         { title: 'Semester', path: '/select-semester' },
         {
           title: currentSemester.name,
-          path: `/semester/${currentSemester.id}`,
+          path: `/select-semester/#`,
         },
         { title: 'Team', path: '/team' },
         { title: currentTeam.name, path: `/team/${currentTeam.id}` },
@@ -474,7 +473,6 @@ const Team = () => {
                   } symbol-45`}
                 >
                   <span className="symbol-label font-weight-bolder font-size-h6">
-                    {currentTeam?.applications?.length}/
                     {currentSemester.maxApplications}
                   </span>
                 </span>

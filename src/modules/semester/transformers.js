@@ -24,6 +24,10 @@ export function down(i) {
     maxApplication: Number.isInteger(i?.maxTopicApplication)
       ? i?.maxTopicApplication
       : console.log('maxTopicApplication field not found'),
+    marginPass:
+      typeof i?.marginPass === 'number' && !Number.isNaN(i?.marginPass)
+        ? i?.marginPass
+        : console.log('marginPass field not found'),
     matchingDate:
       (i?.assigningDate && convertDateDown(i.assigningDate)) ||
       console.log('assigningDate field not found'),
@@ -40,6 +44,7 @@ export function up(i) {
   return {
     name: i?.name,
     maxTopicApplication: Number(i?.maxApplication),
+    marginPass: Number(i?.marginPass),
     assigningDate: convertDateUp(i?.matchingDate),
     inProgressDate: convertDateUp(i?.inprogressDate),
     finishedDate: convertDateUp(i?.finishedDate),

@@ -89,6 +89,10 @@ export default function CheckpointTemplates() {
     setIsShowCheckpoints(true);
   }, []);
 
+  const onEdit = React.useCallback(e => {
+    loadData();
+  }, []);
+
   // ---------------------------------------------------------------------------
 
   const hideUpdateModal = React.useCallback(() => {
@@ -281,6 +285,7 @@ export default function CheckpointTemplates() {
         isShowFlg={isShowCheckpoints}
         setIsShowFlg={setIsShowCheckpoints}
         id={showCheckpointsForId}
+        onEdit={onEdit}
       />
     </Card>
   );

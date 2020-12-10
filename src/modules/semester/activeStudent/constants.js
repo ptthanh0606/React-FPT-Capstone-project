@@ -17,8 +17,20 @@ export const sizePerPageList = [
   { text: '100', value: 100 },
 ];
 
-export const statusClasses = ['danger', 'warning', 'success'];
-export const statusTitles = ['Not in a team', 'Matching', 'Matched'];
+export const statusClasses = [
+  'danger',
+  'warning',
+  'primary',
+  'success',
+  'danger',
+];
+export const statusTitles = [
+  'Not in a team',
+  'Matching',
+  'Matched',
+  'Passed',
+  'Failed',
+];
 
 // export const createColumns = ({ handleEdit, handleRemove }) =>
 //   columnsTransformer();
