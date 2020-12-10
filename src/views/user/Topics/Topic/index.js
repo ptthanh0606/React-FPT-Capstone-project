@@ -60,6 +60,7 @@ const Topic = () => {
   const [mentorLeaderId, setMentorLeaderId] = React.useState();
   const [studentLeaderId, setStudentLeaderId] = React.useState();
   const [guestStudentTeamId, setGuestStudentTeamId] = React.useState();
+  const [studentApplicationId, setStudentApplicationId] = React.useState();
 
   const [editWeightFlg, setEditWeightFlg] = React.useState(false);
 
@@ -198,9 +199,18 @@ const Topic = () => {
         setIsStudentUserHaveTeam(true);
         const transformedRes = teamTransformers.down(res.data.data);
 
-        setIsTeamApplied(
-          transformedRes.applications.some(({ topic }) => id * 1 === topic.id)
-        );
+        if (
+          transformedRes.applications.some(
+            app => id * 1 === app.topic.id && app.status === 0
+          )
+        ) {
+          setIsTeamApplied(true);
+          setStudentApplicationId(
+            transformedRes.applications.filter(
+              app => id * 1 === app.topic.id && app.status === 0
+            )[0].id
+          );
+        }
         setGuestStudentTeamId(transformedRes.id);
         setIsStudentTeamLead(currentUser.id === transformedRes.leader.value);
         setIsTeamInTopic(id === transformedRes.topic?.value);
@@ -213,35 +223,43 @@ const Topic = () => {
 
   // ----------------------------------------------------------
 
-  const handleConfirmApproveTeam = React.useCallback(appId => {
-    return () => {
-      request({
-        to: endpoints.APPROVE_APPLICATION(appId).url,
-        method: endpoints.APPROVE_APPLICATION(appId).method,
-      })
-        .then(res => {
-          toast.success('Approved selected team to topic.');
+  const handleConfirmApproveTeam = React.useCallback(
+    appId => {
+      return () => {
+        request({
+          to: endpoints.APPROVE_APPLICATION(appId).url,
+          method: endpoints.APPROVE_APPLICATION(appId).method,
         })
-        .catch(err => {
-          handleErrors(err);
-        });
-    };
-  }, []);
+          .then(res => {
+            toast.success('Approved selected team to topic.');
+            fetchTopic();
+          })
+          .catch(err => {
+            handleErrors(err);
+          });
+      };
+    },
+    [fetchTopic]
+  );
 
-  const handleConfirmRejectTeam = React.useCallback(appId => {
-    return () => {
-      request({
-        to: endpoints.REJECT_APPLICATION(appId).url,
-        method: endpoints.REJECT_APPLICATION(appId).method,
-      })
-        .then(res => {
-          toast.success('Rejected selected team.');
+  const handleConfirmRejectTeam = React.useCallback(
+    appId => {
+      return () => {
+        request({
+          to: endpoints.REJECT_APPLICATION(appId).url,
+          method: endpoints.REJECT_APPLICATION(appId).method,
         })
-        .catch(err => {
-          handleErrors(err);
-        });
-    };
-  }, []);
+          .then(res => {
+            toast.success('Rejected selected team.');
+            fetchTopic();
+          })
+          .catch(err => {
+            handleErrors(err);
+          });
+      };
+    },
+    [fetchTopic]
+  );
 
   const handleApproveTeam = React.useCallback(
     appId => {
@@ -390,13 +408,36 @@ const Topic = () => {
     })
       .then(res => {
         fetchTopic();
-        loadData();
+        fetchUserTeam();
         toast.success(
           'Your team application sent, please wait for mentor to confirm!'
         );
       })
       .catch(handleErrors);
-  }, [fetchTopic, guestStudentTeamId, id]);
+  }, [fetchTopic, fetchUserTeam, guestStudentTeamId, id]);
+
+  const onConfirmCancelApplication = React.useCallback(() => {
+    request({
+      to: endpoints.CANCEL_APPLICATION(studentApplicationId).url,
+      method: endpoints.CANCEL_APPLICATION(studentApplicationId).method,
+    })
+      .then(() => {
+        fetchTopic();
+        fetchUserTeam();
+        toast.success('Application canceled.');
+      })
+      .catch(err => {
+        handleErrors(err);
+      });
+  }, [fetchTopic, fetchUserTeam, studentApplicationId]);
+
+  const handleCancelApplication = React.useCallback(() => {
+    confirm({
+      title: 'Confirm required',
+      body: 'Are you sure you want to cancel this application?',
+      onConfirm: onConfirmCancelApplication,
+    });
+  }, [confirm, onConfirmCancelApplication]);
 
   const handleStudentApplyForMatching = React.useCallback(() => {
     confirm({
@@ -443,7 +484,7 @@ const Topic = () => {
               <button
                 type="button"
                 className="btn btn-primary btn-danger font-weight-bold btn-sm "
-                onClick={handleStudentApplyForMatching}
+                onClick={handleCancelApplication}
               >
                 <i className="fas fa-ban mr-2"></i>
                 Cancel application
@@ -527,6 +568,7 @@ const Topic = () => {
     currentTopic,
     currentUser.id,
     handleApplyMentor,
+    handleCancelApplication,
     handleConfirmDumpTopic,
     handleConfirmSettingModal,
     handleShowSettingModal,
@@ -566,7 +608,7 @@ const Topic = () => {
 
   // ----------------------------------------------------------
 
-  React.useEffect(() => {
+  const setViewMeta = React.useCallback(() => {
     setMeta(meta => ({
       ...meta,
       title: 'Topic detail',
@@ -581,6 +623,10 @@ const Topic = () => {
       ],
       toolbar: toolBar(),
     }));
+  }, [currentTopic.name, id, setMeta, toolBar]);
+
+  React.useEffect(() => {
+    setViewMeta();
   });
 
   React.useEffect(() => {
@@ -594,54 +640,56 @@ const Topic = () => {
 
   const applicationsMap = React.useCallback(
     applications => {
-      return applications.map(application => ({
-        id: application.id,
-        label: application.team?.name,
-        subLabel: (
-          <>
-            <span className="font-weight-bolder">Leader: </span>
-            {
-              application.team?.members?.filter(
-                member => member.id === application.team.leaderId
-              )[0]?.name
-            }
-          </>
-        ),
-        actions: (() => (
-          <>
-            <OverlayTrigger
-              placement="bottom"
-              overlay={<Tooltip>Approve selected team</Tooltip>}
-            >
-              <Button
-                className="btn btn-primary btn-success font-weight-bold btn-sm mr-2"
-                onClick={() => handleApproveTeam(application.id)}
+      return applications
+        .filter(application => application.status === 0)
+        .map(application => ({
+          id: application.id,
+          label: application.team?.name,
+          subLabel: (
+            <>
+              <span className="font-weight-bolder">Leader: </span>
+              {
+                application.team?.members?.filter(
+                  member => member.id === application.team.leaderId
+                )[0]?.name
+              }
+            </>
+          ),
+          actions: (() => (
+            <>
+              <OverlayTrigger
+                placement="bottom"
+                overlay={<Tooltip>Approve selected team</Tooltip>}
               >
-                <span class="svg-icon mr-0">
-                  <SVG
-                    src={toAbsoluteUrl('/media/svg/icons/General/Smile.svg')}
-                  ></SVG>
-                </span>
-              </Button>
-            </OverlayTrigger>
-            <OverlayTrigger
-              placement="bottom"
-              overlay={<Tooltip>Reject selected team</Tooltip>}
-            >
-              <Button
-                className="btn btn-light-danger font-weight-bold btn-sm "
-                onClick={() => handleRejectTeam(application.id)}
+                <Button
+                  className="btn btn-primary btn-light-success font-weight-bold btn-sm mr-2"
+                  onClick={() => handleApproveTeam(application.id)}
+                >
+                  <span class="svg-icon mr-0">
+                    <SVG
+                      src={toAbsoluteUrl('/media/svg/icons/General/Smile.svg')}
+                    ></SVG>
+                  </span>
+                </Button>
+              </OverlayTrigger>
+              <OverlayTrigger
+                placement="bottom"
+                overlay={<Tooltip>Reject selected team</Tooltip>}
               >
-                <span class="svg-icon mr-0 svg-icon-red">
-                  <SVG
-                    src={toAbsoluteUrl('/media/svg/icons/General/Sad.svg')}
-                  ></SVG>
-                </span>
-              </Button>
-            </OverlayTrigger>
-          </>
-        ))(),
-      }));
+                <Button
+                  className="btn btn-light-danger font-weight-bold btn-sm "
+                  onClick={() => handleRejectTeam(application.id)}
+                >
+                  <span class="svg-icon mr-0 svg-icon-red">
+                    <SVG
+                      src={toAbsoluteUrl('/media/svg/icons/General/Sad.svg')}
+                    ></SVG>
+                  </span>
+                </Button>
+              </OverlayTrigger>
+            </>
+          ))(),
+        }));
     },
     [handleApproveTeam, handleRejectTeam]
   );
