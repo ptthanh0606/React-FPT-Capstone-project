@@ -1,2 +1,2 @@
-export const statusTitles = ['Pending', 'Approved', 'Rejected', 'Canceled'];
-export const statusClass = ['warning', 'success', 'danger', 'danger'];
+export const statusTitles = ['Pending', 'Canceled', 'Rejected', 'Approved'];
+export const statusClass = ['warning', 'danger', 'danger', 'success'];
