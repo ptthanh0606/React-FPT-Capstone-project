@@ -783,6 +783,12 @@ const Topic = ({ semester }) => {
                     }}
                   >
                     Checkpoint 1
+                    <span
+                      class="label label-inline label-success font-weight-bold float-right"
+                      style={{ fontSize: '1.25rem', padding: '1rem' }}
+                    >
+                      Passed
+                    </span>
                     <small className="form-text text-muted">
                       Weight: <b>10</b>, Submit at: <b>0h, 11/11/2020</b>,
                       Evaluate at: <b>0h, 12/12/2020</b>, by:{' '}
@@ -829,6 +835,12 @@ const Topic = ({ semester }) => {
                     }}
                   >
                     Checkpoint 2
+                    <span
+                      class="label label-inline label-secondary font-weight-bold float-right"
+                      style={{ fontSize: '1.25rem', padding: '1rem' }}
+                    >
+                      Pending
+                    </span>
                     <small className="form-text text-muted">
                       Weight: <b>10</b>, Submit at: <b>0h, 11/11/2020</b>,
                       Evaluate at: <b>0h, 12/12/2020</b>, by:{' '}
