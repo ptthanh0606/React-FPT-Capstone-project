@@ -32,8 +32,6 @@ export default function Topics() {
   const semester = useRecoilValue(semesterStore);
   const role = useRecoilValue(roleSelector);
 
-  // const [modalConfigs, setModalConfigs] = React.useState([]);
-
   const [l, loadData] = React.useReducer(() => ({}), {});
 
   const [data, setData] = React.useState([]);
@@ -152,22 +150,27 @@ export default function Topics() {
         { title: 'Topic', path: '/topic' },
         { title: 'All topics', path: '/topic/#' },
       ],
+      toolbar: (
+        <>
+          {role === 'lecturer' ? (
+            <button
+              type="button"
+              className="btn btn-primary font-weight-bold"
+              onClick={showCreateModal}
+            >
+              <i className="fas fa-plus mr2"></i>
+              Submit
+            </button>
+          ) : null}
+        </>
+      ),
     }));
-  }, [semester.name, setMeta]);
+  }, [role, semester.name, setMeta, showCreateModal]);
 
   return (
     <Card>
       <CardHeader title="All topics">
-        <CardHeaderToolbar className="text-nowrap">
-          <button
-            type="button"
-            className="btn btn-primary font-weight-bold"
-            onClick={showCreateModal}
-          >
-            <i className="fas fa-plus mr2"></i>
-            New
-          </button>
-        </CardHeaderToolbar>
+        <CardHeaderToolbar className="text-nowrap"></CardHeaderToolbar>
       </CardHeader>
       <CardBody>
         <Filters filters={filters} setFilters={setFilters} />
@@ -193,7 +196,7 @@ export default function Topics() {
       <CMSModal
         isShowFlg={showCreate}
         onHide={hideCreateModal}
-        configs={constants.modalConfigs}
+        configs={constants.submitterModalConfigs}
         title="Create new topic"
         subTitle="Submit new topic to this capstone semester"
         onConfirmForm={handleCreate}

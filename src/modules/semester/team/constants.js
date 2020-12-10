@@ -270,27 +270,26 @@ export const createColumnsForStudentRole = ({ handleJoin }, role) => {
       sort: true,
       formatter: columnFormatter(privacyClasses, privacyTitles),
     });
-  }
-
-  cols.push({
-    dataField: 'action',
-    text: 'Action',
-    formatter: (cellContent, row) => {
-      return (
-        <a
-          href="/"
-          title="Join team"
-          className="btn btn-icon btn-light btn-hover-primary btn-sm"
-          data-id={row.id}
-          data-code={row.code}
-          data-name={row.name}
-          onClick={handleJoin}
-        >
-          <i className="fas fa-play icon-sm"></i>
-        </a>
-      );
-    },
-  });
+  } else
+    cols.push({
+      dataField: 'action',
+      text: 'Action',
+      formatter: (cellContent, row) => {
+        return (
+          <a
+            href="/"
+            title="Join team"
+            className="btn btn-icon btn-light btn-hover-primary btn-sm"
+            data-id={row.id}
+            data-code={row.code}
+            data-name={row.name}
+            onClick={handleJoin}
+          >
+            <i className="fas fa-play icon-sm"></i>
+          </a>
+        );
+      },
+    });
 
   return columnsTransformer(cols);
 };
