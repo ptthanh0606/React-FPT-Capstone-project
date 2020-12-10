@@ -14,6 +14,7 @@ import Datasheet from 'react-datasheet';
 import './Topic.scss';
 
 import * as transformers from 'modules/semester/topic/transformers';
+import * as constantsCp from 'modules/semester/topic/checkpoints/constants';
 
 import MarkdownIt from 'markdown-it';
 import ToggleSwitch from 'components/ToggleSwitch/ToggleSwitch';
@@ -80,102 +81,168 @@ const fakeData = {
   students: [
     {
       id: 1,
-      name: 'DuyHD',
+      code: 'DuyHD',
     },
-    { id: 2, name: 'ThanhPT' },
+    { id: 2, code: 'ThanhPT' },
   ],
-  evaluators: [
+  checkpoints: [
     {
       id: 1,
+      name: 'Checkpoint 1',
+      status: 3,
       weight: 100,
-      name: 'KhanhKT',
-    },
-    {
-      id: 2,
-      weight: 10,
-      name: 'PhuongLHK',
-    },
-  ],
-  columns: [
-    {
-      id: 1,
-      weight: 10,
-      name: 'Col 1',
-      grade: [
-        // Cột: evaluator, Hàng: student, số cuối: total
-        [1, 2, 4],
-        [4, 5, 6],
+      submitDueDate: '2022-09-01T00:00:00',
+      evaluateDueDate: '2022-09-01T00:00:00',
+      council: {
+        id: 1,
+        name: 'Council XYZ',
+        members: [
+          {
+            id: 1,
+            weight: 100,
+            code: 'KhanhKT',
+          },
+          {
+            id: 2,
+            weight: 10,
+            code: 'PhuongLHK',
+          },
+        ],
+      },
+      columns: [
+        {
+          id: 1,
+          weight: 10,
+          name: 'Col 1',
+          grade: [
+            // Cột: evaluator, Hàng: student, số cuối: total
+            [1, 2, 3],
+            [4, 5, 6],
+          ],
+          total: 10,
+        },
+        {
+          id: 2,
+          weight: 10,
+          name: 'Col 2',
+          grade: [
+            // Cột: evaluator, Hàng: student, số cuối: total
+            [7, 8, 9],
+            [10, 11, 12],
+          ],
+          total: 100,
+        },
       ],
-      total: 10,
+      total: [100, 200], // total student
+      totalTeam: 10, // total all
     },
   ],
-  total: [100, 200], // total student
-  totalTeam: 10, // total all
 };
 
 function transformToGrid(data) {
+  const final = [];
   const header = [
     { value: '', readOnly: true, colSpan: 4 },
     ...data.students.map(i => ({
-      value: i.name,
+      value: i.code,
       readOnly: true,
       colSpan: 2,
+      id: i.id,
     })),
     { value: 'Team', readOnly: true },
   ];
 
-  const grid = [header];
+  for (const z of data.checkpoints) {
+    const grid = [header];
 
-  for (const i in data.columns) {
-    const firstEvaluator = data.evaluators[0];
-    const evaluatorNum = data.evaluators.length;
-    const toPush = [
-      { value: data.columns[i].name, readOnly: true, rowSpan: evaluatorNum },
-      { value: data.columns[i].weight, readOnly: true, rowSpan: evaluatorNum },
-      { value: firstEvaluator.name, readOnly: true },
-      { value: firstEvaluator.weight, readOnly: true },
-    ];
-
-    for (const j in data.students) {
-      toPush.push(
+    for (const i in z.columns) {
+      const firstEvaluator = z.council.members[0];
+      const evaluatorNum = z.council.members.length;
+      const toPush = [
+        { value: z.columns[i].name, readOnly: true, rowSpan: evaluatorNum },
         {
-          value: data.columns[i].grade[j][1],
-        },
-        {
-          value: data.columns[i].grade[j][data.columns[i].grade.length - 1],
-          rowSpan: data.evaluators.length,
+          value: z.columns[i].weight,
           readOnly: true,
-        }
-      );
+          rowSpan: evaluatorNum,
+        },
+        { value: firstEvaluator.code, readOnly: true },
+        { value: firstEvaluator.weight, readOnly: true },
+      ];
+
+      for (const j in data.students) {
+        toPush.push(
+          {
+            value: z.columns[i].grade[j][0],
+            studentId: data.students[j].id,
+            lecturerId: z.council.members[0].id,
+            markColumnId: z.columns[i].id,
+            evaluationId: z.id,
+          },
+          {
+            value: z.columns[i].grade[j][z.columns[i].grade.length],
+            rowSpan: z.council.members.length,
+            readOnly: true,
+          }
+        );
+      }
+
+      toPush.push({
+        value: z.columns[i].total,
+        rowSpan: z.council.members.length,
+        readOnly: true,
+      });
+
+      grid.push(toPush);
+
+      for (const k in z.council.members.slice(1)) {
+        grid.push([
+          { value: z.council.members[+k + 1].code, readOnly: true },
+          { value: z.council.members[+k + 1].weight, readOnly: true },
+          ...z.columns[i].grade.map((x, index) => ({
+            value: x[+k + 1],
+            studentId: data.students[index].id,
+            lecturerId: z.council.members[+k + 1].id,
+            markColumnId: z.columns[i].id,
+            evaluationId: z.id,
+          })),
+        ]);
+      }
     }
 
-    toPush.push({
-      value: data.columns[i].total,
-      rowSpan: data.evaluators.length,
-      readOnly: true,
+    grid.push([
+      { value: 'Total', colSpan: 4, readOnly: true },
+      ...z.total.map(x => ({ value: x, colSpan: 2, readOnly: true })),
+      { value: z.totalTeam, readOnly: true },
+    ]);
+
+    final.push({
+      id: z.id,
+      name: z.name,
+      weight: z.weight,
+      submitDueDate: z.submitDueDate,
+      evaluateDueDate: z.evaluateDueDate,
+      council: z.council,
+      status: z.status,
+      grid,
     });
-
-    grid.push(toPush);
-
-    for (const k in data.evaluators.slice(1)) {
-      grid.push([
-        { value: data.evaluators[+k + 1].name, readOnly: true },
-        { value: data.evaluators[+k + 1].weight, readOnly: true },
-        ...data.columns[i].grade.map(x => ({ value: x[+k + 1] })),
-      ]);
-    }
   }
 
-  grid.push([
-    { value: 'Total', colSpan: 4, readOnly: true },
-    ...data.total.map(x => ({ value: x, colSpan: 2, readOnly: true })),
-    { value: data.totalTeam, readOnly: true },
-  ]);
+  console.log(final);
 
-  return grid;
+  return final;
 }
 
-function transformToData(grid) {}
+function transformToData(data) {
+  const grades = [];
+  for (const k of data) {
+    for (const i of k.grid) {
+      for (const j of i) {
+        if (j.readOnly !== true) grades.push(j);
+      }
+    }
+  }
+  return grades;
+}
 
 const Topic = ({ semester }) => {
   const { id: semId, topicId } = useParams();
@@ -308,20 +375,25 @@ const Topic = ({ semester }) => {
   }, [history, semId, topicId, l]);
 
   const handleGradeChange = React.useCallback(
-    changes => {
-      const grid = evals.map(row => [...row]);
+    (changes, index) => {
       changes.forEach(({ cell, row, col, value }) => {
-        grid[row][col] = { ...grid[row][col], value };
+        evals[index].grid[row][col] = {
+          ...evals[index].grid[row][col],
+          value: Number(value),
+        };
       });
-      setEvals(grid);
+      setEvals(evals);
     },
     [evals]
   );
 
-  const onSaveEvals = React.useCallback(e => {
-    e.preventDefault();
-    console.log(evals);
-  });
+  const onSaveEvals = React.useCallback(
+    e => {
+      e.preventDefault();
+      console.log(transformToData(evals));
+    },
+    [evals]
+  );
 
   React.useEffect(() => {
     if (data?.team?.value) {
@@ -771,87 +843,66 @@ const Topic = ({ semester }) => {
             }
           >
             <Accordion defaultActiveKey="0">
-              <Card>
-                <Card.Header>
-                  <Accordion.Toggle
-                    as={Card.Header}
-                    variant="span"
-                    eventKey="0"
-                    style={{
-                      padding: '1rem',
-                      fontSize: '1.25rem',
-                    }}
-                  >
-                    Checkpoint 1
-                    <span
-                      class="label label-inline label-success font-weight-bold float-right"
-                      style={{ fontSize: '1.25rem', padding: '1rem' }}
+              {evals?.map((i, index) => (
+                <Card>
+                  <Card.Header>
+                    <Accordion.Toggle
+                      as={Card.Header}
+                      variant="span"
+                      eventKey="0"
+                      style={{
+                        padding: '1rem',
+                        fontSize: '1.25rem',
+                      }}
                     >
-                      Passed
-                    </span>
-                    <small className="form-text text-muted">
-                      Weight: <b>10</b>, Submit at: <b>0h, 11/11/2020</b>,
-                      Evaluate at: <b>0h, 12/12/2020</b>, by:{' '}
-                      <b>Topic mentors</b>
-                    </small>
-                  </Accordion.Toggle>
-                </Card.Header>
-                <Accordion.Collapse eventKey="0">
-                  <Card.Body>
-                    <div className="grade-table">
-                      <Datasheet
-                        data={evals}
-                        valueRenderer={cell => cell.value}
-                        onCellsChanged={handleGradeChange}
-                        dataEditor={props => {
-                          return (
-                            <input
-                              onChange={e =>
-                                props.onChange(e.currentTarget.value)
-                              }
-                              value={props.value}
-                              onKeyDown={props.onKeyDown}
-                              type="number"
-                              min="0"
-                              max="10"
-                              step="0.01"
-                            />
-                          );
-                        }}
-                      />
-                    </div>
-                  </Card.Body>
-                </Accordion.Collapse>
-              </Card>
-              <Card>
-                <Card.Header>
-                  <Accordion.Toggle
-                    as={Card.Header}
-                    variant="span"
-                    eventKey="1"
-                    style={{
-                      padding: '1rem',
-                      fontSize: '1.25rem',
-                    }}
-                  >
-                    Checkpoint 2
-                    <span
-                      class="label label-inline label-secondary font-weight-bold float-right"
-                      style={{ fontSize: '1.25rem', padding: '1rem' }}
-                    >
-                      Pending
-                    </span>
-                    <small className="form-text text-muted">
-                      Weight: <b>10</b>, Submit at: <b>0h, 11/11/2020</b>,
-                      Evaluate at: <b>0h, 12/12/2020</b>, by:{' '}
-                      <b>Topic mentors</b>
-                    </small>
-                  </Accordion.Toggle>
-                </Card.Header>
-                <Accordion.Collapse eventKey="1">
-                  <Card.Body>Not evaluated...</Card.Body>
-                </Accordion.Collapse>
-              </Card>
+                      {i.name}
+                      <span
+                        class={`label label-inline label-${
+                          constantsCp.statusClasses[i.status]
+                        } font-weight-bold float-right`}
+                        style={{ fontSize: '1.25rem', padding: '1rem' }}
+                      >
+                        {constantsCp.statusTitles[i.status]}
+                      </span>
+                      <small className="form-text text-muted">
+                        Weight: <b>{i.weight}</b>, Submit at:{' '}
+                        <b>{constantsCp.convertDateDown(i.submitDueDate)}</b>,
+                        Evaluate at:{' '}
+                        <b>{constantsCp.convertDateDown(i.evaluateDueDate)}</b>,
+                        by: <b>{i.council.name}</b>
+                      </small>
+                    </Accordion.Toggle>
+                  </Card.Header>
+                  <Accordion.Collapse eventKey="0">
+                    <Card.Body>
+                      <div className="grade-table">
+                        <Datasheet
+                          data={i.grid || []}
+                          valueRenderer={cell => cell.value}
+                          onCellsChanged={changes =>
+                            handleGradeChange(changes, index)
+                          }
+                          dataEditor={props => {
+                            return (
+                              <input
+                                onChange={e =>
+                                  props.onChange(e.currentTarget.value)
+                                }
+                                value={props.value}
+                                onKeyDown={props.onKeyDown}
+                                type="number"
+                                min="0"
+                                max="10"
+                                step="0.01"
+                              />
+                            );
+                          }}
+                        />
+                      </div>
+                    </Card.Body>
+                  </Accordion.Collapse>
+                </Card>
+              ))}
             </Accordion>
           </CMSCard>
         </Col>
