@@ -120,6 +120,15 @@ export const modalConfigs = [
       'Maximum number of application that a team can send at any-time',
     placeholder: '10',
   },
+
+  {
+    name: 'marginPass',
+    type: 'number',
+    step: 0.01,
+    label: 'Margin pass',
+    smallLabel: 'Minimum grade for student to pass this semester',
+    placeholder: '5',
+  },
   {
     name: 'matchingDate',
     type: 'datetime-local',
