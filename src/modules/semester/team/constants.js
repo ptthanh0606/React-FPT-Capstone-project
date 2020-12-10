@@ -94,7 +94,12 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
         return (
           <div>
             <div className="text-nowrap text-dark-75 font-weight-bold font-size-lg mb-0">
-              {cellContent?.label}
+              <Link
+                className={'text-dark font-weight-bold text-nowrap'}
+                to={'./topic/' + cellContent?.value}
+              >
+                {cellContent?.label}
+              </Link>
             </div>
             <span className="text-muted font-weight-bold text-hover-primary">
               {cellContent?.abstract}

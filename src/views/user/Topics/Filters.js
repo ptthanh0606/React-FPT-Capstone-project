@@ -4,9 +4,12 @@ import SelectTagInput from 'components/TagInput/SelectTagInput';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
 import { mDown as mDownDep } from 'modules/department/transformers';
+import roleSelector from 'auth/recoil/selectors/role';
+import { useRecoilValue } from 'recoil';
 
 export default function CustomersFilter({ filters, setFilters }) {
   const [selectState, setSelectState] = React.useState();
+  const role = useRecoilValue(roleSelector);
   return (
     <>
       <Formik
@@ -66,9 +69,13 @@ export default function CustomersFilter({ filters, setFilters }) {
                   value={values.status}
                 >
                   <option value="">All</option>
-                  <option value="0">Pending</option>
-                  <option value="1">Rejected</option>
-                  <option value="2">Approved</option>
+                  {role !== 'student' && (
+                    <>
+                      <option value="0">Pending</option>
+                      <option value="1">Rejected</option>
+                      <option value="2">Approved</option>
+                    </>
+                  )}
                   <option value="3">Ready</option>
                   <option value="4">Matched</option>
                   <option value="5">Passed</option>

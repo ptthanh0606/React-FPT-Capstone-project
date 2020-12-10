@@ -248,10 +248,10 @@ export default function Teams() {
       ...meta,
       title: `Teams of ${currentSemester.name}`,
       breadcrumb: [
-        { title: 'Semester', path: '/semester' },
+        { title: 'Semester', path: '/select-semester' },
         {
           title: currentSemester.name,
-          path: '/semester/' + currentSemester.id,
+          path: '/select-semester/#',
         },
         { title: 'Team', path: '/team' },
       ],

@@ -264,7 +264,7 @@ const Team = () => {
         { title: 'Semester', path: '/select-semester' },
         {
           title: currentSemester.name,
-          path: `/semester/${currentSemester.id}`,
+          path: `/select-semester/#`,
         },
         { title: 'Team', path: '/team' },
         { title: currentTeam.name, path: `/team/${currentTeam.id}` },

@@ -634,12 +634,12 @@ const Topic = () => {
       ...meta,
       title: 'Topic detail',
       breadcrumb: [
-        { title: 'Semester', path: '/semester' },
-        { title: 'Fall 2020', path: '/semester/' + id },
-        { title: 'Topic', path: '/semester/' + id + '/topic' },
+        { title: 'Semester', path: '/select-semester' },
+        { title: 'Fall 2020', path: '/select-semester#' + id },
+        { title: 'Topic', path: '/topic/' },
         {
           title: currentTopic.name,
-          path: '/semester/' + id + '/topic',
+          path: '/topic/' + id,
         },
       ],
       toolbar: toolBar(),

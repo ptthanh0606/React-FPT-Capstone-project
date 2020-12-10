@@ -224,8 +224,11 @@ export const submitterModalConfigs = [
   },
 ];
 
-export const createColumns = ({ handleEdit, handleRemove }) => {
-  return columnsTransformer([
+export const createColumns = (
+  { handleEdit = function () {}, handleRemove = function () {} },
+  role = 'admin'
+) => {
+  const cols = [
     {
       dataField: 'id',
       text: 'ID',
@@ -376,7 +379,10 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
         minWidth: '200px',
       },
     },
-    {
+  ];
+
+  if (role === 'admin') {
+    cols.push({
       dataField: 'action',
       text: 'Actions',
       formatter: (cellContent, row, rowIndex) => {
@@ -408,6 +414,8 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
       style: {
         minWidth: '100px',
       },
-    },
-  ]);
+    });
+  }
+
+  return columnsTransformer(cols);
 };
