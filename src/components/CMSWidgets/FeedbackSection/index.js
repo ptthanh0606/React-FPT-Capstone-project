@@ -55,18 +55,14 @@ const FeedbackSection = ({
 
   return (
     <>
-      <div
-        className={className}
-        id="kt_apps_contacts_view_tab_1"
-        role="tabpanel"
-      >
+      <div className={className}>
         <div className="my-5">
           <span className="text-dark font-size-h5 font-weight-bold">
             Feedback for this topic
           </span>
         </div>
 
-        {topicStatus === 'Pending' && isUserApprover && isInDep && (
+        {topicStatus === 'Waiting' && isUserApprover && isInDep && (
           <>
             <form className="form">
               <div className="form-group">
@@ -116,7 +112,7 @@ const FeedbackSection = ({
           />
         )}
 
-        {topicStatus !== 'Pending' && (
+        {topicStatus !== 'Waiting' && (
           <MessageTile
             iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Stop.svg')}
             content="Feedback session is over"
@@ -127,7 +123,7 @@ const FeedbackSection = ({
         <div className="timeline timeline-3">
           <div className="my-5">
             <span className="text-dark font-size-h5 font-weight-bold">
-              What other people think
+              What you and other people think:
             </span>
           </div>
           <div className="timeline-items">
@@ -143,7 +139,7 @@ const FeedbackSection = ({
               ))
             ) : (
               <>
-                {topicStatus === 'Pending' ? (
+                {topicStatus === 'Waiting' ? (
                   <>
                     {isInDep && (
                       <MessageTile

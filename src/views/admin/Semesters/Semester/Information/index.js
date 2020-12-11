@@ -18,7 +18,7 @@ import { Form } from 'react-bootstrap';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
 import toast from 'utils/toast';
-import { down, up } from '../../../../../modules/semester/transformers';
+import { down, up } from 'modules/semester/transformers';
 import Button from 'components/Button';
 
 const Information = ({ loadData = function () {} }) => {
@@ -158,7 +158,7 @@ const Information = ({ loadData = function () {} }) => {
           </Form.Group>
           <Form.Group as={Row} controlId="formHorizontalEmail">
             <Form.Label column sm={3}>
-              Matching
+              Assigning
             </Form.Label>
             <Col sm={9}>
               <Form.Control

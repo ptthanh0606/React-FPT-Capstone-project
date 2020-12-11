@@ -1,5 +1,4 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
 import {
   Card,
   CardBody,
@@ -12,7 +11,6 @@ import Filters from './Filters';
 import metaAtom from 'store/meta';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
 
-import toast from 'utils/toast';
 import { useDebounce } from 'use-debounce';
 import request from 'utils/request';
 import { handleErrors } from 'utils/common';
@@ -30,7 +28,7 @@ export default function Councils() {
   const role = useRecoilValue(roleSelector);
   const [isMy, setIsMy] = React.useState(false);
 
-  const [l, loadData] = React.useReducer(() => ({}), {});
+  const [l] = React.useReducer(() => ({}), {});
 
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
@@ -118,36 +116,38 @@ export default function Councils() {
   return (
     <Card>
       <CardHeader title="All councils">
-        <CardHeaderToolbar className="text-nowrap">
-          <div
-            className={`rounded btn btn-lg ${
-              isMy ? 'bg-primary text-white' : 'bg-white text-primary'
-            }`}
-            style={{
-              height: '35px',
-              lineHeight: '35px',
-              padding: '0px 1rem',
-              fontWeight: isMy ? 600 : undefined,
-            }}
-            onClick={myCouncilsOnly}
-          >
-            My council
-          </div>
-          <div
-            className={`rounded btn btn-lg ${
-              !isMy ? 'bg-primary text-white' : 'bg-white text-primary'
-            }`}
-            onClick={allCouncils}
-            style={{
-              height: '35px',
-              lineHeight: '35px',
-              padding: '0px 1rem',
-              fontWeight: !isMy ? 600 : undefined,
-            }}
-          >
-            All
-          </div>
-        </CardHeaderToolbar>
+        {role === 'lecturer' && (
+          <CardHeaderToolbar className="text-nowrap">
+            <div
+              className={`rounded btn btn-lg ${
+                isMy ? 'bg-primary text-white' : 'bg-white text-primary'
+              }`}
+              style={{
+                height: '35px',
+                lineHeight: '35px',
+                padding: '0px 1rem',
+                fontWeight: isMy ? 600 : undefined,
+              }}
+              onClick={myCouncilsOnly}
+            >
+              My council
+            </div>
+            <div
+              className={`rounded btn btn-lg ${
+                !isMy ? 'bg-primary text-white' : 'bg-white text-primary'
+              }`}
+              onClick={allCouncils}
+              style={{
+                height: '35px',
+                lineHeight: '35px',
+                padding: '0px 1rem',
+                fontWeight: !isMy ? 600 : undefined,
+              }}
+            >
+              All
+            </div>
+          </CardHeaderToolbar>
+        )}
       </CardHeader>
       <CardBody>
         <Filters filters={filters} setFilters={setFilters} />

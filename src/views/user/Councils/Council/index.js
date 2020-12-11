@@ -1,4 +1,3 @@
-import CMSList from 'components/CMSList';
 import TeamHeader from 'components/CMSWidgets/TeamHeader';
 import UserCard from 'components/CMSWidgets/UserCard';
 import React from 'react';
@@ -6,7 +5,7 @@ import { Col, Row } from 'react-bootstrap';
 
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
-import * as transformers from '../../../../modules/semester/council/transformers';
+import * as transformers from 'modules/semester/council/transformers';
 import Update from '../../../admin/Semesters/Semester/Councils/Update';
 
 import metaAtom from 'store/meta';
@@ -176,7 +175,6 @@ const Council = () => {
     })
       .then(res => {
         const transformedRes = down(res.data.data);
-        console.log(transformedRes);
         setCurrentCouncil(transformedRes);
         setIsUserInCouncil(
           transformedRes.members.some(({ value }) => value === currentUser.id)

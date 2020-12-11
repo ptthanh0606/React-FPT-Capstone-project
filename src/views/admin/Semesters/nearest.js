@@ -10,8 +10,8 @@ import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 
-import * as transformers from '../../../modules/semester/transformers';
-import * as constants from '../../../modules/semester/constants';
+import * as transformers from 'modules/semester/transformers';
+import * as constants from 'modules/semester/constants';
 
 import SemesterCard from './SemesterCard';
 import ScrollContainer from 'react-indiana-drag-scroll';
@@ -113,8 +113,10 @@ export default React.memo(function NearestSemester() {
       >
         {isLoading ? (
           <div className="mb-8">Loading...</div>
-        ) : (
+        ) : data?.length > 0 ? (
           data.map(s => <SemesterCard {...s} key={s.id} />)
+        ) : (
+          <div className="mb-8">There is no semester at the moment...</div>
         )}
       </ScrollContainer>
       <div className={styles['nav-box']}>

@@ -1,10 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import {
-  statusTitles,
-  statusClasses,
-} from '../../../modules/semester/constants';
+import { statusTitles, statusClasses } from 'modules/semester/constants';
 
 const SemesterCard = props => {
   return (

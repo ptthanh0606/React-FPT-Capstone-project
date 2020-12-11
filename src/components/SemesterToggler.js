@@ -13,28 +13,30 @@ export function SemesterToggler() {
   if (role !== 'admin')
     return (
       <>
-        <OverlayTrigger
-          placement="bottom"
-          overlay={<Tooltip id="quick-user-tooltip">Change semester</Tooltip>}
-        >
-          <div className="topbar-item">
-            <div className="btn btn-icon w-auto btn-clean d-flex align-items-center btn-lg px-2">
-              <Link to="/select-semester">
-                <span
-                  className="symbol rounded bg-primary text-white"
-                  style={{
-                    height: 35,
-                    lineHeight: '35px',
-                    padding: '0 1rem',
-                    fontWeight: 600,
-                  }}
-                >
-                  {semester.name}
-                </span>
-              </Link>
+        {semester?.name && (
+          <OverlayTrigger
+            placement="bottom"
+            overlay={<Tooltip id="quick-user-tooltip">Change semester</Tooltip>}
+          >
+            <div className="topbar-item">
+              <div className="btn btn-icon w-auto btn-clean d-flex align-items-center btn-lg px-2">
+                <Link to="/select-semester">
+                  <span
+                    className="symbol rounded bg-primary text-white"
+                    style={{
+                      height: 35,
+                      lineHeight: '35px',
+                      padding: '0 1rem',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {semester.name}
+                  </span>
+                </Link>
+              </div>
             </div>
-          </div>
-        </OverlayTrigger>
+          </OverlayTrigger>
+        )}
       </>
     );
 

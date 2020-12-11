@@ -110,7 +110,7 @@ const TeamHeader = ({
                 </div>
               </div>
 
-              {teamStatus === 'Matched' ? (
+              {teamStatus === 'Assigned' ? (
                 <>
                   {withTopic && (
                     <>

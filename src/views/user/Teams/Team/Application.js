@@ -3,8 +3,8 @@ import request from 'utils/request';
 import * as endpoints from 'endpoints';
 import { toAbsoluteUrl } from '_metronic/_helpers/AssetsHelpers';
 import SVG from 'react-inlinesvg';
-import * as constants from '../../../../modules/semester/team/application/constants';
-import { Link, useHistory } from 'react-router-dom';
+import * as constants from 'modules/semester/team/application/constants';
+import { Link } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import userAtom from 'store/user';
 import { role } from 'auth/recoil/selectors';
@@ -24,7 +24,6 @@ const Application = ({
   leaderId = '',
   onOperationSuccess = () => {},
 }) => {
-  const history = useHistory();
   const confirm = useConfirm();
 
   // -----------------------------------------------------------------------------
@@ -101,7 +100,7 @@ const Application = ({
       </td>
       {/* Check xem user login co phai la student khong => check xem badge co phai la pending khong => check xem student dang login co phai leader khong => leader co the cancel application */}
       {userRole === 'student' &&
-        statusTitles[status] === 'Pending' &&
+        statusTitles[status] === 'Waiting' &&
         currentUser.id === leaderId && (
           <td className="text-left p-0">
             <button

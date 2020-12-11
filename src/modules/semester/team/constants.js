@@ -20,148 +20,16 @@ export const sizePerPageList = [
 ];
 
 export const statusClasses = { true: 'success', false: 'warning' };
-export const statusTitles = { true: 'Matched', false: 'Matching' };
+export const statusTitles = { true: 'Assigned', false: 'Assigning' };
 export const lockClasses = { false: 'success', true: 'danger' };
 export const lockTitles = { false: 'Unlocked', true: 'Locked' };
 export const privacyClasses = { true: 'success', false: 'danger' };
 export const privacyTitles = { true: 'Public', false: 'Private' };
 
-export const createColumns = ({ handleEdit, handleRemove }) =>
-  columnsTransformer([
-    {
-      dataField: 'id',
-      text: 'ID',
-      sort: true,
-    },
-    {
-      dataField: 'department',
-      text: 'DEP',
-      sort: true,
-      formatter: (cellContent, row) => cellContent?.label,
-    },
-    {
-      dataField: 'code',
-      text: 'Code',
-      sort: true,
-    },
-    {
-      dataField: 'name',
-      text: 'Name',
-      sort: true,
-      style: {
-        minWidth: 200,
-      },
-    },
-    {
-      dataField: 'leader',
-      text: 'Leader',
-      formatter: function (cellContent, row) {
-        return (
-          cellContent?.label &&
-          cellContent?.value && (
-            <Link
-              className={'text-dark font-weight-bold text-nowrap'}
-              to={'/profile/student/' + cellContent?.value}
-            >
-              {cellContent?.label}
-            </Link>
-          )
-        );
-      },
-    },
-    {
-      dataField: 'members',
-      text: 'Members',
-      formatter: function (cellContent, row) {
-        return cellContent?.length > 0
-          ? cellContent
-              ?.map(i => (
-                <Link
-                  className={'text-dark font-weight-bold text-nowrap'}
-                  to={'/profile/student/' + i?.value}
-                >
-                  {i?.label}
-                </Link>
-              ))
-              ?.reduce((prev, curr) => [prev, ', ', curr])
-          : '';
-      },
-    },
-    {
-      dataField: 'topic',
-      text: 'Topic',
-      formatter: function (cellContent, row) {
-        return (
-          <div>
-            <div className="text-nowrap text-dark-75 font-weight-bold font-size-lg mb-0">
-              <Link
-                className={'text-dark font-weight-bold text-nowrap'}
-                to={'./topic/' + cellContent?.value}
-              >
-                {cellContent?.label}
-              </Link>
-            </div>
-            <span className="text-muted font-weight-bold text-hover-primary">
-              {cellContent?.abstract}
-            </span>
-          </div>
-        );
-      },
-    },
-    {
-      dataField: 'status',
-      text: 'Status',
-      sort: true,
-      formatter: columnFormatter(statusClasses, statusTitles),
-    },
-    {
-      dataField: 'lock',
-      text: 'Lock',
-      sort: true,
-      formatter: columnFormatter(lockClasses, lockTitles),
-    },
-    {
-      dataField: 'privacy',
-      text: 'privacy',
-      sort: true,
-      formatter: columnFormatter(privacyClasses, privacyTitles),
-    },
-    {
-      dataField: 'action',
-      text: 'Actions',
-      formatter: (cellContent, row, rowIndex) => {
-        return (
-          <span className="text-nowrap">
-            <a
-              href="/"
-              title="Edit"
-              className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-              data-id={row.id}
-              onClick={handleEdit}
-            >
-              <i className="fas fa-pencil-alt mx-2"></i>
-            </a>
-            <a
-              href="/"
-              title="Remove"
-              className="btn btn-icon btn-light btn-hover-primary btn-sm"
-              data-id={row.id}
-              onClick={handleRemove}
-            >
-              <i className="fas fa-trash mx-2"></i>
-            </a>
-          </span>
-        );
-      },
-      classes: 'text-right pr-0',
-      headerClasses: 'text-right pr-3',
-      style: {
-        minWidth: '100px',
-      },
-    },
-  ]);
-
-export const createColumnsForStudentRole = ({ handleJoin }, role) => {
+export const createColumns = (
+  { handleJoin, handleRemove, handleEdit },
+  role = 'admin'
+) => {
   const cols = [
     {
       dataField: 'id',
@@ -290,6 +158,42 @@ export const createColumnsForStudentRole = ({ handleJoin }, role) => {
         );
       },
     });
+
+  if (role === 'admin') {
+    cols.push({
+      dataField: 'action',
+      text: 'Actions',
+      formatter: (cellContent, row, rowIndex) => {
+        return (
+          <span className="text-nowrap">
+            <a
+              href="/"
+              title="Edit"
+              className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
+              data-id={row.id}
+              onClick={handleEdit}
+            >
+              <i className="fas fa-pencil-alt mx-2"></i>
+            </a>
+            <a
+              href="/"
+              title="Remove"
+              className="btn btn-icon btn-light btn-hover-primary btn-sm"
+              data-id={row.id}
+              onClick={handleRemove}
+            >
+              <i className="fas fa-trash mx-2"></i>
+            </a>
+          </span>
+        );
+      },
+      classes: 'text-right pr-0',
+      headerClasses: 'text-right pr-3',
+      style: {
+        minWidth: '100px',
+      },
+    });
+  }
 
   return columnsTransformer(cols);
 };

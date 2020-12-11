@@ -13,8 +13,8 @@ import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 
-import * as transformers from '../../../modules/lecturer/transformers';
-import * as constants from '../../../modules/lecturer/constants';
+import * as transformers from 'modules/lecturer/transformers';
+import * as constants from 'modules/lecturer/constants';
 
 export default function Lecturers() {
   const confirm = useConfirm();

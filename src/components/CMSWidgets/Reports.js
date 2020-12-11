@@ -1,5 +1,4 @@
 import React from 'react';
-import SVG from 'react-inlinesvg';
 import { Button } from 'react-bootstrap';
 
 const Reports = ({ className }) => {
