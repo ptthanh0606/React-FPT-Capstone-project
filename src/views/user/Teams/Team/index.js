@@ -308,6 +308,18 @@ const Team = () => {
                   />
                 </>
               )}
+
+              {isUserLeader && isTeamMatched && (
+                <button
+                  type="button"
+                  className="btn btn-light-info font-weight-bold btn-sm ml-2"
+                  onClick={handleLeaveTeam}
+                >
+                  <i className="far fa-clipboard mr-2"></i>
+                  Send reports
+                </button>
+              )}
+
               {isUserInTeam ? (
                 <>
                   {!isTeamMatched && !isUserLeader && !currentTeam.lock && (
