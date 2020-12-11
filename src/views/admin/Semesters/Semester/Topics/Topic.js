@@ -9,7 +9,6 @@ import CMSCard from 'components/Card';
 import Button from 'components/Button';
 import MdEditor from 'react-markdown-editor-lite';
 import metaAtom from 'store/meta';
-import { format } from 'date-fns';
 import Datasheet from 'react-datasheet';
 import './Topic.scss';
 
@@ -20,7 +19,6 @@ import MarkdownIt from 'markdown-it';
 import ToggleSwitch from 'components/ToggleSwitch/ToggleSwitch';
 import SelectTagInput from 'components/TagInput/SelectTagInput';
 
-import { mDown as mDownDep } from 'modules/department/transformers';
 import {
   mDown as mDownTeam,
   down as downTeam,
@@ -29,53 +27,55 @@ import { mDown as mDownLec } from 'modules/lecturer/transformers';
 import { useSetRecoilState } from 'recoil';
 import Member from 'views/user/Teams/Team/Member';
 import Comment from 'components/CMSWidgets/FeedbackSection/Comment';
-import * as constants from 'modules/semester/team/application/constants';
+import * as constants from 'modules/semester/topic/constants';
+import * as constantsA from 'modules/semester/team/application/constants';
 import * as appTransformers from 'modules/semester/team/application/transformers';
 import useConfirm from 'utils/confirm';
+import toast from 'utils/toast';
 
 const mdParser = new MarkdownIt();
 
-const config = [
-  // Begin header
-  [
-    { value: '', readOnly: true, colSpan: 4 },
-    { value: 'Student 1', readOnly: true, colSpan: 2, id: 1 },
-    { value: 'Student 2', readOnly: true, colSpan: 2, id: 2 },
-    { value: 'Team', readOnly: true },
-  ],
-  // Begin column 1
-  [
-    { value: 'Columns 1', readOnly: true, rowSpan: 3, id: 1 }, // rowspan = so mentor
-    { value: 50, readOnly: true, rowSpan: 3 },
-    { value: 'Evaluator 1', readOnly: true, id: 1 },
-    { value: 10, readOnly: true },
-    { value: 2 }, // student 1
-    { value: 2, rowSpan: 3, readOnly: true }, // total student 1
-    { value: 4 }, // student 2
-    { value: 2, rowSpan: 3, readOnly: true }, // total student 2
-    { value: 2, rowSpan: 3, readOnly: true }, // total team
-  ],
-  [
-    { value: 'Evaluator 2', readOnly: true },
-    { value: 100, readOnly: true },
-    { value: 2 }, // student 1
-    { value: 4 }, // student 2
-  ],
-  [
-    { value: 'Evaluator 3', readOnly: true },
-    { value: 50, readOnly: true },
-    { value: 2 }, // student 1
-    { value: 4 }, // student 2
-  ],
-  // End column 1
-  // Begin Total
-  [
-    { value: 'Total', colSpan: 4, readOnly: true },
-    { value: 2, colSpan: 2, readOnly: true },
-    { value: 2, colSpan: 2, readOnly: true },
-    { value: 2, readOnly: true },
-  ],
-];
+// const config = [
+//   // Begin header
+//   [
+//     { value: '', readOnly: true, colSpan: 4 },
+//     { value: 'Student 1', readOnly: true, colSpan: 2, id: 1 },
+//     { value: 'Student 2', readOnly: true, colSpan: 2, id: 2 },
+//     { value: 'Team', readOnly: true },
+//   ],
+//   // Begin column 1
+//   [
+//     { value: 'Columns 1', readOnly: true, rowSpan: 3, id: 1 }, // rowspan = so mentor
+//     { value: 50, readOnly: true, rowSpan: 3 },
+//     { value: 'Evaluator 1', readOnly: true, id: 1 },
+//     { value: 10, readOnly: true },
+//     { value: 2 }, // student 1
+//     { value: 2, rowSpan: 3, readOnly: true }, // total student 1
+//     { value: 4 }, // student 2
+//     { value: 2, rowSpan: 3, readOnly: true }, // total student 2
+//     { value: 2, rowSpan: 3, readOnly: true }, // total team
+//   ],
+//   [
+//     { value: 'Evaluator 2', readOnly: true },
+//     { value: 100, readOnly: true },
+//     { value: 2 }, // student 1
+//     { value: 4 }, // student 2
+//   ],
+//   [
+//     { value: 'Evaluator 3', readOnly: true },
+//     { value: 50, readOnly: true },
+//     { value: 2 }, // student 1
+//     { value: 4 }, // student 2
+//   ],
+//   // End column 1
+//   // Begin Total
+//   [
+//     { value: 'Total', colSpan: 4, readOnly: true },
+//     { value: 2, colSpan: 2, readOnly: true },
+//     { value: 2, colSpan: 2, readOnly: true },
+//     { value: 2, readOnly: true },
+//   ],
+// ];
 
 const fakeData = {
   students: [
@@ -114,23 +114,37 @@ const fakeData = {
           id: 1,
           weight: 10,
           name: 'Col 1',
-          grade: [
-            // Cột: evaluator, Hàng: student, số cuối: total
-            [1, 2, 3],
-            [4, 5, 6],
+          marks: [
+            {
+              id: 1,
+              totalForStudent: 30,
+              lecturers: [
+                {
+                  id: 1,
+                  value: 10,
+                },
+                {
+                  id: 2,
+                  value: 20,
+                },
+              ],
+            },
+            {
+              id: 2,
+              totalForStudent: 30,
+              lecturers: [
+                {
+                  id: 1,
+                  value: 10,
+                },
+                {
+                  id: 2,
+                  value: 20,
+                },
+              ],
+            },
           ],
           total: 10,
-        },
-        {
-          id: 2,
-          weight: 10,
-          name: 'Col 2',
-          grade: [
-            // Cột: evaluator, Hàng: student, số cuối: total
-            [7, 8, 9],
-            [10, 11, 12],
-          ],
-          total: 100,
         },
       ],
       total: [100, 200], // total student
@@ -153,15 +167,17 @@ function transformToGrid(data) {
   ];
 
   for (const z of data.checkpoints) {
+    // z = current checkpoints
     const grid = [header];
 
-    for (const i in z.columns) {
+    for (const i of z.columns) {
+      // i = current column
       const firstEvaluator = z.council.members[0];
       const evaluatorNum = z.council.members.length;
       const toPush = [
-        { value: z.columns[i].name, readOnly: true, rowSpan: evaluatorNum },
+        { value: i.name, readOnly: true, rowSpan: evaluatorNum },
         {
-          value: z.columns[i].weight,
+          value: i.weight,
           readOnly: true,
           rowSpan: evaluatorNum,
         },
@@ -169,17 +185,20 @@ function transformToGrid(data) {
         { value: firstEvaluator.weight, readOnly: true },
       ];
 
-      for (const j in data.students) {
+      for (const j of data.students) {
+        // j = current student
         toPush.push(
           {
-            value: z.columns[i].grade[j][0],
-            studentId: data.students[j].id,
+            value: i.marks
+              .find(e => e.id === j.id)
+              .lecturers.find(e => e.id === z.council.members[0].id).value,
+            studentId: j.id,
             lecturerId: z.council.members[0].id,
-            markColumnId: z.columns[i].id,
+            markColumnId: i.id,
             evaluationId: z.id,
           },
           {
-            value: z.columns[i].grade[j][z.columns[i].grade.length],
+            value: i.marks.find(e => e.id === j.id).totalForStudent,
             rowSpan: z.council.members.length,
             readOnly: true,
           }
@@ -187,24 +206,29 @@ function transformToGrid(data) {
       }
 
       toPush.push({
-        value: z.columns[i].total,
+        value: i.total,
         rowSpan: z.council.members.length,
         readOnly: true,
       });
 
       grid.push(toPush);
 
-      for (const k in z.council.members.slice(1)) {
+      for (const k of z.council.members.slice(1)) {
+        // k: current council members
         grid.push([
-          { value: z.council.members[+k + 1].code, readOnly: true },
-          { value: z.council.members[+k + 1].weight, readOnly: true },
-          ...z.columns[i].grade.map((x, index) => ({
-            value: x[+k + 1],
-            studentId: data.students[index].id,
-            lecturerId: z.council.members[+k + 1].id,
-            markColumnId: z.columns[i].id,
-            evaluationId: z.id,
-          })),
+          { value: k.code, readOnly: true },
+          { value: k.weight, readOnly: true },
+          ...data.students.map(x => {
+            return {
+              value: i.marks
+                .find(t => t.id === x.id)
+                .lecturers.find(t => t.id === k.id).value,
+              studentId: x.id,
+              lecturerId: k.id,
+              markColumnId: i.id,
+              evaluationId: z.id,
+            };
+          }),
         ]);
       }
     }
@@ -233,15 +257,15 @@ function transformToGrid(data) {
 }
 
 function transformToData(data) {
-  const grades = [];
+  const marks = [];
   for (const k of data) {
     for (const i of k.grid) {
       for (const j of i) {
-        if (j.readOnly !== true) grades.push(j);
+        if (j.readOnly !== true) marks.push(j);
       }
     }
   }
-  return grades;
+  return marks;
 }
 
 const Topic = ({ semester }) => {
@@ -318,6 +342,7 @@ const Topic = ({ semester }) => {
         data: transformers.up(data),
       })
         .then(loadData)
+        .then(() => toast.success('Save topic successfully!'))
         .catch(handleErrors);
     },
     [data, topicId]
@@ -346,6 +371,7 @@ const Topic = ({ semester }) => {
           })
             .then(res => {
               history.push('/semester/' + semId + '/topic');
+              toast.error('Delete topic successfully!');
             })
             .catch(handleErrors),
       });
@@ -430,7 +456,7 @@ const Topic = ({ semester }) => {
         <Col lg={12}>
           <CMSCard
             isLoading={isLoading}
-            title="Information of topic"
+            title={'Information of topic ' + (data.name || '')}
             toolbar={
               <>
                 <Button
@@ -455,6 +481,21 @@ const Topic = ({ semester }) => {
               </>
             }
           >
+            <Form.Group as={Row}>
+              <Form.Label column sm={3}>
+                Status
+              </Form.Label>
+              <Col sm={9}>
+                <span
+                  class={`label label-inline font-weight-bold label-${
+                    constants.statusClasses[data.status]
+                  }`}
+                  style={{ fontSize: '1.25rem', padding: '1rem' }}
+                >
+                  {constants.statusTitles[data.status]}
+                </span>
+              </Col>
+            </Form.Group>
             <Form.Group as={Row}>
               <Form.Label column sm={3}>
                 Department
@@ -811,10 +852,10 @@ const Topic = ({ semester }) => {
                           <td className="text-left pl-0 text-nowrap">
                             <span
                               className={`label label-lg label-light-${
-                                constants.statusClass[app.status]
+                                constantsA.statusClass[app.status]
                               } label-inline`}
                             >
-                              {constants.statusTitles[app.status]}
+                              {constantsA.statusTitles[app.status]}
                             </span>
                           </td>
                         </tr>
@@ -875,7 +916,7 @@ const Topic = ({ semester }) => {
                   </Card.Header>
                   <Accordion.Collapse eventKey="0">
                     <Card.Body>
-                      <div className="grade-table">
+                      <div className="marks-table">
                         <Datasheet
                           data={i.grid || []}
                           valueRenderer={cell => cell.value}

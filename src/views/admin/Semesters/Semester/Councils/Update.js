@@ -8,7 +8,7 @@ import { mDown as mDownLec } from 'modules/lecturer/transformers';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
 import { columnsTransformer } from 'utils/common';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import BootstrapTable from 'react-bootstrap-table-next';
 import toast from 'utils/toast';
 import cellEditFactory from 'react-bootstrap-table2-editor';

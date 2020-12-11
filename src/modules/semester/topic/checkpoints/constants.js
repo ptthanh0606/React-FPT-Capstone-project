@@ -1,4 +1,4 @@
-import { addMinutes, format, subMinutes } from 'date-fns';
+import { format, subMinutes } from 'date-fns';
 
 export const statusClasses = ['secondary', 'primary', 'success', 'danger'];
 export const statusTitles = ['Pending', 'Evaluating', 'Passed', 'Failed'];

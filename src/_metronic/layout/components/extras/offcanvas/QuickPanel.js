@@ -13,7 +13,6 @@ export function QuickPanel() {
   const role = useRecoilValue(roleSelector);
   const [selectedTab, setSelectedTab] = useState('Notifications');
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
   const [notifications, setNotifications] = useState([]);
   const [hasNext, setHasNext] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +29,7 @@ export function QuickPanel() {
         method: endpoints.LIST_NOTIFICATION.method,
         params: {
           pageNumber,
-          pageSize,
+          pageSize: 20,
         },
       })
         .then(res => {
@@ -41,7 +40,7 @@ export function QuickPanel() {
         .catch(handleErrors)
         .finally(() => setIsLoading(false));
     }
-  }, [pageNumber, pageSize, role]);
+  }, [pageNumber, role]);
 
   const loadNextPage = React.useCallback(() => {
     setPageNumber(v => v + 1);

@@ -215,10 +215,10 @@ export default function Topics() {
   React.useEffect(() => {
     setMeta(meta => ({
       ...meta,
-      title: 'Topics',
+      title: 'Topics of ' + (semester?.name || ''),
       breadcrumb: [
         { title: 'Semester', path: '/select-semester' },
-        { title: semester.name, path: '/select-semester/#' },
+        { title: semester?.name, path: '/select-semester/#' },
         { title: 'Topic', path: '/topic' },
         { title: 'All topics', path: '/topic/#' },
       ],
@@ -242,33 +242,37 @@ export default function Topics() {
   return (
     <Card>
       <CardHeader title="All topics">
-        <CardHeaderToolbar className="text-nowrap">
-          {role === 'lecturer' && (
-            <>
-              <Button
-                className={`ml-1 ${isSubmittedTopics && 'font-weight-bolder'}`}
-                variant={(isSubmittedTopics && 'primary') || 'link'}
-                onClick={handleLoadAllSubmitted}
-              >
-                Submitted
-              </Button>
-              <Button
-                className={`ml-1 ${isMentoringTopics && 'font-weight-bolder'}`}
-                variant={(isMentoringTopics && 'primary') || 'link'}
-                onClick={handleLoadAllMentoring}
-              >
-                Mentoring
-              </Button>
-              <Button
-                className={`ml-1 ${isAllTopics && 'font-weight-bolder'}`}
-                variant={(isAllTopics && 'primary') || 'link'}
-                onClick={handleLoadAllTopics}
-              >
-                All topic
-              </Button>
-            </>
-          )}
-        </CardHeaderToolbar>
+        {role === 'lecturer' && (
+          <CardHeaderToolbar className="text-nowrap">
+            <Button
+              className={`ml-2 ${
+                isSubmittedTopics ? 'font-weight-bolder' : 'text-primary'
+              }`}
+              variant={isSubmittedTopics && 'primary'}
+              onClick={handleLoadAllSubmitted}
+            >
+              Submitted
+            </Button>
+            <Button
+              className={`ml-2 ${
+                isMentoringTopics ? 'font-weight-bolder' : 'text-primary'
+              }`}
+              variant={isMentoringTopics && 'primary'}
+              onClick={handleLoadAllMentoring}
+            >
+              Mentoring
+            </Button>
+            <Button
+              className={`ml-2 ${
+                isAllTopics ? 'font-weight-bolder' : 'text-primary'
+              }`}
+              variant={isAllTopics && 'primary'}
+              onClick={handleLoadAllTopics}
+            >
+              All
+            </Button>
+          </CardHeaderToolbar>
+        )}
       </CardHeader>
       <CardBody>
         <Filters filters={filters} setFilters={setFilters} />

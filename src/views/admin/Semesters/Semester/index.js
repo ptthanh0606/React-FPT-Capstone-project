@@ -20,7 +20,6 @@ import Topic from './Topics/Topic';
 import ActiveStudents from './ActiveStudents';
 import Councils from './Councils';
 import Teams from './Teams';
-import Checkpoints from '../../CheckpointTemplates';
 
 import request from 'utils/request';
 import { READ_SEMESTER } from 'endpoints';
@@ -65,10 +64,6 @@ const Semester = () => {
 
   const TeamsWithSemester = React.useCallback(() => {
     return withSemesterInfo(data, Teams);
-  }, [data]);
-
-  const CheckpointsWithSemester = React.useCallback(() => {
-    return withSemesterInfo(data, Checkpoints);
   }, [data]);
 
   const handleRemove = React.useCallback(
@@ -162,35 +157,28 @@ const Semester = () => {
                 Information
               </NavLink>
               <NavLink
-                to={
-                  '/semester/' + id + '/active-student' + '?dep=all&status=all'
-                }
+                to={'/semester/' + id + '/active-student'}
                 activeClassName={styles['active']}
                 className={styles['menu-item']}
               >
                 Active students
               </NavLink>
               <NavLink
-                to={'/semester/' + id + '/council' + '?dep=all'}
+                to={'/semester/' + id + '/council'}
                 activeClassName={styles['active']}
                 className={styles['menu-item']}
               >
                 Councils
               </NavLink>
               <NavLink
-                to={'/semester/' + id + '/topic' + '?dep=all&status=all'}
+                to={'/semester/' + id + '/topic'}
                 activeClassName={styles['active']}
                 className={styles['menu-item']}
               >
                 Topics
               </NavLink>
               <NavLink
-                to={
-                  '/semester/' +
-                  id +
-                  '/team' +
-                  '?dep=all&status=all&lock=all&private=all'
-                }
+                to={'/semester/' + id + '/team'}
                 activeClassName={styles['active']}
                 className={styles['menu-item']}
               >

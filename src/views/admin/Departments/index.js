@@ -14,8 +14,8 @@ import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 
-import * as transformers from '../../../modules/department/transformers';
-import * as constants from '../../../modules/department/constants';
+import * as transformers from 'modules/department/transformers';
+import * as constants from 'modules/department/constants';
 
 export default function Departments() {
   const confirm = useConfirm();
