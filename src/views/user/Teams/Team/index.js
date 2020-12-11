@@ -69,7 +69,6 @@ const Team = () => {
     })
       .then(res => {
         const transformedRes = transformers.down(res.data.data);
-        console.log(transformedRes);
         // Check user co phai la leader trong team khong
         setIsUserLeader(transformedRes.leader?.value === currentUser.id);
         // Check user co phai la member trong team khong
@@ -100,7 +99,6 @@ const Team = () => {
     })
       .then(res => {
         const transformedRes = transformers.down(res.data.data);
-        console.log(transformedRes);
         // Check user co phai la leader trong team khong
         setIsUserLeader(transformedRes.leader?.value === currentUser.id);
         // Check user co phai la member trong team khong

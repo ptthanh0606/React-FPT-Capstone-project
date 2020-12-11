@@ -158,7 +158,6 @@ const Topic = () => {
     })
       .then(res => {
         const transformedRes = transformers.downRead(res.data.data);
-        console.log(transformedRes);
         checkPreConditions(transformedRes);
 
         setCurrentTopic(transformedRes);
@@ -171,6 +170,7 @@ const Topic = () => {
 
   const fetchTopic = React.useCallback(() => {
     // fetch Topic
+    setIsProcessing(true);
     request({
       to: endpoints.READ_TOPIC(id).url,
       method: endpoints.READ_TOPIC(id).method,
@@ -178,11 +178,12 @@ const Topic = () => {
       .then(res => {
         const transformedRes = transformers.downRead(res.data.data);
         checkPreConditions(transformedRes);
-        console.log(transformedRes);
         setCurrentTopic(transformedRes);
+        setIsProcessing(false);
       })
       .catch(err => {
         history.push('/topic');
+        setIsProcessing(false);
         handleErrors(err);
       });
   }, [checkPreConditions, history, id]);
@@ -741,6 +742,7 @@ const Topic = () => {
             submitter={currentTopic.submitter}
             isUserApprover={isUserApprover}
             onFeedbackSuccess={onFeedbackSuccess}
+            isLoading={isProcessing}
           />
         </div>
         <div className="col-lg-6 col-xxl-3">
