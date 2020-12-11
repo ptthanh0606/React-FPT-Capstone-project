@@ -3,9 +3,9 @@ import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
 import * as endpoints from 'endpoints';
-import * as transformers from '../../../modules/semester/team/transformers';
+import * as transformers from 'modules/semester/team/transformers';
 import {
-  createColumnsForStudentRole,
+  createColumns,
   createTeamAsStudentModalConfigs,
   defaultSorted,
   sizePerPageList,
@@ -237,7 +237,7 @@ export default function Teams() {
   // ---------------------------------------------------------------------------
 
   const columns = React.useMemo(
-    () => createColumnsForStudentRole({ handleJoin }, currentRole),
+    () => createColumns({ handleJoin }, currentRole),
     [currentRole, handleJoin],
     []
   );

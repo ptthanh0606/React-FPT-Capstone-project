@@ -188,6 +188,9 @@ const AssignCheckpointTemplateModal = ({
             rowIndex,
             columnIndex
           ) => <DateTimeEditor {...editorProps} value={value} />,
+          style: {
+            width: '100px',
+          },
         },
         {
           dataField: 'evaluateDueDate',
@@ -208,6 +211,9 @@ const AssignCheckpointTemplateModal = ({
             rowIndex,
             columnIndex
           ) => <DateTimeEditor {...editorProps} value={value} />,
+          style: {
+            width: '100px',
+          },
         },
         {
           dataField: 'council',
@@ -226,8 +232,11 @@ const AssignCheckpointTemplateModal = ({
           ) => (
             <CouncilEditor {...editorProps} value={value} semesterId={semId} />
           ),
-          classes: 'text-right pr-0',
+          classes: 'text-right',
           headerClasses: 'text-right pr-3',
+          style: {
+            minWidth: '200px',
+          },
         },
       ]),
     [semId]

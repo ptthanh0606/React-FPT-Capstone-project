@@ -29,9 +29,11 @@ import { mDown as mDownLec } from 'modules/lecturer/transformers';
 import { useSetRecoilState } from 'recoil';
 import Member from 'views/user/Teams/Team/Member';
 import Comment from 'components/CMSWidgets/FeedbackSection/Comment';
-import * as constants from 'modules/semester/team/application/constants';
+import * as constants from 'modules/semester/topic/constants';
+import * as constantsA from 'modules/semester/team/application/constants';
 import * as appTransformers from 'modules/semester/team/application/transformers';
 import useConfirm from 'utils/confirm';
+import toast from 'utils/toast';
 
 const mdParser = new MarkdownIt();
 
@@ -257,15 +259,15 @@ function transformToGrid(data) {
 }
 
 function transformToData(data) {
-  const markss = [];
+  const marks = [];
   for (const k of data) {
     for (const i of k.grid) {
       for (const j of i) {
-        if (j.readOnly !== true) markss.push(j);
+        if (j.readOnly !== true) marks.push(j);
       }
     }
   }
-  return markss;
+  return marks;
 }
 
 const Topic = ({ semester }) => {
@@ -342,6 +344,7 @@ const Topic = ({ semester }) => {
         data: transformers.up(data),
       })
         .then(loadData)
+        .then(() => toast.success('Save topic successfully!'))
         .catch(handleErrors);
     },
     [data, topicId]
@@ -370,6 +373,7 @@ const Topic = ({ semester }) => {
           })
             .then(res => {
               history.push('/semester/' + semId + '/topic');
+              toast.error('Delete topic successfully!');
             })
             .catch(handleErrors),
       });
@@ -454,7 +458,7 @@ const Topic = ({ semester }) => {
         <Col lg={12}>
           <CMSCard
             isLoading={isLoading}
-            title="Information of topic"
+            title={'Information of topic ' + (data.name || '')}
             toolbar={
               <>
                 <Button
@@ -479,6 +483,21 @@ const Topic = ({ semester }) => {
               </>
             }
           >
+            <Form.Group as={Row}>
+              <Form.Label column sm={3}>
+                Status
+              </Form.Label>
+              <Col sm={9}>
+                <span
+                  class={`label label-inline font-weight-bold label-${
+                    constants.statusClasses[data.status]
+                  }`}
+                  style={{ fontSize: '1.25rem', padding: '1rem' }}
+                >
+                  {constants.statusTitles[data.status]}
+                </span>
+              </Col>
+            </Form.Group>
             <Form.Group as={Row}>
               <Form.Label column sm={3}>
                 Department
@@ -835,10 +854,10 @@ const Topic = ({ semester }) => {
                           <td className="text-left pl-0 text-nowrap">
                             <span
                               className={`label label-lg label-light-${
-                                constants.statusClass[app.status]
+                                constantsA.statusClass[app.status]
                               } label-inline`}
                             >
-                              {constants.statusTitles[app.status]}
+                              {constantsA.statusTitles[app.status]}
                             </span>
                           </td>
                         </tr>

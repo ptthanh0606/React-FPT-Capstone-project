@@ -14,7 +14,7 @@ import request from 'utils/request';
 import * as endpoints from 'endpoints';
 import { handleErrors } from 'utils/common';
 
-import * as transformers from '../../../../modules/semester/team/transformers';
+import * as transformers from 'modules/semester/team/transformers';
 
 import Member from './Member';
 import Application from './Application';

@@ -6,7 +6,7 @@ import { Col, Row } from 'react-bootstrap';
 
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
-import * as transformers from '../../../../modules/semester/council/transformers';
+import * as transformers from 'modules/semester/council/transformers';
 import Update from '../../../admin/Semesters/Semester/Councils/Update';
 
 import metaAtom from 'store/meta';

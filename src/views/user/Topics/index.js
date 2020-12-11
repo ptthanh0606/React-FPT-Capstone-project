@@ -1,5 +1,4 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
 import {
   Card,
   CardBody,
@@ -11,7 +10,6 @@ import Filters from './Filters';
 
 import metaAtom from 'store/meta';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
-import useConfirm from 'utils/confirm';
 import CMSModal from 'components/CMSModal/CMSModal';
 
 import toast from 'utils/toast';
@@ -28,7 +26,6 @@ import roleSelector from 'auth/recoil/selectors/role';
 import { Button } from 'react-bootstrap';
 
 export default function Topics() {
-  const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
   const semester = useRecoilValue(semesterStore);
   const role = useRecoilValue(roleSelector);
@@ -208,16 +205,6 @@ export default function Topics() {
 
   // ---------------------------------------------------------------------------
 
-  const onAssignCheckpointTemplate = React.useCallback(
-    data => {
-      console.log({
-        ...data,
-        topicIds: selected,
-      });
-    },
-    [selected]
-  );
-
   React.useEffect(() => {
     loadTopics('all');
   }, [loadTopics]);
@@ -254,22 +241,28 @@ export default function Topics() {
       <CardHeader title="All topics">
         <CardHeaderToolbar className="text-nowrap">
           <Button
-            className={`ml-2 ${isSubmittedTopics && 'font-weight-bolder'}`}
-            variant={(isSubmittedTopics && 'primary') || 'link'}
+            className={`ml-2 ${
+              isSubmittedTopics ? 'font-weight-bolder' : 'text-primary'
+            }`}
+            variant={isSubmittedTopics && 'primary'}
             onClick={handleLoadAllSubmitted}
           >
             Submitted
           </Button>
           <Button
-            className={`ml-2 ${isMentoringTopics && 'font-weight-bolder'}`}
-            variant={(isMentoringTopics && 'primary') || 'link'}
+            className={`ml-2 ${
+              isMentoringTopics ? 'font-weight-bolder' : 'text-primary'
+            }`}
+            variant={isMentoringTopics && 'primary'}
             onClick={handleLoadAllMentoring}
           >
             Mentoring
           </Button>
           <Button
-            className={`ml-2 ${isAllTopics && 'font-weight-bolder'}`}
-            variant={(isAllTopics && 'primary') || 'link'}
+            className={`ml-2 ${
+              isAllTopics ? 'font-weight-bolder' : 'text-primary'
+            }`}
+            variant={isAllTopics && 'primary'}
             onClick={handleLoadAllTopics}
           >
             All topic

@@ -14,10 +14,10 @@ import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 
 import * as endpoints from 'endpoints';
-import * as transformers from '../../../../modules/semester/topic/transformers';
-import * as constants from '../../../../modules/semester/topic/constants';
-import * as teamTransformers from '../../../../modules/semester/team/transformers';
-import * as departmentTransformers from '../../../../modules/department/transformers';
+import * as transformers from 'modules/semester/topic/transformers';
+import * as constants from 'modules/semester/topic/constants';
+import * as teamTransformers from 'modules/semester/team/transformers';
+import * as departmentTransformers from 'modules/department/transformers';
 import { rowActionFormatter } from './constants';
 
 import CMSModal from 'components/CMSModal/CMSModal';

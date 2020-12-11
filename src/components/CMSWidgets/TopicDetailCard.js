@@ -3,7 +3,7 @@ import { toAbsoluteUrl } from '_metronic/_helpers';
 import SVG from 'react-inlinesvg';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import FeedbackSection from './FeedbackSection';
-import * as constants from '../../modules/semester/topic/constants';
+import * as constants from 'modules/semester/topic/constants';
 import md5 from 'utils/md5';
 import userAtom from 'store/user';
 import { useRecoilValue } from 'recoil';

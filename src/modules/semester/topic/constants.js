@@ -255,7 +255,7 @@ export const createColumns = (
         return (
           <Link className="text-dark font-weight-bold" to={'./topic/' + row.id}>
             <div>
-              <div className="text-nowrap text-dark-75 font-weight-bolder font-size-lg mb-0">
+              <div className="text-nowrap text-dark-75 font-weight-bold font-size-lg mb-0">
                 {row.name}
               </div>
               <span className="text-muted font-weight-bold text-hover-primary">
@@ -332,7 +332,7 @@ export const createColumns = (
               ? cellContent
                   .map(i => (
                     <Link
-                      className="text-dark font-weight-bold"
+                      className="text-dark font-weight-bold text-nowrap"
                       to={'/profile/student/' + i.value}
                     >
                       {i.label}
