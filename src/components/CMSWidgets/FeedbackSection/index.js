@@ -55,11 +55,7 @@ const FeedbackSection = ({
 
   return (
     <>
-      <div
-        className={className}
-        id="kt_apps_contacts_view_tab_1"
-        role="tabpanel"
-      >
+      <div className={className}>
         <div className="my-5">
           <span className="text-dark font-size-h5 font-weight-bold">
             Feedback for this topic
@@ -127,7 +123,7 @@ const FeedbackSection = ({
         <div className="timeline timeline-3">
           <div className="my-5">
             <span className="text-dark font-size-h5 font-weight-bold">
-              What other people think
+              What you and other people think:
             </span>
           </div>
           <div className="timeline-items">

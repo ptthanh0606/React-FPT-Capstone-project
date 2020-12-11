@@ -212,6 +212,47 @@ export const submitterModalConfigs = [
     placeholder: '4',
   },
   {
+    name: 'department',
+    type: 'selectBoxAsync',
+    label: 'Department',
+    smallLabel: 'This team belong to which department, cannot update',
+    readOnlyWhenEdit: true,
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_DEPARTMENT.url,
+        method: endpoints.LIST_DEPARTMENT.method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownDep) || []);
+        })
+        .catch(() => callback([]));
+    },
+  },
+  {
+    name: 'team',
+    type: 'selectBoxAsync',
+    label: 'Student team',
+    smallLabel: 'Student team taking this topic',
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_TEAM.url,
+        method: endpoints.LIST_TEAM.method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownTeam) || []);
+        })
+        .catch(() => callback([]));
+    },
+  },
+  {
     name: 'keywords',
     type: 'text',
     label: 'Keywords',

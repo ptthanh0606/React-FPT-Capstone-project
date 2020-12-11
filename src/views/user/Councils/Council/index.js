@@ -175,7 +175,6 @@ const Council = () => {
     })
       .then(res => {
         const transformedRes = down(res.data.data);
-        console.log(transformedRes);
         setCurrentCouncil(transformedRes);
         setIsUserInCouncil(
           transformedRes.members.some(({ value }) => value === currentUser.id)

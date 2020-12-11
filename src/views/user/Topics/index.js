@@ -22,12 +22,14 @@ import * as transformers from 'modules/semester/topic/transformers';
 import * as constants from 'modules/semester/topic/constants';
 
 import semesterStore from 'store/semester';
+import userAtom from 'store/user';
 import roleSelector from 'auth/recoil/selectors/role';
 import { Button } from 'react-bootstrap';
 
 export default function Topics() {
   const setMeta = useSetRecoilState(metaAtom);
   const semester = useRecoilValue(semesterStore);
+  const currentUser = useRecoilValue(userAtom);
   const role = useRecoilValue(roleSelector);
 
   //----------------------------------------------------------------------------
@@ -80,6 +82,7 @@ export default function Topics() {
         data: {
           ...transformers.up(fieldData),
           semesterId: Number(semester.id),
+          submitterId: currentUser.id,
         },
         params: {
           semesterId: semester.id,
@@ -94,7 +97,7 @@ export default function Topics() {
         .catch(handleErrors)
         .finally(() => setIsProcessing(false));
     },
-    [semester.id]
+    [currentUser.id, semester.id]
   );
 
   const loadTopics = React.useCallback(

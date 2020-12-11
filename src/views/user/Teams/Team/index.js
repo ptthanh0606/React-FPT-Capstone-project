@@ -7,7 +7,7 @@ import metaAtom from 'store/meta';
 import userAtom from 'store/user';
 import { role } from 'auth/recoil/selectors';
 
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 
 import request from 'utils/request';
@@ -69,7 +69,6 @@ const Team = () => {
     })
       .then(res => {
         const transformedRes = transformers.down(res.data.data);
-        console.log(transformedRes);
         // Check user co phai la leader trong team khong
         setIsUserLeader(transformedRes.leader?.value === currentUser.id);
         // Check user co phai la member trong team khong
@@ -100,7 +99,6 @@ const Team = () => {
     })
       .then(res => {
         const transformedRes = transformers.down(res.data.data);
-        console.log(transformedRes);
         // Check user co phai la leader trong team khong
         setIsUserLeader(transformedRes.leader?.value === currentUser.id);
         // Check user co phai la member trong team khong
@@ -464,18 +462,31 @@ const Team = () => {
                     Topic that this team applied
                   </span>
                 </div>
-                <span
-                  className={`symbol symbol-light-${
-                    (currentTeam?.applications?.length ===
-                      currentSemester.maxApplications &&
-                      'danger') ||
-                    'success'
-                  } symbol-45`}
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={
+                    <Tooltip>Amount of pending topics team can send.</Tooltip>
+                  }
                 >
-                  <span className="symbol-label font-weight-bolder font-size-h6">
-                    {currentSemester.maxApplications}
+                  <span
+                    className={`symbol symbol-light-${
+                      (currentTeam?.applications?.filter(
+                        app => app.status === 0
+                      ).length === currentSemester.maxApplications &&
+                        'danger') ||
+                      'success'
+                    } symbol-45`}
+                  >
+                    <span className="symbol-label font-weight-bolder font-size-h6">
+                      {currentTeam?.applications
+                        ? currentTeam?.applications?.filter(
+                            app => app.status === 0
+                          ).length
+                        : 0}
+                      /{currentSemester.maxApplications}
+                    </span>
                   </span>
-                </span>
+                </OverlayTrigger>
               </div>
               <div className="d-flex justify-content-between flex-grow-1 px-8">
                 <div className="table-responsive">
