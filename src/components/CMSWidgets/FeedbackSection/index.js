@@ -62,7 +62,7 @@ const FeedbackSection = ({
           </span>
         </div>
 
-        {topicStatus === 'Pending' && isUserApprover && isInDep && (
+        {topicStatus === 'Waiting' && isUserApprover && isInDep && (
           <>
             <form className="form">
               <div className="form-group">
@@ -112,7 +112,7 @@ const FeedbackSection = ({
           />
         )}
 
-        {topicStatus !== 'Pending' && (
+        {topicStatus !== 'Waiting' && (
           <MessageTile
             iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Stop.svg')}
             content="Feedback session is over"
@@ -139,7 +139,7 @@ const FeedbackSection = ({
               ))
             ) : (
               <>
-                {topicStatus === 'Pending' ? (
+                {topicStatus === 'Waiting' ? (
                   <>
                     {isInDep && (
                       <MessageTile

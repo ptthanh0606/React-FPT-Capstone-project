@@ -26,8 +26,8 @@ export const statusClasses = [
 ];
 export const statusTitles = [
   'Not in a team',
-  'Matching',
-  'Matched',
+  'Assigning',
+  'Assigned',
   'Passed',
   'Failed',
 ];

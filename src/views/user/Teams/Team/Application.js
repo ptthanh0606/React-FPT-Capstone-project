@@ -100,7 +100,7 @@ const Application = ({
       </td>
       {/* Check xem user login co phai la student khong => check xem badge co phai la pending khong => check xem student dang login co phai leader khong => leader co the cancel application */}
       {userRole === 'student' &&
-        statusTitles[status] === 'Pending' &&
+        statusTitles[status] === 'Waiting' &&
         currentUser.id === leaderId && (
           <td className="text-left p-0">
             <button

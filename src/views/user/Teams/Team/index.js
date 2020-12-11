@@ -379,7 +379,7 @@ const Team = () => {
             teamName={currentTeam?.name || ''}
             department={currentTeam?.department?.fullLabel}
             teamType={currentTeam?.privacy ? 'Public' : 'Private'}
-            teamStatus={currentTeam?.status ? 'Matched' : 'Matching'}
+            teamStatus={currentTeam?.status ? 'Assigned' : 'Assigning'}
             withTopic={currentTeam?.topic}
           />
         </div>
