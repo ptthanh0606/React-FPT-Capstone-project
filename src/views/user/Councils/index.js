@@ -1,5 +1,4 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
 import {
   Card,
   CardBody,
@@ -12,7 +11,6 @@ import Filters from './Filters';
 import metaAtom from 'store/meta';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
 
-import toast from 'utils/toast';
 import { useDebounce } from 'use-debounce';
 import request from 'utils/request';
 import { handleErrors } from 'utils/common';
@@ -30,7 +28,7 @@ export default function Councils() {
   const role = useRecoilValue(roleSelector);
   const [isMy, setIsMy] = React.useState(false);
 
-  const [l, loadData] = React.useReducer(() => ({}), {});
+  const [l] = React.useReducer(() => ({}), {});
 
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);

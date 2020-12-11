@@ -1,4 +1,3 @@
-import CMSList from 'components/CMSList';
 import TeamHeader from 'components/CMSWidgets/TeamHeader';
 import UserCard from 'components/CMSWidgets/UserCard';
 import React from 'react';

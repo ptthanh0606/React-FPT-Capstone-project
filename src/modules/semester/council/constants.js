@@ -3,7 +3,6 @@ import React from 'react';
 import { columnsTransformer } from 'utils/common';
 import { Link } from 'react-router-dom';
 import * as endpoints from 'endpoints';
-import { mDown as mDownDep } from 'modules/department/transformers';
 import { mDown as mDownLec } from 'modules/lecturer/transformers';
 import request from 'utils/request';
 

@@ -9,7 +9,6 @@ import CMSCard from 'components/Card';
 import Button from 'components/Button';
 import MdEditor from 'react-markdown-editor-lite';
 import metaAtom from 'store/meta';
-import { format } from 'date-fns';
 import Datasheet from 'react-datasheet';
 import './Topic.scss';
 
@@ -20,7 +19,6 @@ import MarkdownIt from 'markdown-it';
 import ToggleSwitch from 'components/ToggleSwitch/ToggleSwitch';
 import SelectTagInput from 'components/TagInput/SelectTagInput';
 
-import { mDown as mDownDep } from 'modules/department/transformers';
 import {
   mDown as mDownTeam,
   down as downTeam,
@@ -37,47 +35,47 @@ import toast from 'utils/toast';
 
 const mdParser = new MarkdownIt();
 
-const config = [
-  // Begin header
-  [
-    { value: '', readOnly: true, colSpan: 4 },
-    { value: 'Student 1', readOnly: true, colSpan: 2, id: 1 },
-    { value: 'Student 2', readOnly: true, colSpan: 2, id: 2 },
-    { value: 'Team', readOnly: true },
-  ],
-  // Begin column 1
-  [
-    { value: 'Columns 1', readOnly: true, rowSpan: 3, id: 1 }, // rowspan = so mentor
-    { value: 50, readOnly: true, rowSpan: 3 },
-    { value: 'Evaluator 1', readOnly: true, id: 1 },
-    { value: 10, readOnly: true },
-    { value: 2 }, // student 1
-    { value: 2, rowSpan: 3, readOnly: true }, // total student 1
-    { value: 4 }, // student 2
-    { value: 2, rowSpan: 3, readOnly: true }, // total student 2
-    { value: 2, rowSpan: 3, readOnly: true }, // total team
-  ],
-  [
-    { value: 'Evaluator 2', readOnly: true },
-    { value: 100, readOnly: true },
-    { value: 2 }, // student 1
-    { value: 4 }, // student 2
-  ],
-  [
-    { value: 'Evaluator 3', readOnly: true },
-    { value: 50, readOnly: true },
-    { value: 2 }, // student 1
-    { value: 4 }, // student 2
-  ],
-  // End column 1
-  // Begin Total
-  [
-    { value: 'Total', colSpan: 4, readOnly: true },
-    { value: 2, colSpan: 2, readOnly: true },
-    { value: 2, colSpan: 2, readOnly: true },
-    { value: 2, readOnly: true },
-  ],
-];
+// const config = [
+//   // Begin header
+//   [
+//     { value: '', readOnly: true, colSpan: 4 },
+//     { value: 'Student 1', readOnly: true, colSpan: 2, id: 1 },
+//     { value: 'Student 2', readOnly: true, colSpan: 2, id: 2 },
+//     { value: 'Team', readOnly: true },
+//   ],
+//   // Begin column 1
+//   [
+//     { value: 'Columns 1', readOnly: true, rowSpan: 3, id: 1 }, // rowspan = so mentor
+//     { value: 50, readOnly: true, rowSpan: 3 },
+//     { value: 'Evaluator 1', readOnly: true, id: 1 },
+//     { value: 10, readOnly: true },
+//     { value: 2 }, // student 1
+//     { value: 2, rowSpan: 3, readOnly: true }, // total student 1
+//     { value: 4 }, // student 2
+//     { value: 2, rowSpan: 3, readOnly: true }, // total student 2
+//     { value: 2, rowSpan: 3, readOnly: true }, // total team
+//   ],
+//   [
+//     { value: 'Evaluator 2', readOnly: true },
+//     { value: 100, readOnly: true },
+//     { value: 2 }, // student 1
+//     { value: 4 }, // student 2
+//   ],
+//   [
+//     { value: 'Evaluator 3', readOnly: true },
+//     { value: 50, readOnly: true },
+//     { value: 2 }, // student 1
+//     { value: 4 }, // student 2
+//   ],
+//   // End column 1
+//   // Begin Total
+//   [
+//     { value: 'Total', colSpan: 4, readOnly: true },
+//     { value: 2, colSpan: 2, readOnly: true },
+//     { value: 2, colSpan: 2, readOnly: true },
+//     { value: 2, readOnly: true },
+//   ],
+// ];
 
 const fakeData = {
   students: [

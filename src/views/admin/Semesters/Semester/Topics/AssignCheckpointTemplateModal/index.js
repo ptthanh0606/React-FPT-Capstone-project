@@ -5,7 +5,6 @@ import request from 'utils/request';
 import * as endpoints from 'endpoints';
 import { columnsTransformer, handleErrors } from 'utils/common';
 import BootstrapTable from 'react-bootstrap-table-next';
-import toast from 'utils/toast';
 import cellEditFactory from 'react-bootstrap-table2-editor';
 import { addMinutes, format, subMinutes } from 'date-fns';
 import SelectTagInput from 'components/TagInput/SelectTagInput';

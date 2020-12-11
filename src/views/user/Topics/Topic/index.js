@@ -32,7 +32,6 @@ const Topic = () => {
   const history = useHistory();
   const { id } = useParams();
   const confirm = useConfirm();
-  const [l, loadData] = React.useReducer(() => ({}), {});
 
   // ----------------------------------------------------------
 
