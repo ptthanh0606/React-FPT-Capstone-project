@@ -24,7 +24,7 @@ import * as constants from 'modules/semester/activeStudent/constants';
 import AddActiveStudentModal from './AddActiveStudentModal';
 
 export const statusClasses = ['danger', 'info', 'success', ''];
-export const statusTitles = ['Not in a team', 'Matching', 'Matched', ''];
+export const statusTitles = ['Not in a team', 'Assigning', 'Assigned', ''];
 
 export default function ActiveStudents({ semester }) {
   const confirm = useConfirm();

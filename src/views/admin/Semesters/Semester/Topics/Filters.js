@@ -66,11 +66,11 @@ export default function CustomersFilter({ filters, setFilters }) {
                   value={values.status}
                 >
                   <option value="">All</option>
-                  <option value="0">Pending</option>
+                  <option value="0">Waiting</option>
                   <option value="1">Rejected</option>
                   <option value="2">Approved</option>
                   <option value="3">Ready</option>
-                  <option value="4">Matched</option>
+                  <option value="4">Assigned</option>
                   <option value="5">Passed</option>
                   <option value="6">Failed</option>
                 </select>

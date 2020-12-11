@@ -17,9 +17,6 @@ export const sizePerPageList = [
   { text: '100', value: 100 },
 ];
 
-export const statusClasses = ['danger', 'success', 'info', ''];
-export const statusTitles = ['Finished', 'In progress', 'Preparing', ''];
-
 export const createColumns = ({ handleEdit, handleRemove }) => {
   const cols = [
     {

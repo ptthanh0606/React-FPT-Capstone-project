@@ -67,8 +67,8 @@ export default function CustomersFilter({ filters, setFilters }) {
                 >
                   <option value="">All</option>
                   <option value="0">Not in a team</option>
-                  <option value="1">Matching</option>
-                  <option value="2">Matched</option>
+                  <option value="1">Assigning</option>
+                  <option value="2">Assigned</option>
                   <option value="3">Passed</option>
                   <option value="4">Failed</option>
                 </select>
