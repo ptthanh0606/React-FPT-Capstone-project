@@ -337,11 +337,11 @@ const AssignCheckpointTemplateModal = ({
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={onSubmit}>
-            Save
-          </Button>
           <Button variant="secondary" onClick={onHide}>
             Close
+          </Button>
+          <Button variant="primary" onClick={onSubmit}>
+            Save
           </Button>
         </Modal.Footer>
       </Modal>
