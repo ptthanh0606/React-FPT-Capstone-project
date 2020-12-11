@@ -1,7 +1,7 @@
 import React from 'react';
 
 export const rowActionFormatter = statusCode => {
-  const status = ['Pending', 'Approved', 'Rejected'];
+  const status = ['Waiting', 'Approved', 'Rejected'];
   const cssStatus = ['warning', 'success', 'danger'];
 
   return (

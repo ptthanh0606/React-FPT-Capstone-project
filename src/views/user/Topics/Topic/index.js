@@ -458,7 +458,7 @@ const Topic = () => {
         fetchDepartment(data.department.value);
       } else {
         if (
-          !['Pending', 'Approved', 'Rejected', 'Ready'].includes(
+          !['Waiting', 'Approved', 'Rejected', 'Ready'].includes(
             statusTitles[data.status]
           )
         ) {
@@ -843,7 +843,7 @@ const Topic = () => {
         case 'lecturer':
           buttons = (
             <>
-              {statusTitles[currentTopic.status] === 'Pending' &&
+              {statusTitles[currentTopic.status] === 'Waiting' &&
                 currentTopic.submitter.value === currentUser.id && (
                   <>
                     <button
@@ -878,7 +878,7 @@ const Topic = () => {
                     Become a mentor
                   </button>
                 )}
-              {statusTitles[currentTopic.status] === 'Pending' &&
+              {statusTitles[currentTopic.status] === 'Waiting' &&
                 currentTopic.submitter.value === currentUser.id && (
                   <button
                     type="button"
@@ -1033,7 +1033,7 @@ const Topic = () => {
       <div className="row">
         <div
           className={`col-lg-12 col-xxl-${
-            ['Pending', 'Rejected'].includes(statusTitles[currentTopic.status])
+            ['Waiting', 'Rejected'].includes(statusTitles[currentTopic.status])
               ? '12'
               : '9'
           }`}
@@ -1079,7 +1079,7 @@ const Topic = () => {
               />
             )}
 
-          {statusTitles[currentTopic.status] === 'Matched' && (
+          {statusTitles[currentTopic.status] === 'Assigned' && (
             <GroupCard
               className="gutter-b"
               title="Assigned team"
@@ -1087,7 +1087,7 @@ const Topic = () => {
               role="student"
               group={currentTopic.team?.members}
               leaderId={studentLeaderId}
-              fallbackMsg={'Matched but no team? This might be a problem...'}
+              fallbackMsg={'Assigned but no team? This might be a problem...'}
               toolBar={
                 !!currentTopic.team?.members.length && (
                   <Link
@@ -1101,7 +1101,7 @@ const Topic = () => {
             />
           )}
 
-          {!['Pending', 'Rejected'].includes(
+          {!['Waiting', 'Rejected'].includes(
             statusTitles[currentTopic.status]
           ) && (
             <GroupCard

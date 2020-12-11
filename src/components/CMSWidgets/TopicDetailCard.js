@@ -217,7 +217,7 @@ const TopicDetailCard = ({
                 </div>
               </div>
 
-              {statusTitles[status] !== 'Matched' && (
+              {statusTitles[status] !== 'Assigned' && (
                 <div className="d-flex align-items-center flex-lg-fill my-1">
                   <span className="mr-4">
                     <i className="flaticon-file-2 icon-2x text-muted font-weight-bold"></i>
@@ -233,7 +233,7 @@ const TopicDetailCard = ({
 
             <div className="separator separator-solid my-7"></div>
 
-            {['Pending', 'Approved'].includes(statusTitles[status]) && (
+            {['Waiting', 'Approved'].includes(statusTitles[status]) && (
               <FeedbackSection
                 className=""
                 feedbacks={feedbacks}
@@ -246,7 +246,7 @@ const TopicDetailCard = ({
               />
             )}
 
-            {['Matched', 'Pass', 'Failed'].includes(statusTitles[status]) &&
+            {['Assigned', 'Pass', 'Failed'].includes(statusTitles[status]) &&
               isUserMentor && (
                 <GradingSection evaluations={evaluations || []} />
               )}
