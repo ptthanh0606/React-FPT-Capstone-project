@@ -14,8 +14,8 @@ import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 
-import * as transformers from '../../../modules/semester/transformers';
-import * as constants from '../../../modules/semester/constants';
+import * as transformers from 'modules/semester/transformers';
+import * as constants from 'modules/semester/constants';
 
 export default function Semesters() {
   const confirm = useConfirm();

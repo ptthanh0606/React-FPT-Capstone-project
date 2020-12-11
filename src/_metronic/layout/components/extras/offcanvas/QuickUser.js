@@ -8,12 +8,10 @@ import { useRecoilValue } from 'recoil';
 import userStore from 'store/user';
 
 import md5 from 'utils/md5';
-import { role } from 'auth/recoil/selectors';
 
 const QuickUser = () => {
   const history = useHistory();
   const user = useRecoilValue(userStore);
-  const userRole = useRecoilValue(role);
 
   const logoutClick = () => {
     const toggle = document.getElementById('kt_quick_user_toggle');

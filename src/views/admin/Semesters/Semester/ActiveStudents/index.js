@@ -12,7 +12,6 @@ import { useParams } from 'react-router-dom';
 import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
 import useConfirm from 'utils/confirm';
-import CMSModal from 'components/CMSModal/CMSModal';
 
 import toast from 'utils/toast';
 import { useDebounce } from 'use-debounce';
@@ -20,8 +19,8 @@ import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 
-import * as transformers from '../../../../../modules/semester/activeStudent/transformers';
-import * as constants from '../../../../../modules/semester/activeStudent/constants';
+import * as transformers from 'modules/semester/activeStudent/transformers';
+import * as constants from 'modules/semester/activeStudent/constants';
 import AddActiveStudentModal from './AddActiveStudentModal';
 
 export const statusClasses = ['danger', 'info', 'success', ''];
@@ -49,11 +48,7 @@ export default function ActiveStudents({ semester }) {
 
   //----------------------------------------------------------------------------
 
-  const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
   const [showCreate, setShowCreate] = React.useState(false);
-  const [showUpdate, setShowUpdate] = React.useState(false);
-  const [editId, setEditId] = React.useState(0);
-  const [isProcessing, setIsProcessing] = React.useState(false);
 
   // ---------------------------------------------------------------------------
 
@@ -67,7 +62,6 @@ export default function ActiveStudents({ semester }) {
 
   const handleCreate = React.useCallback(
     fieldData => {
-      setIsProcessing(true);
       return request({
         to: endpoints.CREATE_ACTIVE_STUDENTS(semId).url,
         method: endpoints.CREATE_ACTIVE_STUDENTS(semId).method,
@@ -78,58 +72,10 @@ export default function ActiveStudents({ semester }) {
           setShowCreate(false);
           loadData();
         })
-        .catch(handleErrors)
-        .finally(() => setIsProcessing(false));
+        .catch(handleErrors);
     },
     [semId]
   );
-
-  // ---------------------------------------------------------------------------
-
-  // const hideUpdateModal = React.useCallback(() => {
-  //   setShowUpdate(false);
-  // }, []);
-
-  // const edit = React.useCallback(
-  //   fieldData => {
-  //     setIsProcessing(true);
-  //     request({
-  //       to: endpoints.UPDATE_ACTIVE_STUDENTS(semId, editId).url,
-  //       method: endpoints.UPDATE_ACTIVE_STUDENTS(semId, editId).method,
-  //       data: transformers.up(fieldData),
-  //     })
-  //       .then(res => {
-  //         toast.success('Update active student successfully');
-  //         setShowUpdate(false);
-  //         loadData();
-  //       })
-  //       .catch(handleErrors)
-  //       .finally(() => setIsProcessing(false));
-  //   },
-  //   [editId, semId]
-  // );
-
-  // const handleEdit = React.useCallback(
-  //   e => {
-  //     e.preventDefault();
-  //     const id = Number(e.currentTarget.getAttribute('data-id'));
-  //     if (!Number.isInteger(id)) {
-  //       toast.error('Internal Server Error');
-  //       return;
-  //     }
-  //     request({
-  //       to: endpoints.READ_ACTIVE_STUDENTS(semId, id).url,
-  //       method: endpoints.READ_ACTIVE_STUDENTS(semId, id).method,
-  //     })
-  //       .then(res => {
-  //         setEditId(id);
-  //         setUpdateFieldTemplate(transformers.down(res.data?.data) || {});
-  //         setShowUpdate(true);
-  //       })
-  //       .catch(handleErrors);
-  //   },
-  //   [semId]
-  // );
 
   const handleRemove = React.useCallback(
     e => {
@@ -166,40 +112,40 @@ export default function ActiveStudents({ semester }) {
     [confirm, semId]
   );
 
-  const handleRemoveAllSelected = React.useCallback(
-    e => {
-      e.preventDefault();
-      const id = Number(e.currentTarget.getAttribute('data-id'));
-      if (!Number.isInteger(id)) {
-        toast.error('Internal Server Error');
-        return;
-      }
-      confirm({
-        title: 'Removal Confirmation',
-        body: (
-          <>
-            Do you wanna remove all selected students?
-            <br />
-            All students will be <b>permanently removed from this semester</b>.
-          </>
-        ),
-        onConfirm: () =>
-          request({
-            to: endpoints.DELETE_ACTIVE_STUDENTS(semId).url,
-            method: endpoints.DELETE_ACTIVE_STUDENTS(semId).method,
-            data: {
-              studentIDs: selected,
-            },
-          })
-            .then(res => {
-              loadData();
-              toast.success('Successfully remove active student');
-            })
-            .catch(handleErrors),
-      });
-    },
-    [confirm, selected, semId]
-  );
+  // const handleRemoveAllSelected = React.useCallback(
+  //   e => {
+  //     e.preventDefault();
+  //     const id = Number(e.currentTarget.getAttribute('data-id'));
+  //     if (!Number.isInteger(id)) {
+  //       toast.error('Internal Server Error');
+  //       return;
+  //     }
+  //     confirm({
+  //       title: 'Removal Confirmation',
+  //       body: (
+  //         <>
+  //           Do you wanna remove all selected students?
+  //           <br />
+  //           All students will be <b>permanently removed from this semester</b>.
+  //         </>
+  //       ),
+  //       onConfirm: () =>
+  //         request({
+  //           to: endpoints.DELETE_ACTIVE_STUDENTS(semId).url,
+  //           method: endpoints.DELETE_ACTIVE_STUDENTS(semId).method,
+  //           data: {
+  //             studentIDs: selected,
+  //           },
+  //         })
+  //           .then(res => {
+  //             loadData();
+  //             toast.success('Successfully remove active student');
+  //           })
+  //           .catch(handleErrors),
+  //     });
+  //   },
+  //   [confirm, selected, semId]
+  // );
 
   // ---------------------------------------------------------------------------
 
@@ -302,23 +248,11 @@ export default function ActiveStudents({ semester }) {
           pageSizeList={constants.sizePerPageList}
         />
       </CardBody>
-
       <AddActiveStudentModal
         isShowFlg={showCreate}
         onHide={hideCreateModal}
         onAdd={handleCreate}
       />
-      {/* <CMSModal
-        isShowFlg={showUpdate}
-        onHide={hideUpdateModal}
-        configs={constants.modalConfigs}
-        title="Change information of this student"
-        subTitle="Change information of this student"
-        onConfirmForm={edit}
-        fieldTemplate={updateFieldTemplate}
-        primaryButtonLabel="Update"
-        isProcessing={isProcessing}
-      /> */}
     </Card>
   );
 }

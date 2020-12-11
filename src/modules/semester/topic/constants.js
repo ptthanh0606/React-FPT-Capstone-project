@@ -212,6 +212,47 @@ export const submitterModalConfigs = [
     placeholder: '4',
   },
   {
+    name: 'department',
+    type: 'selectBoxAsync',
+    label: 'Department',
+    smallLabel: 'This team belong to which department, cannot update',
+    readOnlyWhenEdit: true,
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_DEPARTMENT.url,
+        method: endpoints.LIST_DEPARTMENT.method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownDep) || []);
+        })
+        .catch(() => callback([]));
+    },
+  },
+  {
+    name: 'team',
+    type: 'selectBoxAsync',
+    label: 'Student team',
+    smallLabel: 'Student team taking this topic',
+    load: (input, callback) => {
+      request({
+        to: endpoints.LIST_TEAM.url,
+        method: endpoints.LIST_TEAM.method,
+        params: {
+          term: input,
+          pageSize: 10,
+        },
+      })
+        .then(res => {
+          callback(res.data.data?.map(mDownTeam) || []);
+        })
+        .catch(() => callback([]));
+    },
+  },
+  {
     name: 'keywords',
     type: 'text',
     label: 'Keywords',
@@ -255,7 +296,7 @@ export const createColumns = (
         return (
           <Link className="text-dark font-weight-bold" to={'./topic/' + row.id}>
             <div>
-              <div className="text-nowrap text-dark-75 font-weight-bolder font-size-lg mb-0">
+              <div className="text-nowrap text-dark-75 font-weight-bold font-size-lg mb-0">
                 {row.name}
               </div>
               <span className="text-muted font-weight-bold text-hover-primary">
@@ -332,7 +373,7 @@ export const createColumns = (
               ? cellContent
                   .map(i => (
                     <Link
-                      className="text-dark font-weight-bold"
+                      className="text-dark font-weight-bold text-nowrap"
                       to={'/profile/student/' + i.value}
                     >
                       {i.label}

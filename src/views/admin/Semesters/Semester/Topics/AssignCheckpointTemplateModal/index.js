@@ -5,7 +5,6 @@ import request from 'utils/request';
 import * as endpoints from 'endpoints';
 import { columnsTransformer, handleErrors } from 'utils/common';
 import BootstrapTable from 'react-bootstrap-table-next';
-import toast from 'utils/toast';
 import cellEditFactory from 'react-bootstrap-table2-editor';
 import { addMinutes, format, subMinutes } from 'date-fns';
 import SelectTagInput from 'components/TagInput/SelectTagInput';
@@ -188,6 +187,9 @@ const AssignCheckpointTemplateModal = ({
             rowIndex,
             columnIndex
           ) => <DateTimeEditor {...editorProps} value={value} />,
+          style: {
+            width: '100px',
+          },
         },
         {
           dataField: 'evaluateDueDate',
@@ -208,6 +210,9 @@ const AssignCheckpointTemplateModal = ({
             rowIndex,
             columnIndex
           ) => <DateTimeEditor {...editorProps} value={value} />,
+          style: {
+            width: '100px',
+          },
         },
         {
           dataField: 'council',
@@ -226,8 +231,11 @@ const AssignCheckpointTemplateModal = ({
           ) => (
             <CouncilEditor {...editorProps} value={value} semesterId={semId} />
           ),
-          classes: 'text-right pr-0',
+          classes: 'text-right',
           headerClasses: 'text-right pr-3',
+          style: {
+            minWidth: '200px',
+          },
         },
       ]),
     [semId]

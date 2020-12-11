@@ -15,8 +15,8 @@ import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 import Checkpoints from './Checkpoints';
 
-import * as transformers from '../../../modules/checkpointTemplates/transformers';
-import * as constants from '../../../modules/checkpointTemplates/constants';
+import * as transformers from 'modules/checkpointTemplates/transformers';
+import * as constants from 'modules/checkpointTemplates/constants';
 
 export default function CheckpointTemplates() {
   const confirm = useConfirm();

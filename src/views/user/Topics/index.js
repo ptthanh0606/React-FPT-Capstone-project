@@ -1,5 +1,4 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
 import {
   Card,
   CardBody,
@@ -11,7 +10,6 @@ import Filters from './Filters';
 
 import metaAtom from 'store/meta';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
-import useConfirm from 'utils/confirm';
 import CMSModal from 'components/CMSModal/CMSModal';
 
 import toast from 'utils/toast';
@@ -24,13 +22,14 @@ import * as transformers from 'modules/semester/topic/transformers';
 import * as constants from 'modules/semester/topic/constants';
 
 import semesterStore from 'store/semester';
+import userAtom from 'store/user';
 import roleSelector from 'auth/recoil/selectors/role';
 import { Button } from 'react-bootstrap';
 
 export default function Topics() {
-  const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
   const semester = useRecoilValue(semesterStore);
+  const currentUser = useRecoilValue(userAtom);
   const role = useRecoilValue(roleSelector);
 
   //----------------------------------------------------------------------------
@@ -83,6 +82,7 @@ export default function Topics() {
         data: {
           ...transformers.up(fieldData),
           semesterId: Number(semester.id),
+          submitterId: currentUser.id,
         },
         params: {
           semesterId: semester.id,
@@ -97,7 +97,7 @@ export default function Topics() {
         .catch(handleErrors)
         .finally(() => setIsProcessing(false));
     },
-    [semester.id]
+    [currentUser.id, semester.id]
   );
 
   const loadTopics = React.useCallback(
@@ -208,16 +208,6 @@ export default function Topics() {
 
   // ---------------------------------------------------------------------------
 
-  const onAssignCheckpointTemplate = React.useCallback(
-    data => {
-      console.log({
-        ...data,
-        topicIds: selected,
-      });
-    },
-    [selected]
-  );
-
   React.useEffect(() => {
     loadTopics('all');
   }, [loadTopics]);
@@ -225,10 +215,10 @@ export default function Topics() {
   React.useEffect(() => {
     setMeta(meta => ({
       ...meta,
-      title: 'Topics',
+      title: 'Topics of ' + (semester?.name || ''),
       breadcrumb: [
         { title: 'Semester', path: '/select-semester' },
-        { title: semester.name, path: '/select-semester/#' },
+        { title: semester?.name, path: '/select-semester/#' },
         { title: 'Topic', path: '/topic' },
         { title: 'All topics', path: '/topic/#' },
       ],
@@ -252,29 +242,37 @@ export default function Topics() {
   return (
     <Card>
       <CardHeader title="All topics">
-        <CardHeaderToolbar className="text-nowrap">
-          <Button
-            className={`ml-2 ${isSubmittedTopics && 'font-weight-bolder'}`}
-            variant={(isSubmittedTopics && 'primary') || 'link'}
-            onClick={handleLoadAllSubmitted}
-          >
-            Submitted
-          </Button>
-          <Button
-            className={`ml-2 ${isMentoringTopics && 'font-weight-bolder'}`}
-            variant={(isMentoringTopics && 'primary') || 'link'}
-            onClick={handleLoadAllMentoring}
-          >
-            Mentoring
-          </Button>
-          <Button
-            className={`ml-2 ${isAllTopics && 'font-weight-bolder'}`}
-            variant={(isAllTopics && 'primary') || 'link'}
-            onClick={handleLoadAllTopics}
-          >
-            All topic
-          </Button>
-        </CardHeaderToolbar>
+        {role === 'lecturer' && (
+          <CardHeaderToolbar className="text-nowrap">
+            <Button
+              className={`ml-2 ${
+                isSubmittedTopics ? 'font-weight-bolder' : 'text-primary'
+              }`}
+              variant={isSubmittedTopics && 'primary'}
+              onClick={handleLoadAllSubmitted}
+            >
+              Submitted
+            </Button>
+            <Button
+              className={`ml-2 ${
+                isMentoringTopics ? 'font-weight-bolder' : 'text-primary'
+              }`}
+              variant={isMentoringTopics && 'primary'}
+              onClick={handleLoadAllMentoring}
+            >
+              Mentoring
+            </Button>
+            <Button
+              className={`ml-2 ${
+                isAllTopics ? 'font-weight-bolder' : 'text-primary'
+              }`}
+              variant={isAllTopics && 'primary'}
+              onClick={handleLoadAllTopics}
+            >
+              All
+            </Button>
+          </CardHeaderToolbar>
+        )}
       </CardHeader>
       <CardBody>
         <Filters filters={filters} setFilters={setFilters} />
