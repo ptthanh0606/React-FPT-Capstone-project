@@ -113,8 +113,10 @@ export default React.memo(function NearestSemester() {
       >
         {isLoading ? (
           <div className="mb-8">Loading...</div>
-        ) : (
+        ) : data & (data.length > 0) ? (
           data.map(s => <SemesterCard {...s} key={s.id} />)
+        ) : (
+          <div className="mb-8">There is no semester at the moment...</div>
         )}
       </ScrollContainer>
       <div className={styles['nav-box']}>
