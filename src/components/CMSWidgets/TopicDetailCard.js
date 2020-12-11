@@ -253,7 +253,7 @@ const TopicDetailCard = ({
               />
             )}
 
-            {['Assigned', 'Pass', 'Failed'].includes(statusTitles[status]) &&
+            {['Assigned', 'Passed', 'Failed'].includes(statusTitles[status]) &&
               isUserMentor && (
                 <GradingSection
                   evaluations={evaluations || []}
@@ -261,7 +261,7 @@ const TopicDetailCard = ({
                 />
               )}
 
-            {['Assigned', 'Pass', 'Failed'].includes(statusTitles[status]) &&
+            {['Assigned', 'Passed', 'Failed'].includes(statusTitles[status]) &&
               isTeamInTopic && (
                 <GradingSection
                   evaluations={evaluations || []}
