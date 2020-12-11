@@ -30,6 +30,7 @@ const TopicDetailCard = ({
   submitter = {},
   isUserApprover = false,
   isUserMentor = false,
+  isTeamInTopic = false,
   isLoading = true,
 }) => {
   const currentUser = useRecoilValue(userAtom);
@@ -38,6 +39,12 @@ const TopicDetailCard = ({
 
   const statusTitles = React.useMemo(() => constants.statusTitles, []);
   const statusClasses = React.useMemo(() => constants.statusClasses, []);
+
+  // -----------------------------------------------------------------------------
+
+  React.useEffect(() => {
+    console.log(isTeamInTopic);
+  }, [isTeamInTopic]);
 
   // -----------------------------------------------------------------------------
 
@@ -248,7 +255,18 @@ const TopicDetailCard = ({
 
             {['Assigned', 'Pass', 'Failed'].includes(statusTitles[status]) &&
               isUserMentor && (
-                <GradingSection evaluations={evaluations || []} />
+                <GradingSection
+                  evaluations={evaluations || []}
+                  isUserMentor={isUserMentor}
+                />
+              )}
+
+            {['Assigned', 'Pass', 'Failed'].includes(statusTitles[status]) &&
+              isTeamInTopic && (
+                <GradingSection
+                  evaluations={evaluations || []}
+                  isUserMentor={isUserMentor}
+                />
               )}
           </>
         ) : (

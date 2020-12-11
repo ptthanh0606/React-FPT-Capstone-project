@@ -92,7 +92,7 @@ const fakeData = {
     {
       id: 2,
       name: 'Checkpoint 2',
-      status: 3,
+      status: 1,
       weight: 80,
       submitDueDate: '2022-09-01T00:00:00',
       evaluateDueDate: '2022-09-01T00:00:00',
@@ -144,7 +144,7 @@ const fakeData = {
     {
       id: 3,
       name: 'Checkpoint 3',
-      status: 1,
+      status: 0,
       weight: 80,
       submitDueDate: '2022-09-01T00:00:00',
       evaluateDueDate: '2022-09-01T00:00:00',
@@ -540,7 +540,7 @@ const Topic = () => {
         }
         setGuestStudentTeamId(transformedRes.id);
         setIsStudentTeamLead(currentUser.id === transformedRes.leader.value);
-        setIsTeamInTopic(id === transformedRes.topic?.value);
+        setIsTeamInTopic(id * 1 === transformedRes.topic?.value);
         setIsTeamLocked(transformedRes.lock);
       })
       .catch(err => {
@@ -1054,6 +1054,7 @@ const Topic = () => {
             submitter={currentTopic.submitter}
             isUserApprover={isUserApprover}
             isUserMentor={isUserMentor}
+            isTeamInTopic={isTeamInTopic}
             onFeedbackSuccess={onFeedbackSuccess}
             isLoading={isProcessing}
             evaluations={evals || []}
@@ -1109,7 +1110,11 @@ const Topic = () => {
               subTitle="Mentor of this topic"
               role="lecturer"
               leaderId={mentorLeaderId}
-              fallbackMsg={'Become a leader mentor for this topic now!'}
+              fallbackMsg={
+                currentRole === 'lecturer'
+                  ? 'Become a leader mentor for this topic now!'
+                  : 'This topic currently not have mentor'
+              }
               group={currentTopic.mentorMembers}
               handleSubmitRowData={handleChangeWeight}
               toolBar={

@@ -96,7 +96,7 @@ const FeedbackSection = ({
           </>
         )}
 
-        {!isInDep && (
+        {isUserApprover && !isInDep && (
           <MessageTile
             iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Stop.svg')}
             content="You are not belong to this department."
@@ -104,7 +104,7 @@ const FeedbackSection = ({
           />
         )}
 
-        {!isUserApprover && (
+        {isUserApprover && !isInDep && (
           <MessageTile
             iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Stop.svg')}
             content="You are not an approver of this topic department."
@@ -123,7 +123,7 @@ const FeedbackSection = ({
         <div className="timeline timeline-3">
           <div className="my-5">
             <span className="text-dark font-size-h5 font-weight-bold">
-              What you and other people think:
+              What other approvers think:
             </span>
           </div>
           <div className="timeline-items">

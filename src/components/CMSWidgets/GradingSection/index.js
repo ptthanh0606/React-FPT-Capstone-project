@@ -1,10 +1,15 @@
 import React from 'react';
+import SVG from 'react-inlinesvg';
 import { Accordion, Card, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import ReactDataSheet from 'react-datasheet';
 import * as constantsCp from 'modules/semester/topic/checkpoints/constants';
+import { toAbsoluteUrl } from '_metronic/_helpers';
+import { role } from 'auth/recoil/selectors';
+import { useRecoilValue } from 'recoil';
 
-const GradingSection = ({ evaluations = [] }) => {
+const GradingSection = ({ evaluations = [], isUserMentor }) => {
   const [evals, setEvals] = React.useState([]);
+  const currentRole = useRecoilValue(role);
 
   // --------------------------------------------------------------
 
@@ -41,13 +46,24 @@ const GradingSection = ({ evaluations = [] }) => {
 
   return (
     <>
-      <div className="my-5">
-        <span className="text-dark font-size-h5 font-weight-bold mr-2">
-          Grading section for mentors and councils
-        </span>
-        <span className="text-info font-size-sm font-weight-bold">
-          (Click the checkpoint to start grading.)
-        </span>
+      <div className="my-5 d-flex justify-content-between">
+        <div className="">
+          <span className="text-dark font-size-h5 font-weight-bold mr-2">
+            Grading section for mentors and councils
+          </span>
+          <span className="text-info font-size-sm font-weight-bold">
+            (Click the checkpoint to start grading.)
+          </span>
+        </div>
+        {currentRole === 'lecturer' && isUserMentor && (
+          <button className="btn btn-info">
+            <span className="svg-icon svg-icon-sm">
+              <SVG
+                src={toAbsoluteUrl('/media/svg/icons/General/Save.svg')}
+              ></SVG>
+            </span>
+          </button>
+        )}
       </div>
 
       <Accordion>
