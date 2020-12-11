@@ -28,11 +28,335 @@ import useConfirm from 'utils/confirm';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 
+const fakeData = {
+  students: [
+    {
+      id: 1,
+      code: 'DuyHD',
+    },
+    { id: 2, code: 'ThanhPT' },
+  ],
+  checkpoints: [
+    {
+      id: 1,
+      name: 'Checkpoint 1',
+      status: 2,
+      weight: 50,
+      submitDueDate: '2022-09-01T00:00:00',
+      evaluateDueDate: '2022-09-01T00:00:00',
+      council: {
+        id: 1,
+        name: 'ThanhPTLecturer',
+        members: [
+          {
+            id: 1,
+            weight: 100,
+            code: 'KhanhKT',
+          },
+          {
+            id: 2,
+            weight: 10,
+            code: 'PhuongLHK',
+          },
+        ],
+      },
+      columns: [
+        {
+          id: 1,
+          weight: 10,
+          name: 'Cot diem 1',
+          grade: [
+            // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
+            // Moi array la cac diem cua 1 column
+            [1, 2, 3],
+            [4, 5, 6],
+          ],
+          total: 10,
+        },
+        {
+          id: 2,
+          weight: 10,
+          name: 'Cot diem 2',
+          grade: [
+            // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
+            // Moi array la cac diem cua 1 column
+            [7, 8, 9],
+            [10, 11, 12],
+          ],
+          total: 100,
+        },
+      ],
+      total: [100, 200], // total student
+      totalTeam: 10, // total all
+    },
+    {
+      id: 2,
+      name: 'Checkpoint 2',
+      status: 3,
+      weight: 80,
+      submitDueDate: '2022-09-01T00:00:00',
+      evaluateDueDate: '2022-09-01T00:00:00',
+      council: {
+        id: 1,
+        name: 'Council IB',
+        members: [
+          {
+            id: 1,
+            weight: 100,
+            code: 'KhanhKT',
+          },
+          {
+            id: 2,
+            weight: 10,
+            code: 'PhuongLHK',
+          },
+        ],
+      },
+      columns: [
+        {
+          id: 1,
+          weight: 10,
+          name: 'Cot diem 1',
+          grade: [
+            // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
+            // Moi array la cac diem cua 1 column
+            [1, 2, 3],
+            [4, 5, 6],
+          ],
+          total: 10,
+        },
+        {
+          id: 2,
+          weight: 10,
+          name: 'Cot diem 2',
+          grade: [
+            // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
+            // Moi array la cac diem cua 1 column
+            [7, 8, 9],
+            [10, 11, 12],
+          ],
+          total: 100,
+        },
+      ],
+      total: [100, 200], // total student
+      totalTeam: 10, // total all
+    },
+    {
+      id: 3,
+      name: 'Checkpoint 3',
+      status: 1,
+      weight: 80,
+      submitDueDate: '2022-09-01T00:00:00',
+      evaluateDueDate: '2022-09-01T00:00:00',
+      council: {
+        id: 1,
+        name: 'Council IB',
+        members: [
+          {
+            id: 1,
+            weight: 100,
+            code: 'KhanhKT',
+          },
+          {
+            id: 2,
+            weight: 10,
+            code: 'PhuongLHK',
+          },
+        ],
+      },
+      columns: [
+        {
+          id: 1,
+          weight: 10,
+          name: 'Cot diem 1',
+          grade: [
+            // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
+            // Moi array la cac diem cua 1 column
+            [1, 2, 3],
+            [4, 5, 6],
+          ],
+          total: 10,
+        },
+        {
+          id: 2,
+          weight: 10,
+          name: 'Cot diem 2',
+          grade: [
+            // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
+            // Moi array la cac diem cua 1 column
+            [7, 8, 9],
+            [10, 11, 12],
+          ],
+          total: 100,
+        },
+      ],
+      total: [100, 200], // total student
+      totalTeam: 10, // total all
+    },
+    {
+      id: 4,
+      name: 'Checkpoint 4',
+      status: 0,
+      weight: 130,
+      submitDueDate: '2022-09-01T00:00:00',
+      evaluateDueDate: '2022-09-01T00:00:00',
+      council: {
+        id: 1,
+        name: 'Council IB',
+        members: [
+          {
+            id: 1,
+            weight: 100,
+            code: 'KhanhKT',
+          },
+          {
+            id: 2,
+            weight: 10,
+            code: 'PhuongLHK',
+          },
+        ],
+      },
+      columns: [
+        {
+          id: 1,
+          weight: 10,
+          name: 'Cot diem 1',
+          grade: [
+            // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
+            // Moi array la cac diem cua 1 column
+            [1, 2, 3],
+            [4, 5, 6],
+          ],
+          total: 10,
+        },
+        {
+          id: 2,
+          weight: 10,
+          name: 'Cot diem 2',
+          grade: [
+            // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
+            // Moi array la cac diem cua 1 column
+            [7, 8, 9],
+            [10, 11, 12],
+          ],
+          total: 100,
+        },
+      ],
+      total: [100, 200], // total student
+      totalTeam: 10, // total all
+    },
+  ],
+};
+
+function transformToGrid(data) {
+  const final = [];
+  const header = [
+    { value: '', readOnly: true, colSpan: 4 },
+    ...data.students.map(i => ({
+      value: i.code,
+      readOnly: true,
+      colSpan: 2,
+      id: i.id,
+    })),
+    { value: 'Team', readOnly: true },
+  ];
+
+  for (const z of data.checkpoints) {
+    const grid = [header];
+
+    for (const i in z.columns) {
+      const firstEvaluator = z.council.members[0];
+      const evaluatorNum = z.council.members.length;
+      const toPush = [
+        { value: z.columns[i].name, readOnly: true, rowSpan: evaluatorNum },
+        {
+          value: z.columns[i].weight,
+          readOnly: true,
+          rowSpan: evaluatorNum,
+        },
+        { value: firstEvaluator.code, readOnly: true },
+        { value: firstEvaluator.weight, readOnly: true },
+      ];
+
+      for (const j in data.students) {
+        toPush.push(
+          {
+            value: z.columns[i].grade[j][0],
+            studentId: data.students[j].id,
+            lecturerId: z.council.members[0].id,
+            markColumnId: z.columns[i].id,
+            evaluationId: z.id,
+          },
+          {
+            value: z.columns[i].grade[j][z.columns[i].grade.length],
+            rowSpan: z.council.members.length,
+            readOnly: true,
+          }
+        );
+      }
+
+      toPush.push({
+        value: z.columns[i].total,
+        rowSpan: z.council.members.length,
+        readOnly: true,
+      });
+
+      grid.push(toPush);
+
+      for (const k in z.council.members.slice(1)) {
+        grid.push([
+          { value: z.council.members[+k + 1].code, readOnly: true },
+          { value: z.council.members[+k + 1].weight, readOnly: true },
+          ...z.columns[i].grade.map((x, index) => ({
+            value: x[+k + 1],
+            studentId: data.students[index].id,
+            lecturerId: z.council.members[+k + 1].id,
+            markColumnId: z.columns[i].id,
+            evaluationId: z.id,
+          })),
+        ]);
+      }
+    }
+
+    grid.push([
+      { value: 'Total', colSpan: 4, readOnly: true },
+      ...z.total.map(x => ({ value: x, colSpan: 2, readOnly: true })),
+      { value: z.totalTeam, readOnly: true },
+    ]);
+
+    final.push({
+      id: z.id,
+      name: z.name,
+      weight: z.weight,
+      submitDueDate: z.submitDueDate,
+      evaluateDueDate: z.evaluateDueDate,
+      council: z.council,
+      status: z.status,
+      grid,
+    });
+  }
+
+  console.log(final);
+
+  return final;
+}
+
+function transformToData(data) {
+  const grades = [];
+  for (const k of data) {
+    for (const i of k.grid) {
+      for (const j of i) {
+        if (j.readOnly !== true) grades.push(j);
+      }
+    }
+  }
+  return grades;
+}
+
 const Topic = () => {
   const history = useHistory();
   const { id } = useParams();
   const confirm = useConfirm();
-  const [l, loadData] = React.useReducer(() => ({}), {});
 
   // ----------------------------------------------------------
 
@@ -44,6 +368,7 @@ const Topic = () => {
   // ----------------------------------------------------------
 
   const [currentTopic, setCurrentTopic] = React.useState({});
+  const [evals, setEvals] = React.useState([]);
   const [isStudentUserHaveTeam, setIsStudentUserHaveTeam] = React.useState(
     false
   );
@@ -180,6 +505,7 @@ const Topic = () => {
         checkPreConditions(transformedRes);
         setCurrentTopic(transformedRes);
         setIsProcessing(false);
+        setEvals(transformToGrid(fakeData));
       })
       .catch(err => {
         history.push('/topic');
@@ -482,13 +808,13 @@ const Topic = () => {
                       onClick={handleStudentApplyForMatching}
                       disabled={!isTeamLocked}
                     >
-                      <i className="fas fa-sign-in-alt mr-2"></i>
+                      <i className="fas fa-sign-in-alt mr-1"></i>
                       Send application
                     </button>
                   </OverlayTrigger>
                 ) : (
                   <>
-                    <span class="svg-icon svg-icon-danger mr-2">
+                    <span class="svg-icon svg-icon-danger mr-1">
                       <SVG
                         src={toAbsoluteUrl(
                           '/media/svg/icons/Code/Warning-1-circle.svg'
@@ -508,7 +834,7 @@ const Topic = () => {
                 className="btn btn-primary btn-danger font-weight-bold btn-sm "
                 onClick={handleCancelApplication}
               >
-                <i className="fas fa-ban mr-2"></i>
+                <i className="fas fa-ban mr-1"></i>
                 Cancel application
               </button>
             ));
@@ -525,7 +851,7 @@ const Topic = () => {
                       className="btn btn-primary font-weight-bold btn-sm btn-light mr-2"
                       onClick={handleShowSettingModal}
                     >
-                      <i className="fas fa-cog mr-2"></i>
+                      <i className="fas fa-cog mr-1"></i>
                       Settings
                     </button>
                     <CMSModal
@@ -550,19 +876,8 @@ const Topic = () => {
                     className="btn btn-primary btn-success font-weight-bold btn-sm ml-2"
                     onClick={handleApplyMentor}
                   >
-                    <i className="fas fa-sign-in-alt mr-2"></i>
+                    <i className="fas fa-sign-in-alt mr-1"></i>
                     Become a mentor
-                  </button>
-                )}
-              {statusTitles[currentTopic.status] === 'Matched' &&
-                !isUserCouncilMember && (
-                  <button
-                    type="button"
-                    className="btn btn-primary btn-info font-weight-bold btn-sm ml-2"
-                    onClick={() => {}}
-                  >
-                    <i className="fas fa-sign-out-alt mr-2"></i>
-                    Evaluate
                   </button>
                 )}
               {statusTitles[currentTopic.status] === 'Pending' &&
@@ -601,7 +916,6 @@ const Topic = () => {
     isTeamApplied,
     isTeamInTopic,
     isTeamLocked,
-    isUserCouncilMember,
     isUserMentor,
     showUpdate,
     statusTitles,
@@ -741,8 +1055,10 @@ const Topic = () => {
             feedbacks={currentTopic.feedbacks}
             submitter={currentTopic.submitter}
             isUserApprover={isUserApprover}
+            isUserMentor={isUserMentor}
             onFeedbackSuccess={onFeedbackSuccess}
             isLoading={isProcessing}
+            evaluations={evals || []}
           />
         </div>
         <div className="col-lg-6 col-xxl-3">

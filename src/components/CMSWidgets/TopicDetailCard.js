@@ -9,24 +9,27 @@ import userAtom from 'store/user';
 import { useRecoilValue } from 'recoil';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
+import GradingSection from './GradingSection';
 
 const TopicDetailCard = ({
-  className,
-  topicId,
-  topicCode,
-  topicName,
-  fullDesc,
-  department,
-  status,
-  minMembers,
-  maxMember,
+  className = '',
+  topicId = '',
+  topicCode = '',
+  topicName = '',
+  fullDesc = '',
+  department = '',
+  status = '',
+  minMembers = 0,
+  maxMember = 0,
   mentorMembers = [],
   studentMembers = [],
-  applications,
-  feedbacks,
-  onFeedbackSuccess,
+  applications = [],
+  feedbacks = [],
+  evaluations = [],
+  onFeedbackSuccess = () => {},
   submitter = {},
   isUserApprover = false,
+  isUserMentor = false,
   isLoading = true,
 }) => {
   const currentUser = useRecoilValue(userAtom);
@@ -242,6 +245,11 @@ const TopicDetailCard = ({
                 isUserApprover={isUserApprover}
               />
             )}
+
+            {['Matched', 'Pass', 'Failed'].includes(statusTitles[status]) &&
+              isUserMentor && (
+                <GradingSection evaluations={evaluations || []} />
+              )}
           </>
         ) : (
           <div className="d-flex align-items-center">
