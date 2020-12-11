@@ -867,9 +867,7 @@ const Topic = () => {
                     />
                   </>
                 )}
-              {!['Pending', 'Rejected'].includes(
-                statusTitles[currentTopic.status]
-              ) &&
+              {['Approved'].includes(statusTitles[currentTopic.status]) &&
                 !isUserMentor && (
                   <button
                     type="button"
