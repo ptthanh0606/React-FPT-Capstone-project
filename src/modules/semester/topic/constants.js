@@ -8,18 +8,22 @@ import { mDown as mDownTeam } from 'modules/semester/team/transformers';
 import { mDown as mDownLec } from 'modules/lecturer/transformers';
 
 export const statusClasses = [
+  'secondary',
   'warning',
-  'danger',
-  'success',
+  'info',
   'primary',
   'info',
+  'success',
+  'danger',
 ];
 export const statusTitles = [
-  'Pending',
+  'Waiting',
   'Rejected',
   'Approved',
   'Ready',
-  'Matched',
+  'Assigned',
+  'Passed',
+  'Failed',
 ];
 export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 export const sizePerPageList = [

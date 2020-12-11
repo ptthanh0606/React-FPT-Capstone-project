@@ -16,7 +16,7 @@ export const sizePerPageList = [
 
 export const statusTitles = [
   'Preparing',
-  'Matching',
+  'Assigning',
   'In-progress',
   'Finished',
 ];
@@ -132,9 +132,9 @@ export const modalConfigs = [
   {
     name: 'matchingDate',
     type: 'datetime-local',
-    label: 'Matching',
+    label: 'Assigning',
     smallLabel:
-      'Ending date of Matching-phase, all team must matched with a topic before this day',
+      'Ending date of Assigning-phase, all team must matched with a topic before this day',
     step: 3600,
   },
   {

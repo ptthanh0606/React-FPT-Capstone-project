@@ -20,7 +20,7 @@ export const sizePerPageList = [
 ];
 
 export const statusClasses = { true: 'success', false: 'warning' };
-export const statusTitles = { true: 'Matched', false: 'Matching' };
+export const statusTitles = { true: 'Assigned', false: 'Assigning' };
 export const lockClasses = { false: 'success', true: 'danger' };
 export const lockTitles = { false: 'Unlocked', true: 'Locked' };
 export const privacyClasses = { true: 'success', false: 'danger' };
