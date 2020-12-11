@@ -7,8 +7,10 @@ import { columnsTransformer, handleErrors } from 'utils/common';
 import BootstrapTable from 'react-bootstrap-table-next';
 import Update from './Update';
 import Add from './Add';
+import useConfirm from 'utils/confirm';
 
 import * as transformers from 'modules/checkpointTemplates/transformers';
+import toast from 'utils/toast';
 
 const ListCheckpoints = ({
   isShowFlg = false,
@@ -16,6 +18,7 @@ const ListCheckpoints = ({
   id,
   onEdit = function () {},
 }) => {
+  const confirm = useConfirm();
   const [checkpoints, setCheckpoints] = React.useState([]);
   const [templateName, setTemplateName] = React.useState('...');
 
@@ -102,17 +105,31 @@ const ListCheckpoints = ({
       e.preventDefault();
       const cpId = Number(e.currentTarget.getAttribute('data-id'));
       setIsLoading(true);
-      request({
-        to: endpoints.DELETE_CHECKPOINT(id, cpId).url,
-        method: endpoints.DELETE_CHECKPOINT(id, cpId).method,
-      })
-        .then(() => {
-          loadData();
-        })
-        .catch(handleErrors)
-        .finally(() => setIsLoading(false));
+
+      confirm({
+        title: 'Removal Confirmation',
+        body: (
+          <>
+            Do you wanna remove this checkpoint?
+            <br />
+            This checkpoint will be <b>permanently removed</b> only if it has
+            never been used before.
+          </>
+        ),
+        onConfirm: () =>
+          request({
+            to: endpoints.DELETE_CHECKPOINT(id, cpId).url,
+            method: endpoints.DELETE_CHECKPOINT(id, cpId).method,
+          })
+            .then(() => {
+              loadData();
+              toast.success('Successfully remove checkpoint');
+            })
+            .catch(handleErrors)
+            .finally(() => setIsLoading(false)),
+      });
     },
-    [id]
+    [confirm, id]
   );
 
   //----------------------------------------------------------------------------
