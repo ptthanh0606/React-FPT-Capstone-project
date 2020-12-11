@@ -75,6 +75,7 @@ const Information = ({ loadData = function () {} }) => {
         matchingDate,
         inprogressDate,
         finishedDate,
+        marginPass,
       }),
     })
       .then(res => {
@@ -90,6 +91,7 @@ const Information = ({ loadData = function () {} }) => {
     id,
     inprogressDate,
     loadData,
+    marginPass,
     matchingDate,
     maxApplication,
     name,
