@@ -25,8 +25,8 @@ const Reports = ({ className }) => {
             </a>
             <span className="text-muted">At 10:30AM 6 June 2020</span>
           </div>
-          <span class="font-weight-bolder label label-xl label-light-success label-inline px-3 py-5 min-w-45px">
-            3.2
+          <span class="btn btn-light">
+            <i class="fas fa-download"></i>
           </span>
         </div>
         <div className="d-flex align-items-center mb-10">
@@ -39,8 +39,8 @@ const Reports = ({ className }) => {
             </a>
             <span className="text-muted">At 10:30AM 6 June 2020</span>
           </div>
-          <span class="font-weight-bolder label label-xl label-light-success label-inline px-3 py-5 min-w-45px">
-            3.2
+          <span class="btn btn-light">
+            <i class="fas fa-download"></i>
           </span>
         </div>
         <div className="d-flex align-items-center mb-10">
@@ -53,8 +53,8 @@ const Reports = ({ className }) => {
             </a>
             <span className="text-muted">At 10:30AM 6 June 2020</span>
           </div>
-          <span class="font-weight-bolder label label-xl label-light-success label-inline px-3 py-5 min-w-45px">
-            3.2
+          <span class="btn btn-light">
+            <i class="fas fa-download"></i>
           </span>
         </div>
         <div className="d-flex align-items-center">
@@ -67,8 +67,8 @@ const Reports = ({ className }) => {
             </a>
             <span className="text-muted">At 10:30AM 6 June 2020</span>
           </div>
-          <span class="font-weight-bolder label label-xl label-light-success label-inline px-3 py-5 min-w-45px">
-            3.2
+          <span class="btn btn-light">
+            <i class="fas fa-download"></i>
           </span>
         </div>
       </div>
