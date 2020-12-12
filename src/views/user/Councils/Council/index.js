@@ -96,7 +96,7 @@ const Council = () => {
       ],
       toolbar: isUserInCouncil && isUserLeadCouncil && (
         <>
-          <button
+          {/* <button
             type="button"
             onClick={showUpdateModal}
             className="btn btn-primary font-weight-bold btn-sm btn-light mr-2"
@@ -111,7 +111,7 @@ const Council = () => {
             onConfirmForm={edit}
             isProcessing={isProcessing}
             fieldTemplate={updateFieldTemplate}
-          />
+          /> */}
         </>
       ),
     });
@@ -136,10 +136,6 @@ const Council = () => {
         id: 0,
         label: 'Capstone Management System',
         subLabel: 'FA20SE13',
-        onLabelClick: e => {
-          e.preventDefault();
-          history.push(`/topic/${0}`);
-        },
       },
       {
         id: 0,
@@ -233,6 +229,7 @@ const Council = () => {
                       name={i.name}
                       isLead={i.isLeader}
                       role="lecturer"
+                      isUserLeadCouncil={isUserLeadCouncil}
                     />
                   </Col>
                 ))) || <Col></Col>}
@@ -241,7 +238,7 @@ const Council = () => {
         <div className="col-lg-12 col-xxl-3">
           <CMSAnotherList
             className="gutter-b"
-            title="Topic need feedback"
+            title="Topic need avaluate"
             rows={incomingTopic}
             darkMode={true}
           />
