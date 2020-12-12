@@ -56,12 +56,13 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
           </span>
         </div>
         {currentRole === 'lecturer' && isUserMentor && (
-          <button className="btn btn-info">
-            <span className="svg-icon svg-icon-sm">
+          <button className="btn btn-light-info">
+            <span className="svg-icon svg-icon-sm ml-0 mr-2">
               <SVG
                 src={toAbsoluteUrl('/media/svg/icons/General/Save.svg')}
               ></SVG>
             </span>
+            Save
           </button>
         )}
       </div>

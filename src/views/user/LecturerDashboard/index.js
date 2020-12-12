@@ -353,7 +353,7 @@ export default React.memo(function LecturerDashboard() {
             />
           </div>
         </div>
-        {/* <div className="row">
+        <div className="row">
           <div className="col-lg-12 col-xxl-12">
             <CMSAnotherList
               className="gutter-b"
@@ -362,7 +362,7 @@ export default React.memo(function LecturerDashboard() {
               darkMode={true}
             />
           </div>
-        </div> */}
+        </div>
       </div>
       <div className="col-lg-6 col-xxl-4">
         <div className="row">

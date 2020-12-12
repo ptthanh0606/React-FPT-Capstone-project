@@ -4,8 +4,10 @@ import SVG from 'react-inlinesvg';
 import { OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap';
 import FeedbackSection from './FeedbackSection';
 import * as constants from 'modules/semester/topic/constants';
+import * as semesterConstants from 'modules/semester/constants';
 import md5 from 'utils/md5';
 import userAtom from 'store/user';
+import semesterAtom from 'store/semester';
 import { useRecoilValue } from 'recoil';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
@@ -34,17 +36,7 @@ const TopicDetailCard = ({
   isLoading = true,
 }) => {
   const currentUser = useRecoilValue(userAtom);
-
-  // -----------------------------------------------------------------------------
-
-  const statusTitles = React.useMemo(() => constants.statusTitles, []);
-  const statusClasses = React.useMemo(() => constants.statusClasses, []);
-
-  // -----------------------------------------------------------------------------
-
-  React.useEffect(() => {
-    console.log(isTeamInTopic);
-  }, [isTeamInTopic]);
+  const currentSemester = useRecoilValue(semesterAtom);
 
   // -----------------------------------------------------------------------------
 
@@ -116,9 +108,9 @@ const TopicDetailCard = ({
                       <div className="mr-10">
                         <div className="font-weight-bolder mb-2">Status</div>
                         <span
-                          className={`label label-xl label-light-${statusClasses[status]} label-inline text-nowrap`}
+                          className={`label label-xl label-light-${constants.statusClasses[status]} label-inline text-nowrap`}
                         >
-                          {statusTitles[status]}
+                          {constants.statusTitles[status]}
                         </span>
                       </div>
                     </div>
@@ -224,7 +216,7 @@ const TopicDetailCard = ({
                 </div>
               </div>
 
-              {statusTitles[status] !== 'Assigned' && (
+              {constants.statusTitles[status] !== 'Assigned' && (
                 <div className="d-flex align-items-center flex-lg-fill my-1">
                   <span className="mr-4">
                     <i className="flaticon-file-2 icon-2x text-muted font-weight-bold"></i>
@@ -240,12 +232,14 @@ const TopicDetailCard = ({
 
             <div className="separator separator-solid my-7"></div>
 
-            {['Waiting', 'Approved'].includes(statusTitles[status]) && (
+            {['Waiting', 'Approved'].includes(
+              constants.statusTitles[status]
+            ) && (
               <FeedbackSection
                 className=""
                 feedbacks={feedbacks}
                 onSuccess={onFeedbackSuccess}
-                topicStatus={statusTitles[status]}
+                topicStatus={constants.statusTitles[status]}
                 isInDep={currentUser.department.some(
                   ({ name }) => name === department.fullName
                 )}
@@ -253,21 +247,30 @@ const TopicDetailCard = ({
               />
             )}
 
-            {['Assigned', 'Passed', 'Failed'].includes(statusTitles[status]) &&
-              isUserMentor && (
-                <GradingSection
-                  evaluations={evaluations || []}
-                  isUserMentor={isUserMentor}
-                />
-              )}
+            {semesterConstants.statusTitles[currentSemester.status] ===
+              'In-progress' && (
+              <>
+                {['Assigned', 'Passed', 'Failed'].includes(
+                  constants.statusTitles[status]
+                ) &&
+                  isUserMentor && (
+                    <GradingSection
+                      evaluations={evaluations || []}
+                      isUserMentor={isUserMentor}
+                    />
+                  )}
 
-            {['Assigned', 'Passed', 'Failed'].includes(statusTitles[status]) &&
-              isTeamInTopic && (
-                <GradingSection
-                  evaluations={evaluations || []}
-                  isUserMentor={isUserMentor}
-                />
-              )}
+                {['Assigned', 'Passed', 'Failed'].includes(
+                  constants.statusTitles[status]
+                ) &&
+                  isTeamInTopic && (
+                    <GradingSection
+                      evaluations={evaluations || []}
+                      isUserMentor={isUserMentor}
+                    />
+                  )}
+              </>
+            )}
           </>
         ) : (
           <div className="d-flex align-items-center">

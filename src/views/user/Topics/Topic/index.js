@@ -336,8 +336,6 @@ function transformToGrid(data) {
     });
   }
 
-  console.log(final);
-
   return final;
 }
 
@@ -394,10 +392,6 @@ const Topic = () => {
   const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
   const [showUpdate, setShowUpdate] = React.useState(false);
   const [isProcessing, setIsProcessing] = React.useState(false);
-
-  // ---------------------------------------------------------------------------
-
-  const statusTitles = React.useMemo(() => constants.statusTitles, []);
 
   // ----------------------------------------------------------
 
@@ -459,20 +453,14 @@ const Topic = () => {
       } else {
         if (
           !['Waiting', 'Approved', 'Rejected', 'Ready'].includes(
-            statusTitles[data.status]
+            constants.statusTitles[data.status]
           )
         ) {
           fetchLeaderTeam(data.team.value);
         }
       }
     },
-    [
-      currentRole,
-      currentUser.id,
-      fetchDepartment,
-      fetchLeaderTeam,
-      statusTitles,
-    ]
+    [currentRole, currentUser.id, fetchDepartment, fetchLeaderTeam]
   );
 
   const fetchCouncil = React.useCallback(() => {
@@ -785,7 +773,7 @@ const Topic = () => {
       switch (currentRole) {
         case 'student':
           buttons =
-            statusTitles[currentTopic?.status] === 'Ready' &&
+            constants.statusTitles[currentTopic?.status] === 'Ready' &&
             isStudentUserHaveTeam &&
             !isTeamInTopic &&
             isStudentTeamLead &&
@@ -843,7 +831,7 @@ const Topic = () => {
         case 'lecturer':
           buttons = (
             <>
-              {statusTitles[currentTopic.status] === 'Waiting' &&
+              {constants.statusTitles[currentTopic.status] === 'Waiting' &&
                 currentTopic.submitter.value === currentUser.id && (
                   <>
                     <button
@@ -867,7 +855,9 @@ const Topic = () => {
                     />
                   </>
                 )}
-              {['Approved'].includes(statusTitles[currentTopic.status]) &&
+              {['Approved'].includes(
+                constants.statusTitles[currentTopic.status]
+              ) &&
                 !isUserMentor && (
                   <button
                     type="button"
@@ -878,7 +868,7 @@ const Topic = () => {
                     Become a mentor
                   </button>
                 )}
-              {statusTitles[currentTopic.status] === 'Waiting' &&
+              {constants.statusTitles[currentTopic.status] === 'Waiting' &&
                 currentTopic.submitter.value === currentUser.id && (
                   <button
                     type="button"
@@ -916,7 +906,6 @@ const Topic = () => {
     isTeamLocked,
     isUserMentor,
     showUpdate,
-    statusTitles,
     updateFieldTemplate,
   ]);
 
@@ -1033,7 +1022,9 @@ const Topic = () => {
       <div className="row">
         <div
           className={`col-lg-12 col-xxl-${
-            ['Waiting', 'Rejected'].includes(statusTitles[currentTopic.status])
+            ['Waiting', 'Rejected'].includes(
+              constants.statusTitles[currentTopic.status]
+            )
               ? '12'
               : '9'
           }`}
@@ -1063,7 +1054,7 @@ const Topic = () => {
         <div className="col-lg-6 col-xxl-3">
           {currentRole === 'lecturer' &&
             isUserMentor &&
-            statusTitles[currentTopic.status] === 'Ready' && (
+            constants.statusTitles[currentTopic.status] === 'Ready' && (
               <CMSList
                 className="gutter-b"
                 title="Applying teams"
@@ -1080,7 +1071,7 @@ const Topic = () => {
               />
             )}
 
-          {statusTitles[currentTopic.status] === 'Assigned' && (
+          {constants.statusTitles[currentTopic.status] === 'Assigned' && (
             <GroupCard
               className="gutter-b"
               title="Assigned team"
@@ -1103,7 +1094,7 @@ const Topic = () => {
           )}
 
           {!['Waiting', 'Rejected'].includes(
-            statusTitles[currentTopic.status]
+            constants.statusTitles[currentTopic.status]
           ) && (
             <GroupCard
               title="Mentors"
