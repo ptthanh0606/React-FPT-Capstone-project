@@ -238,7 +238,7 @@ const Council = () => {
         <div className="col-lg-12 col-xxl-3">
           <CMSAnotherList
             className="gutter-b"
-            title="Topic need avaluate"
+            title="Topic need evaluate"
             rows={incomingTopic}
             darkMode={true}
           />
