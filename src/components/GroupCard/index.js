@@ -36,7 +36,7 @@ const GroupCard = ({
 
   return (
     <div className={`card card-custom ${className}`}>
-      <div className="card-header d-flex align-items-center border-0 mt-4">
+      <div className="card-header d-flex align-items-start border-0 mt-4">
         <h3 className="card-title font-weight-bolder align-items-start text-dark flex-column">
           {title}
           <span className="text-muted mt-3 font-weight-bold font-size-sm mb-5">

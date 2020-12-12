@@ -625,6 +625,10 @@ const Topic = () => {
     [currentTopic.id, fetchTopic, id]
   );
 
+  const handleSubmitReport = React.useCallback(weightData => {
+    //
+  });
+
   const onFeedbackSuccess = React.useCallback(
     e => {
       fetchTopic();
@@ -914,7 +918,7 @@ const Topic = () => {
       <button
         type="submit"
         form="change-weight-form"
-        className="btn btn-sm font-weight-bolder btn-success"
+        className="btn btn-sm font-weight-bolder btn-success mt-2"
       >
         Save
       </button>
@@ -922,7 +926,7 @@ const Topic = () => {
       <button
         type="button"
         onClick={handleShowEditWeight}
-        className="btn btn-sm font-weight-bolder btn-light-primary"
+        className="btn btn-sm font-weight-bolder btn-light-primary mt-2"
       >
         Edit weight
       </button>
@@ -1084,7 +1088,7 @@ const Topic = () => {
                 !!currentTopic.team?.members.length && (
                   <Link
                     to={`/team/${currentTopic.team?.value}`}
-                    className="btn btn-sm btn-light-primary font-weight-bolder"
+                    className="btn btn-light-primary font-weight-bolder mt-2"
                   >
                     More
                   </Link>
@@ -1097,6 +1101,7 @@ const Topic = () => {
             constants.statusTitles[currentTopic.status]
           ) && (
             <GroupCard
+              className="gutter-b"
               title="Mentors"
               subTitle="Mentor of this topic"
               role="lecturer"
@@ -1112,6 +1117,29 @@ const Topic = () => {
                 (currentTopic?.mentorMembers?.length &&
                   isUserMentorLeader &&
                   mentorCardToolbar()) || <></>
+              }
+              booleanFlg={editWeightFlg}
+            />
+          )}
+
+          {!['Waiting', 'Rejected'].includes(
+            constants.statusTitles[currentTopic.status]
+          ) && (
+            <GroupCard
+              title="Progress reports"
+              subTitle="Submitted by students"
+              fallbackMsg={
+                currentRole === 'lecturer'
+                  ? 'No report by team yet...'
+                  : 'Awaiting for report submission...'
+              }
+              group={[]}
+              handleSubmitRowData={handleSubmitReport}
+              toolBar={
+                <button className="btn btn-light-info mt-2 font-weight-bolder">
+                  <i class="far fa-file-archive icon-md mr-1"></i>
+                  Submit
+                </button>
               }
               booleanFlg={editWeightFlg}
             />
