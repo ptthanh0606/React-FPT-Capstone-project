@@ -103,6 +103,7 @@ const AssignCheckpointTemplateModal = ({
 
   const [checkpointTemplate, setCheckpointTemplate] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isProcessing, setIsProcessing] = React.useState(false);
 
   const [checkpoints, setCheckpoints] = React.useState([]);
   const handleSelectCheckpointTemplate = React.useCallback(
@@ -242,11 +243,17 @@ const AssignCheckpointTemplateModal = ({
   );
 
   const onSubmit = React.useCallback(() => {
-    setIsShowFlg(false);
+    setIsProcessing(true);
     onOk({
       checkpointTemplateId: checkpointTemplate.value,
       checkpoints,
-    });
+    })
+      .then(() => {
+        setIsShowFlg(false);
+        setCheckpointTemplate({});
+        setCheckpoints([]);
+      })
+      .finally(() => setIsProcessing(false));
   }, [checkpointTemplate.value, checkpoints, onOk, setIsShowFlg]);
 
   return (
@@ -340,7 +347,7 @@ const AssignCheckpointTemplateModal = ({
           <Button variant="secondary" onClick={onHide}>
             Close
           </Button>
-          <Button variant="primary" onClick={onSubmit}>
+          <Button variant="primary" onClick={onSubmit} isLoading={isProcessing}>
             Save
           </Button>
         </Modal.Footer>
