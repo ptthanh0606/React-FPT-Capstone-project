@@ -4,6 +4,8 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import useConfirm from 'utils/confirm';
 import md5 from 'utils/md5';
+import { role } from 'auth/recoil/selectors';
+import { useRecoilValue } from 'recoil';
 
 const UserCard = ({
   id = '',
@@ -11,13 +13,13 @@ const UserCard = ({
   email = '',
   code = '',
   isLead = false,
-  role = '',
+  roleProp = '',
   weight = 10,
   isUserLeadCouncil = false,
 }) => {
   const [showEditWeight, setShowEditWeight] = React.useState(false);
   const confirm = useConfirm();
-
+  const currentRole = useRecoilValue(role);
   // ------------------------------------------------------------------
 
   const handleMakeLeader = React.useCallback(() => {
@@ -49,7 +51,7 @@ const UserCard = ({
           <div className="">
             <div className="symbol symbol-circle symbol-lg-75">
               <Link
-                to={`/profile/${role}/${id}`}
+                to={`/profile/${roleProp}/${id}`}
                 className="symbol-label"
                 style={{
                   backgroundImage: `url(https://www.gravatar.com/avatar/${md5(
@@ -62,7 +64,7 @@ const UserCard = ({
 
           <div className="mt-2">
             <Link
-              to={`/profile/${role}/${id}`}
+              to={`/profile/${roleProp}/${id}`}
               className="text-dark font-weight-bold text-hover-primary font-size-h4"
             >
               {name}
@@ -82,7 +84,7 @@ const UserCard = ({
             </OverlayTrigger>
           </div>
 
-          {isUserLeadCouncil && !isLead && (
+          {currentRole === 'lecturer' && isUserLeadCouncil && !isLead && (
             <div className="mt-9 mb-4 d-flex justify-content-center">
               <OverlayTrigger
                 placement="bottom"

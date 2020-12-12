@@ -6,7 +6,6 @@ import { Col, Row } from 'react-bootstrap';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 import * as transformers from 'modules/semester/council/transformers';
-import Update from '../../../admin/Semesters/Semester/Councils/Update';
 
 import metaAtom from 'store/meta';
 import userAtom from 'store/user';
@@ -15,6 +14,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import request from 'utils/request';
 import toast from 'utils/toast';
+import { role } from 'auth/recoil/selectors';
 import CMSAnotherList from 'components/CMSAnotherList';
 import { useHistory, useParams } from 'react-router-dom';
 import { down } from 'modules/semester/council/transformers';
@@ -28,6 +28,7 @@ const Council = () => {
   const setMeta = useSetRecoilState(metaAtom);
   const currentUser = useRecoilValue(userAtom);
   const currenSem = useRecoilValue(semesterAtom);
+  const currentRole = useRecoilValue(role);
 
   const [l, loadData] = React.useReducer(() => ({}), {});
 
@@ -94,9 +95,11 @@ const Council = () => {
         { title: 'Council', path: '/council' },
         { title: currentCouncil?.name, path: `/council/${currentCouncil?.id}` },
       ],
-      toolbar: isUserInCouncil && isUserLeadCouncil && (
-        <>
-          {/* <button
+      toolbar: currentRole === 'lecturer' &&
+        isUserInCouncil &&
+        isUserLeadCouncil && (
+          <>
+            {/* <button
             type="button"
             onClick={showUpdateModal}
             className="btn btn-primary font-weight-bold btn-sm btn-light mr-2"
@@ -112,13 +115,14 @@ const Council = () => {
             isProcessing={isProcessing}
             fieldTemplate={updateFieldTemplate}
           /> */}
-        </>
-      ),
+          </>
+        ),
     });
   }, [
     currenSem.name,
     currentCouncil.id,
     currentCouncil.name,
+    currentRole,
     edit,
     hideUpdateModal,
     isProcessing,
@@ -236,16 +240,18 @@ const Council = () => {
           </Row>
         </div>
         <div className="col-lg-12 col-xxl-3">
-          <CMSAnotherList
-            className="gutter-b"
-            title="Topic need evaluate"
-            rows={incomingTopic}
-            darkMode={true}
-          />
+          {currentRole === 'lecturer' && (
+            <CMSAnotherList
+              className="gutter-b"
+              title="Topic need evaluate"
+              rows={incomingTopic}
+              darkMode={true}
+            />
+          )}
           {/* <CMSList
-            title="Incoming topic need evaluation"
-            rows={incomingTopic}
-          /> */}
+          title="Incoming topic need evaluation"
+          rows={incomingTopic}
+        /> */}
         </div>
       </div>
     </>
