@@ -2,7 +2,7 @@ import React from 'react';
 import TimelineItem from './FlowItem';
 
 const FlowTimeline = ({
-  className,
+  className = '',
   items = [
     {
       date: '12 May',
@@ -17,7 +17,7 @@ const FlowTimeline = ({
       content: (
         <div className="timeline-content flex-row d-flex">
           <span className="font-weight-normal text-muted text-dark-75 pl-3 font-size-lg mr-5">
-            Send topic for approvals
+            Phase meeting with{' '}
             <span className="font-weight-bolder text-dark-75">
               Lam Huu Khanh Phuong, Tran Tuan Anh
             </span>
@@ -70,6 +70,28 @@ const FlowTimeline = ({
       ),
     },
     {
+      date: '1 Jun',
+      content: (
+        <div className="timeline-content font-weight-bolder font-size-lg text-dark-75 pl-3">
+          Send report
+          <a href="/" className="text-primary ml-1">
+            #4
+          </a>
+        </div>
+      ),
+    },
+    {
+      date: '25 Jun',
+      content: (
+        <div className="timeline-content flex-row d-flex">
+          <span className="font-weight-normal text-muted text-dark-75 pl-3 font-size-lg mr-5">
+            Checkpoint meeting with{' '}
+            <span className="font-weight-bolder text-dark-75">Council SE</span>
+          </span>
+        </div>
+      ),
+    },
+    {
       date: '30 Jun',
       content: (
         <div className="timeline-content font-weight-mormal font-size-lg text-muted pl-3">
@@ -78,9 +100,10 @@ const FlowTimeline = ({
       ),
     },
   ],
+  ...props
 }) => {
   return (
-    <div className={`card card-custom ${className}`}>
+    <div className={`card card-custom ${className}`} {...props}>
       <div className="card-header align-items-center border-0 mt-4">
         <h3 className="card-title align-items-start flex-column">
           <span className="font-weight-bolder text-dark">Flow timeline</span>
