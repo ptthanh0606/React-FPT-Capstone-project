@@ -386,7 +386,9 @@ const Team = () => {
         </div>
       </div>
       <div className="row">
-        <div className="col-lg-12 col-xxl-9">
+        <div
+          className={`col-lg-12 col-xxl-${userRole === 'student' ? '9' : '12'}`}
+        >
           <div className={`card card-custom gutter-b`}>
             <div className="card-body d-flex flex-column p-0">
               <div className="d-flex justify-content-between card-spacer flex-grow-1">
@@ -535,55 +537,59 @@ const Team = () => {
             </div>
           </div>
         </div>
-        <div className="col-lg-12 col-xxl-3">
-          <UtilityButtonTile
-            className="gutter-b"
-            smallTitle="Join code"
-            baseColor="info"
-            label={currentTeam?.code}
-            clickAbleIcon={isUserLeader}
-            onIconClick={handleRefreshJoinCode}
-            tooltipMsg={
-              <>
-                You can give this code to another student for joining.
-                <br />
-                <br /> Click the "refresh icon" to get new code (Team leader
-                only).
-              </>
-            }
-            buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Update.svg')}
-          />
-
-          {currentTeam.lock ? (
+        {userRole === 'student' && (
+          <div className="col-lg-12 col-xxl-3">
             <UtilityButtonTile
               className="gutter-b"
-              smallTitle="Team state"
-              baseColor="danger"
-              label="Locked"
-              onIconClick={handleChangeLockTeam}
-              clickAbleIcon={isUserLeader && currentTeam?.topic}
-              buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Lock.svg')}
-            />
-          ) : (
-            <UtilityButtonTile
-              className="gutter-b"
-              smallTitle="Team state"
-              baseColor="success"
-              label="Unlocked"
+              smallTitle="Join code"
+              baseColor="info"
+              label={currentTeam?.code}
               clickAbleIcon={isUserLeader}
+              onIconClick={handleRefreshJoinCode}
               tooltipMsg={
                 <>
-                  Lock this team (Locked team can not accept joining from other
-                  student)
+                  You can give this code to another student for joining.
                   <br />
-                  <br /> Click the "lock icon" to lock (Team leader only).
+                  <br /> Click the "refresh icon" to get new code (Team leader
+                  only).
                 </>
               }
-              onIconClick={handleChangeLockTeam}
-              buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Unlock.svg')}
+              buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Update.svg')}
             />
-          )}
-        </div>
+
+            {currentTeam.lock ? (
+              <UtilityButtonTile
+                className="gutter-b"
+                smallTitle="Team state"
+                baseColor="danger"
+                label="Locked"
+                onIconClick={handleChangeLockTeam}
+                clickAbleIcon={isUserLeader && currentTeam?.topic}
+                buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Lock.svg')}
+              />
+            ) : (
+              <UtilityButtonTile
+                className="gutter-b"
+                smallTitle="Team state"
+                baseColor="success"
+                label="Unlocked"
+                clickAbleIcon={isUserLeader}
+                tooltipMsg={
+                  <>
+                    Lock this team (Locked team can not accept joining from
+                    other student)
+                    <br />
+                    <br /> Click the "lock icon" to lock (Team leader only).
+                  </>
+                }
+                onIconClick={handleChangeLockTeam}
+                buttonIcon={toAbsoluteUrl(
+                  '/media/svg/icons/General/Unlock.svg'
+                )}
+              />
+            )}
+          </div>
+        )}
       </div>
     </>
   );

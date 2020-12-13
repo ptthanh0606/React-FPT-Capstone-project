@@ -10,8 +10,12 @@ import FlowTimeline from 'components/CMSWidgets/FlowTimeline';
 import QuickAction from 'components/CMSWidgets/QuickAction';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 import NumberOfTopic from 'components/CMSWidgets/NumberOfTopic';
+import TopicPreviewList from 'components/CMSWidgets/TopicPreviewList';
 
 export default React.memo(function LecturerDashboard() {
+  const [isStudentHaveTeam, setIsStudentHaveTeam] = React.useState(false);
+  const [isStudentHaveTopic, setIsStudentHaveTopic] = React.useState(false);
+
   const setMeta = useSetRecoilState(metaAtom);
 
   React.useEffect(() => {
@@ -25,52 +29,77 @@ export default React.memo(function LecturerDashboard() {
     <div className="row">
       <div className="col-lg-6 col-xxl-4">
         {/* Have team, have topic */}
-        <TopicTeamPreview className="card-stretch gutter-b" />
+        <TopicTeamPreview
+          className="card-stretch gutter-b"
+          isStudentHaveTeam={isStudentHaveTeam}
+          isStudentHaveTopic={isStudentHaveTopic}
+        />
 
-        <Reports className="gutter-b" />
+        {isStudentHaveTeam && isStudentHaveTopic && (
+          <Reports className="gutter-b" />
+        )}
 
-        {/* Have team */}
-        <NumberOfTopic />
+        <NumberOfTopic className="gutter-b" />
 
         {/* No team */}
-        {/* <QuickAction
-          className="gutter-b"
-          title="Quick teams"
-          actionsRows={[
-            [
-              {
-                className: 'col px-6 py-8 rounded-xl mr-7 mb-7',
-                type: 'info',
-                iconSrc: toAbsoluteUrl('/media/svg/icons/Code/Lock-circle.svg'),
-                label: 'Join team with code',
-                // onClick: handleRouteToTopics,
-              },
-              {
-                className: 'col px-6 py-8 rounded-xl mb-7',
-                type: 'primary',
-                iconSrc: toAbsoluteUrl('/media/svg/icons/Design/Join-1.svg'),
-                label: 'Join public team',
-                // onClick: handleRouteToTopics,
-              },
-            ],
-          ]}
-        /> */}
+        {!isStudentHaveTeam && (
+          <QuickAction
+            className="gutter-b"
+            title="Quick team actions"
+            actionsRows={[
+              [
+                {
+                  className: 'col px-6 py-8 rounded-xl mr-7 mb-7',
+                  type: 'info',
+                  iconSrc: toAbsoluteUrl(
+                    '/media/svg/icons/Code/Lock-circle.svg'
+                  ),
+                  label: 'Join team with code',
+                  // onClick: handleRouteToTopics,
+                },
+                {
+                  className: 'col px-6 py-8 rounded-xl mb-7',
+                  type: 'primary',
+                  iconSrc: toAbsoluteUrl('/media/svg/icons/Design/Join-1.svg'),
+                  label: 'Join public team',
+                  // onClick: handleRouteToTopics,
+                },
+              ],
+            ]}
+          />
+        )}
       </div>
       <div className="col-lg-6 col-xxl-4">
-        {/* Have team, have topic */}
-        <FlowTimeline className=" gutter-b" />
+        {isStudentHaveTeam && isStudentHaveTopic && (
+          <FlowTimeline className=" gutter-b" />
+        )}
 
-        {/* Have team || No team */}
-        {/* <TopicPreviewList
+        {!isStudentHaveTeam && (
+          <TopicPreviewList
             title={'Available public team'}
             expandbuttonlabel={'View all team'}
-          /> */}
+          />
+        )}
       </div>
       <div className="col-lg-6 col-xxl-4">
-        {/* Have team, have topic */}
-        <Anouncement body="This is an example anouncement" date="2020-06-06" />
-        <Anouncement body="This is an example anouncement" date="2020-06-06" />
-        <CheckpointProgress className=" gutter-b" />
+        <Anouncement
+          body={
+            <>
+              Lorem ipsum dolor sit amet, <br />
+              <br />
+              Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+              labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+              nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+              consequat. Duis aute irure dolor in reprehenderit in voluptate
+              velit esse cillum dolore eu fugiat nulla pariatur.{' '}
+            </>
+          }
+          date="2020-06-06"
+        />
+
+        {isStudentHaveTeam && isStudentHaveTopic && (
+          <CheckpointProgress className=" gutter-b" />
+        )}
       </div>
     </div>
   );
