@@ -197,10 +197,28 @@ export default function Topics({ semester }) {
 
   const onAssignCheckpointTemplate = React.useCallback(
     data => {
-      console.log({
-        ...data,
-        topicIds: selected,
-      });
+      return request({
+        to: endpoints.ASSIGN_EVALUATION.url,
+        method: endpoints.ASSIGN_EVALUATION.method,
+        data: {
+          checkpointTemplateId: data.checkpointTemplateId,
+          topicIds: selected,
+          evaluations: data.checkpoints.map(i => ({
+            checkpointId: i.id,
+            councilId: i.council.value,
+            submitDueDate: i.submitDueDate,
+            evaluateDueDate: i.evaluateDueDate,
+          })),
+        },
+      })
+        .then(res => {
+          toast.success('Assign checkpoint template to topics successfully!');
+          loadData();
+        })
+        .catch(e => {
+          handleErrors(e);
+          return Promise.reject(e);
+        });
     },
     [selected]
   );
