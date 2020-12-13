@@ -2,7 +2,7 @@ import axios from 'axios';
 import { helpers as authHelpers } from 'auth';
 
 const config = {
-  timeout: 0,
+  timeout: 5000,
 };
 
 function defaultHeaders() {
