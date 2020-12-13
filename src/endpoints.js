@@ -401,3 +401,20 @@ export const CANCEL_APPLICATION = id => ({
   url: SEND_APPLICATION.url + '/' + id + '/cancel',
   method: METHOD.PUT,
 });
+
+// -----------------------------------------------------------------------------
+
+export const LIST_EVALUATION = {
+  url: config.api + 'evaluations',
+  method: METHOD.GET,
+};
+
+export const ASSIGN_EVALUATION = {
+  url: LIST_EVALUATION.url,
+  method: METHOD.POST,
+};
+
+export const UPDATE_EVALUATION = {
+  url: LIST_EVALUATION.url,
+  method: METHOD.PUT,
+};

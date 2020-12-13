@@ -8,8 +8,8 @@ import { mDown as mDownTeam } from 'modules/semester/team/transformers';
 import { mDown as mDownLec } from 'modules/lecturer/transformers';
 
 export const statusClasses = [
-  'secondary',
   'warning',
+  'danger',
   'info',
   'primary',
   'info',

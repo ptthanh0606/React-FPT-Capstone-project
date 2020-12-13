@@ -308,6 +308,7 @@ const Team = () => {
                   />
                 </>
               )}
+
               {isUserInTeam ? (
                 <>
                   {!isTeamMatched && !isUserLeader && !currentTeam.lock && (

@@ -1,5 +1,7 @@
 import React from 'react';
+import md5 from 'utils/md5';
 import { toAbsoluteUrl } from '_metronic/_helpers';
+import MessageTile from './MessageTile';
 
 const TopicTeamPreview = () => {
   return (
@@ -26,7 +28,10 @@ const TopicTeamPreview = () => {
             </span>
           </div>
 
-          {/* <MessageTile className="flex-grow-1" /> */}
+          {/* <MessageTile
+            className="flex-grow-1"
+            content="Create a team or join a team to start matching for topic"
+          /> */}
 
           <div className="d-flex flex-column mt-10">
             <span className="text-dark mr-2 font-size-lg font-weight-bolder pb-4">
@@ -34,44 +39,46 @@ const TopicTeamPreview = () => {
             </span>
 
             <div className="d-flex">
-              <a
-                href="/"
-                className="symbol symbol-50 symbol-light-success mr-3"
-              >
-                <div className="symbol-label">
-                  <img
-                    src={toAbsoluteUrl('/media/svg/avatars/009-boy-4.svg')}
-                    className="h-75 align-self-end"
-                    alt=""
-                  />
-                </div>
-              </a>
-
-              <a
-                href="/"
-                className="symbol symbol-50 symbol-light-success mr-3"
-              >
-                <div className="symbol-label">
-                  <img
-                    src={toAbsoluteUrl('/media/svg/avatars/028-girl-16.svg')}
-                    className="h-75 align-self-end"
-                    alt=""
-                  />
-                </div>
-              </a>
-
-              <a
-                href="/"
-                className="symbol symbol-50 symbol-light-success mr-3"
-              >
-                <div className="symbol-label">
-                  <img
-                    src={toAbsoluteUrl('/media/svg/avatars/024-boy-9.svg')}
-                    className="h-75 align-self-end"
-                    alt=""
-                  />
-                </div>
-              </a>
+              <div className="symbol symbol-50 mr-5">
+                <div
+                  className="symbol-label"
+                  style={{
+                    backgroundImage: `url(https://www.gravatar.com/avatar/${md5(
+                      'phanthongthanh0606@gmail.com'
+                    )})`,
+                  }}
+                />
+              </div>
+              <div className="symbol symbol-50 mr-5">
+                <div
+                  className="symbol-label"
+                  style={{
+                    backgroundImage: `url(https://www.gravatar.com/avatar/${md5(
+                      ''
+                    )})`,
+                  }}
+                />
+              </div>
+              <div className="symbol symbol-50 mr-5">
+                <div
+                  className="symbol-label"
+                  style={{
+                    backgroundImage: `url(https://www.gravatar.com/avatar/${md5(
+                      ''
+                    )})`,
+                  }}
+                />
+              </div>
+              <div className="symbol symbol-50 mr-5">
+                <div
+                  className="symbol-label"
+                  style={{
+                    backgroundImage: `url(https://www.gravatar.com/avatar/${md5(
+                      ''
+                    )})`,
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>

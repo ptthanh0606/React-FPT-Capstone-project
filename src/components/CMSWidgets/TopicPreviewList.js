@@ -5,10 +5,11 @@ import { Button } from 'react-bootstrap';
 const TopicPreviewList = ({
   title = 'Newly added topics',
   expandbuttonlabel = 'View all topic',
-  className,
+  className = '',
+  ...props
 }) => {
   return (
-    <div className={`card card-custom ${className}`}>
+    <div className={`card card-custom ${className}`} {...props}>
       {/* Header */}
       <div className="card-header border-0">
         <h3 className="card-title font-weight-bolder text-dark">{title}</h3>
@@ -145,98 +146,6 @@ const TopicPreviewList = ({
           {/* end::Content */}
         </div>
 
-        <div className="mb-6">
-          {/* begin::Content */}
-          <div className="d-flex align-items-center flex-grow-1">
-            {/* begin::Checkbox */}
-
-            {/* end::Checkbox */}
-
-            {/* begin::Section */}
-            <div className="d-flex flex-wrap align-items-center justify-content-between w-100">
-              {/* begin::Info */}
-              <div className="d-flex flex-column align-items-cente py-2 w-75">
-                {/* begin::Title */}
-                <a
-                  href="#"
-                  className="text-dark-75 font-weight-bold text-hover-primary font-size-lg mb-1"
-                >
-                  Sprint delivery and project deployment
-                </a>
-                {/* end::Title */}
-
-                {/* begin::Data */}
-                <span className="text-muted font-weight-bold">
-                  Due in 2 Days
-                </span>
-                {/* end::Data */}
-              </div>
-              {/* end::Info */}
-
-              {/* begin::Label */}
-              <Button
-                className="btn-light-primary"
-                style={{
-                  width: '7em',
-                  lineHeight: '35px',
-                  padding: '0px 1rem',
-                  fontWeight: '600',
-                }}
-              >
-                Apply
-              </Button>
-              {/* end::Label */}
-            </div>
-            {/* end::Section */}
-          </div>
-          {/* end::Content */}
-        </div>
-        <div className="mb-6">
-          {/* begin::Content */}
-          <div className="d-flex align-items-center flex-grow-1">
-            {/* begin::Checkbox */}
-
-            {/* end::Checkbox */}
-
-            {/* begin::Section */}
-            <div className="d-flex flex-wrap align-items-center justify-content-between w-100">
-              {/* begin::Info */}
-              <div className="d-flex flex-column align-items-cente py-2 w-75">
-                {/* begin::Title */}
-                <a
-                  href="#"
-                  className="text-dark-75 font-weight-bold text-hover-primary font-size-lg mb-1"
-                >
-                  Sprint delivery and project deployment
-                </a>
-                {/* end::Title */}
-
-                {/* begin::Data */}
-                <span className="text-muted font-weight-bold">
-                  Due in 2 Days
-                </span>
-                {/* end::Data */}
-              </div>
-              {/* end::Info */}
-
-              {/* begin::Label */}
-              <Button
-                className="btn-light-primary"
-                style={{
-                  width: '7em',
-                  lineHeight: '35px',
-                  padding: '0px 1rem',
-                  fontWeight: '600',
-                }}
-              >
-                Apply
-              </Button>
-              {/* end::Label */}
-            </div>
-            {/* end::Section */}
-          </div>
-          {/* end::Content */}
-        </div>
         <div className="">
           {/* begin::Content */}
           <div className="d-flex align-items-center flex-grow-1">

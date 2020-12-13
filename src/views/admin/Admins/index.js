@@ -238,8 +238,8 @@ export default function Admins() {
         isShowFlg={showCreate}
         onHide={hideCreateModal}
         configs={constants.modalConfigs}
-        title="Add new student"
-        subTitle="Add student to the system"
+        title="Add new admin"
+        subTitle="Add admin to the system"
         onConfirmForm={handleCreate}
         fieldTemplate={fieldTemplate}
         isProcessing={isProcessing}
@@ -248,8 +248,8 @@ export default function Admins() {
         isShowFlg={showUpdate}
         onHide={hideUpdateModal}
         configs={constants.modalConfigs}
-        title="Update this student"
-        subTitle="Change this student info"
+        title="Update this admin"
+        subTitle="Change this admin info"
         onConfirmForm={edit}
         fieldTemplate={updateFieldTemplate}
         primaryButtonLabel="Update"

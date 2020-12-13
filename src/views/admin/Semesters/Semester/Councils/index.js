@@ -222,7 +222,7 @@ export default function Councils({ semester }) {
     <Card>
       <CardHeader title="All councils">
         <CardHeaderToolbar className="text-nowrap">
-          <button
+          {/* <button
             type="button"
             className="btn btn-danger font-weight-bold"
             disabled={Array.isArray(selected) && selected.length === 0}
@@ -231,7 +231,7 @@ export default function Councils({ semester }) {
             <i className="fas fa-trash mr-2"></i>
             Remove ({(Array.isArray(selected) && selected.length) || 0})
           </button>
-          &nbsp;
+          &nbsp; */}
           <button
             type="button"
             className="btn btn-primary font-weight-bold"

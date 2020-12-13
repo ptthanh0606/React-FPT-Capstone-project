@@ -66,9 +66,6 @@ const DropdownPopover = ({
                   data-value={item.value}
                   className="navi-link"
                 >
-                  <span className="navi-icon">
-                    <i className="flaticon2-shopping-cart-1"></i>
-                  </span>
                   <span className="navi-text">{item.label}</span>
                 </a>
               </li>

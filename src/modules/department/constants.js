@@ -37,23 +37,23 @@ export const createColumns = ({ handleEdit, handleRemove }) =>
       text: 'Name',
       sort: true,
     },
-    {
-      dataField: 'status',
-      text: 'Status',
-      sort: true,
-      formatter: (cellContent, row) => {
-        const getLabelCssClasses = () => {
-          return `label label-lg label-light-${
-            statusClasses[row.status === true ? 1 : 0]
-          } label-inline text-nowrap`;
-        };
-        return (
-          <span className={getLabelCssClasses()}>
-            {statusTitles[row.status === true ? 1 : 0]}
-          </span>
-        );
-      },
-    },
+    // {
+    //   dataField: 'status',
+    //   text: 'Status',
+    //   sort: true,
+    //   formatter: (cellContent, row) => {
+    //     const getLabelCssClasses = () => {
+    //       return `label label-lg label-light-${
+    //         statusClasses[row.status === true ? 1 : 0]
+    //       } label-inline text-nowrap`;
+    //     };
+    //     return (
+    //       <span className={getLabelCssClasses()}>
+    //         {statusTitles[row.status === true ? 1 : 0]}
+    //       </span>
+    //     );
+    //   },
+    // },
     {
       dataField: 'approvers',
       text: 'Approvers',
@@ -150,10 +150,10 @@ export const modalConfigs = [
     },
     isMulti: true,
   },
-  {
-    name: 'status',
-    type: 'toggle',
-    label: 'Active state',
-    smallLabel: 'Is this department active',
-  },
+  // {
+  //   name: 'status',
+  //   type: 'toggle',
+  //   label: 'Active state',
+  //   smallLabel: 'Is this department active',
+  // },
 ];

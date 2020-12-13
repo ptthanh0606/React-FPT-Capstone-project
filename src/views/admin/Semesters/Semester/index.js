@@ -145,9 +145,24 @@ const Semester = () => {
       <Row>
         <Col lg={3} className="mb-8">
           <div className={'alert-shadow bg-white p-5 rounded'}>
-            <span className="font-size-h2">{data.name}</span>
+            <span
+              className="font-size-h2"
+              style={{
+                lineHeight: '1.5rem',
+                marginBottom: '1rem',
+              }}
+            >
+              {data.name}
+            </span>
             <br />
-            <span className="font-size-h6">{statusTitles[data.status]}</span>
+            <span
+              className="font-size-h6"
+              style={{
+                lineHeight: '3rem',
+              }}
+            >
+              {statusTitles[data.status]}
+            </span>
             <div className={styles['menu-container']}>
               <NavLink
                 to={'/semester/' + id + '/information'}

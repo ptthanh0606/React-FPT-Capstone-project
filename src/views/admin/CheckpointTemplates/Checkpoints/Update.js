@@ -296,7 +296,7 @@ const UpdateCheckpoint = ({
             marginTop: '2rem',
           }}
         >
-          Mask columns
+          Mark columns
           <div
             style={{
               float: 'right',
