@@ -7,7 +7,7 @@ const CheckpointProgress = () => {
         <div className="card-title">
           <div className="card-label">
             <div className="font-weight-bolder">Checkpoint status</div>
-            <div className="fontSize-sm text-muted mt-2">3 checkpoints</div>
+            <div className="fontSize-sm text-muted mt-2">4 checkpoints</div>
           </div>
         </div>
       </div>
@@ -19,15 +19,6 @@ const CheckpointProgress = () => {
         <div className="flex-grow-1 card-spacer-x">
           <div className="d-flex align-items-center justify-content-between mb-10">
             <div className="d-flex align-items-center mr-2">
-              <div className="symbol symbol-50 symbol-light mr-3 flex-shrink-0">
-                <div className="symbol-label">
-                  <img
-                    src="assets/media/svg/misc/006-plurk.svg"
-                    alt=""
-                    className="h-50"
-                  />
-                </div>
-              </div>
               <div>
                 <a
                   href="/"
@@ -40,22 +31,13 @@ const CheckpointProgress = () => {
                 </div>
               </div>
             </div>
-            <div className="label label-light label-inline font-weight-bolder text-dark-50 py-4 px-3 fontSize-base">
-              Graded
+            <div className="label label-light-success label-inline font-weight-bolder py-4 px-3 fontSize-base">
+              Passed
             </div>
           </div>
 
           <div className="d-flex align-items-center justify-content-between mb-10">
             <div className="d-flex align-items-center mr-2">
-              <div className="symbol symbol-50 symbol-light mr-3 flex-shrink-0">
-                <div className="symbol-label">
-                  <img
-                    src="assets/media/svg/misc/015-telegram.svg"
-                    alt=""
-                    className="h-50"
-                  />
-                </div>
-              </div>
               <div>
                 <a
                   href="/"
@@ -68,21 +50,12 @@ const CheckpointProgress = () => {
                 </div>
               </div>
             </div>
-            <div className="label label-light label-inline font-weight-bolder text-dark-50 py-4 px-3 fontSize-base">
-              Not yet
+            <div className="label label-light-primary label-inline font-weight-bolder py-4 px-3 fontSize-base">
+              Evaluating
             </div>
           </div>
           <div className="d-flex align-items-center justify-content-between mb-10">
             <div className="d-flex align-items-center mr-2">
-              <div className="symbol symbol-50 symbol-light mr-3 flex-shrink-0">
-                <div className="symbol-label">
-                  <img
-                    src="assets/media/svg/misc/015-telegram.svg"
-                    alt=""
-                    className="h-50"
-                  />
-                </div>
-              </div>
               <div>
                 <a
                   href="/"
@@ -95,14 +68,14 @@ const CheckpointProgress = () => {
                 </div>
               </div>
             </div>
-            <div className="label label-light label-inline font-weight-bolder text-dark-50 py-4 px-3 fontSize-base">
-              Not yet
+            <div className="label label-light-warning label-inline font-weight-bolder py-4 px-3 fontSize-base">
+              Waiting
             </div>
           </div>
 
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center mr-2">
-              <div className="symbol symbol-50 symbol-light mr-3 flex-shrink-0">
+              {/* <div className="symbol symbol-50 symbol-light mr-3 flex-shrink-0">
                 <div className="symbol-label">
                   <img
                     src="assets/media/svg/misc/003-puzzle.svg"
@@ -110,7 +83,7 @@ const CheckpointProgress = () => {
                     className="h-50"
                   />
                 </div>
-              </div>
+              </div> */}
               <div>
                 <a
                   href="/"
@@ -123,8 +96,8 @@ const CheckpointProgress = () => {
                 </div>
               </div>
             </div>
-            <div className="label label-light label-inline font-weight-bolder text-dark-50 py-4 px-3 fontSize-base">
-              Not yet
+            <div className="label label-light-warning label-inline font-weight-bolder py-4 px-3 fontSize-base">
+              Waiting
             </div>
           </div>
         </div>

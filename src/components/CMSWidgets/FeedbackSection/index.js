@@ -62,6 +62,30 @@ const FeedbackSection = ({
           </span>
         </div>
 
+        {topicStatus === 'Waiting' && !isUserApprover && (
+          <MessageTile
+            iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Stop.svg')}
+            content="You are not an approver to give feedback."
+            baseColor="warning"
+          />
+        )}
+
+        {topicStatus === 'Waiting' && isUserApprover && !isInDep && (
+          <MessageTile
+            iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Stop.svg')}
+            content="You are not an approver of this topic department."
+            baseColor="warning"
+          />
+        )}
+
+        {['Approved'].includes(topicStatus) && (
+          <MessageTile
+            iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Stop.svg')}
+            content="Feedback session is over"
+            baseColor="warning"
+          />
+        )}
+
         {topicStatus === 'Waiting' && isUserApprover && isInDep && (
           <>
             <form className="form">
@@ -96,34 +120,10 @@ const FeedbackSection = ({
           </>
         )}
 
-        {!isInDep && (
-          <MessageTile
-            iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Stop.svg')}
-            content="You are not belong to this department."
-            baseColor="warning"
-          />
-        )}
-
-        {!isUserApprover && (
-          <MessageTile
-            iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Stop.svg')}
-            content="You are not an approver of this topic department."
-            baseColor="warning"
-          />
-        )}
-
-        {topicStatus !== 'Waiting' && (
-          <MessageTile
-            iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Stop.svg')}
-            content="Feedback session is over"
-            baseColor="warning"
-          />
-        )}
-
         <div className="timeline timeline-3">
           <div className="my-5">
             <span className="text-dark font-size-h5 font-weight-bold">
-              What you and other people think:
+              What other approvers think:
             </span>
           </div>
           <div className="timeline-items">
@@ -146,7 +146,11 @@ const FeedbackSection = ({
                         iconSrc={toAbsoluteUrl(
                           '/media/svg/icons/Communication/Chat-smile.svg'
                         )}
-                        content="Be the first one to feedback for this topic"
+                        content={
+                          isUserApprover
+                            ? 'Be the first one to feedback for this topic'
+                            : 'Waiting for feedbacks...'
+                        }
                         baseColor="primary"
                       />
                     )}
