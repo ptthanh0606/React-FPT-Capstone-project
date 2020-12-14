@@ -15,8 +15,8 @@ export const modalConfigs = [
   {
     name: 'isPublic',
     type: 'toggle',
-    label: 'Public team',
-    smallLabel: 'Is this team private',
+    label: 'Privacy',
+    smallLabel: 'Is this team public',
   },
   {
     name: 'isLocked',

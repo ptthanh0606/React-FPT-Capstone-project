@@ -2,13 +2,13 @@ import Row from 'components/CMSList/Row';
 import React from 'react';
 
 const CMSList = ({
-  className,
-  title,
-  subTitle,
-  rows,
+  className = '',
+  title = '',
+  subTitle = '',
+  rows = [],
   rowActions = <></>,
-  toolBar,
-  fallbackMsg,
+  toolBar = <></>,
+  fallbackMsg = '',
 }) => {
   // -------------------------------------------------------------
 

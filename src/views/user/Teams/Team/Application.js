@@ -6,12 +6,15 @@ import SVG from 'react-inlinesvg';
 import * as constants from 'modules/semester/team/application/constants';
 import { Link } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import userAtom from 'store/user';
 import { role } from 'auth/recoil/selectors';
+import userAtom from 'store/user';
+
 import { formatRelative, subMinutes } from 'date-fns';
+
 import toast from 'utils/toast';
-import { handleErrors } from 'utils/common';
 import useConfirm from 'utils/confirm';
+import { handleErrors } from 'utils/common';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 const Application = ({
   createdAt = '',
@@ -103,16 +106,23 @@ const Application = ({
         statusTitles[status] === 'Waiting' &&
         currentUser.id === leaderId && (
           <td className="text-left p-0">
-            <button
-              onClick={handleCancelApplication}
-              className="btn btn-icon btn-light-danger btn-sm"
+            <OverlayTrigger
+              placement="bottom"
+              overlay={<Tooltip>Cancel application</Tooltip>}
             >
-              <span className="svg-icon svg-icon-md">
-                <SVG
-                  src={toAbsoluteUrl('/media/svg/icons/Code/Error-circle.svg')}
-                ></SVG>
-              </span>
-            </button>
+              <button
+                onClick={handleCancelApplication}
+                className="btn btn-icon btn-light-danger btn-sm"
+              >
+                <span className="svg-icon svg-icon-md">
+                  <SVG
+                    src={toAbsoluteUrl(
+                      '/media/svg/icons/Code/Error-circle.svg'
+                    )}
+                  ></SVG>
+                </span>
+              </button>
+            </OverlayTrigger>
           </td>
         )}
     </tr>
