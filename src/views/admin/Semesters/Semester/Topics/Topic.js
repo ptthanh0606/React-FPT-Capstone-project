@@ -581,20 +581,6 @@ const Topic = ({ semester }) => {
             </Form.Group>
             <Form.Group as={Row}>
               <Form.Label column sm={3}>
-                Note
-              </Form.Label>
-              <Col sm={9}>
-                <Form.Control
-                  type="text"
-                  className="form-control form-control-md form-control-solid"
-                  value={data.note}
-                  data-name="note"
-                  onChange={handleChangeField}
-                />
-              </Col>
-            </Form.Group>
-            <Form.Group as={Row}>
-              <Form.Label column sm={3}>
                 Minimum members
               </Form.Label>
               <Col sm={9}>

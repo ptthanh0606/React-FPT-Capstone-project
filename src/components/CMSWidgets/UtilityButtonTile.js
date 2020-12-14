@@ -8,19 +8,12 @@ const UtilityButtonTile = ({
   smallTitle = '',
   label = '',
   baseColor = '',
-  tooltipMsg,
+  tooltipMsg = '',
+  iconTooltipMsg = '',
   clickAbleIcon = false,
   onIconClick = () => {},
   buttonIcon = toAbsoluteUrl('/media/svg/icons/Code/Lock-overturning.svg'),
 }) => {
-  const handleIconClick = React.useCallback(
-    e => {
-      e.preventDefault();
-      onIconClick();
-    },
-    [onIconClick]
-  );
-
   return (
     <div
       className={`card card-custom bg-diagonal bg-diagonal-${baseColor} ${className}`}
@@ -47,17 +40,23 @@ const UtilityButtonTile = ({
           </div>
 
           {clickAbleIcon && (
-            <div className="ml-6 flex-shrink-0">
-              <a
-                href="/"
-                onClick={handleIconClick}
-                className="btn btn-light py-3 px-6"
-              >
-                <span className={`svg-icon svg-icon-${baseColor} svg-icon-4x`}>
-                  <SVG src={buttonIcon}></SVG>
-                </span>
-              </a>
-            </div>
+            <OverlayTrigger
+              placement="bottom"
+              overlay={<Tooltip>{iconTooltipMsg}</Tooltip>}
+            >
+              <div className="ml-6 flex-shrink-0">
+                <button
+                  onClick={onIconClick}
+                  className="btn btn-light py-3 px-6"
+                >
+                  <span
+                    className={`svg-icon svg-icon-${baseColor} svg-icon-4x`}
+                  >
+                    <SVG src={buttonIcon}></SVG>
+                  </span>
+                </button>
+              </div>
+            </OverlayTrigger>
           )}
         </div>
       </div>

@@ -279,28 +279,36 @@ export default React.memo(function LecturerDashboard() {
   React.useEffect(() => {
     const response = [
       {
-        id: 0,
+        id: 1,
         label: 'Capstone Management System',
         onLabelClick: handleRouteToSpecificTopic(0),
         subLabel: 'Software Engineer',
-        altLabel: 'Ho Hoan Kiem',
-        emailAvatar: '',
+        altLabel: 'ThanhPTLecturer',
+        emailAvatar: 'c',
       },
       {
-        id: 0,
+        id: 2,
         label: 'Web Checker System',
         onLabelClick: handleRouteToSpecificTopic(0),
-        subLabel: 'Graphic Design',
+        subLabel: 'Software Engineer',
         altLabel: 'Le Vu Truong',
-        emailAvatar: '',
+        emailAvatar: 'c',
       },
       {
-        id: 0,
-        label: 'Example topic name',
+        id: 3,
+        label: 'Example topic name 1',
         onLabelClick: handleRouteToSpecificTopic(0),
-        subLabel: 'International Business',
+        subLabel: 'Software Engineer',
         altLabel: 'Tran Dinh Thanh',
-        emailAvatar: '',
+        emailAvatar: 'c',
+      },
+      {
+        id: 5,
+        label: 'Example topic name 2',
+        onLabelClick: handleRouteToSpecificTopic(0),
+        subLabel: 'Software Engineer',
+        altLabel: 'Tran Dinh Thanh',
+        emailAvatar: 'c',
       },
     ];
     setTopicNeedFeedback(response);
@@ -309,7 +317,7 @@ export default React.memo(function LecturerDashboard() {
   return (
     <div className="row">
       <div className="col-lg-6 col-xxl-4">
-        <div className="row">
+        {/* <div className="row">
           <div className="col-lg-12 col-xxl-12">
             <QuickAction
               className="gutter-b"
@@ -336,7 +344,7 @@ export default React.memo(function LecturerDashboard() {
               ]}
             />
           </div>
-        </div>
+        </div> */}
         <div className="row">
           <div className="col-lg-12 col-xxl-12">
             <Anouncement
@@ -370,7 +378,7 @@ export default React.memo(function LecturerDashboard() {
             <FlowTimeline className="gutter-b" items={flowTimelines} />
           </div>
         </div>
-        <div className="row">
+        {/* <div className="row">
           <div className="col-lg-12 col-xxl-12">
             <CMSList
               className="gutter-b card-stretch"
@@ -378,7 +386,7 @@ export default React.memo(function LecturerDashboard() {
               rows={applications}
             />
           </div>
-        </div>
+        </div> */}
       </div>
       <div className="col-lg-6 col-xxl-4">
         <div className="row">
