@@ -1,6 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import md5 from 'utils/md5';
-import { toAbsoluteUrl } from '_metronic/_helpers';
 import MessageTile from './MessageTile';
 
 const TopicTeamPreview = ({
@@ -31,6 +31,20 @@ const TopicTeamPreview = ({
                 FA20SE13
               </span>
             </div>
+          )}
+
+          {isStudentHaveTeam && !isStudentHaveTopic && (
+            <MessageTile
+              className="flex-grow-1"
+              content={
+                <>
+                  Now you can start apply for a capstone topic{' '}
+                  <Link className="font-weight-bolder text-success" to="/topic">
+                    Show me how
+                  </Link>
+                </>
+              }
+            />
           )}
 
           {!isStudentHaveTeam && (

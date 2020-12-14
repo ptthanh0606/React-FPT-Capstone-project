@@ -224,7 +224,7 @@ export default function Topics() {
       ],
       toolbar: (
         <>
-          {role === 'lecturer' ? (
+          {role === 'lecturer' && [0, 1].includes(semester.status) ? (
             <button
               type="button"
               className="btn btn-primary font-weight-bold"
@@ -237,7 +237,7 @@ export default function Topics() {
         </>
       ),
     }));
-  }, [role, semester.name, setMeta, showCreateModal]);
+  }, [role, semester.name, semester.status, setMeta, showCreateModal]);
 
   return (
     <Card>

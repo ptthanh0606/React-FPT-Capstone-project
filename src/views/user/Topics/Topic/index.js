@@ -859,7 +859,7 @@ const Topic = () => {
                     />
                   </>
                 )}
-              {['Approved'].includes(
+              {['Approved', 'Ready'].includes(
                 constants.statusTitles[currentTopic.status]
               ) &&
                 !isUserMentor && (
