@@ -105,8 +105,10 @@ export default React.memo(function LecturerDashboard() {
                 {
                   className: 'col px-6 py-8 rounded-xl mb-7',
                   type: 'primary',
-                  iconSrc: toAbsoluteUrl('/media/svg/icons/Design/Join-1.svg'),
-                  label: 'Join public team',
+                  iconSrc: toAbsoluteUrl(
+                    '/media/svg/icons/Communication/Address-card.svg'
+                  ),
+                  label: 'Create a team',
                   // onClick: handleRouteToTopics,
                 },
               ],

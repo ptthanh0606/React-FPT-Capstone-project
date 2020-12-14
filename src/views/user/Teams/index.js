@@ -30,9 +30,11 @@ import toast from 'utils/toast';
 import { useDebounce } from 'use-debounce/lib';
 import { handleErrors } from 'utils/common';
 import request from 'utils/request';
+import useConfirm from 'utils/confirm';
 
 export default function Teams() {
   const history = useHistory();
+  const confirm = useConfirm();
   const [l, loadData] = React.useReducer(() => ({}), {});
   // ------------------------------------------------------------------
 
@@ -184,31 +186,44 @@ export default function Teams() {
     [currentSemester.id, fetchTeams]
   );
 
-  const handleJoin = React.useCallback(
+  const onJoinPublicConfirm = React.useCallback(
     e => {
-      e.preventDefault();
       const teamId = e.currentTarget.getAttribute('data-id');
       const teamCode = e.currentTarget.getAttribute('data-code');
       const teamName = e.currentTarget.getAttribute('data-name');
-      request({
-        to: endpoints.JOIN_TEAM(teamId).url,
-        method: endpoints.JOIN_TEAM(teamId).method,
-        params: {
-          teamId: teamId,
-          semesterId: currentSemester.id,
-          teamCode: teamCode,
-        },
-      })
-        .then(res => {
-          history.push(`/team/${teamId}`);
-          toast.success(`Joined, you are now a member of ${teamName}!`);
+      return () => {
+        request({
+          to: endpoints.JOIN_TEAM(teamId).url,
+          method: endpoints.JOIN_TEAM(teamId).method,
+          params: {
+            teamId: teamId,
+            semesterId: currentSemester.id,
+            teamCode: teamCode,
+          },
         })
-        .catch(err => {
-          handleErrors(err);
-          if (!err.isCancel) setIsLoading(false);
-        });
+          .then(() => {
+            history.push(`/team/${teamId}`);
+            toast.success(`Joined, you are now a member of ${teamName}!`);
+          })
+          .catch(err => {
+            handleErrors(err);
+            if (!err.isCancel) setIsLoading(false);
+          });
+      };
     },
     [currentSemester.id, history]
+  );
+
+  const handleJoin = React.useCallback(
+    e => {
+      e.preventDefault();
+      confirm({
+        title: 'Confirm required',
+        body: 'Are you sure you want to join this team?',
+        onConfirm: onJoinPublicConfirm(e),
+      });
+    },
+    [confirm, onJoinPublicConfirm]
   );
 
   const handleJoinWithCode = React.useCallback(
@@ -223,8 +238,8 @@ export default function Teams() {
       })
         .then(res => {
           setJoinTeamModalShowFlg(false);
-          history.push(`/team/${res.data.data.id}`);
-          toast.success(`Joined, you are now a member of ${''}!`);
+          history.push(`/team/${res.data.data}`);
+          toast.success(`Joined!`);
         })
         .catch(err => {
           handleErrors(err);

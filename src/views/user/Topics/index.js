@@ -34,10 +34,6 @@ export default function Topics() {
 
   //----------------------------------------------------------------------------
 
-  const [l, loadData] = React.useReducer(() => ({}), {});
-
-  //----------------------------------------------------------------------------
-
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -72,33 +68,6 @@ export default function Topics() {
   const hideCreateModal = React.useCallback(() => {
     setShowCreate(false);
   }, []);
-
-  const handleCreate = React.useCallback(
-    fieldData => {
-      setIsProcessing(true);
-      request({
-        to: endpoints.CREATE_TOPIC.url,
-        method: endpoints.CREATE_TOPIC.method,
-        data: {
-          ...transformers.up(fieldData),
-          semesterId: Number(semester.id),
-          submitterId: currentUser.id,
-        },
-        params: {
-          semesterId: semester.id,
-        },
-      })
-        .then(res => {
-          toast.success('Create topic successfully');
-          setShowCreate(false);
-          loadData();
-          setFieldTemplate({});
-        })
-        .catch(handleErrors)
-        .finally(() => setIsProcessing(false));
-    },
-    [currentUser.id, semester.id]
-  );
 
   const loadTopics = React.useCallback(
     state => {
@@ -177,6 +146,34 @@ export default function Topics() {
       };
     },
     [debouncedFilters, page, pageSize, semester.id, sortField, sortOrder]
+  );
+
+  const handleCreate = React.useCallback(
+    fieldData => {
+      setIsProcessing(true);
+      request({
+        to: endpoints.CREATE_TOPIC.url,
+        method: endpoints.CREATE_TOPIC.method,
+        data: {
+          ...transformers.up(fieldData),
+          semesterId: Number(semester.id),
+          submitterId: currentUser.id,
+        },
+        params: {
+          semesterId: semester.id,
+        },
+      })
+        .then(res => {
+          toast.success('Create topic successfully');
+          setShowCreate(false);
+          setFieldTemplate({});
+          loadTopics('all');
+          loadTopics('submitted');
+        })
+        .catch(handleErrors)
+        .finally(() => setIsProcessing(false));
+    },
+    [currentUser.id, loadTopics, semester.id]
   );
 
   const handleLoadAllSubmitted = React.useCallback(() => {

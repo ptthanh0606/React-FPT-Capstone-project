@@ -18,7 +18,6 @@ import * as transformers from 'modules/semester/topic/transformers';
 import * as constants from 'modules/semester/topic/constants';
 import * as teamTransformers from 'modules/semester/team/transformers';
 import * as departmentTransformers from 'modules/department/transformers';
-import { rowActionFormatter } from './constants';
 
 import CMSModal from 'components/CMSModal/CMSModal';
 import CMSList from 'components/CMSList';
@@ -451,11 +450,7 @@ const Topic = () => {
 
         fetchDepartment(data.department.value);
       } else {
-        if (
-          !['Waiting', 'Approved', 'Rejected', 'Ready'].includes(
-            constants.statusTitles[data.status]
-          )
-        ) {
+        if (![0, 1, 2, 3].includes(data.status)) {
           fetchLeaderTeam(data.team.value);
         }
       }
@@ -789,8 +784,7 @@ const Topic = () => {
                     overlay={
                       <Tooltip>
                         Apply matching for this topic, mentor will consider your
-                        application after you sent. <br />
-                        You must lock your team before you can apply.
+                        application after you sent.
                       </Tooltip>
                     }
                   >
@@ -859,19 +853,16 @@ const Topic = () => {
                     />
                   </>
                 )}
-              {['Approved', 'Ready'].includes(
-                constants.statusTitles[currentTopic.status]
-              ) &&
-                !isUserMentor && (
-                  <button
-                    type="button"
-                    className="btn btn-primary btn-success font-weight-bold btn-sm ml-2"
-                    onClick={handleApplyMentor}
-                  >
-                    <i className="fas fa-sign-in-alt mr-1"></i>
-                    Become a mentor
-                  </button>
-                )}
+              {[2, 3].includes(currentTopic.status) && !isUserMentor && (
+                <button
+                  type="button"
+                  className="btn btn-primary btn-success font-weight-bold btn-sm ml-2"
+                  onClick={handleApplyMentor}
+                >
+                  <i className="fas fa-sign-in-alt mr-1"></i>
+                  Become a mentor
+                </button>
+              )}
               {constants.statusTitles[currentTopic.status] === 'Waiting' &&
                 currentTopic.submitter.value === currentUser.id && (
                   <button
@@ -992,11 +983,7 @@ const Topic = () => {
                   className="btn btn-primary btn-light-success font-weight-bold btn-sm mr-2"
                   onClick={() => handleApproveTeam(application.id)}
                 >
-                  <span class="svg-icon mr-0">
-                    <SVG
-                      src={toAbsoluteUrl('/media/svg/icons/General/Smile.svg')}
-                    ></SVG>
-                  </span>
+                  <i class="far fa-thumbs-up p-0"></i>
                 </Button>
               </OverlayTrigger>
               <OverlayTrigger
@@ -1007,11 +994,7 @@ const Topic = () => {
                   className="btn btn-light-danger font-weight-bold btn-sm "
                   onClick={() => handleRejectTeam(application.id)}
                 >
-                  <span class="svg-icon mr-0 svg-icon-red">
-                    <SVG
-                      src={toAbsoluteUrl('/media/svg/icons/General/Sad.svg')}
-                    ></SVG>
-                  </span>
+                  <i class="far fa-thumbs-down p-0"></i>
                 </Button>
               </OverlayTrigger>
             </>
@@ -1026,11 +1009,7 @@ const Topic = () => {
       <div className="row">
         <div
           className={`col-lg-12 col-xxl-${
-            ['Waiting', 'Rejected'].includes(
-              constants.statusTitles[currentTopic.status]
-            )
-              ? '12'
-              : '9'
+            [0, 1].includes(currentTopic.status) ? '12' : '9'
           }`}
         >
           <TopicDetailCard
@@ -1055,95 +1034,98 @@ const Topic = () => {
             evaluations={evals || []}
           />
         </div>
-        <div className="col-lg-6 col-xxl-3">
-          {currentRole === 'lecturer' &&
-            isUserMentor &&
-            constants.statusTitles[currentTopic.status] === 'Ready' && (
-              <CMSList
-                className="gutter-b"
-                title="Applying teams"
-                subTitle="Consider approve team to topic"
-                rows={applicationsMap(currentTopic.applications)}
-                rowActions={
-                  (isUserMentorLeader &&
-                    rowActionFormatter(
-                      handleApproveTeam,
-                      handleRejectTeam
-                    )) || <></>
-                }
-                fallbackMsg="Awaiting for application..."
-              />
+        <div className="col-lg-12 col-xxl-3">
+          <div className="row">
+            {currentRole === 'lecturer' &&
+              isUserMentor &&
+              currentTopic.status === 3 && (
+                <div className="col-lg-6 col-xxl-12">
+                  <CMSList
+                    className="gutter-b"
+                    title="Applying teams"
+                    subTitle="Consider approve team to topic"
+                    rows={applicationsMap(currentTopic.applications)}
+                    fallbackMsg="Awaiting for application..."
+                  />
+                </div>
+              )}
+
+            {currentTopic.status === 4 && (
+              <div className="col-lg-6 col-xxl-12">
+                <GroupCard
+                  className="gutter-b"
+                  title="Assigned team"
+                  subTitle="Team currently matched to this topic"
+                  role="student"
+                  group={currentTopic.team?.members}
+                  leaderId={studentLeaderId}
+                  fallbackMsg={
+                    'Assigned but no team? This might be a problem...'
+                  }
+                  toolBar={
+                    !!currentTopic.team?.members.length && (
+                      <Link
+                        to={`/team/${currentTopic.team?.value}`}
+                        className="btn btn-light-primary font-weight-bolder mt-2"
+                      >
+                        More
+                      </Link>
+                    )
+                  }
+                />
+              </div>
             )}
 
-          {constants.statusTitles[currentTopic.status] === 'Assigned' && (
-            <GroupCard
-              className="gutter-b"
-              title="Assigned team"
-              subTitle="Team currently matched to this topic"
-              role="student"
-              group={currentTopic.team?.members}
-              leaderId={studentLeaderId}
-              fallbackMsg={'Assigned but no team? This might be a problem...'}
-              toolBar={
-                !!currentTopic.team?.members.length && (
-                  <Link
-                    to={`/team/${currentTopic.team?.value}`}
-                    className="btn btn-light-primary font-weight-bolder mt-2"
-                  >
-                    More
-                  </Link>
-                )
-              }
-            />
-          )}
+            {![0, 1].includes(currentTopic.status) && (
+              <div className="col-lg-6 col-xxl-12">
+                <GroupCard
+                  className="gutter-b"
+                  title="Mentors"
+                  subTitle="Mentor of this topic"
+                  role="lecturer"
+                  leaderId={mentorLeaderId}
+                  fallbackMsg={
+                    currentRole === 'lecturer'
+                      ? 'Become a leader mentor for this topic now!'
+                      : 'This topic currently not have mentor'
+                  }
+                  group={currentTopic.mentorMembers}
+                  handleSubmitRowData={handleChangeWeight}
+                  toolBar={
+                    (currentTopic?.mentorMembers?.length &&
+                      isUserMentorLeader &&
+                      mentorCardToolbar()) || <></>
+                  }
+                  booleanFlg={editWeightFlg}
+                />
+              </div>
+            )}
 
-          {!['Waiting', 'Rejected'].includes(
-            constants.statusTitles[currentTopic.status]
-          ) && (
-            <GroupCard
-              className="gutter-b"
-              title="Mentors"
-              subTitle="Mentor of this topic"
-              role="lecturer"
-              leaderId={mentorLeaderId}
-              fallbackMsg={
-                currentRole === 'lecturer'
-                  ? 'Become a leader mentor for this topic now!'
-                  : 'This topic currently not have mentor'
-              }
-              group={currentTopic.mentorMembers}
-              handleSubmitRowData={handleChangeWeight}
-              toolBar={
-                (currentTopic?.mentorMembers?.length &&
-                  isUserMentorLeader &&
-                  mentorCardToolbar()) || <></>
-              }
-              booleanFlg={editWeightFlg}
-            />
-          )}
-
-          {!['Waiting', 'Rejected'].includes(
-            constants.statusTitles[currentTopic.status]
-          ) && (
-            <GroupCard
-              title="Progress reports"
-              subTitle="Submitted by students"
-              fallbackMsg={
-                currentRole === 'lecturer'
-                  ? 'No report by team yet...'
-                  : 'Awaiting for report submission...'
-              }
-              group={[]}
-              handleSubmitRowData={handleSubmitReport}
-              toolBar={
-                <button className="btn btn-light-info mt-2 font-weight-bolder">
-                  <i class="far fa-file-archive icon-md mr-1"></i>
-                  Submit
-                </button>
-              }
-              booleanFlg={editWeightFlg}
-            />
-          )}
+            {currentSemester.status === 2 &&
+              [4, 5, 6].includes(currentTopic.status) && (
+                <div className="col-lg-6 col-xxl-12">
+                  <GroupCard
+                    className="gutter-b"
+                    title="Progress reports"
+                    subTitle="Submitted by students"
+                    fallbackMsg={
+                      currentRole === 'lecturer'
+                        ? 'No report by team yet...'
+                        : 'Awaiting for report submission...'
+                    }
+                    group={[]}
+                    handleSubmitRowData={handleSubmitReport}
+                    toolBar={
+                      <button className="btn btn-light-info mt-2 font-weight-bolder">
+                        <i class="far fa-file-archive icon-md mr-1"></i>
+                        Submit
+                      </button>
+                    }
+                    booleanFlg={editWeightFlg}
+                  />
+                </div>
+              )}
+          </div>
         </div>
       </div>
     </>

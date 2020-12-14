@@ -202,7 +202,7 @@ const Team = () => {
       });
   }, [checkInitAction, currentTeam.id, currentTeam.lock]);
 
-  const handleLeaveTeam = React.useCallback(() => {
+  const onLeaveConfirm = React.useCallback(() => {
     request({
       to: endpoints.LEAVE_TEAM(currentTeam.id).url,
       method: endpoints.LEAVE_TEAM(currentTeam.id).method,
@@ -213,14 +213,21 @@ const Team = () => {
     })
       .then(() => {
         history.push('/team');
-        checkInitAction();
       })
       .catch(err => {
         handleErrors(err);
       });
-  }, [checkInitAction, currentSemester.id, currentTeam.id, history]);
+  }, [currentSemester.id, currentTeam.id, history]);
 
-  const handleJoinTeam = React.useCallback(() => {
+  const handleLeaveTeam = React.useCallback(() => {
+    confirm({
+      title: 'Confirm required',
+      body: 'Are you sure you want to leave this team?',
+      onConfirm: onLeaveConfirm,
+    });
+  }, [confirm, onLeaveConfirm]);
+
+  const onJoinTeamConfirm = React.useCallback(() => {
     request({
       to: endpoints.JOIN_TEAM(id).url,
       method: endpoints.JOIN_TEAM(id).method,
@@ -237,7 +244,15 @@ const Team = () => {
       .catch(err => {
         handleErrors(err);
       });
-  }, [id, currentSemester.id, currentTeam.code, checkInitAction]);
+  }, [checkInitAction, currentSemester.id, currentTeam.code, id]);
+
+  const handleJoinTeam = React.useCallback(() => {
+    confirm({
+      title: 'Confirm required',
+      body: 'Are you sure you want to join this team?',
+      onConfirm: onJoinTeamConfirm,
+    });
+  }, [confirm, onJoinTeamConfirm]);
 
   const handleConfirmDumpTeam = React.useCallback(() => {
     request({
@@ -271,7 +286,7 @@ const Team = () => {
         <>
           {userRole === 'student' && (
             <>
-              {isUserLeader && !isTeamMatched && (
+              {isUserLeader && !isTeamMatched && !currentTeam.lock && (
                 <>
                   <button
                     type="button"
@@ -546,6 +561,7 @@ const Team = () => {
               label={currentTeam?.code}
               clickAbleIcon={isUserLeader}
               onIconClick={handleRefreshJoinCode}
+              iconTooltipMsg="Change code"
               tooltipMsg={
                 <>
                   You can give this code to another student for joining.
@@ -564,6 +580,7 @@ const Team = () => {
                 baseColor="danger"
                 label="Locked"
                 onIconClick={handleChangeLockTeam}
+                iconTooltipMsg="Unlock team"
                 clickAbleIcon={isUserLeader && currentTeam?.topic}
                 buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Lock.svg')}
               />
@@ -582,6 +599,7 @@ const Team = () => {
                     <br /> Click the "lock icon" to lock (Team leader only).
                   </>
                 }
+                iconTooltipMsg="Lock team"
                 onIconClick={handleChangeLockTeam}
                 buttonIcon={toAbsoluteUrl(
                   '/media/svg/icons/General/Unlock.svg'
