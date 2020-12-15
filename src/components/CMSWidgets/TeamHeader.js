@@ -82,31 +82,7 @@ const TeamHeader = ({
                         )}
                       </div>
                     </div>
-
-                    {/* <div className="mb-10">
-                  <span className="btn btn-sm btn-light-primary font-weight-bolder text-uppercase mr-2">
-                  contact
-                  </span>
-                  <div className="dropdown dropdown-inline">
-                    <span
-                      className="btn btn-primary btn-sm font-weight-bolder text-uppercase dropdown-toggle"
-                      data-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                    export
-                    </span>
                   </div>
-                </div> */}
-                  </div>
-
-                  {/* <div className="d-flex align-items-center flex-wrap justify-content-between">
-                <div className="flex-grow-1 font-weight-bold text-dark-50 py-2 py-lg-2 mr-5">
-                I distinguish three main text objectives could be merely to
-                inform people.
-                <br />A second could be persuade people. You want people to
-                bay objective.
-                </div>
-              </div> */}
                 </div>
               </div>
 
@@ -115,12 +91,9 @@ const TeamHeader = ({
                   {withTopic && (
                     <>
                       <div className="separator separator-solid my-7"></div>
-                      <a
-                        href="/"
-                        className="text-muted font-size-h6 font-weight-bolder"
-                      >
+                      <span className="text-muted font-size-h6 font-weight-bolder">
                         {`Assigned to`}{' '}
-                      </a>
+                      </span>
                       <div className="d-flex align-items-center justify-content-between flex-wrap">
                         <div className="mr-3">
                           <a

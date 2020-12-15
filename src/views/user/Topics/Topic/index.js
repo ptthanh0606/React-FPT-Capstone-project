@@ -45,7 +45,7 @@ const fakeData = {
       evaluateDueDate: '2022-09-01T00:00:00',
       council: {
         id: 1,
-        name: 'ThanhPTLecturer',
+        name: 'ThanhPTLecturer, DuyHDLecturer',
         members: [
           {
             id: 1,
@@ -80,7 +80,7 @@ const fakeData = {
             // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
             // Moi array la cac diem cua 1 column
             [7, 8, 9],
-            [10, 11, 12],
+            [10, 10, 12],
           ],
           total: 100,
         },
@@ -184,7 +184,7 @@ const fakeData = {
             // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
             // Moi array la cac diem cua 1 column
             [7, 8, 9],
-            [10, 11, 12],
+            [10, 10, 12],
           ],
           total: 100,
         },
@@ -236,7 +236,7 @@ const fakeData = {
             // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
             // Moi array la cac diem cua 1 column
             [7, 8, 9],
-            [10, 11, 12],
+            [10, 10, 12],
           ],
           total: 100,
         },
@@ -1116,10 +1116,14 @@ const Topic = () => {
                     group={[]}
                     handleSubmitRowData={handleSubmitReport}
                     toolBar={
-                      <button className="btn btn-light-info mt-2 font-weight-bolder">
-                        <i class="far fa-file-archive icon-md mr-1"></i>
-                        Submit
-                      </button>
+                      currentRole === 'student' && isStudentTeamLead ? (
+                        <button className="btn btn-light-info mt-2 font-weight-bolder">
+                          <i class="far fa-file-archive icon-md mr-1"></i>
+                          Submit
+                        </button>
+                      ) : (
+                        <></>
+                      )
                     }
                     booleanFlg={editWeightFlg}
                   />

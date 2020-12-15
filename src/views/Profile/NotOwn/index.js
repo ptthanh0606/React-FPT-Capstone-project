@@ -13,6 +13,7 @@ const ProfilePage = () => {
   const { id, role } = useParams();
 
   const [user, setUser] = React.useState({});
+  const [userDepartment, setUserDepartment] = React.useState([]);
 
   // ----------------------------------------------------------------
 
@@ -24,47 +25,36 @@ const ProfilePage = () => {
   }, [id, role, setMeta]);
 
   React.useEffect(() => {
+    let config = {};
+
     if (role === 'lecturer') {
-      request({
+      config = {
         to: READ_LECTURER(id).url,
         method: READ_LECTURER(id).method,
-      })
-        .then(res => {
-          console.log(res.data.data);
-        })
-        .catch(err => {
-          handleErrors(err);
-        });
+      };
     }
     if (role === 'student') {
-      request({
+      config = {
         to: READ_STUDENT(id).url,
         method: READ_STUDENT(id).method,
-      })
-        .then(res => {
-          console.log(res.data.data);
-        })
-        .catch(err => {
-          handleErrors(err);
-        });
+      };
     }
+    request(config)
+      .then(res => {
+        setUser(res.data.data);
+        if (role === 'student') {
+          setUserDepartment(oldValue => [
+            ...oldValue,
+            res.data.data.department.name,
+          ]);
+        } else {
+          setUserDepartment(res.data.data.departments.map(dep => dep.name));
+        }
+      })
+      .catch(err => {
+        handleErrors(err);
+      });
   }, [id, role]);
-
-  // ----------------------------------------------------------------
-
-  React.useEffect(() => {
-    setUser({
-      id: 4,
-      name: 'Phan Thong Thanh',
-      email: 'phanthongthanh0606@gmail.com',
-      code: 'ThanhPTLecturer',
-      role: 2,
-      department: [
-        { id: 3, code: 'IB', name: 'International Business' },
-        { id: 4, code: 'IZ', name: 'International Businessz' },
-      ],
-    });
-  }, []);
 
   // ----------------------------------------------------------------
 
@@ -73,13 +63,20 @@ const ProfilePage = () => {
       <div className="row">
         <div className="col-lg-6 col-xxl-4">
           <ProfileActions
-            fullName={user.name}
-            departments={user.department}
-            email={user.email}
+            fullName={user?.name}
+            departments={userDepartment}
+            email={user?.email}
+            code={user?.code}
+            className="gutter-b"
           />
         </div>
         <div className="col-lg-6 col-xxl-8">
-          <ViewOnlyInfomation id={user.id} bio={user.bio} email={user.email} />
+          <ViewOnlyInfomation
+            id={user?.id}
+            bioProp={user?.biography}
+            email={user?.email}
+            className="gutter-b"
+          />
         </div>
       </div>
     </>

@@ -1,72 +1,72 @@
 import React from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import roleSelector from 'auth/recoil/selectors/role';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { role } from 'auth/recoil/selectors';
 import PersonalInfomation from './Infomation';
 import ProfileActions from '../ProfileActions';
 import metaAtom from 'store/meta';
-import { useHistory, useParams } from 'react-router-dom';
-import userStore from 'store/user';
-import { ME } from 'endpoints';
+import { useHistory } from 'react-router-dom';
+import userAtom from 'store/user';
 import request from 'utils/request';
+import { READ_LECTURER, READ_STUDENT } from 'endpoints';
+import { handleErrors } from 'utils/common';
 
 const ProfilePage = () => {
   const setMeta = useSetRecoilState(metaAtom);
-  const [user, setUser] = useRecoilState(userStore);
-  const setRole = useSetRecoilState(roleSelector);
-  const { id } = useParams();
+  const currentUser = useRecoilValue(userAtom);
+  const currentRole = useRecoilValue(role);
+
   const history = useHistory();
+
+  const [userInfo, setUserInfo] = React.useState({});
+  const [userDepartment, setUserDepartment] = React.useState([]);
 
   // ----------------------------------------------------------------
 
-  function fetchMe(setRole, setUser, history) {
-    request({
-      to: ME.url,
-      method: ME.method,
-    })
-      .then(({ data }) => {
-        let role;
-
-        switch (data.data.role) {
-          case 0:
-            role = 'admin';
-            break;
-          case 1:
-            role = 'student';
-            break;
-          case 2:
-            role = 'lecturer';
-            break;
-          default:
-        }
-
-        setRole(role);
-
-        setUser({
-          id: data.data.id,
-          code: data.data.code,
-          email: data.data.email,
-          name: data.data.name,
-          department: data.data.department,
-          role: role,
+  const fetchUser = React.useCallback(() => {
+    if (currentRole) {
+      let config = {};
+      if (currentRole === 'student') {
+        config = {
+          to: READ_STUDENT(currentUser.id).url,
+          method: READ_STUDENT(currentUser.id).method,
+        };
+      } else if (currentRole === 'lecturer') {
+        config = {
+          to: READ_LECTURER(currentUser.id).url,
+          method: READ_LECTURER(currentUser.id).method,
+        };
+      }
+      request(config)
+        .then(res => {
+          setUserInfo(res.data.data);
+          if (currentRole === 'student') {
+            setUserDepartment(oldValue => [
+              ...oldValue,
+              res.data.data.department.name,
+            ]);
+          } else {
+            setUserDepartment(res.data.data.departments.map(dep => dep.name));
+          }
+        })
+        .catch(err => {
+          console.log('Own');
+          handleErrors(err);
         });
-      })
-      .catch(err => {
-        history.push('/logout');
-      });
-  }
+    }
+  }, [currentRole, currentUser.id]);
 
   // ----------------------------------------------------------------
 
   React.useEffect(() => {
     setMeta({
       title: 'User profile',
-      breadcrumb: [{ title: 'Profile', path: `/profile/myprofile` }],
+      breadcrumb: [{ title: 'My profile', path: `/profile/myprofile` }],
     });
-  }, [id, setMeta]);
+  }, [setMeta]);
 
   React.useEffect(() => {
-    fetchMe(setRole, setUser, history);
-  }, [history, setRole, setUser]);
+    fetchUser(currentRole);
+  }, [currentRole, fetchUser, history]);
 
   // ----------------------------------------------------------------
 
@@ -75,13 +75,20 @@ const ProfilePage = () => {
       <div className="row">
         <div className="col-lg-6 col-xxl-4">
           <ProfileActions
-            fullName={user.name}
-            departments={user.department}
-            email={user.email}
+            fullName={userInfo?.name}
+            departments={userDepartment}
+            email={userInfo?.email}
+            code={userInfo?.code}
+            className="gutter-b"
           />
         </div>
         <div className="col-lg-6 col-xxl-8">
-          <PersonalInfomation id={user.id} bio={user.bio} email={user.email} />
+          <PersonalInfomation
+            id={userInfo?.id}
+            bioProp={userInfo?.biography}
+            email={userInfo?.email}
+            className="gutter-b"
+          />
         </div>
       </div>
     </>

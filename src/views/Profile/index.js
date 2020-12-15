@@ -8,11 +8,9 @@ const Profile = () => {
   return (
     <Layout>
       <Switch>
-        {/* {personalRoutes()} */}
         <Route path="/profile/myprofile">
           <OwnProfilePage />
         </Route>
-        {/* {viewProfileRoutes()} */}
         <Route path="/profile/admin/:id(\d+)">
           <NotOwnProfilePage />
         </Route>
