@@ -219,7 +219,7 @@ export default React.memo(function LecturerDashboard() {
               }))
             );
           } else {
-            setNumberOfTeams(10);
+            setNumberOfTeams(transformedRes.length);
           }
         })
         .catch(err => {
