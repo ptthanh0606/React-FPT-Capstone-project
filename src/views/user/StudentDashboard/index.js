@@ -36,29 +36,6 @@ export default React.memo(function LecturerDashboard() {
 
   // -------------------------------------------------------------------------
 
-  const [currentTopicPreviews, setCurrentTopicPreviews] = React.useState([
-    {
-      label: 'Green implant project',
-      subLabel: 'Abstract detail',
-      actions: (
-        <button className="btn btn-light-info font-weight-bolder">Apply</button>
-      ),
-    },
-    {
-      label: 'BSMC Management',
-      subLabel: 'This is abstract',
-      actions: (
-        <button className="btn btn-light-info font-weight-bolder">Apply</button>
-      ),
-    },
-    {
-      label: 'Smart tracking',
-      subLabel: 'Abstract told you everything',
-      actions: (
-        <button className="btn btn-light-info font-weight-bolder">Apply</button>
-      ),
-    },
-  ]);
   const [
     currentPublicTeamPreviews,
     setCurrentPublicTeamPreviews,

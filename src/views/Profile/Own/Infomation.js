@@ -1,8 +1,5 @@
 import React from 'react';
 import toast from 'utils/toast';
-import * as endpoints from 'endpoints';
-import { handleErrors } from 'utils/common';
-import request from 'utils/request';
 import md5 from 'utils/md5';
 
 const PersonalInfomation = ({ id = '', email = '', bioProp = '' }) => {
