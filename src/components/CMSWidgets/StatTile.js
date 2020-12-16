@@ -11,24 +11,14 @@ const StatTile = ({
   iconSrc = '',
   dataText = '790',
   desciption = 'Topic in this semester',
-  onClick = () => {},
 }) => {
-  const handleClick = React.useCallback(
-    e => {
-      e.preventDefault();
-      onClick();
-    },
-    [onClick]
-  );
-
   return (
     <div
-      onClick={handleClick}
       className={`card card-custom bg-${baseColor} ${className}`}
       style={{ height: widgetHeight }}
     >
       <div className="card-body">
-        <span className={`svg-icon svg-icon-3x svg-icon-white ml-n2`}>
+        <span className={`svg-icon svg-icon-3x svg-icon-${iconColor} ml-n2`}>
           <SVG src={iconSrc} />
         </span>
         <div

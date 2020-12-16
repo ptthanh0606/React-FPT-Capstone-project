@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import semesterAtom from 'store/semester';
@@ -24,6 +24,7 @@ import CMSModal from 'components/CMSModal/CMSModal';
 import { createTeamSettingFieldTemplate, modalConfigs } from './constants';
 import toast from 'utils/toast';
 import useConfirm from 'utils/confirm';
+import Engaging from 'components/CMSWidgets/Engaging';
 
 const Team = () => {
   const history = useHistory();
@@ -33,6 +34,8 @@ const Team = () => {
   const [isUserInTeam, setIsUserInTeam] = React.useState(false);
   const [isUserLeader, setIsUserLeader] = React.useState(false);
   const [showSetting, setShowSetting] = React.useState(false);
+  const [showNoTeamWarn, setShowNoTeamWarn] = React.useState(false);
+
   const [settingFieldTemplate, setSettingFieldTemplate] = React.useState({});
 
   // ------------------------------------------------------------------
@@ -108,16 +111,10 @@ const Team = () => {
         setIsTeamMatched(transformedRes.status);
       })
       .catch(err => {
-        // handleErrors(err);
-        toast.error("You don't have a team yet...Please create or join a team");
-        history.push('/team');
+        setShowNoTeamWarn(true);
+        // ----
       });
-  }, [
-    currentSemester.id,
-    currentUser.id,
-    history,
-    processCheckCurrentStudentInTeam,
-  ]);
+  }, [currentSemester.id, currentUser.id, processCheckCurrentStudentInTeam]);
 
   const checkUserInTeam = React.useCallback(() => {
     request({
@@ -339,7 +336,7 @@ const Team = () => {
                 </>
               ) : (
                 <>
-                  {!isUserHaveTeam && (
+                  {!showNoTeamWarn && !isUserHaveTeam && (
                     <button
                       type="button"
                       className="btn btn-primary font-weight-bold btn-sm ml-2"
@@ -375,6 +372,7 @@ const Team = () => {
     isUserLeader,
     setMeta,
     settingFieldTemplate,
+    showNoTeamWarn,
     showSetting,
     userRole,
   ]);
@@ -389,226 +387,274 @@ const Team = () => {
 
   return (
     <>
-      <div className="row">
-        <div className="col-lg-12 col-xxl-12">
-          <TeamHeader
-            teamName={currentTeam?.name || ''}
-            department={currentTeam?.department?.fullLabel}
-            teamType={currentTeam?.privacy ? 'Public' : 'Private'}
-            teamStatus={currentTeam?.status ? 'Assigned' : 'Assigning'}
-            withTopic={currentTeam?.topic}
-          />
-        </div>
-      </div>
-      <div className="row">
-        <div
-          className={`col-lg-12 col-xxl-${userRole === 'student' ? '9' : '12'}`}
-        >
-          <div className={`card card-custom gutter-b`}>
-            <div className="card-body d-flex flex-column p-0">
-              <div className="d-flex justify-content-between card-spacer flex-grow-1">
-                <div className="d-flex flex-column mr-2">
-                  <span className="text-dark-75 font-weight-bolder font-size-h5">
-                    Members
-                  </span>
-                  <span className="text-muted font-weight-bold mt-2">
-                    Student in this team
-                  </span>
-                </div>
-                <span
-                  className={`symbol symbol-light-${
-                    (currentTeam?.members?.length === currentTeam?.maxMembers &&
-                      'danger') ||
-                    'success'
-                  } symbol-45`}
+      {showNoTeamWarn ? (
+        <div className="row" style={{ height: '105%' }}>
+          <div className="col-12">
+            <Engaging
+              className="gutter-b card-stretch"
+              bgColor="#FFF4DE"
+              imageUrl="/media/svg/humans/custom-7.svg"
+              textColorTitle="danger"
+              textColorSubTitle="dark"
+              bgSize="100%"
+              titleSize="h1"
+              title="You have no team"
+              action={
+                <Link
+                  to="/team"
+                  className="btn btn-danger font-weight-bold py-2 px-6 mt-3"
                 >
-                  <span className="symbol-label font-weight-bolder font-size-h6">
-                    {currentTeam?.members?.length}/{currentTeam?.maxMembers}
-                  </span>
-                </span>
-              </div>
-              <Row className="d-flex flex-grow-1 px-8 pb-4">
-                {currentTeam?.members?.length ? (
-                  <>
-                    <Col sm={12} md={6} lg={6} xl={4}>
-                      <Member
-                        id={currentTeam?.leader?.value}
-                        teamId={currentTeam?.id}
-                        name={currentTeam?.leader?.label}
-                        email={currentTeam?.leader?.email}
-                        isLeader
-                        leaderId={currentTeam?.leader?.value}
-                        onOperationSuccess={(id && fetchTeam) || fetchOwnTeam}
-                      />
-                    </Col>
-                    {currentTeam?.members
-                      .filter(
-                        ({ value }) => value !== currentTeam?.leader?.value
-                      )
-                      .map(member => (
-                        <Col sm={12} md={6} lg={6} xl={4}>
-                          <Member
-                            id={member.value}
-                            teamId={currentTeam.id}
-                            name={member.label}
-                            email={member.email}
-                            leaderId={currentTeam?.leader?.value}
-                            onOperationSuccess={
-                              (id && fetchTeam) || fetchOwnTeam
-                            }
-                            role="student"
-                          />
-                        </Col>
-                      ))}
-                  </>
-                ) : (
-                  <Col sm={12} md={6} lg={6} xl={4}>
-                    No member available, this might be a problem.
-                  </Col>
-                )}
-              </Row>
-            </div>
-          </div>
-          <div className={`card card-custom gutter-b`}>
-            <div className="card-body d-flex flex-column p-0">
-              <div className="d-flex justify-content-between card-spacer flex-grow-1">
-                <div className="d-flex flex-column mr-2">
-                  <span className="text-dark-75 font-weight-bolder font-size-h5">
-                    Applications
-                  </span>
-                  <span className="text-muted font-weight-bold mt-2">
-                    Topic that this team applied
-                  </span>
-                </div>
-                <OverlayTrigger
-                  placement="bottom"
-                  overlay={
-                    <Tooltip>Amount of pending topics team can send.</Tooltip>
-                  }
-                >
-                  <span
-                    className={`symbol symbol-light-${
-                      (currentTeam?.applications?.filter(
-                        app => app.status === 0
-                      ).length === currentSemester.maxApplications &&
-                        'danger') ||
-                      'success'
-                    } symbol-45`}
-                  >
-                    <span className="symbol-label font-weight-bolder font-size-h6">
-                      {currentTeam?.applications
-                        ? currentTeam?.applications?.filter(
-                            app => app.status === 0
-                          ).length
-                        : 0}
-                      /{currentSemester.maxApplications}
-                    </span>
-                  </span>
-                </OverlayTrigger>
-              </div>
-              <div className="d-flex justify-content-between flex-grow-1 px-8">
-                <div className="table-responsive">
-                  <table className="table table-head-custom table-head-bg table-borderless table-vertical-center">
-                    <thead>
-                      <tr className="text-left text-uppercase">
-                        <th className="pl-4">
-                          <span className="text-dark-75">Topic</span>
-                        </th>
-                        <th>Sent at</th>
-                        <th>Updated at</th>
-                        <th>Status</th>
-                        <th width="1%"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {currentTeam?.applications?.length ? (
-                        currentTeam?.applications.map(app => (
-                          <Application
-                            key={app.id}
-                            id={app.id}
-                            createdAt={app.createdAt}
-                            updatedAt={app.updatedAt}
-                            topicId={app.topic.id}
-                            topicName={app.topic.name}
-                            abstract={app.topic.abstract}
-                            status={app.status}
-                            leaderId={currentTeam?.leader?.value}
-                            onOperationSuccess={
-                              (id && fetchTeam) || fetchOwnTeam
-                            }
-                          />
-                        ))
-                      ) : (
-                        <tr>
-                          <td className="text-muted">
-                            This team currently don't have any applications yet.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        {userRole === 'student' && (
-          <div className="col-lg-12 col-xxl-3">
-            <UtilityButtonTile
-              className="gutter-b"
-              smallTitle="Join code"
-              baseColor="info"
-              label={currentTeam?.code}
-              clickAbleIcon={isUserLeader}
-              onIconClick={handleRefreshJoinCode}
-              iconTooltipMsg="Change code"
-              tooltipMsg={
+                  Take me there
+                </Link>
+              }
+              subTitle={
                 <>
-                  You can give this code to another student for joining.
+                  Looks like you are not a member of any teams...
                   <br />
-                  <br /> Click the "refresh icon" to get new code (Team leader
-                  only).
+                  Start by <b>create a team</b> or <b>join one</b> to prepare
+                  for a capstone topic.
                 </>
               }
-              buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Update.svg')}
+              subTitleSize="lg"
             />
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="row">
+            <div className="col-lg-12 col-xxl-12">
+              <TeamHeader
+                teamName={currentTeam?.name || ''}
+                department={currentTeam?.department?.fullLabel}
+                teamType={currentTeam?.privacy ? 'Public' : 'Private'}
+                teamStatus={currentTeam?.status ? 'Assigned' : 'Assigning'}
+                withTopic={currentTeam?.topic}
+              />
+            </div>
+          </div>
+          <div className="row">
+            <div
+              className={`col-lg-12 col-xxl-${
+                userRole === 'student' ? '9' : '12'
+              }`}
+            >
+              <div className={`card card-custom gutter-b`}>
+                <div className="card-body d-flex flex-column p-0">
+                  <div className="d-flex justify-content-between card-spacer flex-grow-1">
+                    <div className="d-flex flex-column mr-2">
+                      <span className="text-dark-75 font-weight-bolder font-size-h5">
+                        Members
+                      </span>
+                      <span className="text-muted font-weight-bold mt-2">
+                        Student in this team
+                      </span>
+                    </div>
+                    <span
+                      className={`symbol symbol-light-${
+                        (currentTeam?.members?.length ===
+                          currentTeam?.maxMembers &&
+                          'danger') ||
+                        'success'
+                      } symbol-45`}
+                    >
+                      <span className="symbol-label font-weight-bolder font-size-h6">
+                        {currentTeam?.members?.length}/{currentTeam?.maxMembers}
+                      </span>
+                    </span>
+                  </div>
+                  <Row className="d-flex flex-grow-1 px-8 pb-4">
+                    {currentTeam?.members?.length ? (
+                      <>
+                        <Col sm={12} md={6} lg={6} xl={4}>
+                          <Member
+                            id={currentTeam?.leader?.value}
+                            teamId={currentTeam?.id}
+                            name={currentTeam?.leader?.label}
+                            email={currentTeam?.leader?.email}
+                            isLeader
+                            leaderId={currentTeam?.leader?.value}
+                            onOperationSuccess={
+                              (id && fetchTeam) || fetchOwnTeam
+                            }
+                          />
+                        </Col>
+                        {currentTeam?.members
+                          .filter(
+                            ({ value }) => value !== currentTeam?.leader?.value
+                          )
+                          .map(member => (
+                            <Col sm={12} md={6} lg={6} xl={4}>
+                              <Member
+                                id={member.value}
+                                teamId={currentTeam.id}
+                                name={member.label}
+                                email={member.email}
+                                leaderId={currentTeam?.leader?.value}
+                                onOperationSuccess={
+                                  (id && fetchTeam) || fetchOwnTeam
+                                }
+                                role="student"
+                              />
+                            </Col>
+                          ))}
+                      </>
+                    ) : (
+                      <Col sm={12} md={6} lg={6} xl={4}>
+                        No member available, this might be a problem.
+                      </Col>
+                    )}
+                  </Row>
+                </div>
+              </div>
+              <div className={`card card-custom gutter-b`}>
+                <div className="card-body d-flex flex-column p-0">
+                  <div className="d-flex justify-content-between card-spacer flex-grow-1">
+                    <div className="d-flex flex-column mr-2">
+                      <span className="text-dark-75 font-weight-bolder font-size-h5">
+                        Applications
+                      </span>
+                      <span className="text-muted font-weight-bold mt-2">
+                        Topic that this team applied
+                      </span>
+                    </div>
+                    <OverlayTrigger
+                      placement="bottom"
+                      overlay={
+                        <Tooltip>
+                          Amount of pending topics team can send.
+                        </Tooltip>
+                      }
+                    >
+                      <span
+                        className={`symbol symbol-light-${
+                          (currentTeam?.applications?.filter(
+                            app => app.status === 0
+                          ).length === currentSemester.maxApplications &&
+                            'danger') ||
+                          'success'
+                        } symbol-45`}
+                      >
+                        <span className="symbol-label font-weight-bolder font-size-h6">
+                          {currentTeam?.applications
+                            ? currentTeam?.applications?.filter(
+                                app => app.status === 0
+                              ).length
+                            : 0}
+                          /{currentSemester.maxApplications}
+                        </span>
+                      </span>
+                    </OverlayTrigger>
+                  </div>
+                  <div className="d-flex justify-content-between flex-grow-1 px-8">
+                    <div className="table-responsive">
+                      <table className="table table-head-custom table-head-bg table-borderless table-vertical-center">
+                        <thead>
+                          <tr className="text-left text-uppercase">
+                            <th className="pl-4">
+                              <span className="text-dark-75">Topic</span>
+                            </th>
+                            <th>Sent at</th>
+                            <th>Updated at</th>
+                            <th>Status</th>
+                            <th width="1%"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {currentTeam?.applications?.length ? (
+                            currentTeam?.applications.map(app => (
+                              <Application
+                                key={app.id}
+                                id={app.id}
+                                createdAt={app.createdAt}
+                                updatedAt={app.updatedAt}
+                                topicId={app.topic.id}
+                                topicName={app.topic.name}
+                                abstract={app.topic.abstract}
+                                status={app.status}
+                                leaderId={currentTeam?.leader?.value}
+                                onOperationSuccess={
+                                  (id && fetchTeam) || fetchOwnTeam
+                                }
+                              />
+                            ))
+                          ) : (
+                            <tr>
+                              <td className="text-muted">
+                                This team currently don't have any applications
+                                yet.
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {userRole === 'student' && (
+              <div className="col-lg-12 col-xxl-3">
+                <UtilityButtonTile
+                  className="gutter-b"
+                  smallTitle="Join code"
+                  baseColor="info"
+                  label={currentTeam?.code}
+                  clickAbleIcon={isUserLeader}
+                  onIconClick={handleRefreshJoinCode}
+                  iconTooltipMsg="Change code"
+                  tooltipMsg={
+                    <>
+                      You can give this code to another student for joining.
+                      <br />
+                      <br /> Click the "refresh icon" to get new code (Team
+                      leader only).
+                    </>
+                  }
+                  buttonIcon={toAbsoluteUrl(
+                    '/media/svg/icons/General/Update.svg'
+                  )}
+                />
 
-            {currentTeam.lock ? (
-              <UtilityButtonTile
-                className="gutter-b"
-                smallTitle="Team state"
-                baseColor="danger"
-                label="Locked"
-                onIconClick={handleChangeLockTeam}
-                iconTooltipMsg="Unlock team"
-                clickAbleIcon={isUserLeader && currentTeam?.topic}
-                buttonIcon={toAbsoluteUrl('/media/svg/icons/General/Lock.svg')}
-              />
-            ) : (
-              <UtilityButtonTile
-                className="gutter-b"
-                smallTitle="Team state"
-                baseColor="success"
-                label="Unlocked"
-                clickAbleIcon={isUserLeader}
-                tooltipMsg={
-                  <>
-                    Lock this team (Locked team can not accept joining from
-                    other student)
-                    <br />
-                    <br /> Click the "lock icon" to lock (Team leader only).
-                  </>
-                }
-                iconTooltipMsg="Lock team"
-                onIconClick={handleChangeLockTeam}
-                buttonIcon={toAbsoluteUrl(
-                  '/media/svg/icons/General/Unlock.svg'
+                {currentTeam.lock ? (
+                  <UtilityButtonTile
+                    className="gutter-b"
+                    smallTitle="Team state"
+                    baseColor="danger"
+                    label="Locked"
+                    onIconClick={handleChangeLockTeam}
+                    iconTooltipMsg="Unlock team"
+                    clickAbleIcon={isUserLeader && currentTeam?.topic}
+                    buttonIcon={toAbsoluteUrl(
+                      '/media/svg/icons/General/Lock.svg'
+                    )}
+                  />
+                ) : (
+                  <UtilityButtonTile
+                    className="gutter-b"
+                    smallTitle="Team state"
+                    baseColor="success"
+                    label="Unlocked"
+                    clickAbleIcon={isUserLeader}
+                    tooltipMsg={
+                      <>
+                        Lock this team (Locked team can not accept joining from
+                        other student)
+                        <br />
+                        <br /> Click the "lock icon" to lock (Team leader only).
+                      </>
+                    }
+                    iconTooltipMsg="Lock team"
+                    onIconClick={handleChangeLockTeam}
+                    buttonIcon={toAbsoluteUrl(
+                      '/media/svg/icons/General/Unlock.svg'
+                    )}
+                  />
                 )}
-              />
+              </div>
             )}
           </div>
-        )}
-      </div>
+        </>
+      )}
     </>
   );
 };

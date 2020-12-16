@@ -36,29 +36,6 @@ export default React.memo(function LecturerDashboard() {
 
   // -------------------------------------------------------------------------
 
-  const [currentTopicPreviews, setCurrentTopicPreviews] = React.useState([
-    {
-      label: 'Green implant project',
-      subLabel: 'Abstract detail',
-      actions: (
-        <button className="btn btn-light-info font-weight-bolder">Apply</button>
-      ),
-    },
-    {
-      label: 'BSMC Management',
-      subLabel: 'This is abstract',
-      actions: (
-        <button className="btn btn-light-info font-weight-bolder">Apply</button>
-      ),
-    },
-    {
-      label: 'Smart tracking',
-      subLabel: 'Abstract told you everything',
-      actions: (
-        <button className="btn btn-light-info font-weight-bolder">Apply</button>
-      ),
-    },
-  ]);
   const [
     currentPublicTeamPreviews,
     setCurrentPublicTeamPreviews,
@@ -242,7 +219,7 @@ export default React.memo(function LecturerDashboard() {
               }))
             );
           } else {
-            setNumberOfTeams(10);
+            setNumberOfTeams(transformedRes.length);
           }
         })
         .catch(err => {
@@ -399,6 +376,7 @@ export default React.memo(function LecturerDashboard() {
                   dataText={numberOfTeams}
                   className="gutter-b"
                   desciption="Teams created"
+                  iconColor="white"
                   iconSrc={toAbsoluteUrl(
                     '/media/svg/icons/Communication/Group.svg'
                   )}
@@ -429,9 +407,7 @@ export default React.memo(function LecturerDashboard() {
             />
           )}
 
-          {currentSemester.status !== 3 &&
-            isStudentHaveTeam &&
-            isStudentHaveTopic && <FlowTimeline className=" gutter-b" />}
+          <FlowTimeline className=" gutter-b" />
 
           {currentSemester.status !== 3 &&
             !isStudentHaveTeam &&

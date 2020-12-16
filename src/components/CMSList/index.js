@@ -38,6 +38,7 @@ const CMSList = ({
               subLabel={row.subLabel}
               action={row.actions || rowActions}
               onLabelClick={row.onLabelClick}
+              labelLinkTo={row.labelLinkTo}
             />
           ))
         ) : (

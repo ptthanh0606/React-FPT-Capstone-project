@@ -3,9 +3,9 @@ import Row from './Row';
 
 const CMSAnotherList = ({
   darkMode = false,
-  className,
-  title,
-  subTitle,
+  className = '',
+  title = '',
+  subTitle = '',
   rows = [
     {
       id: 0,
@@ -18,6 +18,7 @@ const CMSAnotherList = ({
     },
   ],
   toolBar = <></>,
+  fallbackMsg = '',
 }) => {
   // -------------------------------------------------------------
 
@@ -27,7 +28,11 @@ const CMSAnotherList = ({
         darkMode && 'bg-dark'
       } ${className}`}
     >
-      <div className="card-header align-items-center border-0 mt-4">
+      <div
+        className={`card-header align-items-center border-0 mt-${
+          subTitle ? '7' : '0'
+        }`}
+      >
         <h3
           className={`card-title font-weight-bolder align-items-start text-${
             darkMode && 'white'
@@ -38,7 +43,7 @@ const CMSAnotherList = ({
             <span
               className={`text-muted text-${
                 darkMode && 'white'
-              } mt-3 font-weight-bold font-size-sm mb-5`}
+              } mt-3 font-weight-bold font-size-sm mb-0`}
             >
               {subTitle}
             </span>
@@ -47,17 +52,7 @@ const CMSAnotherList = ({
         <div className="card-toolbar">{toolBar}</div>
       </div>
       <div className="card-body pt-2">
-        {rows &&
-          rows.map(row => (
-            <Row
-              label={row.label}
-              subLabel={row.subLabel}
-              emailAvatar={row.emailAvatar}
-              altLabel={row.altLabel}
-              darkMode={darkMode}
-              onLabelClick={row.onLabelClick}
-            />
-          ))}
+        {rows?.length ? rows.map(row => <Row {...row} />) : <>{fallbackMsg}</>}
       </div>
     </div>
   );

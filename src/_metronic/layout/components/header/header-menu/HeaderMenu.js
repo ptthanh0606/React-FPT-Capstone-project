@@ -75,10 +75,6 @@ const menusOfStudent = [
     path: '/my-team',
     title: 'My Team',
   },
-  {
-    path: '/council',
-    title: 'Council',
-  },
 ];
 
 export const HeaderMenu = React.memo(function ({ layoutProps }) {
