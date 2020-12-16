@@ -267,7 +267,24 @@ export default function Topics() {
   return (
     <>
       {role === 'student' && isStudentHaveTeam && !isStudentHaveTopic && (
-        <Engaging className="gutter-b" />
+        <Engaging
+          className="gutter-b"
+          bgColor="#8950FC"
+          bgSize="40%"
+          title="Quick guide"
+          textColorTitle="white"
+          textColorSubTitle="white"
+          imageUrl="/media/svg/humans/custom-8.svg"
+          subTitle={
+            <>
+              Discuss with your team to find <b>the best topic</b> for you all
+              to handle.
+              <br />
+              Pick one of the topic with the <b>"Ready"</b> status below to
+              start.
+            </>
+          }
+        />
       )}
       {role === 'student' && !isStudentHaveTeam && (
         <MessageTile

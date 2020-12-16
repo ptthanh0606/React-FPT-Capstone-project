@@ -1,30 +1,45 @@
 import React from 'react';
 
-const Engaging = ({ className = '' }) => {
+const Engaging = ({
+  className = '',
+  bgColor = '',
+  imageUrl = '',
+  title = '',
+  textColorTitle = '',
+  titleSize = '',
+  textColorSubTitle = '',
+  subTitle = '',
+  subTitleSize = '',
+  action = <></>,
+}) => {
   return (
     <div className={`card card-custom ${className}`}>
       <div className="card-body d-flex p-0">
         <div
           className="flex-grow-1 p-12 card-rounded bgi-no-repeat d-flex flex-column justify-content-center align-items-start"
           style={{
-            backgroundColor: '#8950FC',
-            backgroundPosition: 'right bottom',
-            backgroundSize: 'auto 100%',
-            backgroundImage: 'url(/media/svg/humans/custom-8.svg)',
+            backgroundColor: bgColor,
+            backgroundPosition: `calc(100% + 0.5rem) bottom`,
+            backgroundSize: `25% auto`,
+            backgroundImage: `url(${imageUrl})`,
           }}
         >
-          <h4 className="text-white font-weight-bolder m-0">Quick guide</h4>
+          <h4
+            className={`text-${textColorTitle} font-size-${titleSize} font-weight-bolder m-0`}
+          >
+            {title}
+          </h4>
 
-          <p className="text-white mt-5">
-            Discuss with your team to find <b>the best topic</b> for you all to
-            handle.
-            <br />
-            Pick one of the topic with the <b>"Ready"</b> status below to start.
+          <p
+            className={`text-${textColorSubTitle} font-size-${subTitleSize} mt-5`}
+          >
+            {subTitle}
           </p>
+          {action}
         </div>
       </div>
     </div>
   );
 };
 
-export default Engaging;
+export default React.memo(Engaging);

@@ -24,7 +24,10 @@ import Profile from 'views/Profile';
 import { ME } from 'endpoints';
 import request from 'utils/request';
 
-function fetchMe(setRole, setUser, history) {
+import LocalStorage from 'utils/localStorage';
+import semesterAtom from 'store/semester';
+
+function fetchMe(setRole, setUser, history, setSemester) {
   request({
     to: ME.url,
     method: ME.method,
@@ -38,6 +41,13 @@ function fetchMe(setRole, setUser, history) {
           break;
         case '1':
           role = 'student';
+          if (data?.data?.semesterId) {
+            LocalStorage.set('semester_id', data?.data?.semesterId);
+
+            setSemester({
+              id: Number(data?.data?.semesterId),
+            });
+          }
           break;
         case '2':
           role = 'lecturer';
@@ -55,6 +65,7 @@ function fetchMe(setRole, setUser, history) {
         name: data.data.name,
         department: data.data.department,
         role: role,
+        teamId: data.data?.teamId,
       });
     })
     .catch(err => {
@@ -76,12 +87,13 @@ const RoleBasedLayout = React.memo(({ role }) => {
 
 const Private = React.memo(function Private() {
   const [role, setRole] = useRecoilState(roleSelector);
+  const setSemester = useSetRecoilState(semesterAtom);
   const setUser = useSetRecoilState(userAtom);
   const history = useHistory();
 
   React.useEffect(() => {
-    fetchMe(setRole, setUser, history);
-  }, [history, setRole, setUser]);
+    fetchMe(setRole, setUser, history, setSemester);
+  }, [history, setRole, setSemester, setUser]);
 
   return (
     <>
