@@ -20,11 +20,15 @@ import * as endpoints from 'endpoints';
 
 import * as transformers from 'modules/semester/topic/transformers';
 import * as constants from 'modules/semester/topic/constants';
+import * as TeamTransformer from 'modules/semester/team/transformers';
 
 import semesterStore from 'store/semester';
 import userAtom from 'store/user';
 import roleSelector from 'auth/recoil/selectors/role';
 import { Button } from 'react-bootstrap';
+import Engaging from 'components/CMSWidgets/Engaging';
+import MessageTile from 'components/CMSWidgets/MessageTile';
+import { toAbsoluteUrl } from '_metronic/_helpers';
 
 export default function Topics() {
   const setMeta = useSetRecoilState(metaAtom);
@@ -58,6 +62,8 @@ export default function Topics() {
   const [isAllTopics, setIsAllTopics] = React.useState(true);
   const [isMentoringTopics, setIsMentoringTopics] = React.useState(false);
   const [isSubmittedTopics, setIsSubmittedTopics] = React.useState(false);
+  const [isStudentHaveTeam, setIsStudentHaveTeam] = React.useState(false);
+  const [isStudentHaveTopic, setIsStudentHaveTopic] = React.useState(false);
 
   // ---------------------------------------------------------------------------
 
@@ -197,6 +203,25 @@ export default function Topics() {
     loadTopics('all');
   }, [loadTopics]);
 
+  const checkUserInTeam = React.useCallback(() => {
+    request({
+      to: endpoints.READ_TEAM(0).url,
+      method: endpoints.READ_TEAM(0).method,
+      params: {
+        semesterId: semester.id,
+      },
+    })
+      .then(res => {
+        const transformedRes = TeamTransformer.down(res.data.data);
+
+        setIsStudentHaveTopic(!!transformedRes.topic.label);
+        setIsStudentHaveTeam(true);
+      })
+      .catch(() => {
+        setIsStudentHaveTeam(false);
+      });
+  }, [semester.id]);
+
   // ---------------------------------------------------------------------------
 
   const columns = React.useMemo(() => constants.createColumns({}, role), [
@@ -207,7 +232,10 @@ export default function Topics() {
 
   React.useEffect(() => {
     loadTopics('all');
-  }, [loadTopics]);
+    if (role === 'student') {
+      checkUserInTeam();
+    }
+  }, [checkUserInTeam, loadTopics, role]);
 
   React.useEffect(() => {
     setMeta(meta => ({
@@ -237,71 +265,89 @@ export default function Topics() {
   }, [role, semester.name, semester.status, setMeta, showCreateModal]);
 
   return (
-    <Card>
-      <CardHeader title="All topics">
-        {role === 'lecturer' && (
-          <CardHeaderToolbar className="text-nowrap">
-            <Button
-              className={`ml-2 ${
-                isSubmittedTopics ? 'font-weight-bolder' : 'text-primary'
-              }`}
-              variant={isSubmittedTopics && 'primary'}
-              onClick={handleLoadAllSubmitted}
-            >
-              Submitted
-            </Button>
-            <Button
-              className={`ml-2 ${
-                isMentoringTopics ? 'font-weight-bolder' : 'text-primary'
-              }`}
-              variant={isMentoringTopics && 'primary'}
-              onClick={handleLoadAllMentoring}
-            >
-              Mentoring
-            </Button>
-            <Button
-              className={`ml-2 ${
-                isAllTopics ? 'font-weight-bolder' : 'text-primary'
-              }`}
-              variant={isAllTopics && 'primary'}
-              onClick={handleLoadAllTopics}
-            >
-              All
-            </Button>
-          </CardHeaderToolbar>
-        )}
-      </CardHeader>
-      <CardBody>
-        <Filters filters={filters} setFilters={setFilters} />
-        <Table
-          columns={columns}
-          data={data}
-          total={total}
-          isLoading={isLoading}
-          selected={selected}
-          setSelected={setSelected}
-          page={page}
-          setPage={setPage}
-          pageSize={pageSize}
-          setPageSize={setPageSize}
-          sortField={sortField}
-          setSortField={setSortField}
-          sortOrder={sortOrder}
-          setSortOrder={setSortOrder}
-          defaultSorted={constants.defaultSorted}
-          pageSizeList={constants.sizePerPageList}
+    <>
+      {role === 'student' && isStudentHaveTeam && !isStudentHaveTopic && (
+        <Engaging className="gutter-b" />
+      )}
+      {role === 'student' && !isStudentHaveTeam && (
+        <MessageTile
+          iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Info-circle.svg')}
+          content={
+            <>
+              <b>Create a team</b> or <b>join a team</b> to start assigning for
+              topic!
+            </>
+          }
+          baseColor="warning"
+          className="gutter-b"
         />
-      </CardBody>
-      <CMSModal
-        isShowFlg={showCreate}
-        onHide={hideCreateModal}
-        configs={constants.submitterModalConfigs}
-        title="Create new topic"
-        subTitle="Submit new topic to this capstone semester"
-        onConfirmForm={handleCreate}
-        fieldTemplate={fieldTemplate}
-        isProcessing={isProcessing}
-      />
-    </Card>
+      )}
+      <Card>
+        <CardHeader title="All topics">
+          {role === 'lecturer' && (
+            <CardHeaderToolbar className="text-nowrap">
+              <Button
+                className={`ml-2 ${
+                  isSubmittedTopics ? 'font-weight-bolder' : 'text-primary'
+                }`}
+                variant={isSubmittedTopics && 'primary'}
+                onClick={handleLoadAllSubmitted}
+              >
+                Submitted
+              </Button>
+              <Button
+                className={`ml-2 ${
+                  isMentoringTopics ? 'font-weight-bolder' : 'text-primary'
+                }`}
+                variant={isMentoringTopics && 'primary'}
+                onClick={handleLoadAllMentoring}
+              >
+                Mentoring
+              </Button>
+              <Button
+                className={`ml-2 ${
+                  isAllTopics ? 'font-weight-bolder' : 'text-primary'
+                }`}
+                variant={isAllTopics && 'primary'}
+                onClick={handleLoadAllTopics}
+              >
+                All
+              </Button>
+            </CardHeaderToolbar>
+          )}
+        </CardHeader>
+        <CardBody>
+          <Filters filters={filters} setFilters={setFilters} />
+          <Table
+            columns={columns}
+            data={data}
+            total={total}
+            isLoading={isLoading}
+            selected={selected}
+            setSelected={setSelected}
+            page={page}
+            setPage={setPage}
+            pageSize={pageSize}
+            setPageSize={setPageSize}
+            sortField={sortField}
+            setSortField={setSortField}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            defaultSorted={constants.defaultSorted}
+            pageSizeList={constants.sizePerPageList}
+          />
+        </CardBody>
+        <CMSModal
+          isShowFlg={showCreate}
+          onHide={hideCreateModal}
+          configs={constants.submitterModalConfigs}
+          title="Create new topic"
+          subTitle="Submit new topic to this capstone semester"
+          onConfirmForm={handleCreate}
+          fieldTemplate={fieldTemplate}
+          isProcessing={isProcessing}
+        />
+      </Card>
+    </>
   );
 }

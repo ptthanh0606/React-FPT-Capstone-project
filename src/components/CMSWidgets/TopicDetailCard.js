@@ -157,9 +157,7 @@ const TopicDetailCard = ({
               <div className="d-flex align-items-center flex-lg-fill my-1">
                 <OverlayTrigger
                   placement="bottom"
-                  overlay={
-                    <Tooltip id="quick-user-tooltip">Team members</Tooltip>
-                  }
+                  overlay={<Tooltip>Team</Tooltip>}
                 >
                   <span className="mr-4">
                     <i className="flaticon-users icon-2x text-muted font-weight-bold"></i>
@@ -168,17 +166,23 @@ const TopicDetailCard = ({
                 <div className="symbol-group symbol-hover">
                   {studentMembers?.length ? (
                     studentMembers.map(student => (
-                      <div
-                        className="symbol symbol-30 symbol-circle"
-                        data-toggle="tooltip"
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={<Tooltip>{student.name}</Tooltip>}
                       >
-                        <img
-                          alt="Pic"
-                          src={`https://www.gravatar.com/avatar/${md5(
-                            student.email ? student.email.toLowerCase() : ''
-                          )}`}
-                        />
-                      </div>
+                        <Link
+                          to={`/profile/student/${student.id}`}
+                          className="symbol symbol-30 symbol-circle"
+                          data-toggle="tooltip"
+                        >
+                          <img
+                            alt="Pic"
+                            src={`https://www.gravatar.com/avatar/${md5(
+                              student.email ? student.email.toLowerCase() : ''
+                            )}`}
+                          />
+                        </Link>
+                      </OverlayTrigger>
                     ))
                   ) : (
                     <>Not yet</>
@@ -189,7 +193,7 @@ const TopicDetailCard = ({
               <div className="d-flex align-items-center flex-lg-fill my-1">
                 <OverlayTrigger
                   placement="bottom"
-                  overlay={<Tooltip id="quick-user-tooltip">Mentors</Tooltip>}
+                  overlay={<Tooltip>Mentors</Tooltip>}
                 >
                   <span className="mr-4">
                     <i className="flaticon-profile-1 icon-2x text-muted font-weight-bold"></i>
@@ -198,17 +202,23 @@ const TopicDetailCard = ({
                 <div className="symbol-group symbol-hover">
                   {mentorMembers?.length ? (
                     mentorMembers.map(mentor => (
-                      <div
-                        className="symbol symbol-30 symbol-circle"
-                        data-toggle="tooltip"
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={<Tooltip>{mentor.name}</Tooltip>}
                       >
-                        <img
-                          alt="Pic"
-                          src={`https://www.gravatar.com/avatar/${md5(
-                            mentor.email ? mentor.email.toLowerCase() : ''
-                          )}`}
-                        />
-                      </div>
+                        <Link
+                          to={`/profile/lecturer/${mentor.id}`}
+                          className="symbol symbol-30 symbol-circle"
+                          data-toggle="tooltip"
+                        >
+                          <img
+                            alt="Pic"
+                            src={`https://www.gravatar.com/avatar/${md5(
+                              mentor.email ? mentor.email.toLowerCase() : ''
+                            )}`}
+                          />
+                        </Link>
+                      </OverlayTrigger>
                     ))
                   ) : (
                     <>Not yet</>

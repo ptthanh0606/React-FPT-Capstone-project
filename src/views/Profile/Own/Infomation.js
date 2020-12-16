@@ -5,11 +5,17 @@ import { handleErrors } from 'utils/common';
 import request from 'utils/request';
 import md5 from 'utils/md5';
 
-const PersonalInfomation = ({ id, email, bio }) => {
+const PersonalInfomation = ({ id = '', email = '', bioProp = '' }) => {
+  const [bio, setBio] = React.useState('');
+
   const handleUpdate = React.useCallback(e => {
     e.preventDefault();
     toast.success('Saved');
   }, []);
+
+  React.useEffect(() => {
+    setBio(bioProp);
+  }, [bioProp]);
 
   return (
     <>
@@ -83,9 +89,9 @@ const PersonalInfomation = ({ id, email, bio }) => {
                     resize: 'none',
                     height: '130px',
                   }}
-                >
-                  {bio}
-                </textarea>
+                  onChange={e => setBio(e.currentTarget.value)}
+                  value={bio}
+                ></textarea>
               </div>
             </div>
           </div>

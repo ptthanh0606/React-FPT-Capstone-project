@@ -60,7 +60,7 @@ const Member = ({
         semesterId: currentSemester.id,
       },
     })
-      .then(res => {
+      .then(() => {
         toast.success('Team members updated!');
         onOperationSuccess();
       })
@@ -129,7 +129,7 @@ const Member = ({
           </div>
           <div class="d-flex flex-column align-items-start">
             <Link
-              to={`/profile/${roleProp}/${id}`}
+              to={`/profile/student/${id}`}
               class="text-dark font-weight-bold text-hover-primary font-size-h5 mb-0"
             >
               {name}
@@ -144,7 +144,6 @@ const Member = ({
             </div>
           </div>
         </div>
-        {/* Check user phai student khong => Check xem day co phai la member component khong => check xem user dang login phai team lead khong => Leader co the make leader, kick member */}
         {userRole === 'student' && !isLeader && currentUser.id === leaderId && (
           <div className="px-2">
             <Dropdown className="dropdown-inline" alignRight>

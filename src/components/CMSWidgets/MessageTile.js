@@ -3,39 +3,22 @@ import { toAbsoluteUrl } from '_metronic/_helpers';
 import SVG from 'react-inlinesvg';
 
 const MessageTile = ({
-  className,
+  className = '',
   iconSrc = toAbsoluteUrl('/media/svg/icons/Layout/Layout-4-blocks.svg'),
   baseColor = 'success',
-  content = (
-    <>
-      Configure user passwords to expire periodically. Users will need warning
-      that their passwords are going to expire,
-    </>
-  ),
+  content = <></>,
 }) => {
   return (
     <div
-      class={`alert alert-custom alert-light-${baseColor} fade show ${className}`}
+      className={`alert alert-custom alert-light-${baseColor} fade show ${className}`}
       role="alert"
     >
-      <div class="alert-icon">
-        <span class={`svg-icon svg-icon-3x svg-icon-${baseColor}`}>
+      <div className="alert-icon">
+        <span className={`svg-icon svg-icon-3x svg-icon-${baseColor}`}>
           <SVG src={iconSrc} />
         </span>{' '}
       </div>
-      <div class="alert-text font-weight-bold">{content}</div>
-      {/* <div class="alert-close">
-        <button
-          type="button"
-          class="close"
-          data-dismiss="alert"
-          aria-label="Close"
-        >
-          <span aria-hidden="true">
-            <i class="ki ki-close"></i>
-          </span>
-        </button>
-      </div> */}
+      <div className="alert-text font-weight-bold">{content}</div>
     </div>
   );
 };
