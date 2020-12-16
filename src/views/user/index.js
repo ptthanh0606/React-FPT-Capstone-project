@@ -19,7 +19,7 @@ function fetchSemester(
   setLastSemester,
   history
 ) {
-  if (semester.id !== lastSemester) {
+  if (semester.id !== 0 && semester.id !== lastSemester) {
     request({
       to: READ_SEMESTER(semester.id).url,
       method: READ_SEMESTER(semester.id).method,
@@ -79,7 +79,6 @@ const User = () => {
                 component={lazy(() => import('views/user/LecturerDashboard'))}
               />
             )}
-
             <Route.SemesterSelected
               path="/topic/:id(\d+)"
               component={lazy(() => import('views/user/Topics/Topic'))}
