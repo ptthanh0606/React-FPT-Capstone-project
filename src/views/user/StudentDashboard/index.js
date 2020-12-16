@@ -376,6 +376,7 @@ export default React.memo(function LecturerDashboard() {
                   dataText={numberOfTeams}
                   className="gutter-b"
                   desciption="Teams created"
+                  iconColor="white"
                   iconSrc={toAbsoluteUrl(
                     '/media/svg/icons/Communication/Group.svg'
                   )}
@@ -406,9 +407,7 @@ export default React.memo(function LecturerDashboard() {
             />
           )}
 
-          {currentSemester.status !== 3 &&
-            isStudentHaveTeam &&
-            isStudentHaveTopic && <FlowTimeline className=" gutter-b" />}
+          <FlowTimeline className=" gutter-b" />
 
           {currentSemester.status !== 3 &&
             !isStudentHaveTeam &&

@@ -9,7 +9,7 @@ import userAtom from 'store/user';
 
 import { toAbsoluteUrl } from '_metronic/_helpers';
 
-import { LIST_TOPIC, READ_LECTURER } from 'endpoints';
+import { CREATE_TOPIC, LIST_TOPIC, READ_LECTURER } from 'endpoints';
 import { applicationRowActionFormatter, rowActionFormatter } from './constants';
 import * as topicTranformer from 'modules/semester/topic/transformers';
 
@@ -23,6 +23,12 @@ import CMSAnotherList from 'components/CMSAnotherList';
 import SemesterPhase from 'components/CMSWidgets/SemesterPhase';
 import { handleErrors } from 'utils/common';
 import request from 'utils/request';
+import CMSModal from 'components/CMSModal/CMSModal';
+
+import * as constants from 'modules/semester/topic/constants';
+import * as transformers from 'modules/semester/topic/transformers';
+import toast from 'utils/toast';
+import { transduce } from 'ramda';
 
 export default React.memo(function LecturerDashboard() {
   const setMeta = useSetRecoilState(metaAtom);
@@ -40,6 +46,10 @@ export default React.memo(function LecturerDashboard() {
   const [flowTimelines, setFlowTimelines] = React.useState([]);
   const [topicNeedFeedback, setTopicNeedFeedback] = React.useState([]);
   const [applications, setApplications] = React.useState([]);
+
+  const [fieldTemplate, setFieldTemplate] = React.useState({});
+  const [showCreate, setShowCreate] = React.useState(false);
+  const [isProcessing, setIsProcessing] = React.useState(false);
 
   // --------------------------------------------------------------------
 
@@ -69,7 +79,7 @@ export default React.memo(function LecturerDashboard() {
         method: LIST_TOPIC.method,
         params: {
           pageNumber: 1,
-          pageSize: 5,
+          pageSize: 2,
           semesterId: currentSemester.id,
           departmentId: depId,
           status: 0,
@@ -78,16 +88,19 @@ export default React.memo(function LecturerDashboard() {
         .then(res => {
           if (res.data.data.length) {
             setTopicNeedFeedback(
-              res.data.data.map(topicTranformer.downList).map(topic => ({
-                labelId: topic.id,
-                label: topic.name,
-                subLabel: topic.code,
-                emailAvatar: '',
-                altLabel: topic.submitter.label,
-                altLabelLinkTo: `/profile/lecturer/${topic.submitter.value}`,
-                altLabelExtended: 'Submit by',
-                darkMode: true,
-              }))
+              res.data.data
+                .map(topicTranformer.downList)
+                .map(topic => ({
+                  labelId: topic.id,
+                  label: topic.name,
+                  subLabel: topic.code,
+                  emailAvatar: '',
+                  altLabel: topic.submitter.label,
+                  altLabelLinkTo: `/profile/lecturer/${topic.submitter.value}`,
+                  altLabelExtended: 'Submit by',
+                  darkMode: true,
+                }))
+                .slice(0, 5)
             );
           }
         })
@@ -178,16 +191,7 @@ export default React.memo(function LecturerDashboard() {
       });
   }, [currentUser.id, fetchWaitingTopics]);
 
-  // --------------------------------------------------------------------
-
-  React.useEffect(() => {
-    setMeta({
-      title: 'Dashboard',
-      breadcrumb: [{ title: 'Dashboard', path: '/dashboard' }],
-    });
-  }, [setMeta]);
-
-  React.useEffect(() => {
+  const fetchInit = React.useCallback(() => {
     fetchCurrentLecturer();
     if (currentSemester.status === 0) {
       fetchTopicsByStatus(2);
@@ -200,6 +204,52 @@ export default React.memo(function LecturerDashboard() {
   }, [
     currentSemester.status,
     fetchCurrentLecturer,
+    fetchTopicsByStatus,
+    fetchTopicsByType,
+  ]);
+
+  const handleCreate = React.useCallback(
+    fieldData => {
+      setIsProcessing(true);
+      request({
+        to: CREATE_TOPIC.url,
+        method: CREATE_TOPIC.method,
+        data: {
+          ...transformers.up(fieldData),
+          semesterId: Number(currentSemester.id),
+          submitterId: currentUser.id,
+        },
+        params: {
+          semesterId: currentSemester.id,
+        },
+      })
+        .then(res => {
+          toast.success('Create topic successfully');
+          setShowCreate(false);
+          setFieldTemplate({});
+          fetchInit();
+        })
+        .catch(handleErrors)
+        .finally(() => setIsProcessing(false));
+    },
+    [currentSemester.id, currentUser.id, fetchInit]
+  );
+
+  // --------------------------------------------------------------------
+
+  React.useEffect(() => {
+    setMeta({
+      title: 'Dashboard',
+      breadcrumb: [{ title: 'Dashboard', path: '/dashboard' }],
+    });
+  }, [setMeta]);
+
+  React.useEffect(() => {
+    fetchInit();
+  }, [
+    currentSemester.status,
+    fetchCurrentLecturer,
+    fetchInit,
     fetchTopicsByStatus,
     fetchTopicsByType,
   ]);
@@ -446,6 +496,7 @@ export default React.memo(function LecturerDashboard() {
             <QuickAction
               className="gutter-b"
               title="Quick topic actions"
+              subTitle="This will help you become a mentor or submit a topic in no time."
               actionsRows={[
                 [
                   {
@@ -455,14 +506,14 @@ export default React.memo(function LecturerDashboard() {
                       '/media/svg/icons/Design/Join-1.svg'
                     ),
                     label: 'Apply for mentor',
-                    onClick: handleRouteToTopics,
+                    onClick: () => history.push('/topic'),
                   },
                   {
                     className: 'col px-6 py-8 rounded-xl mb-7',
                     type: 'success',
                     iconSrc: toAbsoluteUrl('/media/svg/icons/Files/Export.svg'),
                     label: 'Submit topic',
-                    onClick: handleRouteToTopics,
+                    onClick: () => setShowCreate(true),
                   },
                 ],
               ]}
@@ -577,6 +628,16 @@ export default React.memo(function LecturerDashboard() {
           />
         </div>
       </div>
+      <CMSModal
+        isShowFlg={showCreate}
+        onHide={() => setShowCreate(false)}
+        configs={constants.submitterModalConfigs}
+        title="Create new topic"
+        subTitle="Submit new topic to this capstone semester"
+        onConfirmForm={handleCreate}
+        fieldTemplate={fieldTemplate}
+        isProcessing={isProcessing}
+      />
     </>
   );
 });

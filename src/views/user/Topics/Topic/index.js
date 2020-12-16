@@ -865,6 +865,24 @@ const Topic = () => {
                     Become a mentor
                   </button>
                 )}
+
+              {[0].includes(currentSemester.status) &&
+                [0].includes(currentTopic.status) && (
+                  <>
+                    <span class="svg-icon svg-icon-danger mr-1">
+                      <SVG
+                        src={toAbsoluteUrl(
+                          '/media/svg/icons/Code/Warning-1-circle.svg'
+                        )}
+                      ></SVG>
+                    </span>
+                    <span className="text-danger font-weight-bolder">
+                      This topic is not approved yet, you have to wait for it to
+                      become approved.
+                    </span>
+                  </>
+                )}
+
               {constants.statusTitles[currentTopic.status] === 'Waiting' &&
                 currentTopic.submitter.value === currentUser.id && (
                   <button
