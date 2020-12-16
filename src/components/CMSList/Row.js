@@ -20,6 +20,7 @@ const ApplicationRow = ({
     <div className={'d-flex align-items-center mb-10 ' + className}>
       <div className="d-flex flex-column flex-grow-1 font-weight-bold">
         <Link
+          to="/"
           className="text-dark text-hover-primary mb-1 font-size-lg"
           onClick={handleRoute}
         >

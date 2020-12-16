@@ -3,10 +3,10 @@ import { toAbsoluteUrl } from '_metronic/_helpers';
 import ActionCard from './ActionCard';
 
 const QuickAction = ({
-  className,
-  title,
-  subTitle,
-  toolBar,
+  className = '',
+  title = '',
+  subTitle = '',
+  toolBar = <></>,
   actionsRows = [
     [
       {
@@ -33,7 +33,11 @@ const QuickAction = ({
   return (
     <div className={`card card-custom bg-white ${className}`}>
       <div className="card-header align-items-center border-0">
-        <h3 className="card-title font-weight-bolder align-items-start text-dark flex-column">
+        <h3
+          className={`card-title font-weight-bolder align-items-start text-dark flex-column mt-${
+            subTitle ? '8' : '0'
+          }`}
+        >
           {title}
           {subTitle && (
             <span className="text-muted mt-3 font-weight-bold font-size-sm mb-5">

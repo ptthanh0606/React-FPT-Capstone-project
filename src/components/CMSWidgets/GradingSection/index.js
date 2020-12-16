@@ -88,11 +88,7 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
                     <div className="d-flex font-size-sm text-white mt-3">
                       <OverlayTrigger
                         placement="bottom"
-                        overlay={
-                          <Tooltip id="quick-user-tooltip">
-                            This checkpoint weight
-                          </Tooltip>
-                        }
+                        overlay={<Tooltip>This checkpoint weight</Tooltip>}
                       >
                         <div className="mr-10">
                           <i class="flaticon2-pie-chart-3 text-white mr-2 icon-nm"></i>

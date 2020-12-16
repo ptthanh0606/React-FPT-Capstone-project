@@ -853,16 +853,18 @@ const Topic = () => {
                     />
                   </>
                 )}
-              {[2, 3].includes(currentTopic.status) && !isUserMentor && (
-                <button
-                  type="button"
-                  className="btn btn-primary btn-success font-weight-bold btn-sm ml-2"
-                  onClick={handleApplyMentor}
-                >
-                  <i className="fas fa-sign-in-alt mr-1"></i>
-                  Become a mentor
-                </button>
-              )}
+              {[0].includes(currentSemester.status) &&
+                [2, 3].includes(currentTopic.status) &&
+                !isUserMentor && (
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-success font-weight-bold btn-sm ml-2"
+                    onClick={handleApplyMentor}
+                  >
+                    <i className="fas fa-sign-in-alt mr-1"></i>
+                    Become a mentor
+                  </button>
+                )}
               {constants.statusTitles[currentTopic.status] === 'Waiting' &&
                 currentTopic.submitter.value === currentUser.id && (
                   <button
@@ -885,6 +887,7 @@ const Topic = () => {
     return buttons;
   }, [
     currentRole,
+    currentSemester.status,
     currentTopic,
     currentUser.id,
     handleApplyMentor,

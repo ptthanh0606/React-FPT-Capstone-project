@@ -5,7 +5,7 @@ const CMSList = ({
   className = '',
   title = '',
   subTitle = '',
-  rows = [],
+  rows = [{ label: '', subLabel: '', actions: <></> }],
   rowActions = <></>,
   toolBar = <></>,
   fallbackMsg = '',
@@ -14,7 +14,11 @@ const CMSList = ({
 
   return (
     <div className={`card card-custom card-border ${className}`}>
-      <div className="card-header align-items-center border-0 mt-4">
+      <div
+        className={`card-header align-items-center border-0 mt-${
+          subTitle ? '7' : '0'
+        }`}
+      >
         <h3 className="card-title font-weight-bolder align-items-start text-dark flex-column">
           {title}
           {subTitle && (

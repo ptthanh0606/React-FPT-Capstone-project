@@ -157,7 +157,7 @@ const TopicDetailCard = ({
               <div className="d-flex align-items-center flex-lg-fill my-1">
                 <OverlayTrigger
                   placement="bottom"
-                  overlay={<Tooltip id="quick-user-tooltip">Team</Tooltip>}
+                  overlay={<Tooltip>Team</Tooltip>}
                 >
                   <span className="mr-4">
                     <i className="flaticon-users icon-2x text-muted font-weight-bold"></i>
@@ -168,11 +168,7 @@ const TopicDetailCard = ({
                     studentMembers.map(student => (
                       <OverlayTrigger
                         placement="bottom"
-                        overlay={
-                          <Tooltip id="quick-user-tooltip">
-                            {student.name}
-                          </Tooltip>
-                        }
+                        overlay={<Tooltip>{student.name}</Tooltip>}
                       >
                         <Link
                           to={`/profile/student/${student.id}`}
@@ -197,7 +193,7 @@ const TopicDetailCard = ({
               <div className="d-flex align-items-center flex-lg-fill my-1">
                 <OverlayTrigger
                   placement="bottom"
-                  overlay={<Tooltip id="quick-user-tooltip">Mentors</Tooltip>}
+                  overlay={<Tooltip>Mentors</Tooltip>}
                 >
                   <span className="mr-4">
                     <i className="flaticon-profile-1 icon-2x text-muted font-weight-bold"></i>
@@ -208,11 +204,7 @@ const TopicDetailCard = ({
                     mentorMembers.map(mentor => (
                       <OverlayTrigger
                         placement="bottom"
-                        overlay={
-                          <Tooltip id="quick-user-tooltip">
-                            {mentor.name}
-                          </Tooltip>
-                        }
+                        overlay={<Tooltip>{mentor.name}</Tooltip>}
                       >
                         <Link
                           to={`/profile/lecturer/${mentor.id}`}

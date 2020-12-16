@@ -76,7 +76,7 @@ const UserCard = ({
           <div className="mt-5">
             <OverlayTrigger
               placement="bottom"
-              overlay={<Tooltip id="quick-user-tooltip">Weight</Tooltip>}
+              overlay={<Tooltip>Weight</Tooltip>}
             >
               <span className="label label-inline font-weight-bolder">
                 {weight}
@@ -88,7 +88,7 @@ const UserCard = ({
             <div className="mt-9 mb-4 d-flex justify-content-center">
               <OverlayTrigger
                 placement="bottom"
-                overlay={<Tooltip id="quick-user-tooltip">Make Leader</Tooltip>}
+                overlay={<Tooltip>Make Leader</Tooltip>}
               >
                 <button
                   onClick={handleMakeLeader}
@@ -99,7 +99,7 @@ const UserCard = ({
               </OverlayTrigger>
               <OverlayTrigger
                 placement="bottom"
-                overlay={<Tooltip id="quick-user-tooltip">Edit weight</Tooltip>}
+                overlay={<Tooltip>Edit weight</Tooltip>}
               >
                 <button
                   onClick={handleEditWeight}

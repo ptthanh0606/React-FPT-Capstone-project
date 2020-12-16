@@ -48,11 +48,7 @@ const TeamHeader = ({
                         {department && (
                           <OverlayTrigger
                             placement="bottom"
-                            overlay={
-                              <Tooltip id="quick-user-tooltip">
-                                Department
-                              </Tooltip>
-                            }
+                            overlay={<Tooltip>Department</Tooltip>}
                           >
                             <div className="d-flex align-items-center mr-10">
                               <i class="fas fa-university icon-md mr-2" />
@@ -66,11 +62,7 @@ const TeamHeader = ({
                         {teamType && (
                           <OverlayTrigger
                             placement="bottom"
-                            overlay={
-                              <Tooltip id="quick-user-tooltip">
-                                Is this team private
-                              </Tooltip>
-                            }
+                            overlay={<Tooltip>Is this team private</Tooltip>}
                           >
                             <div className="d-flex align-items-center mr-10">
                               <i class="fas fa-shield-alt icon-md mr-2" />
