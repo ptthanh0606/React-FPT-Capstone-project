@@ -7,19 +7,19 @@ const Engaging = ({ className = '' }) => {
         <div
           className="flex-grow-1 p-12 card-rounded bgi-no-repeat d-flex flex-column justify-content-center align-items-start"
           style={{
-            backgroundColor: '#BBDBFB',
+            backgroundColor: '#8950FC',
             backgroundPosition: 'right bottom',
             backgroundSize: 'auto 100%',
             backgroundImage: 'url(/media/svg/humans/custom-8.svg)',
           }}
         >
-          <h4 className="text-primary font-weight-bolder m-0">Quick guide</h4>
+          <h4 className="text-white font-weight-bolder m-0">Quick guide</h4>
 
-          <p className="text-dark mt-5 font-size-xl font-weight-bold">
+          <p className="text-white mt-5">
             Discuss with your team to find <b>the best topic</b> for you all to
             handle.
             <br />
-            Pick one of the topic with the <b>Ready</b> status below to start.
+            Pick one of the topic with the <b>"Ready"</b> status below to start.
           </p>
         </div>
       </div>
