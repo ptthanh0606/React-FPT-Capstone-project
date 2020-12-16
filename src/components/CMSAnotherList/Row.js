@@ -1,30 +1,32 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import md5 from 'utils/md5';
 
 const Row = ({
   className,
+  labelId = '',
   label = '',
   subLabel = '',
   altLabel = '',
+  altLabelExtended = '',
   emailAvatar = '',
-  onLabelClick,
-  darkMode,
+  altLabelLinkTo = '',
+  darkMode = false,
 }) => {
   return (
     <div
-      className={`d-flex align-items-start list-item py-4 ${className}`}
+      className={`d-flex align-items-center list-item py-4 ${className}`}
       data-inbox="message"
     >
       <div className="flex-grow-1 mt-1 mr-2" data-toggle="view">
-        <a
-          href="/"
-          onClick={onLabelClick}
+        <Link
+          to={`/topic/${labelId}`}
           className={`text-${
             darkMode && 'light-primary'
           } text-hover-primary font-weight-bold mr-2`}
         >
           {label}
-        </a>
+        </Link>
 
         <div className="mt-2">
           <span
@@ -37,17 +39,22 @@ const Row = ({
         </div>
       </div>
       <div
-        className="d-flex align-items-center justify-content-end flex-wrap"
+        className="d-flex flex-column align-items-end justify-content-center flex-wrap"
         data-toggle="view"
       >
-        <a
-          href="/"
-          className={`font-weight-bolder ${
+        {altLabelExtended && (
+          <span className={`${darkMode && 'text-light-primary'}`}>
+            {altLabelExtended}
+          </span>
+        )}
+        <Link
+          to={altLabelLinkTo}
+          className={`font-weight-bolder mt-2 ${
             darkMode && 'text-light-primary text-hover-primary'
           }`}
         >
           {altLabel}
-        </a>
+        </Link>
 
         {emailAvatar && (
           <a href="/" className="symbol symbol-30 ml-3">

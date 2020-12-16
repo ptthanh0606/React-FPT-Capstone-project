@@ -1,22 +1,41 @@
 import React from 'react';
 
-import { useSetRecoilState } from 'recoil';
+import { useHistory } from 'react-router-dom';
+
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import metaAtom from 'store/meta';
+import semesterAtom from 'store/semester';
+import userAtom from 'store/user';
+
+import { toAbsoluteUrl } from '_metronic/_helpers';
+
+import { LIST_TOPIC, READ_LECTURER } from 'endpoints';
+import { applicationRowActionFormatter, rowActionFormatter } from './constants';
+import * as topicTranformer from 'modules/semester/topic/transformers';
+
 import Anouncement from 'components/CMSWidgets/Anouncement';
 import QuickAction from 'components/CMSWidgets/QuickAction';
-import { toAbsoluteUrl } from '_metronic/_helpers';
 import CMSList from 'components/CMSList';
-import { applicationRowActionFormatter, rowActionFormatter } from './constants';
 import StatTile from 'components/CMSWidgets/StatTile';
-import { useHistory } from 'react-router-dom';
 import DropdownPopover from 'components/DropdownPopover';
 import FlowTimeline from 'components/CMSWidgets/FlowTimeline';
 import CMSAnotherList from 'components/CMSAnotherList';
+import SemesterPhase from 'components/CMSWidgets/SemesterPhase';
+import { handleErrors } from 'utils/common';
+import request from 'utils/request';
 
 export default React.memo(function LecturerDashboard() {
   const setMeta = useSetRecoilState(metaAtom);
+  const currentSemester = useRecoilValue(semesterAtom);
+  const currentUser = useRecoilValue(userAtom);
+
   const history = useHistory();
+
   const [topicType, setTopicType] = React.useState('Submited');
+  const [totalTopic, setTotalTopics] = React.useState(0);
+  const [totalMentoring, setTotalMentoring] = React.useState(0);
+  const [totalSubmitted, setTotalSubmitted] = React.useState(0);
+
   const [topicPreviews, setTopicPreviews] = React.useState([]);
   const [flowTimelines, setFlowTimelines] = React.useState([]);
   const [topicNeedFeedback, setTopicNeedFeedback] = React.useState([]);
@@ -41,6 +60,124 @@ export default React.memo(function LecturerDashboard() {
     [history]
   );
 
+  // ---------------------------------------------------------------------
+
+  const fetchWaitingTopics = React.useCallback(
+    depId => {
+      request({
+        to: LIST_TOPIC.url,
+        method: LIST_TOPIC.method,
+        params: {
+          pageNumber: 1,
+          pageSize: 5,
+          semesterId: currentSemester.id,
+          departmentId: depId,
+          status: 0,
+        },
+      })
+        .then(res => {
+          if (res.data.data.length) {
+            setTopicNeedFeedback(
+              res.data.data.map(topicTranformer.downList).map(topic => ({
+                labelId: topic.id,
+                label: topic.name,
+                subLabel: topic.code,
+                emailAvatar: '',
+                altLabel: topic.submitter.label,
+                altLabelLinkTo: `/profile/lecturer/${topic.submitter.value}`,
+                altLabelExtended: 'Submit by',
+                darkMode: true,
+              }))
+            );
+          }
+        })
+        .catch(err => {
+          handleErrors(err);
+        });
+    },
+    [currentSemester.id]
+  );
+
+  const fetchTopicsByStatus = React.useCallback(
+    status => {
+      request({
+        to: LIST_TOPIC.url,
+        method: LIST_TOPIC.method,
+        params: {
+          pageNumber: 1,
+          pageSize: 5,
+          semesterId: currentSemester.id,
+          status: status,
+        },
+      })
+        .then(res => {
+          if (res.data.data.length) {
+            setTotalTopics(res.data.data.map(topicTranformer.downList).length);
+          }
+        })
+        .catch(err => {
+          handleErrors(err);
+        });
+    },
+    [currentSemester.id]
+  );
+
+  const fetchTopicsByType = React.useCallback(
+    type => {
+      let params = {};
+      params =
+        type === 'mentoring'
+          ? {
+              isOwnMentorTopic: true,
+            }
+          : {
+              isOwnSubmit: true,
+            };
+      request({
+        to: LIST_TOPIC.url,
+        method: LIST_TOPIC.method,
+        params: {
+          pageNumber: 1,
+          pageSize: 5,
+          semesterId: currentSemester.id,
+          ...params,
+        },
+      })
+        .then(res => {
+          if (res.data.data.length) {
+            if (type === 'mentoring') {
+              setTotalMentoring(
+                res.data.data.map(topicTranformer.downList).length
+              );
+            } else
+              setTotalSubmitted(
+                res.data.data.map(topicTranformer.downList).length
+              );
+          }
+        })
+        .catch(err => {
+          handleErrors(err);
+        });
+    },
+    [currentSemester.id]
+  );
+
+  const fetchCurrentLecturer = React.useCallback(() => {
+    request({
+      to: READ_LECTURER(currentUser.id).url,
+      method: READ_LECTURER(currentUser.id).method,
+    })
+      .then(res => {
+        const lecturerApproverDepIDs = res.data.data.departments
+          .filter(dep => dep.isApprover === true)
+          .map(dep => dep.id);
+        lecturerApproverDepIDs.map(id => fetchWaitingTopics(id));
+      })
+      .catch(err => {
+        handleErrors(err);
+      });
+  }, [currentUser.id, fetchWaitingTopics]);
+
   // --------------------------------------------------------------------
 
   React.useEffect(() => {
@@ -49,6 +186,23 @@ export default React.memo(function LecturerDashboard() {
       breadcrumb: [{ title: 'Dashboard', path: '/dashboard' }],
     });
   }, [setMeta]);
+
+  React.useEffect(() => {
+    fetchCurrentLecturer();
+    if (currentSemester.status === 0) {
+      fetchTopicsByStatus(2);
+    }
+    if (currentSemester.status === 1) {
+      fetchTopicsByStatus(3);
+    }
+    fetchTopicsByType('mentoring');
+    fetchTopicsByType('submitted');
+  }, [
+    currentSemester.status,
+    fetchCurrentLecturer,
+    fetchTopicsByStatus,
+    fetchTopicsByType,
+  ]);
 
   // My topic
   React.useEffect(() => {
@@ -275,50 +429,20 @@ export default React.memo(function LecturerDashboard() {
     ]);
   }, []);
 
-  // Topic need feedback
-  React.useEffect(() => {
-    const response = [
-      {
-        id: 1,
-        label: 'Capstone Management System',
-        onLabelClick: handleRouteToSpecificTopic(0),
-        subLabel: 'Software Engineer',
-        altLabel: 'ThanhPTLecturer',
-        emailAvatar: 'c',
-      },
-      {
-        id: 2,
-        label: 'Web Checker System',
-        onLabelClick: handleRouteToSpecificTopic(0),
-        subLabel: 'Software Engineer',
-        altLabel: 'Le Vu Truong',
-        emailAvatar: 'c',
-      },
-      {
-        id: 3,
-        label: 'Example topic name 1',
-        onLabelClick: handleRouteToSpecificTopic(0),
-        subLabel: 'Software Engineer',
-        altLabel: 'Tran Dinh Thanh',
-        emailAvatar: 'c',
-      },
-      {
-        id: 5,
-        label: 'Example topic name 2',
-        onLabelClick: handleRouteToSpecificTopic(0),
-        subLabel: 'Software Engineer',
-        altLabel: 'Tran Dinh Thanh',
-        emailAvatar: 'c',
-      },
-    ];
-    setTopicNeedFeedback(response);
-  }, [handleRouteToSpecificTopic]);
-
   return (
-    <div className="row">
-      <div className="col-lg-6 col-xxl-4">
-        {/* <div className="row">
-          <div className="col-lg-12 col-xxl-12">
+    <>
+      <div className="row">
+        <div className="col-12">
+          <SemesterPhase
+            phaseStatus={currentSemester.status}
+            semesterName={currentSemester.name}
+            className="gutter-b"
+          />
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-lg-6 col-xxl-4">
+          {currentSemester.status === 0 && (
             <QuickAction
               className="gutter-b"
               title="Quick topic actions"
@@ -343,104 +467,116 @@ export default React.memo(function LecturerDashboard() {
                 ],
               ]}
             />
-          </div>
-        </div> */}
-        <div className="row">
-          <div className="col-lg-12 col-xxl-12">
-            <Anouncement
-              className="gutter-b"
-              date="20 Jun 2020"
-              body={
-                <>
-                  Lorem ipsum dolor,
-                  <br />
-                  <br /> Consectetur adipiscing elit, sed do eiusmod tempor
-                  incididunt ut labore et dolore magna aliqua. <br />
-                </>
-              }
-            />
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-lg-12 col-xxl-12">
+          )}
+
+          {/* Fetch departments to check approver */}
+          {currentSemester.status === 0 && (
             <CMSAnotherList
               className="gutter-b"
               title="Topic need feedback"
+              subTitle="Consider giving feedback for these topics"
+              fallbackMsg="Awaiting for topic submission..."
               rows={topicNeedFeedback}
               darkMode={true}
             />
-          </div>
+          )}
         </div>
-      </div>
-      <div className="col-lg-6 col-xxl-4">
-        <div className="row">
-          <div className="col-lg-12 col-xxl-12">
-            <FlowTimeline className="gutter-b" items={flowTimelines} />
-          </div>
-        </div>
-        {/* <div className="row">
-          <div className="col-lg-12 col-xxl-12">
-            <CMSList
-              className="gutter-b card-stretch"
-              title="Topic applications"
-              rows={applications}
-            />
-          </div>
-        </div> */}
-      </div>
-      <div className="col-lg-6 col-xxl-4">
-        <div className="row">
-          <div className="col-lg-6 col-xxl-6">
-            <StatTile
-              className="gutter-b"
-              baseColor="primary"
-              iconColor="white"
-              dataText="790"
-              desciption="Topics in this semester"
-              iconSrc={toAbsoluteUrl(
-                '/media/svg/icons/Communication/Clipboard-list.svg'
-              )}
-              onClick={handleRouteToTopics}
-            />
-          </div>
-          <div className="col-lg-6 col-xxl-6">
-            <StatTile
-              className="gutter-b"
-              baseColor="white"
-              iconColor="primary"
-              dataText="40"
-              desciption="Topic you are mentoring"
-              iconSrc={toAbsoluteUrl('/media/svg/icons/General/Half-star.svg')}
-              onClick={handleRouteToTopics}
-            />
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-lg-12 col-xxl-12">
-            <CMSList
-              className="gutter-b"
-              title="My topic"
-              toolBar={
-                <DropdownPopover
-                  value="Submited"
-                  items={[
-                    {
-                      label: 'Submited',
-                      value: 'Submited',
-                    },
-                    {
-                      label: 'Mentoring',
-                      value: 'Mentoring',
-                    },
-                  ]}
-                  onChange={value => setTopicType(value)}
+        <div className="col-lg-6 col-xxl-4">
+          <Anouncement
+            className="gutter-b"
+            date="20 Jun 2020"
+            body={
+              <>
+                Lorem ipsum dolor,
+                <br />
+                <br /> Consectetur adipiscing elit, sed do eiusmod tempor
+                incididunt ut labore et dolore magna aliqua. <br />
+              </>
+            }
+          />
+
+          <FlowTimeline className="gutter-b" items={flowTimelines} />
+
+          {currentSemester.status === 1 && (
+            <div className="row">
+              <div className="col-lg-12 col-xxl-12">
+                <CMSList
+                  className="gutter-b card-stretch"
+                  title="Topic applications"
+                  rows={applications}
                 />
-              }
-              rows={topicPreviews}
-            />
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="col-lg-6 col-xxl-4">
+          <div className="row">
+            <div className="col-6">
+              <StatTile
+                className="gutter-b"
+                baseColor="primary"
+                iconColor="white"
+                dataText={totalTopic}
+                desciption="Topics in this semester"
+                iconSrc={toAbsoluteUrl(
+                  '/media/svg/icons/Communication/Clipboard-list.svg'
+                )}
+              />
+            </div>
+            <div className="col-6">
+              <StatTile
+                className="gutter-b"
+                baseColor="white"
+                iconColor="primary"
+                dataText={totalMentoring}
+                desciption="Topic you are mentoring"
+                iconSrc={toAbsoluteUrl(
+                  '/media/svg/icons/General/Half-star.svg'
+                )}
+              />
+            </div>
           </div>
+
+          {currentSemester.status === 0 && (
+            <div className="row">
+              <div className="col-12">
+                <StatTile
+                  className="gutter-b"
+                  baseColor="info"
+                  iconColor="white"
+                  dataText={totalSubmitted}
+                  desciption="Submitted"
+                  iconSrc={toAbsoluteUrl(
+                    '/media/svg/icons/Communication/Urgent-mail.svg'
+                  )}
+                />
+              </div>
+            </div>
+          )}
+
+          <CMSList
+            className="gutter-b"
+            title="My topic"
+            toolBar={
+              <DropdownPopover
+                value="Submited"
+                items={[
+                  {
+                    label: 'Submited',
+                    value: 'Submited',
+                  },
+                  {
+                    label: 'Mentoring',
+                    value: 'Mentoring',
+                  },
+                ]}
+                onChange={value => setTopicType(value)}
+              />
+            }
+            rows={topicPreviews}
+          />
         </div>
       </div>
-    </div>
+    </>
   );
 });
