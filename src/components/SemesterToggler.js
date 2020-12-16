@@ -16,7 +16,7 @@ export function SemesterToggler() {
         {semester?.name && (
           <OverlayTrigger
             placement="bottom"
-            overlay={<Tooltip id="quick-user-tooltip">Change semester</Tooltip>}
+            overlay={<Tooltip>Change semester</Tooltip>}
           >
             <div className="topbar-item">
               <div className="btn btn-icon w-auto btn-clean d-flex align-items-center btn-lg px-2">

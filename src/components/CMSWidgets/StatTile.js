@@ -1,13 +1,14 @@
 import React from 'react';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import SVG from 'react-inlinesvg';
-import { toAbsoluteUrl } from '_metronic/_helpers';
 
 const StatTile = ({
-  className,
-  baseColor = 'primary',
+  className = '',
+  baseColor = 'success',
   iconColor = 'success',
+  toolTipMsg = '',
   widgetHeight = '150px',
-  iconSrc = toAbsoluteUrl('/media/svg/icons/Layout/Layout-4-blocks.svg'),
+  iconSrc = '',
   dataText = '790',
   desciption = 'Topic in this semester',
   onClick = () => {},
@@ -21,14 +22,13 @@ const StatTile = ({
   );
 
   return (
-    <a
-      href="/"
+    <div
       onClick={handleClick}
       className={`card card-custom bg-${baseColor} ${className}`}
       style={{ height: widgetHeight }}
     >
       <div className="card-body">
-        <span className={`svg-icon svg-icon-3x svg-icon-${iconColor} ml-n2`}>
+        <span className={`svg-icon svg-icon-3x svg-icon-white ml-n2`}>
           <SVG src={iconSrc} />
         </span>
         <div
@@ -36,15 +36,26 @@ const StatTile = ({
         >
           {dataText}
         </div>
-
-        <span
-          href="/"
-          className={`text-inverse-${baseColor} font-weight-bold font-size-lg mt-1`}
-        >
-          {desciption}
-        </span>
+        {toolTipMsg ? (
+          <OverlayTrigger
+            placement="bottom"
+            overlay={<Tooltip>{toolTipMsg}</Tooltip>}
+          >
+            <span
+              className={`text-inverse-${baseColor} font-weight-bold font-size-lg mt-1`}
+            >
+              {desciption}
+            </span>
+          </OverlayTrigger>
+        ) : (
+          <span
+            className={`text-inverse-${baseColor} font-weight-bold font-size-lg mt-1`}
+          >
+            {desciption}
+          </span>
+        )}
       </div>
-    </a>
+    </div>
   );
 };
 

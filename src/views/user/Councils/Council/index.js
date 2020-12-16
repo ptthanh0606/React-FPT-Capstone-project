@@ -217,7 +217,7 @@ const Council = () => {
                       email={i.email || ''}
                       name={i.name}
                       isLead={i.isLeader}
-                      role="lecturer"
+                      roleProp="lecturer"
                     />
                   </Col>
                 ))) || <Col>No member</Col>}
@@ -232,7 +232,7 @@ const Council = () => {
                       email={i.email || ''}
                       name={i.name}
                       isLead={i.isLeader}
-                      role="lecturer"
+                      roleProp="lecturer"
                       isUserLeadCouncil={isUserLeadCouncil}
                     />
                   </Col>
@@ -248,10 +248,6 @@ const Council = () => {
               darkMode={true}
             />
           )}
-          {/* <CMSList
-          title="Incoming topic need evaluation"
-          rows={incomingTopic}
-        /> */}
         </div>
       </div>
     </>

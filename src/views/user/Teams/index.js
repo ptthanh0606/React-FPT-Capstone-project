@@ -127,7 +127,7 @@ export default function Teams() {
     let buttons = <></>;
     switch (currentRole) {
       case 'student':
-        buttons = (
+        buttons = [0, 1].includes(currentSemester.status) ? (
           <>
             <button
               type="button"
@@ -146,6 +146,8 @@ export default function Teams() {
               Create a team
             </button>
           </>
+        ) : (
+          <></>
         );
         break;
 
@@ -157,7 +159,7 @@ export default function Teams() {
         break;
     }
     return buttons;
-  }, [currentRole, handleShowCreateStudentTeamModal]);
+  }, [currentRole, currentSemester.status, handleShowCreateStudentTeamModal]);
 
   const handleConfirmCreate = React.useCallback(
     fieldData => {
@@ -228,6 +230,7 @@ export default function Teams() {
 
   const handleJoinWithCode = React.useCallback(
     data => {
+      setIsProcessing(true);
       request({
         to: endpoints.JOIN_TEAM(0).url,
         method: endpoints.JOIN_TEAM(0).method,
@@ -240,10 +243,11 @@ export default function Teams() {
           setJoinTeamModalShowFlg(false);
           history.push(`/team/${res.data.data}`);
           toast.success(`Joined!`);
+          setIsProcessing(false);
         })
         .catch(err => {
           handleErrors(err);
-          if (!err.isCancel) setIsLoading(false);
+          setIsProcessing(false);
         });
     },
     [currentSemester.id, history]
