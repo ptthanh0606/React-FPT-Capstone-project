@@ -100,6 +100,7 @@ export default React.memo(function LecturerDashboard() {
 
   const fetchWaitingTopics = React.useCallback(
     depId => {
+      setIsProcessing(true);
       request({
         to: LIST_TOPIC.url,
         method: LIST_TOPIC.method,
@@ -113,8 +114,9 @@ export default React.memo(function LecturerDashboard() {
       })
         .then(res => {
           if (res.data.data.length) {
+            console.log(res.data.data.map(topicTranformer.downList));
             setTopicNeedFeedback(
-              res.data.data
+              res?.data?.data
                 .map(topicTranformer.downList)
                 .map(topic => ({
                   labelId: topic.id,
@@ -128,6 +130,7 @@ export default React.memo(function LecturerDashboard() {
                 }))
                 .slice(0, 5)
             );
+            setIsProcessing(false);
           }
         })
         .catch(err => {
@@ -137,7 +140,7 @@ export default React.memo(function LecturerDashboard() {
     [currentSemester.id]
   );
 
-  const fetchTopicsByStatus = React.useCallback(
+  const fetchTotalTopicsByStatus = React.useCallback(
     status => {
       request({
         to: LIST_TOPIC.url,
@@ -163,6 +166,7 @@ export default React.memo(function LecturerDashboard() {
 
   const fetchTotalTopicsByType = React.useCallback(
     type => {
+      setIsProcessing(true);
       let params = {};
       params =
         type === 'mentoring'
@@ -194,6 +198,7 @@ export default React.memo(function LecturerDashboard() {
               setTotalSubmitted(transformedres.length);
             }
           }
+          setIsProcessing(false);
         })
         .catch(err => {
           handleErrors(err);
@@ -226,13 +231,15 @@ export default React.memo(function LecturerDashboard() {
         .then(res => {
           const transformedres = res.data.data.map(topicTranformer.downList);
           setTopicPreviews(
-            transformedres.map(topic => ({
-              id: topic.id,
-              label: topic.name,
-              subLabel: topic.code,
-              labelLinkTo: `/topic/${topic.id}`,
-              actions: rowActionFormatter(topic.status),
-            }))
+            transformedres
+              .map(topic => ({
+                id: topic.id,
+                label: topic.name,
+                subLabel: topic.code,
+                labelLinkTo: `/topic/${topic.id}`,
+                actions: rowActionFormatter(topic.status),
+              }))
+              .slice(0, 4)
           );
         })
         .catch(err => {
@@ -261,17 +268,17 @@ export default React.memo(function LecturerDashboard() {
   const fetchInit = React.useCallback(() => {
     fetchCurrentLecturer();
     if (currentSemester.status === 0) {
-      fetchTopicsByStatus(2);
+      fetchTotalTopicsByStatus(2);
     }
     if (currentSemester.status === 1) {
-      fetchTopicsByStatus(3);
+      fetchTotalTopicsByStatus(3);
     }
     fetchTotalTopicsByType('mentoring');
     fetchTotalTopicsByType('submitted');
   }, [
     currentSemester.status,
     fetchCurrentLecturer,
-    fetchTopicsByStatus,
+    fetchTotalTopicsByStatus,
     fetchTotalTopicsByType,
   ]);
 
@@ -317,7 +324,7 @@ export default React.memo(function LecturerDashboard() {
     currentSemester.status,
     fetchCurrentLecturer,
     fetchInit,
-    fetchTopicsByStatus,
+    fetchTotalTopicsByStatus,
     fetchTotalTopicsByType,
   ]);
 
@@ -426,6 +433,21 @@ export default React.memo(function LecturerDashboard() {
       </div>
       <div className="row">
         <div className="col-lg-6 col-xxl-4">
+          {currentSemester.status === 3 && (
+            <Anouncement
+              className="gutter-b"
+              date="20 Jun 2020"
+              body={
+                <>
+                  Lorem ipsum dolor,
+                  <br />
+                  <br /> Consectetur adipiscing elit, sed do eiusmod tempor
+                  incididunt ut labore et dolore magna aliqua. <br />
+                </>
+              }
+            />
+          )}
+
           {currentSemester.status === 0 && (
             <QuickAction
               className="gutter-b"
@@ -467,24 +489,28 @@ export default React.memo(function LecturerDashboard() {
               fallbackMsg="Awaiting for topic submission..."
               rows={topicNeedFeedback}
               darkMode={true}
+              isLoading={isProcessing}
             />
           ) : (
             <></>
           )}
         </div>
+
         <div className="col-lg-6 col-xxl-4">
-          <Anouncement
-            className="gutter-b"
-            date="20 Jun 2020"
-            body={
-              <>
-                Lorem ipsum dolor,
-                <br />
-                <br /> Consectetur adipiscing elit, sed do eiusmod tempor
-                incididunt ut labore et dolore magna aliqua. <br />
-              </>
-            }
-          />
+          {currentSemester.status !== 3 && (
+            <Anouncement
+              className="gutter-b"
+              date="20 Jun 2020"
+              body={
+                <>
+                  Lorem ipsum dolor,
+                  <br />
+                  <br /> Consectetur adipiscing elit, sed do eiusmod tempor
+                  incididunt ut labore et dolore magna aliqua. <br />
+                </>
+              }
+            />
+          )}
 
           {currentSemester.status === 1 && (
             <div className="row">
@@ -493,6 +519,7 @@ export default React.memo(function LecturerDashboard() {
                   className="gutter-b card-stretch"
                   title="Topic applications"
                   rows={applications}
+                  isLoading={isProcessing}
                 />
               </div>
             </div>
@@ -550,7 +577,7 @@ export default React.memo(function LecturerDashboard() {
 
           <CMSList
             className="gutter-b"
-            title="My topic"
+            title="My latest topic status"
             toolBar={
               <DropdownPopover
                 value={topicType}
@@ -568,6 +595,7 @@ export default React.memo(function LecturerDashboard() {
               />
             }
             rows={topicPreviews}
+            isLoading={isProcessing}
             fallbackMsg="No topic found..."
           />
         </div>

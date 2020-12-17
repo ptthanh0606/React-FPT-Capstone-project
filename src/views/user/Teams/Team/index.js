@@ -581,8 +581,7 @@ const Team = () => {
                           ) : (
                             <tr>
                               <td className="text-muted">
-                                This team currently don't have any applications
-                                yet.
+                                No applications found.
                               </td>
                             </tr>
                           )}
