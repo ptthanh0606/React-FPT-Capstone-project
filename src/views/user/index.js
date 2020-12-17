@@ -19,7 +19,7 @@ function fetchSemester(
   setLastSemester,
   history
 ) {
-  if (semester.id !== 0 && semester.id !== lastSemester) {
+  if (semester.id !== 0 && semester.isLoaded !== true) {
     request({
       to: READ_SEMESTER(semester.id).url,
       method: READ_SEMESTER(semester.id).method,
@@ -31,8 +31,8 @@ function fetchSemester(
           name: data.name,
           status: data.status,
           maxApplications: data.maxApplication,
+          isLoaded: true,
         });
-        setLastSemester(data.id);
       })
       .catch(err => {
         history.push('/select-semester');
@@ -44,17 +44,10 @@ const User = () => {
   const role = useRecoilValue(roleSelector);
   const history = useHistory();
   const [semester, setSemester] = useRecoilState(semesterAtom);
-  const [lastSemester, setLastSemester] = React.useState(semester);
 
   React.useEffect(() => {
-    fetchSemester(
-      semester,
-      setSemester,
-      lastSemester,
-      setLastSemester,
-      history
-    );
-  }, [history, lastSemester, semester, setSemester]);
+    fetchSemester(semester, setSemester, history);
+  }, [history, semester, setSemester]);
   return (
     <Switch>
       <Route.NormalRoute
