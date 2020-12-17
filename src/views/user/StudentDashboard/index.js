@@ -278,7 +278,7 @@ export default React.memo(function LecturerDashboard() {
         </div>
       </div>
       <div className="row">
-        <div className="col-lg-6 col-xxl-4">
+        <div className="col-lg-12 col-xxl-4">
           {currentSemester.status !== 3 && !isStudentHaveTeam && (
             <QuickAction
               className="gutter-b"
@@ -363,6 +363,7 @@ export default React.memo(function LecturerDashboard() {
             }
             date="2020-06-06"
           />
+          <FlowTimeline className=" gutter-b" />
         </div>
         <div className="col-lg-6 col-xxl-4">
           {!isStudentHaveTopic && (
@@ -388,6 +389,7 @@ export default React.memo(function LecturerDashboard() {
                   <StatTile
                     className="gutter-b"
                     dataText={totalTopics}
+                    iconColor="white"
                     desciption="Topics incomming"
                     toolTipMsg="Expected topics will be available when semester reaches next phase."
                     iconSrc={toAbsoluteUrl(
@@ -406,8 +408,6 @@ export default React.memo(function LecturerDashboard() {
               total={totalTopics}
             />
           )}
-
-          <FlowTimeline className=" gutter-b" />
 
           {currentSemester.status !== 3 &&
             !isStudentHaveTeam &&
