@@ -9,7 +9,7 @@ import userAtom from 'store/user';
 
 import { toAbsoluteUrl } from '_metronic/_helpers';
 
-import { CREATE_TOPIC, LIST_TOPIC, READ_LECTURER } from 'endpoints';
+import { CREATE_TOPIC, LIST_TOPIC, READ_LECTURER, READ_TOPIC } from 'endpoints';
 import { applicationRowActionFormatter, rowActionFormatter } from './constants';
 import * as topicTranformer from 'modules/semester/topic/transformers';
 
@@ -28,7 +28,7 @@ import CMSModal from 'components/CMSModal/CMSModal';
 import * as constants from 'modules/semester/topic/constants';
 import * as transformers from 'modules/semester/topic/transformers';
 import toast from 'utils/toast';
-import { transduce } from 'ramda';
+import Engaging2 from 'components/CMSWidgets/Engaging2';
 
 export default React.memo(function LecturerDashboard() {
   const setMeta = useSetRecoilState(metaAtom);
@@ -37,7 +37,7 @@ export default React.memo(function LecturerDashboard() {
 
   const history = useHistory();
 
-  const [topicType, setTopicType] = React.useState('Submited');
+  const [topicType, setTopicType] = React.useState('Mentoring');
   const [totalTopic, setTotalTopics] = React.useState(0);
   const [totalMentoring, setTotalMentoring] = React.useState(0);
   const [totalSubmitted, setTotalSubmitted] = React.useState(0);
@@ -53,14 +53,6 @@ export default React.memo(function LecturerDashboard() {
 
   // --------------------------------------------------------------------
 
-  const handleRouteToTopics = React.useCallback(
-    e => {
-      if (e) e.preventDefault();
-      history.push('/topic');
-    },
-    [history]
-  );
-
   const handleRouteToSpecificTopic = React.useCallback(
     id => {
       return function () {
@@ -72,8 +64,45 @@ export default React.memo(function LecturerDashboard() {
 
   // ---------------------------------------------------------------------
 
+  const fetchTopicApplications = React.useCallback(id => {
+    if (id) {
+      request({
+        to: READ_TOPIC(id).url,
+        method: READ_TOPIC(id).method,
+      })
+        .then(res => {
+          const transformedRes = transformers.downRead(res.data.data);
+          if (
+            transformedRes.applications.some(
+              application => application.status === 0
+            )
+          ) {
+            setApplications(old => [
+              ...old,
+              {
+                id: transformedRes.id,
+                label: transformedRes.name,
+                labelLinkTo: `/topic/${id}`,
+                subLabel: transformedRes.code,
+                actions: applicationRowActionFormatter(
+                  transformedRes.applications.filter(
+                    application => application.status === 0
+                  ).length,
+                  transformedRes.id
+                ),
+              },
+            ]);
+          }
+        })
+        .catch(err => {
+          handleErrors(err);
+        });
+    }
+  }, []);
+
   const fetchWaitingTopics = React.useCallback(
     depId => {
+      setIsProcessing(true);
       request({
         to: LIST_TOPIC.url,
         method: LIST_TOPIC.method,
@@ -87,8 +116,9 @@ export default React.memo(function LecturerDashboard() {
       })
         .then(res => {
           if (res.data.data.length) {
+            console.log(res.data.data.map(topicTranformer.downList));
             setTopicNeedFeedback(
-              res.data.data
+              res?.data?.data
                 .map(topicTranformer.downList)
                 .map(topic => ({
                   labelId: topic.id,
@@ -102,6 +132,7 @@ export default React.memo(function LecturerDashboard() {
                 }))
                 .slice(0, 5)
             );
+            setIsProcessing(false);
           }
         })
         .catch(err => {
@@ -111,7 +142,7 @@ export default React.memo(function LecturerDashboard() {
     [currentSemester.id]
   );
 
-  const fetchTopicsByStatus = React.useCallback(
+  const fetchTotalTopicsByStatus = React.useCallback(
     status => {
       request({
         to: LIST_TOPIC.url,
@@ -135,8 +166,9 @@ export default React.memo(function LecturerDashboard() {
     [currentSemester.id]
   );
 
-  const fetchTopicsByType = React.useCallback(
+  const fetchTotalTopicsByType = React.useCallback(
     type => {
+      setIsProcessing(true);
       let params = {};
       params =
         type === 'mentoring'
@@ -158,15 +190,59 @@ export default React.memo(function LecturerDashboard() {
       })
         .then(res => {
           if (res.data.data.length) {
+            const transformedres = res.data.data.map(topicTranformer.downList);
             if (type === 'mentoring') {
-              setTotalMentoring(
-                res.data.data.map(topicTranformer.downList).length
-              );
-            } else
-              setTotalSubmitted(
-                res.data.data.map(topicTranformer.downList).length
-              );
+              setTotalMentoring(transformedres.length);
+              transformedres
+                .map(topic => topic.id)
+                .map(id => fetchTopicApplications(id));
+            } else {
+              setTotalSubmitted(transformedres.length);
+            }
           }
+          setIsProcessing(false);
+        })
+        .catch(err => {
+          handleErrors(err);
+        });
+    },
+    [currentSemester.id, fetchTopicApplications]
+  );
+
+  const fetchTopicsByType = React.useCallback(
+    type => {
+      let params = {};
+      params =
+        type === 'Mentoring'
+          ? {
+              isOwnMentorTopic: true,
+            }
+          : {
+              isOwnSubmit: true,
+            };
+      request({
+        to: LIST_TOPIC.url,
+        method: LIST_TOPIC.method,
+        params: {
+          pageNumber: 1,
+          pageSize: 5,
+          semesterId: currentSemester.id,
+          ...params,
+        },
+      })
+        .then(res => {
+          const transformedres = res.data.data.map(topicTranformer.downList);
+          setTopicPreviews(
+            transformedres
+              .map(topic => ({
+                id: topic.id,
+                label: topic.name,
+                subLabel: topic.code,
+                labelLinkTo: `/topic/${topic.id}`,
+                actions: rowActionFormatter(topic.status),
+              }))
+              .slice(0, 4)
+          );
         })
         .catch(err => {
           handleErrors(err);
@@ -194,18 +270,18 @@ export default React.memo(function LecturerDashboard() {
   const fetchInit = React.useCallback(() => {
     fetchCurrentLecturer();
     if (currentSemester.status === 0) {
-      fetchTopicsByStatus(2);
+      fetchTotalTopicsByStatus(2);
     }
     if (currentSemester.status === 1) {
-      fetchTopicsByStatus(3);
+      fetchTotalTopicsByStatus(3);
     }
-    fetchTopicsByType('mentoring');
-    fetchTopicsByType('submitted');
+    fetchTotalTopicsByType('mentoring');
+    fetchTotalTopicsByType('submitted');
   }, [
     currentSemester.status,
     fetchCurrentLecturer,
-    fetchTopicsByStatus,
-    fetchTopicsByType,
+    fetchTotalTopicsByStatus,
+    fetchTotalTopicsByType,
   ]);
 
   const handleCreate = React.useCallback(
@@ -250,153 +326,20 @@ export default React.memo(function LecturerDashboard() {
     currentSemester.status,
     fetchCurrentLecturer,
     fetchInit,
-    fetchTopicsByStatus,
-    fetchTopicsByType,
+    fetchTotalTopicsByStatus,
+    fetchTotalTopicsByType,
   ]);
 
   // My topic
   React.useEffect(() => {
-    const response =
-      topicType === 'Submited'
-        ? [
-            {
-              id: 1,
-              label: 'Capstone Management System',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE13',
-              actions: rowActionFormatter(1),
-            },
-            {
-              id: 2,
-              label: 'Web Checker System',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE11',
-              actions: rowActionFormatter(0),
-            },
-            {
-              id: 3,
-              label: 'Example topic name',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE15',
-              actions: rowActionFormatter(2),
-            },
-            {
-              id: 4,
-              label: 'Example topic name 2',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE15',
-              actions: rowActionFormatter(1),
-            },
-            {
-              id: 5,
-              label: 'Example topic name 3',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE15',
-              actions: rowActionFormatter(0),
-            },
-            {
-              id: 6,
-              label: 'Example topic name 4',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE11',
-              actions: rowActionFormatter(0),
-            },
-            {
-              id: 7,
-              label: 'Example topic name 5',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE15',
-              actions: rowActionFormatter(2),
-            },
-            {
-              id: 8,
-              label: 'Example topic name 5',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE15',
-              actions: rowActionFormatter(2),
-            },
-          ]
-        : [
-            {
-              id: 1,
-              label: 'Example topic name 2',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE15',
-              action: rowActionFormatter(1),
-            },
-            {
-              id: 2,
-              label: 'Example topic name 3',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE15',
-              action: rowActionFormatter(0),
-            },
-            {
-              id: 3,
-              label: 'Example topic name 4',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE11',
-              action: rowActionFormatter(0),
-            },
-            {
-              id: 4,
-              label: 'Example topic name 5',
-              onLabelClick: handleRouteToSpecificTopic(0),
-              subLabel: 'FA20SE15',
-              action: rowActionFormatter(2),
-            },
-          ];
-    setTopicPreviews(response);
-  }, [handleRouteToSpecificTopic, topicType]);
-
-  // Applications
-  React.useEffect(() => {
-    const response = [
-      {
-        id: 0,
-        label: 'Capstone Management System',
-        onLabelClick: handleRouteToSpecificTopic(0),
-        subLabel: 'FA20SE13',
-        actions: applicationRowActionFormatter(10),
-      },
-      {
-        id: 0,
-        label: 'Web Checker System',
-        onLabelClick: handleRouteToSpecificTopic(0),
-        subLabel: 'FA20SE11',
-        actions: applicationRowActionFormatter(5),
-      },
-      {
-        id: 0,
-        label: 'Example topic name',
-        onLabelClick: handleRouteToSpecificTopic(0),
-        subLabel: 'FA20SE15',
-        actions: applicationRowActionFormatter(2),
-      },
-      {
-        id: 0,
-        label: 'Example topic name 2',
-        onLabelClick: handleRouteToSpecificTopic(0),
-        subLabel: 'FA20SE15',
-        actions: applicationRowActionFormatter(2),
-      },
-      {
-        id: 0,
-        label: 'Example topic name 3',
-        onLabelClick: handleRouteToSpecificTopic(0),
-        subLabel: 'FA20SE15',
-        actions: applicationRowActionFormatter(2),
-      },
-      {
-        id: 0,
-        label: 'Example topic name 4',
-        onLabelClick: handleRouteToSpecificTopic(0),
-        subLabel: 'FA20SE15',
-        actions: applicationRowActionFormatter(2),
-      },
-    ];
-    setApplications(response);
-  }, [handleRouteToSpecificTopic]);
+    if (topicType === 'Submitted') {
+      fetchTopicsByType('Submitted');
+      console.log(topicType);
+    } else if (topicType === 'Mentoring') {
+      fetchTopicsByType('Mentoring');
+      console.log(topicType);
+    }
+  }, [fetchTopicsByType, topicType]);
 
   // Flow timelines
   React.useEffect(() => {
@@ -492,6 +435,21 @@ export default React.memo(function LecturerDashboard() {
       </div>
       <div className="row">
         <div className="col-lg-6 col-xxl-4">
+          {currentSemester.status === 3 && (
+            <Anouncement
+              className="gutter-b"
+              date="20 Jun 2020"
+              body={
+                <>
+                  Lorem ipsum dolor,
+                  <br />
+                  <br /> Consectetur adipiscing elit, sed do eiusmod tempor
+                  incididunt ut labore et dolore magna aliqua. <br />
+                </>
+              }
+            />
+          )}
+
           {currentSemester.status === 0 && (
             <QuickAction
               className="gutter-b"
@@ -520,33 +478,60 @@ export default React.memo(function LecturerDashboard() {
             />
           )}
 
-          {/* Fetch departments to check approver */}
+          {currentSemester.status === 1 && (
+            <FlowTimeline className="gutter-b" items={flowTimelines} />
+          )}
+
           {currentSemester.status === 0 && (
-            <CMSAnotherList
-              className="gutter-b"
-              title="Topic need feedback"
-              subTitle="Consider giving feedback for these topics"
-              fallbackMsg="Awaiting for topic submission..."
-              rows={topicNeedFeedback}
-              darkMode={true}
-            />
+            <>
+              {topicNeedFeedback?.length ? (
+                <CMSAnotherList
+                  className="gutter-b"
+                  title="Topic need feedback"
+                  subTitle="Consider giving feedback for these topics"
+                  fallbackMsg="Awaiting for topic submission..."
+                  rows={topicNeedFeedback}
+                  darkMode={true}
+                  isLoading={isProcessing}
+                />
+              ) : (
+                <Engaging2
+                  className="gutter-b"
+                  title={
+                    <>
+                      <span>Welcome</span>
+                      <br />
+                      <br />
+                      This is your dasboard, from here you can quickly start
+                      with some actions for this semester.
+                    </>
+                  }
+                  textColorTitle="white"
+                  subTitle="Start by submit a topic or join mentoring a topic."
+                  textColorSubTitle="white"
+                  svgVariant={4}
+                  bgColor="primary"
+                />
+              )}
+            </>
           )}
         </div>
-        <div className="col-lg-6 col-xxl-4">
-          <Anouncement
-            className="gutter-b"
-            date="20 Jun 2020"
-            body={
-              <>
-                Lorem ipsum dolor,
-                <br />
-                <br /> Consectetur adipiscing elit, sed do eiusmod tempor
-                incididunt ut labore et dolore magna aliqua. <br />
-              </>
-            }
-          />
 
-          <FlowTimeline className="gutter-b" items={flowTimelines} />
+        <div className="col-lg-6 col-xxl-4">
+          {currentSemester.status !== 3 && (
+            <Anouncement
+              className="gutter-b"
+              date="20 Jun 2020"
+              body={
+                <>
+                  Lorem ipsum dolor,
+                  <br />
+                  <br /> Consectetur adipiscing elit, sed do eiusmod tempor
+                  incididunt ut labore et dolore magna aliqua. <br />
+                </>
+              }
+            />
+          )}
 
           {currentSemester.status === 1 && (
             <div className="row">
@@ -555,11 +540,18 @@ export default React.memo(function LecturerDashboard() {
                   className="gutter-b card-stretch"
                   title="Topic applications"
                   rows={applications}
+                  fallbackMsg="No application available..."
+                  isLoading={isProcessing}
                 />
               </div>
             </div>
           )}
+
+          {currentSemester.status === 0 && (
+            <FlowTimeline className="gutter-b" items={flowTimelines} />
+          )}
         </div>
+
         <div className="col-lg-6 col-xxl-4">
           <div className="row">
             <div className="col-6">
@@ -605,27 +597,31 @@ export default React.memo(function LecturerDashboard() {
             </div>
           )}
 
-          <CMSList
-            className="gutter-b"
-            title="My topic"
-            toolBar={
-              <DropdownPopover
-                value="Submited"
-                items={[
-                  {
-                    label: 'Submited',
-                    value: 'Submited',
-                  },
-                  {
-                    label: 'Mentoring',
-                    value: 'Mentoring',
-                  },
-                ]}
-                onChange={value => setTopicType(value)}
-              />
-            }
-            rows={topicPreviews}
-          />
+          {[0, 1].includes(currentSemester.status) && (
+            <CMSList
+              className="gutter-b"
+              title="My latest topic status"
+              toolBar={
+                <DropdownPopover
+                  value={topicType}
+                  items={[
+                    {
+                      label: 'Submitted',
+                      value: 'Submitted',
+                    },
+                    {
+                      label: 'Mentoring',
+                      value: 'Mentoring',
+                    },
+                  ]}
+                  onChange={value => setTopicType(value)}
+                />
+              }
+              rows={topicPreviews}
+              isLoading={isProcessing}
+              fallbackMsg="No topic found..."
+            />
+          )}
         </div>
       </div>
       <CMSModal

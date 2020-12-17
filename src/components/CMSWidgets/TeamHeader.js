@@ -1,6 +1,6 @@
 import React from 'react';
 import { OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 import MessageTile from './MessageTile';
 
@@ -12,14 +12,6 @@ const TeamHeader = ({
   withTopic = {},
 }) => {
   const history = useHistory();
-
-  const handleTopicLabelClick = React.useCallback(
-    e => {
-      e.preventDefault();
-      history.push(`/topic/${withTopic?.value}`);
-    },
-    [history, withTopic.value]
-  );
 
   return (
     <>
@@ -88,13 +80,12 @@ const TeamHeader = ({
                       </span>
                       <div className="d-flex align-items-center justify-content-between flex-wrap">
                         <div className="mr-3">
-                          <a
-                            href="/"
-                            onClick={handleTopicLabelClick}
+                          <Link
+                            to={`/topic/${withTopic?.value}`}
                             className="d-flex align-items-center text-dark text-hover-primary font-size-h3 font-weight-bolder mr-3"
                           >
                             {`${withTopic?.label || 'Awaiting...'}`}{' '}
-                          </a>
+                          </Link>
                           <div className="d-flex flex-wrap my-2">
                             <span className="text-muted font-weight-bold mr-lg-8 mr-5 mb-lg-0 mb-2">
                               {withTopic?.code || '...'}
@@ -127,8 +118,12 @@ const TeamHeader = ({
             </>
           ) : (
             <div className="d-flex align-items-center">
-              <Spinner className="mr-5" animation="border"></Spinner>
-              <span className="text">Loading...</span>
+              <Spinner
+                className="mr-5"
+                animation="border"
+                variant="primary"
+              ></Spinner>
+              <span className="text text-primary">Loading...</span>
             </div>
           )}
         </div>

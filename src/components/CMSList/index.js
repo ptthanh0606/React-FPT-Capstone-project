@@ -1,5 +1,6 @@
 import Row from 'components/CMSList/Row';
 import React from 'react';
+import { Spinner } from 'react-bootstrap';
 
 const CMSList = ({
   className = '',
@@ -9,6 +10,7 @@ const CMSList = ({
   rowActions = <></>,
   toolBar = <></>,
   fallbackMsg = '',
+  isLoading = false,
 }) => {
   // -------------------------------------------------------------
 
@@ -30,19 +32,30 @@ const CMSList = ({
         <div className="card-toolbar">{toolBar}</div>
       </div>
       <div className="card-body pt-2">
-        {rows?.length ? (
-          rows.map(row => (
-            <Row
-              key={row.label}
-              label={row.label}
-              subLabel={row.subLabel}
-              action={row.actions || rowActions}
-              onLabelClick={row.onLabelClick}
-              labelLinkTo={row.labelLinkTo}
-            />
-          ))
+        {!isLoading ? (
+          rows?.length ? (
+            rows.map(row => (
+              <Row
+                key={row.label}
+                label={row.label}
+                subLabel={row.subLabel}
+                action={row.actions || rowActions}
+                onLabelClick={row.onLabelClick}
+                labelLinkTo={row.labelLinkTo}
+              />
+            ))
+          ) : (
+            <>{fallbackMsg}</>
+          )
         ) : (
-          <>{fallbackMsg}</>
+          <div className="d-flex align-items-center">
+            <Spinner
+              className="mr-5"
+              variant="primary"
+              animation="border"
+            ></Spinner>
+            <span className="text-primary">Loading...</span>
+          </div>
         )}
       </div>
     </div>
