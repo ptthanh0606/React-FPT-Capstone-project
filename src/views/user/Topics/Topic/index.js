@@ -771,59 +771,89 @@ const Topic = () => {
     if (currentTopic) {
       switch (currentRole) {
         case 'student':
-          buttons =
-            constants.statusTitles[currentTopic?.status] === 'Ready' &&
-            isStudentUserHaveTeam &&
-            !isTeamInTopic &&
-            isStudentTeamLead &&
-            (!isTeamApplied ? (
-              <>
-                {isTeamLocked ? (
-                  <OverlayTrigger
-                    placement="bottom"
-                    overlay={
-                      <Tooltip>
-                        Apply matching for this topic, mentor will consider your
-                        application after you sent.
-                      </Tooltip>
-                    }
-                  >
-                    <button
-                      type="button"
-                      className="btn btn-primary btn-success font-weight-bold btn-sm "
-                      onClick={handleStudentApplyForMatching}
-                      disabled={!isTeamLocked}
-                    >
-                      <i className="fas fa-sign-in-alt mr-1"></i>
-                      Send application
-                    </button>
-                  </OverlayTrigger>
-                ) : (
+          buttons = (
+            <>
+              {constants.statusTitles[currentTopic?.status] === 'Ready' &&
+                isStudentUserHaveTeam &&
+                !isTeamInTopic &&
+                !isStudentTeamLead && (
                   <>
-                    <span class="svg-icon svg-icon-danger mr-1">
-                      <SVG
-                        src={toAbsoluteUrl(
-                          '/media/svg/icons/Code/Warning-1-circle.svg'
-                        )}
-                      ></SVG>
-                    </span>
-                    <span className="text-danger font-weight-bolder">
-                      You must lock your team before send application for this
-                      topic.
-                    </span>
+                    <OverlayTrigger
+                      placement="bottom"
+                      overlay={
+                        <Tooltip>Only leader can send applications.</Tooltip>
+                      }
+                    >
+                      <span class="svg-icon svg-icon-lg svg-icon-warning mr-2">
+                        <SVG
+                          src={toAbsoluteUrl(
+                            '/media/svg/icons/Code/Warning-1-circle.svg'
+                          )}
+                        ></SVG>
+                      </span>
+                    </OverlayTrigger>
                   </>
                 )}
-              </>
-            ) : (
-              <button
-                type="button"
-                className="btn btn-primary btn-danger font-weight-bold btn-sm "
-                onClick={handleCancelApplication}
-              >
-                <i className="fas fa-ban mr-1"></i>
-                Cancel application
-              </button>
-            ));
+              {constants.statusTitles[currentTopic?.status] === 'Ready' &&
+                isStudentUserHaveTeam &&
+                !isTeamInTopic &&
+                isStudentTeamLead &&
+                (!isTeamApplied ? (
+                  <>
+                    {isTeamLocked ? (
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip>
+                            Apply matching for this topic, mentor will consider
+                            your application after you sent.
+                          </Tooltip>
+                        }
+                      >
+                        <button
+                          type="button"
+                          className="btn btn-primary btn-success font-weight-bold btn-sm "
+                          onClick={handleStudentApplyForMatching}
+                          disabled={!isTeamLocked}
+                        >
+                          <i className="fas fa-sign-in-alt mr-1"></i>
+                          Send application
+                        </button>
+                      </OverlayTrigger>
+                    ) : (
+                      <>
+                        <span class="svg-icon svg-icon-lg svg-icon-warning mr-1">
+                          <SVG
+                            src={toAbsoluteUrl(
+                              '/media/svg/icons/Code/Warning-1-circle.svg'
+                            )}
+                          ></SVG>
+                        </span>
+                        <span className="text-warning font-weight-bold mr-1">
+                          You must lock your team before send application for
+                          topic.
+                        </span>
+                        <Link
+                          to="/my-team"
+                          className="text-warning font-weight-bolder"
+                        >
+                          Take me there
+                        </Link>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-danger font-weight-bold btn-sm "
+                    onClick={handleCancelApplication}
+                  >
+                    <i className="fas fa-ban mr-1"></i>
+                    Cancel application
+                  </button>
+                ))}
+            </>
+          );
           break;
 
         case 'lecturer':
@@ -985,6 +1015,7 @@ const Topic = () => {
         .map(application => ({
           id: application.id,
           label: application.team?.name,
+          labelLinkTo: `/team/${application.team.id}`,
           subLabel: (
             <>
               <span className="font-weight-bolder">Leader: </span>

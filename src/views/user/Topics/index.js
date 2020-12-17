@@ -174,12 +174,16 @@ export default function Topics() {
           setShowCreate(false);
           setFieldTemplate({});
           loadTopics('all');
-          loadTopics('submitted');
+          let currentState = 'all';
+          if (isMentoringTopics) {
+            currentState = 'mentoring';
+          } else currentState = 'submitted';
+          loadTopics(currentState);
         })
         .catch(handleErrors)
         .finally(() => setIsProcessing(false));
     },
-    [currentUser.id, loadTopics, semester.id]
+    [currentUser.id, isMentoringTopics, loadTopics, semester.id]
   );
 
   const handleLoadAllSubmitted = React.useCallback(() => {

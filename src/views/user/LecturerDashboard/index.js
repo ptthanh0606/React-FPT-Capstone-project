@@ -28,6 +28,7 @@ import CMSModal from 'components/CMSModal/CMSModal';
 import * as constants from 'modules/semester/topic/constants';
 import * as transformers from 'modules/semester/topic/transformers';
 import toast from 'utils/toast';
+import Engaging2 from 'components/CMSWidgets/Engaging2';
 
 export default React.memo(function LecturerDashboard() {
   const setMeta = useSetRecoilState(metaAtom);
@@ -86,7 +87,8 @@ export default React.memo(function LecturerDashboard() {
                 actions: applicationRowActionFormatter(
                   transformedRes.applications.filter(
                     application => application.status === 0
-                  ).length
+                  ).length,
+                  transformedRes.id
                 ),
               },
             ]);
@@ -480,19 +482,38 @@ export default React.memo(function LecturerDashboard() {
             <FlowTimeline className="gutter-b" items={flowTimelines} />
           )}
 
-          {/* Fetch departments to check approver */}
-          {currentSemester.status === 0 && topicNeedFeedback?.length ? (
-            <CMSAnotherList
-              className="gutter-b"
-              title="Topic need feedback"
-              subTitle="Consider giving feedback for these topics"
-              fallbackMsg="Awaiting for topic submission..."
-              rows={topicNeedFeedback}
-              darkMode={true}
-              isLoading={isProcessing}
-            />
-          ) : (
-            <></>
+          {currentSemester.status === 0 && (
+            <>
+              {topicNeedFeedback?.length ? (
+                <CMSAnotherList
+                  className="gutter-b"
+                  title="Topic need feedback"
+                  subTitle="Consider giving feedback for these topics"
+                  fallbackMsg="Awaiting for topic submission..."
+                  rows={topicNeedFeedback}
+                  darkMode={true}
+                  isLoading={isProcessing}
+                />
+              ) : (
+                <Engaging2
+                  className="gutter-b"
+                  title={
+                    <>
+                      <span>Welcome</span>
+                      <br />
+                      <br />
+                      This is your dasboard, from here you can quickly start
+                      with some actions for this semester.
+                    </>
+                  }
+                  textColorTitle="white"
+                  subTitle="Start by submit a topic or join mentoring a topic."
+                  textColorSubTitle="white"
+                  svgVariant={4}
+                  bgColor="primary"
+                />
+              )}
+            </>
           )}
         </div>
 
@@ -519,6 +540,7 @@ export default React.memo(function LecturerDashboard() {
                   className="gutter-b card-stretch"
                   title="Topic applications"
                   rows={applications}
+                  fallbackMsg="No application available..."
                   isLoading={isProcessing}
                 />
               </div>
@@ -575,29 +597,31 @@ export default React.memo(function LecturerDashboard() {
             </div>
           )}
 
-          <CMSList
-            className="gutter-b"
-            title="My latest topic status"
-            toolBar={
-              <DropdownPopover
-                value={topicType}
-                items={[
-                  {
-                    label: 'Submitted',
-                    value: 'Submitted',
-                  },
-                  {
-                    label: 'Mentoring',
-                    value: 'Mentoring',
-                  },
-                ]}
-                onChange={value => setTopicType(value)}
-              />
-            }
-            rows={topicPreviews}
-            isLoading={isProcessing}
-            fallbackMsg="No topic found..."
-          />
+          {[0, 1].includes(currentSemester.status) && (
+            <CMSList
+              className="gutter-b"
+              title="My latest topic status"
+              toolBar={
+                <DropdownPopover
+                  value={topicType}
+                  items={[
+                    {
+                      label: 'Submitted',
+                      value: 'Submitted',
+                    },
+                    {
+                      label: 'Mentoring',
+                      value: 'Mentoring',
+                    },
+                  ]}
+                  onChange={value => setTopicType(value)}
+                />
+              }
+              rows={topicPreviews}
+              isLoading={isProcessing}
+              fallbackMsg="No topic found..."
+            />
+          )}
         </div>
       </div>
       <CMSModal

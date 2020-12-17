@@ -37,6 +37,7 @@ const Team = () => {
   const [showNoTeamWarn, setShowNoTeamWarn] = React.useState(false);
 
   const [settingFieldTemplate, setSettingFieldTemplate] = React.useState({});
+  const [isProcessing, setIsProcessing] = React.useState(false);
 
   // ------------------------------------------------------------------
 
@@ -145,17 +146,24 @@ const Team = () => {
 
   const handleConfirmSetting = React.useCallback(
     data => {
+      setIsProcessing(true);
       request({
         to: endpoints.UPDATE_TEAM(currentTeam.id).url,
         method: endpoints.UPDATE_TEAM(currentTeam.id).method,
+        params: {
+          teamId: currentTeam.id,
+          semesterId: currentSemester.id,
+        },
         data: {
           ...data,
-          smesterId: currentSemester.id,
+          semesterId: currentSemester.id,
           teamId: currentTeam.id,
         },
       })
         .then(() => {
           toast.success('Updated team info.');
+          setShowSetting(false);
+          setIsProcessing(false);
           checkInitAction();
         })
         .catch(err => {
@@ -318,6 +326,7 @@ const Team = () => {
                     fieldTemplate={settingFieldTemplate}
                     onConfirmForm={handleConfirmSetting}
                     onHide={() => setShowSetting(false)}
+                    isProcessing={isProcessing}
                   />
                 </>
               )}
@@ -367,6 +376,7 @@ const Team = () => {
     handleJoinTeam,
     handleLeaveTeam,
     id,
+    isProcessing,
     isTeamMatched,
     isUserHaveTeam,
     isUserInTeam,

@@ -15,7 +15,7 @@ const NumberOfTopic = ({ className = '', totalAvailable = 0, total = 0 }) => {
         </div>
 
         <span className="text-muted text-hover-primary font-weight-bold font-size-lg mt-1">
-          Topics are currently ready for assigning.
+          Topics available left for assigning.
         </span>
         <OverlayTrigger
           placement="bottom"
