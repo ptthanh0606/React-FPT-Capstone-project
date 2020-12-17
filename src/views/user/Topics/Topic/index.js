@@ -829,12 +829,29 @@ const Topic = () => {
         case 'lecturer':
           buttons = (
             <>
+              {[0].includes(currentSemester.status) &&
+                [0].includes(currentTopic.status) &&
+                !isUserApprover && (
+                  <>
+                    <span class="svg-icon svg-icon-warning mr-1">
+                      <SVG
+                        src={toAbsoluteUrl(
+                          '/media/svg/icons/Code/Warning-1-circle.svg'
+                        )}
+                      ></SVG>
+                    </span>
+                    <span className="text-warning font-weight-bolder">
+                      This topic is not approved yet to be mentored.
+                    </span>
+                  </>
+                )}
+
               {constants.statusTitles[currentTopic.status] === 'Waiting' &&
                 currentTopic.submitter.value === currentUser.id && (
                   <>
                     <button
                       type="button"
-                      className="btn btn-primary font-weight-bold btn-sm btn-light mr-2"
+                      className="btn btn-primary font-weight-bold btn-sm btn-light mr-2 ml-2"
                       onClick={handleShowSettingModal}
                     >
                       <i className="fas fa-cog mr-1"></i>
@@ -864,23 +881,6 @@ const Topic = () => {
                     <i className="fas fa-sign-in-alt mr-1"></i>
                     Become a mentor
                   </button>
-                )}
-
-              {[0].includes(currentSemester.status) &&
-                [0].includes(currentTopic.status) && (
-                  <>
-                    <span class="svg-icon svg-icon-danger mr-1">
-                      <SVG
-                        src={toAbsoluteUrl(
-                          '/media/svg/icons/Code/Warning-1-circle.svg'
-                        )}
-                      ></SVG>
-                    </span>
-                    <span className="text-danger font-weight-bolder">
-                      This topic is not approved yet, you have to wait for it to
-                      become approved.
-                    </span>
-                  </>
                 )}
 
               {constants.statusTitles[currentTopic.status] === 'Waiting' &&
@@ -920,6 +920,7 @@ const Topic = () => {
     isTeamApplied,
     isTeamInTopic,
     isTeamLocked,
+    isUserApprover,
     isUserMentor,
     showUpdate,
     updateFieldTemplate,
