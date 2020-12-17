@@ -72,7 +72,10 @@ const AddActiveStudentModal = ({ isShowFlg, onHide, onAdd }) => {
 
   const handleAddStudent = () => {
     setIsProcessing(true);
-    onAdd(selected).finally(() => setIsProcessing(false));
+    onAdd(selected).finally(() => {
+      setIsProcessing(false);
+      setSelected([]);
+    });
   };
 
   const onHideModal = React.useCallback(() => {
