@@ -7,23 +7,13 @@ const ApplicationRow = ({
   subLabel = '',
   action = <></>,
   labelLinkTo = '',
-  onLabelClick = () => {},
 }) => {
-  const handleRoute = React.useCallback(
-    event => {
-      event.preventDefault();
-      onLabelClick();
-    },
-    [onLabelClick]
-  );
-
   return (
     <div className={'d-flex align-items-center mb-10 ' + className}>
       <div className="d-flex flex-column flex-grow-1 font-weight-bold">
         <Link
           to={labelLinkTo}
           className="text-dark text-hover-primary mb-1 font-size-lg"
-          onClick={handleRoute}
         >
           {label}
         </Link>

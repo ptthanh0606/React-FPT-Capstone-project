@@ -853,7 +853,7 @@ const Topic = () => {
                     />
                   </>
                 )}
-              {[0].includes(currentSemester.status) &&
+              {[0, 1].includes(currentSemester.status) &&
                 [2, 3].includes(currentTopic.status) &&
                 !isUserMentor && (
                   <button

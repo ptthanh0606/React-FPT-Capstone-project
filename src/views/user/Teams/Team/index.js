@@ -105,6 +105,7 @@ const Team = () => {
         // Check user co phai la leader trong team khong
         setIsUserLeader(transformedRes.leader?.value === currentUser.id);
         // Check user co phai la member trong team khong
+        console.log(transformedRes);
         processCheckCurrentStudentInTeam(transformedRes.members);
         setSettingFieldTemplate(createTeamSettingFieldTemplate(transformedRes));
         setCurrentTeam(transformedRes);
