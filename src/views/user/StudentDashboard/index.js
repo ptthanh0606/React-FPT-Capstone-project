@@ -29,6 +29,14 @@ import toast from 'utils/toast';
 import StatTile from 'components/CMSWidgets/StatTile';
 import CMSModal from 'components/CMSModal/CMSModal';
 import { createTeamAsStudentModalConfigs } from 'modules/semester/team/constants';
+import Engaging2 from 'components/CMSWidgets/Engaging2';
+import {
+  statusClass,
+  statusTitles,
+} from 'modules/semester/team/application/constants';
+import { formatRelative, subMinutes } from 'date-fns';
+import { MixedWidget14 } from '_metronic/_partials/widgets';
+import { ProgressChart } from 'components/CMSWidgets/ProgressChart';
 
 export default React.memo(function LecturerDashboard() {
   const confirm = useConfirm();
@@ -40,6 +48,8 @@ export default React.memo(function LecturerDashboard() {
     currentPublicTeamPreviews,
     setCurrentPublicTeamPreviews,
   ] = React.useState([]);
+  const [teamApplications, setTeamApplications] = React.useState([]);
+
   const [numberOfTeams, setNumberOfTeams] = React.useState(0);
   const [totalTopics, setTotalTopics] = React.useState(0);
   const [totalAvailableTopics, setTotalAvailableTopics] = React.useState(0);
@@ -67,31 +77,6 @@ export default React.memo(function LecturerDashboard() {
   const [isProcessing, setIsProcessing] = React.useState(false);
 
   // -------------------------------------------------------------------------
-
-  const onCreateTeam = React.useCallback(
-    fieldData => {
-      setIsProcessing(true);
-      request({
-        to: CREATE_TEAM.url,
-        method: CREATE_TEAM.method,
-        data: {
-          ...fieldData,
-          semesterId: Number(currentSemester.id),
-        },
-        params: {
-          semesterId: currentSemester.id,
-        },
-      })
-        .then(res => {
-          toast.success('Create team successfully');
-          setShowCreateTeam(false);
-          setFieldTemplate({});
-        })
-        .catch(handleErrors)
-        .finally(() => setIsProcessing(false));
-    },
-    [currentSemester.id]
-  );
 
   const handleJoinWithCode = React.useCallback(
     data => {
@@ -175,6 +160,7 @@ export default React.memo(function LecturerDashboard() {
 
   const fetchOtherTeams = React.useCallback(
     isPublic => {
+      setIsProcessing(true);
       request({
         to: LIST_TEAM.url,
         method: LIST_TEAM.method,
@@ -196,34 +182,38 @@ export default React.memo(function LecturerDashboard() {
           console.log(transformedRes);
           if (isPublic) {
             setCurrentPublicTeamPreviews(
-              transformedRes.map(team => ({
-                label: team.name,
-                subLabel: (
-                  <>
-                    <b>Lead by </b>
-                    {team.leader.label}
-                  </>
-                ),
-                actions: (
-                  <button
-                    className="btn btn-light-info font-weight-bolder"
-                    onClick={handleJoinPublicTeam(
-                      team.id,
-                      team.code,
-                      team.name
-                    )}
-                  >
-                    Apply
-                  </button>
-                ),
-              }))
+              transformedRes
+                .filter(team => team.members.length < team.maxMembers)
+                .map(team => ({
+                  label: team.name,
+                  subLabel: (
+                    <>
+                      <b>Lead by </b>
+                      {team.leader.label}
+                    </>
+                  ),
+                  actions: (
+                    <button
+                      className="btn btn-light-info font-weight-bolder"
+                      onClick={handleJoinPublicTeam(
+                        team.id,
+                        team.code,
+                        team.name
+                      )}
+                    >
+                      Apply
+                    </button>
+                  ),
+                }))
             );
           } else {
             setNumberOfTeams(transformedRes.length);
           }
+          setIsProcessing(false);
         })
         .catch(err => {
           handleErrors(err);
+          setIsProcessing(false);
         });
     },
     [currentSemester.id, handleJoinPublicTeam]
@@ -239,7 +229,30 @@ export default React.memo(function LecturerDashboard() {
     })
       .then(res => {
         const transformedRes = TeamTransformer.down(res.data.data);
-
+        setTeamApplications(
+          transformedRes.applications
+            .filter(app => [0, 2].includes(app.status))
+            .map(app => ({
+              label: app.topic.name,
+              subLabel: formatRelative(
+                subMinutes(
+                  new Date(app.createdAt),
+                  new Date().getTimezoneOffset()
+                ),
+                new Date()
+              ),
+              labelLinkTo: `/topic/${app.topic.id}`,
+              actions: (
+                <span
+                  className={`label label-lg label-light-${
+                    statusClass[app.status]
+                  } label-inline`}
+                >
+                  {statusTitles[app.status]}
+                </span>
+              ),
+            }))
+        );
         setIsStudentHaveTopic(!!transformedRes.topic.label);
         setIsStudentHaveTeam(true);
         setUserTeam(transformedRes);
@@ -250,6 +263,36 @@ export default React.memo(function LecturerDashboard() {
         setModalConfigs(createTeamAsStudentModalConfigs(currentSemester.id));
       });
   }, [currentSemester.id, fetchOtherTeams]);
+
+  const onCreateTeam = React.useCallback(
+    fieldData => {
+      setIsProcessing(true);
+      request({
+        to: CREATE_TEAM.url,
+        method: CREATE_TEAM.method,
+        data: {
+          ...fieldData,
+          semesterId: Number(currentSemester.id),
+        },
+        params: {
+          semesterId: currentSemester.id,
+        },
+      })
+        .then(res => {
+          toast.success('Create team successfully');
+          setShowCreateTeam(false);
+          setFieldTemplate({});
+          checkUserInTeam();
+          fetchOtherTeams();
+          fetchAllTopics();
+        })
+        .catch(handleErrors)
+        .finally(() => setIsProcessing(false));
+    },
+    [checkUserInTeam, currentSemester.id, fetchAllTopics, fetchOtherTeams]
+  );
+
+  const fetchTeamApplications = React.useCallback(() => {}, []);
 
   // -------------------------------------------------------------------------
 
@@ -279,6 +322,16 @@ export default React.memo(function LecturerDashboard() {
       </div>
       <div className="row">
         <div className="col-lg-12 col-xxl-4">
+          {currentSemester.status !== 3 && (
+            <TopicTeamPreview
+              className="card-stretch gutter-b"
+              isStudentHaveTeam={isStudentHaveTeam}
+              isStudentHaveTopic={isStudentHaveTopic}
+              members={userTeam.members}
+              topic={userTeam.topic}
+            />
+          )}
+
           {currentSemester.status !== 3 && !isStudentHaveTeam && (
             <QuickAction
               className="gutter-b"
@@ -309,35 +362,62 @@ export default React.memo(function LecturerDashboard() {
             />
           )}
 
-          {currentSemester.status !== 3 && (
-            <TopicTeamPreview
-              className="card-stretch gutter-b"
-              isStudentHaveTeam={isStudentHaveTeam}
-              isStudentHaveTopic={isStudentHaveTopic}
-              members={userTeam.members}
-              topic={userTeam.topic}
+          {currentSemester.status === 0 && !isStudentHaveTeam && (
+            <Engaging2
+              className="gutter-b"
+              title={
+                <>
+                  <span>Welcome</span>
+                  <br />
+                  <br />
+                  This is your dasboard, from here you can quickly start with
+                  some actions before assigning for a capstone topic.
+                </>
+              }
+              textColorTitle="white"
+              textColorSubTitle="white"
+              svgVariant={7}
+              bgColor="danger"
             />
           )}
 
-          {currentSemester.status !== 3 &&
+          {currentSemester.status === 1 &&
+            isStudentHaveTeam &&
+            !isStudentHaveTopic && (
+              <Engaging2
+                className="gutter-b"
+                title={
+                  <>
+                    Assigning phase is now! apply matching for a topic and
+                    arrange an interview with mentors.
+                  </>
+                }
+                textColorTitle="white"
+                textColorSubTitle="white"
+                svgVariant={12}
+                bgColor="primary"
+              />
+            )}
+
+          {currentSemester.status === 1 &&
             isStudentHaveTeam &&
             isStudentHaveTopic && (
-              <CMSList
+              <Engaging2
                 className="gutter-b"
-                title="Report progress"
-                fallbackMsg="No reports found from team..."
-                rows={[
-                  {
-                    label: 'Report #1',
-                    subLabel: 'At 2020-03-03',
-                    actions: (
-                      <button class="btn btn-light">
-                        <i class="fas fa-download p-0"></i>
-                      </button>
-                    ),
-                  },
-                ]}
-                toolBar={<Button>Send report</Button>}
+                title={
+                  <>
+                    <span>You are all set!</span>
+                    <br />
+                    <br />
+                    When semester reaches next phase, all activities will be
+                    started.
+                  </>
+                }
+                textColorTitle="white"
+                subTitle="Happy capstoning!"
+                textColorSubTitle="white"
+                svgVariant={4}
+                bgColor="success"
               />
             )}
         </div>
@@ -350,15 +430,7 @@ export default React.memo(function LecturerDashboard() {
                 Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
                 labore et dolore magna aliqua. Ut enim ad minim veniam, quis
                 nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                commodo consequat. Duis aute irure dolor. Ut enim ad minim
-                veniam sed do eiusmod tempor incididunt. <br />
-                <br />
-                Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                commodo consequat. Duis aute irure dolor. Ut enim ad minim
-                veniam sed do eiusmod tempor incididunt. Consectetur adipiscing
-                elit, sed do eiusmod tempor incididunt ut labore et{' '}
+                commodo consequat. <br />
               </>
             }
             date="2020-06-06"
@@ -376,7 +448,7 @@ export default React.memo(function LecturerDashboard() {
                 <StatTile
                   dataText={numberOfTeams}
                   className="gutter-b"
-                  desciption="Teams created"
+                  desciption="Teams in this semester"
                   iconColor="white"
                   iconSrc={toAbsoluteUrl(
                     '/media/svg/icons/Communication/Group.svg'
@@ -384,6 +456,7 @@ export default React.memo(function LecturerDashboard() {
                   baseColor="danger"
                 />
               </div>
+
               {currentSemester.status === 0 && (
                 <div className="col-6">
                   <StatTile
@@ -401,7 +474,27 @@ export default React.memo(function LecturerDashboard() {
             </div>
           )}
 
-          {![0, 3].includes(currentSemester.status) && !isStudentHaveTopic && (
+          {currentSemester.status === 0 && isStudentHaveTeam && (
+            <Engaging2
+              className="gutter-b"
+              title={
+                <>
+                  <span>Topics comming soon!</span>
+                  <br />
+                  <br />
+                  Topics will be published when semester reaches next phase,
+                  keep track of the timeline.
+                </>
+              }
+              textColorTitle="white"
+              subTitle="Please be patient..."
+              textColorSubTitle="white"
+              svgVariant={3}
+              bgColor="info"
+            />
+          )}
+
+          {![0, 2, 3].includes(currentSemester.status) && (
             <NumberOfTopic
               className="gutter-b"
               totalAvailable={totalAvailableTopics}
@@ -414,11 +507,55 @@ export default React.memo(function LecturerDashboard() {
             !isStudentHaveTopic && (
               <CMSList
                 title="Available public team"
-                fallbackMsg="No team yet, be the first to create team now!"
+                fallbackMsg="No team available!"
                 rows={currentPublicTeamPreviews}
                 toolBar={<Link to="/team">View all teams</Link>}
+                isLoading={isProcessing}
               />
             )}
+
+          {currentSemester.status === 1 &&
+            isStudentHaveTeam &&
+            !isStudentHaveTopic && (
+              <CMSList
+                title="Applications status"
+                fallbackMsg="No applications!"
+                rows={teamApplications}
+                toolBar={<Link to="/my-team">View all</Link>}
+                isLoading={isProcessing}
+              />
+            )}
+
+          {currentSemester.status === 2 &&
+            isStudentHaveTeam &&
+            isStudentHaveTopic && (
+              <CMSList
+                className="gutter-b"
+                title="Your team reports"
+                fallbackMsg="No reports found from team..."
+                rows={[
+                  {
+                    label: 'Report #1',
+                    subLabel: 'At 2020-03-03',
+                    actions: (
+                      <button class="btn btn-light">
+                        <i class="fas fa-download p-0"></i>
+                      </button>
+                    ),
+                  },
+                ]}
+                toolBar={<Button>Send report</Button>}
+              />
+            )}
+
+          {currentSemester.status === 2 && (
+            <ProgressChart
+              title="Checkpoints progress"
+              subTitle="Overall status of checkpoints"
+              percent={75}
+              baseColor="info"
+            />
+          )}
         </div>
       </div>
       <CMSModal

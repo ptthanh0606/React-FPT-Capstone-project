@@ -1,5 +1,6 @@
 import React from 'react';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 export const rowActionFormatter = statusCode => {
   const statusClasses = [
@@ -36,7 +37,7 @@ export const rowActionFormatter = statusCode => {
   );
 };
 
-export const applicationRowActionFormatter = numberOfApplication => {
+export const applicationRowActionFormatter = (numberOfApplication, topicId) => {
   return (
     <OverlayTrigger
       placement="bottom"
@@ -44,13 +45,14 @@ export const applicationRowActionFormatter = numberOfApplication => {
         <Tooltip>Number of waiting applications for this topic.</Tooltip>
       }
     >
-      <div
+      <Link
+        to={`/topic/${topicId}`}
         className={`label label-danger label-inline font-weight-bolder text-dark-50 py-4 px-3 fontSize-base`}
       >
         <span className={`text-white font-weight-bolder font-size-sm`}>
           {numberOfApplication}
         </span>
-      </div>
+      </Link>
     </OverlayTrigger>
   );
 };

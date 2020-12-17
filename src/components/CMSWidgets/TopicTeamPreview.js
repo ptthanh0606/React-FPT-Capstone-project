@@ -114,10 +114,22 @@ const TopicTeamPreview = ({
               content={
                 [0, 1].includes(currentSemester.status) ? (
                   <>
-                    Now you can start applying for a capstone topic! <br />
-                    <Link className="font-weight-bolder text-info" to="/topic">
-                      Show me where
-                    </Link>
+                    {currentSemester.status === 0 ? (
+                      <>
+                        Topic is being processing, please wait for the next
+                        semester phase! <br />
+                      </>
+                    ) : (
+                      <>
+                        Now you can start applying for a capstone topic! <br />
+                        <Link
+                          className="font-weight-bolder text-info"
+                          to="/topic"
+                        >
+                          Show me where
+                        </Link>
+                      </>
+                    )}
                   </>
                 ) : (
                   <>Assigning for topics session over!</>
