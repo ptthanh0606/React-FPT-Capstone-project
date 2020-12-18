@@ -478,7 +478,7 @@ export default React.memo(function LecturerDashboard() {
             />
           )}
 
-          {currentSemester.status === 1 && (
+          {[1, 2].includes(currentSemester.status) && (
             <FlowTimeline className="gutter-b" items={flowTimelines} />
           )}
 

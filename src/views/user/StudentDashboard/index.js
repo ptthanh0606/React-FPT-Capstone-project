@@ -18,6 +18,7 @@ import {
   JOIN_TEAM,
   LIST_TEAM,
   LIST_TOPIC,
+  READ_ANOUNCEMENTS,
   READ_TEAM,
 } from 'endpoints';
 import * as TeamTransformer from 'modules/semester/team/transformers';
@@ -35,7 +36,6 @@ import {
   statusTitles,
 } from 'modules/semester/team/application/constants';
 import { formatRelative, subMinutes } from 'date-fns';
-import { MixedWidget14 } from '_metronic/_partials/widgets';
 import { ProgressChart } from 'components/CMSWidgets/ProgressChart';
 
 export default React.memo(function LecturerDashboard() {
@@ -93,9 +93,7 @@ export default React.memo(function LecturerDashboard() {
           history.push(`/team/${res.data.data}`);
           toast.success(`Joined!`);
         })
-        .catch(err => {
-          handleErrors(err);
-        });
+        .catch(err => {});
     },
     [currentSemester.id, history]
   );
@@ -116,9 +114,7 @@ export default React.memo(function LecturerDashboard() {
             history.push(`/team/${id}`);
             toast.success(`Joined, you are now a member of ${name}!`);
           })
-          .catch(err => {
-            handleErrors(err);
-          });
+          .catch(err => {});
       };
     },
     [currentSemester.id, history]
@@ -153,9 +149,7 @@ export default React.memo(function LecturerDashboard() {
           res.data?.data?.filter(topic => topic.teamMembers.length === 0).length
         );
       })
-      .catch(err => {
-        handleErrors(err);
-      });
+      .catch(err => {});
   }, [currentSemester.id]);
 
   const fetchOtherTeams = React.useCallback(
@@ -212,7 +206,6 @@ export default React.memo(function LecturerDashboard() {
           setIsProcessing(false);
         })
         .catch(err => {
-          handleErrors(err);
           setIsProcessing(false);
         });
     },
@@ -292,7 +285,19 @@ export default React.memo(function LecturerDashboard() {
     [checkUserInTeam, currentSemester.id, fetchAllTopics, fetchOtherTeams]
   );
 
-  const fetchTeamApplications = React.useCallback(() => {}, []);
+  const fetchAnouncements = React.useCallback(() => {
+    request({
+      to: READ_ANOUNCEMENTS(currentSemester.id, 1).url,
+      method: READ_ANOUNCEMENTS(currentSemester.id, 1).method,
+      params: {
+        semesterId: currentSemester.id,
+      },
+    })
+      .then(res => {
+        console.log(res.data);
+      })
+      .catch(err => {});
+  }, [currentSemester.id]);
 
   // -------------------------------------------------------------------------
 
@@ -307,7 +312,14 @@ export default React.memo(function LecturerDashboard() {
     checkUserInTeam();
     fetchOtherTeams();
     fetchAllTopics();
-  }, [checkUserInTeam, fetchAllTopics, fetchOtherTeams, setMeta]);
+    fetchAnouncements();
+  }, [
+    checkUserInTeam,
+    fetchAllTopics,
+    fetchAnouncements,
+    fetchOtherTeams,
+    setMeta,
+  ]);
 
   return (
     <>
