@@ -37,6 +37,7 @@ import {
 } from 'modules/semester/team/application/constants';
 import { formatRelative, subMinutes } from 'date-fns';
 import { ProgressChart } from 'components/CMSWidgets/ProgressChart';
+import Engaging from 'components/CMSWidgets/Engaging';
 
 export default React.memo(function LecturerDashboard() {
   const confirm = useConfirm();
@@ -331,6 +332,19 @@ export default React.memo(function LecturerDashboard() {
       </div>
       <div className="row">
         <div className="col-lg-12 col-xxl-4">
+          <Engaging
+            className="gutter-b"
+            bgColor="#8950FC"
+            bgSize="40%"
+            title="Semester over"
+            textColorTitle="white"
+            textColorSubTitle="white"
+            imageUrl="/media/svg/humans/custom-8.svg"
+            subTitle={
+              <>All activities are finished, all informations are view only</>
+            }
+          />
+
           {currentSemester.status !== 3 && (
             <TopicTeamPreview
               className="card-stretch gutter-b"
@@ -444,8 +458,7 @@ export default React.memo(function LecturerDashboard() {
             className="gutter-b"
             dataText={totalTopics}
             iconColor="white"
-            desciption="Topics incomming"
-            toolTipMsg="Expected topics will be available when semester reaches next phase."
+            desciption="Topics in this semester"
             iconSrc={toAbsoluteUrl('/media/svg/icons/Design/Pixels.svg')}
           />
 

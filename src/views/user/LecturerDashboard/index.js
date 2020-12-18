@@ -51,17 +51,6 @@ export default React.memo(function LecturerDashboard() {
   const [showCreate, setShowCreate] = React.useState(false);
   const [isProcessing, setIsProcessing] = React.useState(false);
 
-  // --------------------------------------------------------------------
-
-  const handleRouteToSpecificTopic = React.useCallback(
-    id => {
-      return function () {
-        history.push('/' + id);
-      };
-    },
-    [history]
-  );
-
   // ---------------------------------------------------------------------
 
   const fetchTopicApplications = React.useCallback(id => {
@@ -287,14 +276,24 @@ export default React.memo(function LecturerDashboard() {
   const handleCreate = React.useCallback(
     fieldData => {
       setIsProcessing(true);
+      const data = new FormData();
+      fieldData = {
+        ...transformers.up(fieldData),
+        semesterId: Number(currentSemester.id),
+        submitterId: currentUser.id,
+      };
+      for (const i of Object.keys(fieldData)) {
+        if (!fieldData?.[i]) continue;
+        if (fieldData[i]?.constructor?.name !== 'File') {
+          data.append(i, fieldData[i]);
+        } else {
+          data.append(i, fieldData[i], fieldData[i].name);
+        }
+      }
       request({
         to: CREATE_TOPIC.url,
         method: CREATE_TOPIC.method,
-        data: {
-          ...transformers.up(fieldData),
-          semesterId: Number(currentSemester.id),
-          submitterId: currentUser.id,
-        },
+        data: data,
         params: {
           semesterId: currentSemester.id,
         },
@@ -334,10 +333,8 @@ export default React.memo(function LecturerDashboard() {
   React.useEffect(() => {
     if (topicType === 'Submitted') {
       fetchTopicsByType('Submitted');
-      console.log(topicType);
     } else if (topicType === 'Mentoring') {
       fetchTopicsByType('Mentoring');
-      console.log(topicType);
     }
   }, [fetchTopicsByType, topicType]);
 

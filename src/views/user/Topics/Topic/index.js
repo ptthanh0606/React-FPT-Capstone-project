@@ -485,6 +485,7 @@ const Topic = () => {
     })
       .then(res => {
         const transformedRes = transformers.downRead(res.data.data);
+        console.log(transformedRes);
         checkPreConditions(transformedRes);
         setCurrentTopic(transformedRes);
         setIsProcessing(false);
@@ -622,7 +623,7 @@ const Topic = () => {
 
   const handleSubmitReport = React.useCallback(weightData => {
     //
-  });
+  }, []);
 
   const onFeedbackSuccess = React.useCallback(
     e => {
@@ -634,13 +635,26 @@ const Topic = () => {
   const handleConfirmSettingModal = React.useCallback(
     fieldData => {
       setIsProcessing(true);
+
+      fieldData = transformers.up(fieldData);
+
+      const data = new FormData();
+      for (const i of Object.keys(fieldData)) {
+        if (!fieldData?.[i]) continue;
+        if (fieldData[i]?.constructor?.name !== 'File') {
+          data.append(i, fieldData[i]);
+        } else {
+          data.append(i, fieldData[i], fieldData[i].name);
+        }
+      }
+
       request({
         to: endpoints.UPDATE_TOPIC(id).url,
         method: endpoints.UPDATE_TOPIC(id).method,
         params: {
           topicId: id,
         },
-        data: transformers.up(fieldData),
+        data: data,
       })
         .then(res => {
           toast.success('Update topic successfully');
@@ -1066,6 +1080,7 @@ const Topic = () => {
           }`}
         >
           <TopicDetailCard
+            attachmentLinkName={currentTopic.attachment?.name || ''}
             topicId={currentTopic.id || ''}
             topicCode={currentTopic.code || ''}
             topicName={currentTopic.name || ''}

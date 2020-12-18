@@ -188,7 +188,7 @@ const Council = () => {
         history.push('/council');
         handleErrors(err);
       });
-  }, [currenSem.id, currentUser.id, history, history.push, id]);
+  }, [l, currenSem.id, currentUser.id, history, history.push, id]);
 
   // ---------------------------------------------------------
 

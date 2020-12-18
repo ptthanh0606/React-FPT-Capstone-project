@@ -288,7 +288,7 @@ export default function Teams() {
 
   React.useEffect(() => {
     fetchTeams();
-  }, [fetchTeams]);
+  }, [l, fetchTeams]);
 
   return (
     <Card>

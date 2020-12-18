@@ -28,6 +28,7 @@ const TopicDetailCard = ({
   applications = [],
   feedbacks = [],
   evaluations = [],
+  attachmentLinkName = '',
   onFeedbackSuccess = () => {},
   submitter = {},
   isUserApprover = false,
@@ -65,7 +66,13 @@ const TopicDetailCard = ({
                     </div>
                   </div>
                   <div className="my-lg-0 my-1">
-                    <button className="btn btn-sm btn-light-primary font-weight-bolder text-uppercase">
+                    <a
+                      href={attachmentLinkName}
+                      title="Download"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm btn-light-primary font-weight-bolder text-uppercase"
+                    >
                       <span className="svg-icon svg-icon-md">
                         <SVG
                           src={toAbsoluteUrl(
@@ -74,7 +81,7 @@ const TopicDetailCard = ({
                         ></SVG>
                       </span>
                       Attachment
-                    </button>
+                    </a>
                   </div>
                 </div>
 

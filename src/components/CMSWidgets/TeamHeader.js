@@ -1,6 +1,6 @@
 import React from 'react';
 import { OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 import MessageTile from './MessageTile';
 
@@ -11,8 +11,6 @@ const TeamHeader = ({
   teamStatus = '',
   withTopic = {},
 }) => {
-  const history = useHistory();
-
   return (
     <>
       <div className="card card-custom gutter-b">
