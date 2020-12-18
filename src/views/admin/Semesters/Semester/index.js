@@ -20,6 +20,7 @@ import Topic from './Topics/Topic';
 import ActiveStudents from './ActiveStudents';
 import Councils from './Councils';
 import Teams from './Teams';
+import Announcements from './Announcements';
 
 import request from 'utils/request';
 import { READ_SEMESTER } from 'endpoints';
@@ -64,6 +65,10 @@ const Semester = () => {
 
   const TeamsWithSemester = React.useCallback(() => {
     return withSemesterInfo(data, Teams);
+  }, [data]);
+
+  const AnnouncementsWithSemester = React.useCallback(() => {
+    return withSemesterInfo(data, Announcements);
   }, [data]);
 
   const handleRemove = React.useCallback(
@@ -179,6 +184,13 @@ const Semester = () => {
                 Active students
               </NavLink>
               <NavLink
+                to={'/semester/' + id + '/announcement'}
+                activeClassName={styles['active']}
+                className={styles['menu-item']}
+              >
+                Announcements
+              </NavLink>
+              <NavLink
                 to={'/semester/' + id + '/council'}
                 activeClassName={styles['active']}
                 className={styles['menu-item']}
@@ -222,6 +234,10 @@ const Semester = () => {
               component={CouncilsWithSemester}
             />
             <Route path="/semester/:id/team" component={TeamsWithSemester} />
+            <Route
+              path="/semester/:id/announcement"
+              component={AnnouncementsWithSemester}
+            />
             <Route>
               <Redirect to={'/semester/' + id + '/information'} />
             </Route>
