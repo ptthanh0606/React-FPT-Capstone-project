@@ -49,7 +49,6 @@ const ProfilePage = () => {
           }
         })
         .catch(err => {
-          console.log('Own');
           handleErrors(err);
         });
     }

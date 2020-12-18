@@ -485,7 +485,6 @@ const Topic = () => {
     })
       .then(res => {
         const transformedRes = transformers.downRead(res.data.data);
-        console.log(transformedRes);
         checkPreConditions(transformedRes);
         setCurrentTopic(transformedRes);
         setIsProcessing(false);

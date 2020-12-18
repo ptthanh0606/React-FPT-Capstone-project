@@ -177,7 +177,6 @@ export default React.memo(function LecturerDashboard() {
       })
         .then(res => {
           const transformedRes = res.data?.data?.map(TeamTransformer.down);
-          console.log(transformedRes);
           if (isPublic) {
             setCurrentPublicTeamPreviews(
               transformedRes
@@ -295,11 +294,6 @@ export default React.memo(function LecturerDashboard() {
       method: LIST_ANNOUNCEMENT(currentSemester.id).method,
     })
       .then(res => {
-        console.log(
-          res.data.data
-            .map(AnouncementTransformer.down)
-            .filter(anounce => anounce.role === 0)
-        );
         setAnouncements(
           res.data.data
             .map(AnouncementTransformer.down)
