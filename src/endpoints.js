@@ -199,27 +199,54 @@ export const READ_ANOUNCEMENTS = (semId, id) => ({
 // -----------------------------------------------------------------------------
 
 export const LIST_ACTIVE_STUDENTS = id => ({
-  url: READ_SEMESTER(id).url + '/Students',
+  url: READ_SEMESTER(id).url + '/students',
   method: METHOD.GET,
 });
 
 export const CREATE_ACTIVE_STUDENTS = id => ({
-  url: READ_SEMESTER(id).url + '/Students',
+  url: LIST_ACTIVE_STUDENTS(id).url,
   method: METHOD.POST,
 });
 
 export const READ_ACTIVE_STUDENTS = (id, id2) => ({
-  url: READ_SEMESTER(id).url + '/Students/' + id2,
+  url: LIST_ACTIVE_STUDENTS(id).url + '/' + id2,
   method: METHOD.GET,
 });
 
 export const UPDATE_ACTIVE_STUDENTS = (id, id2) => ({
-  url: READ_SEMESTER(id).url + '/Students/' + id2,
+  url: READ_ACTIVE_STUDENTS(id, id2).url,
   method: METHOD.PATCH,
 });
 
 export const DELETE_ACTIVE_STUDENTS = id => ({
-  url: READ_SEMESTER(id).url + '/Students',
+  url: LIST_ACTIVE_STUDENTS(id).url,
+  method: METHOD.DELETE,
+});
+
+// -----------------------------------------------------------------------------
+
+export const LIST_ANNOUNCEMENT = id => ({
+  url: READ_SEMESTER(id).url + '/announcements',
+  method: METHOD.GET,
+});
+
+export const CREATE_ANNOUNCEMENT = id => ({
+  url: LIST_ANNOUNCEMENT(id).url,
+  method: METHOD.POST,
+});
+
+export const READ_ANNOUNCEMENT = (id, id2) => ({
+  url: LIST_ANNOUNCEMENT(id).url + '/' + id2,
+  method: METHOD.GET,
+});
+
+export const UPDATE_ANNOUNCEMENT = (id, id2) => ({
+  url: READ_ANNOUNCEMENT(id, id2).url,
+  method: METHOD.PUT,
+});
+
+export const DELETE_ANNOUNCEMENT = id => ({
+  url: LIST_ANNOUNCEMENT(id).url,
   method: METHOD.DELETE,
 });
 

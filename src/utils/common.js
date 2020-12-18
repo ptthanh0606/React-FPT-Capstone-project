@@ -32,6 +32,7 @@ export function columnsTransformer(cols) {
   const newCols = [];
 
   for (const col of cols) {
+    col.sort = false;
     if (col.sort === true) {
       col.sortCaret = col.sortCaret || sortCaret;
       col.headerSortingClasses =

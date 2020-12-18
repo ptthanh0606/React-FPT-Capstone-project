@@ -19,7 +19,7 @@ export default function CustomersFilter({ filters, setFilters }) {
         }) => (
           <form onSubmit={handleSubmit} className="form form-label-right">
             <div className="form-group row">
-              <div className="col-lg-2">
+              <div className="col-xl-2 col-lg-6">
                 <SelectTagInput
                   placeholder="All"
                   onChange={e => {
@@ -47,7 +47,7 @@ export default function CustomersFilter({ filters, setFilters }) {
                   Filter by <b>department</b>
                 </small>
               </div>
-              <div className="col-lg-2">
+              <div className="col-xl-2 col-lg-6">
                 <select
                   className="form-control form-control-solid"
                   name="status"
@@ -67,7 +67,7 @@ export default function CustomersFilter({ filters, setFilters }) {
                   Filter by <b>status</b>
                 </small>
               </div>
-              <div className="col-lg-2">
+              <div className="col-xl-2 col-lg-6">
                 <select
                   className="form-control form-control-solid"
                   placeholder="Filter by status"
@@ -86,7 +86,7 @@ export default function CustomersFilter({ filters, setFilters }) {
                   Filter by <b>lock</b>
                 </small>
               </div>
-              <div className="col-lg-2">
+              <div className="col-xl-2 col-lg-6">
                 <select
                   className="form-control form-control-solid"
                   placeholder="Filter by Department"
@@ -105,7 +105,7 @@ export default function CustomersFilter({ filters, setFilters }) {
                   Filter by <b>privacy</b>
                 </small>
               </div>
-              <div className="col-lg-4">
+              <div className="col-xl-4 col-lg-12">
                 <div className="input-icon">
                   <input
                     type="text"
