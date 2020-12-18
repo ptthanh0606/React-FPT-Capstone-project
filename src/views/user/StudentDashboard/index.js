@@ -18,7 +18,7 @@ import {
   JOIN_TEAM,
   LIST_TEAM,
   LIST_TOPIC,
-  READ_ANOUNCEMENTS,
+  LIST_ANNOUNCEMENT,
   READ_TEAM,
 } from 'endpoints';
 import * as TeamTransformer from 'modules/semester/team/transformers';
@@ -287,11 +287,8 @@ export default React.memo(function LecturerDashboard() {
 
   const fetchAnouncements = React.useCallback(() => {
     request({
-      to: READ_ANOUNCEMENTS(currentSemester.id, 1).url,
-      method: READ_ANOUNCEMENTS(currentSemester.id, 1).method,
-      params: {
-        semesterId: currentSemester.id,
-      },
+      to: LIST_ANNOUNCEMENT(currentSemester.id).url,
+      method: LIST_ANNOUNCEMENT(currentSemester.id).method,
     })
       .then(res => {
         console.log(res.data);
@@ -434,22 +431,62 @@ export default React.memo(function LecturerDashboard() {
             )}
         </div>
         <div className="col-lg-6 col-xxl-4">
-          <Anouncement
-            body={
-              <>
-                Lorem ipsum dolor sit amet, <br />
-                <br />
-                Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                commodo consequat. <br />
-              </>
-            }
-            date="2020-06-06"
+          <StatTile
+            dataText={numberOfTeams}
+            className="gutter-b"
+            desciption="Teams in this semester"
+            iconColor="white"
+            iconSrc={toAbsoluteUrl('/media/svg/icons/Communication/Group.svg')}
+            baseColor="danger"
           />
-          <FlowTimeline className=" gutter-b" />
+
+          <StatTile
+            className="gutter-b"
+            dataText={totalTopics}
+            iconColor="white"
+            desciption="Topics incomming"
+            toolTipMsg="Expected topics will be available when semester reaches next phase."
+            iconSrc={toAbsoluteUrl('/media/svg/icons/Design/Pixels.svg')}
+          />
+
+          {currentSemester.status !== 3 && (
+            <>
+              <Anouncement
+                body={
+                  <>
+                    Lorem ipsum dolor sit amet, <br />
+                    <br />
+                    Consectetur adipiscing elit, sed do eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua. Ut enim ad
+                    minim veniam, quis nostrud exercitation ullamco laboris nisi
+                    ut aliquip ex ea commodo consequat. <br />
+                  </>
+                }
+                date="2020-06-06"
+              />
+              <FlowTimeline className=" gutter-b" />
+            </>
+          )}
         </div>
         <div className="col-lg-6 col-xxl-4">
+          {currentSemester.status === 3 && (
+            <>
+              <Anouncement
+                body={
+                  <>
+                    Lorem ipsum dolor sit amet, <br />
+                    <br />
+                    Consectetur adipiscing elit, sed do eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua. Ut enim ad
+                    minim veniam, quis nostrud exercitation ullamco laboris nisi
+                    ut aliquip ex ea commodo consequat. <br />
+                  </>
+                }
+                date="2020-06-06"
+              />
+              <FlowTimeline className=" gutter-b" />
+            </>
+          )}
           {!isStudentHaveTopic && (
             <div className="row">
               <div

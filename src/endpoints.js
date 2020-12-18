@@ -186,16 +186,6 @@ export const DELETE_SEMESTER = id => ({
   method: METHOD.DELETE,
 });
 
-export const LIST_ANOUNCEMENTS = id => ({
-  url: READ_SEMESTER(id).url + '/Announcements',
-  method: METHOD.GET,
-});
-
-export const READ_ANOUNCEMENTS = (semId, id) => ({
-  url: READ_SEMESTER(semId).url + '/Announcements/' + id,
-  method: METHOD.GET,
-});
-
 // -----------------------------------------------------------------------------
 
 export const LIST_ACTIVE_STUDENTS = id => ({
