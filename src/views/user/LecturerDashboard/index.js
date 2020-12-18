@@ -113,7 +113,6 @@ export default React.memo(function LecturerDashboard() {
       })
         .then(res => {
           if (res.data.data.length) {
-            console.log(res.data.data.map(topicTranformer.downList));
             setTopicNeedFeedback(
               res?.data?.data
                 .map(topicTranformer.downList)
@@ -270,11 +269,6 @@ export default React.memo(function LecturerDashboard() {
       method: LIST_ANNOUNCEMENT(currentSemester.id).method,
     })
       .then(res => {
-        console.log(
-          res.data.data
-            .map(AnouncementTransformer.down)
-            .filter(anounce => anounce.role === 2)
-        );
         setAnouncements(
           res.data.data
             .map(AnouncementTransformer.down)
