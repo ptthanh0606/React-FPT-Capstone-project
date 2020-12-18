@@ -315,14 +315,14 @@ export const createColumns = (
       dataField: 'attachment',
       text: 'Detail',
       formatter: (cellContent, row) => {
+        if (!cellContent?.name) return null;
         return (
           <a
-            href="null"
+            href={cellContent.name}
             title="Download"
             className="btn btn-icon btn-light btn-hover-primary btn-sm"
-            onClick={event => {
-              event.preventDefault();
-            }}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <i className="fas fa-download my-2"></i>
           </a>

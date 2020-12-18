@@ -4,8 +4,9 @@ import SelectTagInput from 'components/TagInput/SelectTagInput';
 import ToggleSwitch from 'components/ToggleSwitch/ToggleSwitch';
 import React from 'react';
 import MdEditor from 'react-markdown-editor-lite';
-import { Col, Form, Row } from 'react-bootstrap';
+import { Col, Form, InputGroup, Row } from 'react-bootstrap';
 import MarkdownIt from 'markdown-it';
+import { Button } from 'react-bootstrap';
 
 const mdParser = new MarkdownIt();
 
@@ -15,6 +16,8 @@ const FormGroups = ({
   handleChangeFields = function () {},
   type = '',
 }) => {
+  const fileRef = React.useRef(null);
+
   const handleChange = React.useCallback(
     event => {
       handleChangeFields(event.currentTarget.value, config.name);
@@ -25,6 +28,18 @@ const FormGroups = ({
   const handleEditorChange = React.useCallback(
     event => {
       handleChangeFields(event.text, config.name);
+    },
+    [config.name, handleChangeFields]
+  );
+
+  const handleClickFile = React.useCallback(e => {
+    e.preventDefault();
+    fileRef.current.click();
+  }, []);
+
+  const handleFileChange = React.useCallback(
+    event => {
+      handleChangeFields(event.currentTarget.files[0], config.name);
     },
     [config.name, handleChangeFields]
   );
@@ -212,12 +227,30 @@ const FormGroups = ({
             {config.label}
           </Form.Label>
           <Col sm={9}>
+            <InputGroup
+              style={{
+                marginBottom: '-0.5rem',
+              }}
+            >
+              <Form.Control
+                className="form-control form-control-md form-control-solid mb-2"
+                placeholder={value.placeholder}
+                aria-label={value.placeholder}
+                value={value.name}
+                readOnly
+              />
+              <InputGroup.Append>
+                <Button className="form-control" onClick={handleClickFile}>
+                  <i class="fas fa-upload pr-0"></i>
+                </Button>
+              </InputGroup.Append>
+            </InputGroup>
             <Form.File
+              ref={fileRef}
               {...config}
               label={undefined}
-              onChange={event =>
-                handleChangeFields(event.currentTarget.files, config.name)
-              }
+              onChange={handleFileChange}
+              className="d-none"
             />
             <small className="form-text text-muted">{config.smallLabel}</small>
           </Col>
