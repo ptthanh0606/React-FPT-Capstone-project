@@ -61,6 +61,42 @@ export default React.memo(function LecturerDashboard() {
 
   // ---------------------------------------------------------------------
 
+  const fetchTimelines = React.useCallback(() => {
+    // setIsProcessing(true);
+    // request({
+    //   to: LIST_TOPIC.url,
+    //   method: LIST_TOPIC.method,
+    //   params: {
+    //     pageNumber: 1,
+    //     pageSize: 2,
+    //     semesterId: currentSemester.id,
+    //     departmentId: depId,
+    //     status: 0,
+    //   },
+    // })
+    //   .then(res => {
+    //     if (res.data.data.length) {
+    //       let transformedRes = res?.data?.data
+    //         .map(topicTranformer.downList)
+    //         .map(topic => ({
+    //           labelId: topic.id,
+    //           label: topic.name,
+    //           subLabel: topic.code,
+    //           emailAvatar: '',
+    //           altLabel: topic.submitter.label,
+    //           altLabelLinkTo: `/profile/lecturer/${topic.submitter.value}`,
+    //           altLabelExtended: 'Submit by',
+    //           darkMode: true,
+    //         }));
+    //       setTopicNeedFeedback(old => [...old, ...transformedRes]);
+    //       setIsProcessing(false);
+    //     }
+    //   })
+    //   .catch(err => {
+    //     handleErrors(err);
+    //   });
+  }, []);
+
   const fetchTopicApplications = React.useCallback(id => {
     if (id) {
       request({
@@ -113,21 +149,19 @@ export default React.memo(function LecturerDashboard() {
       })
         .then(res => {
           if (res.data.data.length) {
-            setTopicNeedFeedback(
-              res?.data?.data
-                .map(topicTranformer.downList)
-                .map(topic => ({
-                  labelId: topic.id,
-                  label: topic.name,
-                  subLabel: topic.code,
-                  emailAvatar: '',
-                  altLabel: topic.submitter.label,
-                  altLabelLinkTo: `/profile/lecturer/${topic.submitter.value}`,
-                  altLabelExtended: 'Submit by',
-                  darkMode: true,
-                }))
-                .slice(0, 5)
-            );
+            let transformedRes = res?.data?.data
+              .map(topicTranformer.downList)
+              .map(topic => ({
+                labelId: topic.id,
+                label: topic.name,
+                subLabel: topic.code,
+                emailAvatar: '',
+                altLabel: topic.submitter.label,
+                altLabelLinkTo: `/profile/lecturer/${topic.submitter.value}`,
+                altLabelExtended: 'Submit by',
+                darkMode: true,
+              }));
+            setTopicNeedFeedback(old => [...old, ...transformedRes]);
             setIsProcessing(false);
           }
         })
@@ -292,10 +326,12 @@ export default React.memo(function LecturerDashboard() {
     fetchTotalTopicsByType('mentoring');
     fetchTotalTopicsByType('submitted');
     fetchAnouncements();
+    fetchTimelines();
   }, [
     currentSemester.status,
     fetchAnouncements,
     fetchCurrentLecturer,
+    fetchTimelines,
     fetchTotalTopicsByStatus,
     fetchTotalTopicsByType,
   ]);

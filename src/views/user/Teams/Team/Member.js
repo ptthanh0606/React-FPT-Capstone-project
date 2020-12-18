@@ -144,48 +144,51 @@ const Member = ({
             </div>
           </div>
         </div>
-        {userRole === 'student' && !isLeader && currentUser.id === leaderId && (
-          <div className="px-2">
-            <Dropdown className="dropdown-inline" alignRight>
-              <Dropdown.Toggle
-                className="btn btn-clean btn-hover-light-primary btn-sm btn-icon"
-                variant="transparent"
-                id="dropdown-toggle-top"
-                as={DropdownCustomToggler}
-              >
-                <i className="ki ki-bold-more-hor" />
-              </Dropdown.Toggle>
-              <Dropdown.Menu className="dropdown-menu dropdown-menu-sm dropdown-menu-right">
-                <ul className="navi navi-hover">
-                  <li className="navi-item">
-                    <a
-                      href="/"
-                      onClick={handleMakeLeader}
-                      className="navi-link"
-                    >
-                      <span className="navi-icon">
-                        <i className="fab fa-font-awesome-flag"></i>
-                      </span>
-                      <span className="navi-text">Make leader</span>
-                    </a>
-                  </li>
-                  <li className="navi-item">
-                    <a
-                      href="/"
-                      onClick={handleForceLeave}
-                      className="navi-link"
-                    >
-                      <span className="navi-icon">
-                        <i className="far fa-times-circle"></i>
-                      </span>
-                      <span className="navi-text">Force leave</span>
-                    </a>
-                  </li>
-                </ul>
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
-        )}
+        {currentSemester.status !== 3 &&
+          userRole === 'student' &&
+          !isLeader &&
+          currentUser.id === leaderId && (
+            <div className="px-2">
+              <Dropdown className="dropdown-inline" alignRight>
+                <Dropdown.Toggle
+                  className="btn btn-clean btn-hover-light-primary btn-sm btn-icon"
+                  variant="transparent"
+                  id="dropdown-toggle-top"
+                  as={DropdownCustomToggler}
+                >
+                  <i className="ki ki-bold-more-hor" />
+                </Dropdown.Toggle>
+                <Dropdown.Menu className="dropdown-menu dropdown-menu-sm dropdown-menu-right">
+                  <ul className="navi navi-hover">
+                    <li className="navi-item">
+                      <a
+                        href="/"
+                        onClick={handleMakeLeader}
+                        className="navi-link"
+                      >
+                        <span className="navi-icon">
+                          <i className="fab fa-font-awesome-flag"></i>
+                        </span>
+                        <span className="navi-text">Make leader</span>
+                      </a>
+                    </li>
+                    <li className="navi-item">
+                      <a
+                        href="/"
+                        onClick={handleForceLeave}
+                        className="navi-link"
+                      >
+                        <span className="navi-icon">
+                          <i className="far fa-times-circle"></i>
+                        </span>
+                        <span className="navi-text">Force leave</span>
+                      </a>
+                    </li>
+                  </ul>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+          )}
       </div>
     </>
   );

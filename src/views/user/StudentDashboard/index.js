@@ -338,18 +338,20 @@ export default React.memo(function LecturerDashboard() {
       </div>
       <div className="row">
         <div className="col-lg-12 col-xxl-4">
-          <Engaging
-            className="gutter-b"
-            bgColor="#8950FC"
-            bgSize="40%"
-            title="Semester over"
-            textColorTitle="white"
-            textColorSubTitle="white"
-            imageUrl="/media/svg/humans/custom-8.svg"
-            subTitle={
-              <>All activities are finished, all informations are view only</>
-            }
-          />
+          {currentSemester.status === 3 && (
+            <Engaging2
+              className="gutter-b"
+              bgColor="info"
+              bgSize="50%"
+              title="Semester over"
+              textColorTitle="white"
+              textColorSubTitle="white"
+              svgVariant={5}
+              subTitle={
+                <>All activities are finished, all informations are view only</>
+              }
+            />
+          )}
 
           {currentSemester.status !== 3 && (
             <TopicTeamPreview
@@ -451,36 +453,16 @@ export default React.memo(function LecturerDashboard() {
             )}
         </div>
         <div className="col-lg-6 col-xxl-4">
-          <StatTile
-            dataText={numberOfTeams}
-            className="gutter-b"
-            desciption="Teams in this semester"
-            iconColor="white"
-            iconSrc={toAbsoluteUrl('/media/svg/icons/Communication/Group.svg')}
-            baseColor="danger"
-          />
-
-          <StatTile
-            className="gutter-b"
-            dataText={totalTopics}
-            iconColor="white"
-            desciption="Topics in this semester"
-            iconSrc={toAbsoluteUrl('/media/svg/icons/Design/Pixels.svg')}
-          />
-
           {currentSemester.status !== 3 && (
             <>
               <Anouncement announcements={anouncements} />
-              <FlowTimeline className=" gutter-b" />
             </>
           )}
+          <FlowTimeline className=" gutter-b" />
         </div>
         <div className="col-lg-6 col-xxl-4">
           {currentSemester.status === 3 && (
-            <>
-              <Anouncement announcements={anouncements} />
-              <FlowTimeline className=" gutter-b" />
-            </>
+            <Anouncement announcements={anouncements} />
           )}
           {!isStudentHaveTopic && (
             <div className="row">

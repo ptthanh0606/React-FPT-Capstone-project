@@ -291,46 +291,49 @@ const Team = () => {
         <>
           {userRole === 'student' && (
             <>
-              {isUserLeader && !isTeamMatched && !currentTeam.lock && (
-                <>
-                  <button
-                    type="button"
-                    className="btn btn-light-info font-weight-bold btn-sm ml-2"
-                    onClick={() => setShowSetting(true)}
-                  >
-                    <i className="fas fa-cog mr-2"></i>
-                    Settings
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-light-danger font-weight-bold btn-sm ml-2"
-                    onClick={() =>
-                      confirm({
-                        title: 'Confirm required',
-                        body:
-                          'Are you sure you want to dump this team (All member will be disposed!)',
-                        onConfirm: handleConfirmDumpTeam,
-                      })
-                    }
-                  >
-                    <i className="fas fa-trash mr-2"></i>
-                    Dump team
-                  </button>
-                  <CMSModal
-                    title="Settings"
-                    subTitle="Update for this team"
-                    primaryButtonLabel="Save changes"
-                    configs={modalConfigs}
-                    isShowFlg={showSetting}
-                    fieldTemplate={settingFieldTemplate}
-                    onConfirmForm={handleConfirmSetting}
-                    onHide={() => setShowSetting(false)}
-                    isProcessing={isProcessing}
-                  />
-                </>
-              )}
+              {currentSemester.status !== 3 &&
+                isUserLeader &&
+                !isTeamMatched &&
+                !currentTeam.lock && (
+                  <>
+                    <button
+                      type="button"
+                      className="btn btn-light-info font-weight-bold btn-sm ml-2"
+                      onClick={() => setShowSetting(true)}
+                    >
+                      <i className="fas fa-cog mr-2"></i>
+                      Settings
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-light-danger font-weight-bold btn-sm ml-2"
+                      onClick={() =>
+                        confirm({
+                          title: 'Confirm required',
+                          body:
+                            'Are you sure you want to dump this team (All member will be disposed!)',
+                          onConfirm: handleConfirmDumpTeam,
+                        })
+                      }
+                    >
+                      <i className="fas fa-trash mr-2"></i>
+                      Dump team
+                    </button>
+                    <CMSModal
+                      title="Settings"
+                      subTitle="Update for this team"
+                      primaryButtonLabel="Save changes"
+                      configs={modalConfigs}
+                      isShowFlg={showSetting}
+                      fieldTemplate={settingFieldTemplate}
+                      onConfirmForm={handleConfirmSetting}
+                      onHide={() => setShowSetting(false)}
+                      isProcessing={isProcessing}
+                    />
+                  </>
+                )}
 
-              {isUserInTeam ? (
+              {currentSemester.status !== 3 && isUserInTeam ? (
                 <>
                   {!isTeamMatched && !isUserLeader && !currentTeam.lock && (
                     <button
@@ -345,16 +348,18 @@ const Team = () => {
                 </>
               ) : (
                 <>
-                  {!showNoTeamWarn && !isUserHaveTeam && (
-                    <button
-                      type="button"
-                      className="btn btn-primary font-weight-bold btn-sm ml-2"
-                      onClick={handleJoinTeam}
-                    >
-                      <i className="fas fa-sign-in-alt mr-2"></i>
-                      Join this team
-                    </button>
-                  )}
+                  {currentSemester.status !== 3 &&
+                    !showNoTeamWarn &&
+                    !isUserHaveTeam && (
+                      <button
+                        type="button"
+                        className="btn btn-primary font-weight-bold btn-sm ml-2"
+                        onClick={handleJoinTeam}
+                      >
+                        <i className="fas fa-sign-in-alt mr-2"></i>
+                        Join this team
+                      </button>
+                    )}
                 </>
               )}
             </>
@@ -366,6 +371,7 @@ const Team = () => {
     confirm,
     currentSemester.id,
     currentSemester.name,
+    currentSemester.status,
     currentTeam,
     currentTeam.leader,
     currentTeam.name,
@@ -608,7 +614,7 @@ const Team = () => {
                   smallTitle="Join code"
                   baseColor="info"
                   label={currentTeam?.code}
-                  clickAbleIcon={isUserLeader}
+                  clickAbleIcon={currentSemester.status !== 3 && isUserLeader}
                   onIconClick={handleRefreshJoinCode}
                   iconTooltipMsg="Change code"
                   tooltipMsg={
@@ -632,7 +638,11 @@ const Team = () => {
                     label="Locked"
                     onIconClick={handleChangeLockTeam}
                     iconTooltipMsg="Unlock team"
-                    clickAbleIcon={isUserLeader && currentTeam?.topic}
+                    clickAbleIcon={
+                      currentSemester.status !== 3 &&
+                      isUserLeader &&
+                      currentTeam?.topic
+                    }
                     buttonIcon={toAbsoluteUrl(
                       '/media/svg/icons/General/Lock.svg'
                     )}
@@ -643,7 +653,7 @@ const Team = () => {
                     smallTitle="Team state"
                     baseColor="success"
                     label="Unlocked"
-                    clickAbleIcon={isUserLeader}
+                    clickAbleIcon={currentSemester.status !== 3 && isUserLeader}
                     tooltipMsg={
                       <>
                         Lock this team (Locked team can not accept joining from

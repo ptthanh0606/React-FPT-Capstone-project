@@ -25,7 +25,7 @@ const Anouncement = ({
                 {announce.updatedAt}
               </div>
 
-              <div className="text-dark-75 font-size-h6 m-0 d-flex flex-column">
+              <div className="text-dark-75 font-size-h6 m-0 d-flex flex-column mt-3">
                 <span className="font-weight-bolder mb-4">
                   {announce.title}
                 </span>

@@ -65,7 +65,7 @@ const FeedbackSection = ({
         {topicStatus === 'Waiting' && !isUserApprover && (
           <MessageTile
             iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Stop.svg')}
-            content="You are not an approver to give feedback."
+            content="You are not an approver to give feedback or you are not an approver of this topic department."
             baseColor="warning"
           />
         )}
