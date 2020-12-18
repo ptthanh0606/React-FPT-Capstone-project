@@ -9,9 +9,16 @@ import userAtom from 'store/user';
 
 import { toAbsoluteUrl } from '_metronic/_helpers';
 
-import { CREATE_TOPIC, LIST_TOPIC, READ_LECTURER, READ_TOPIC } from 'endpoints';
+import {
+  CREATE_TOPIC,
+  LIST_ANNOUNCEMENT,
+  LIST_TOPIC,
+  READ_LECTURER,
+  READ_TOPIC,
+} from 'endpoints';
 import { applicationRowActionFormatter, rowActionFormatter } from './constants';
 import * as topicTranformer from 'modules/semester/topic/transformers';
+import * as AnouncementTransformer from 'modules/semester/announcement/transformers';
 
 import Anouncement from 'components/CMSWidgets/Anouncement';
 import QuickAction from 'components/CMSWidgets/QuickAction';
@@ -46,6 +53,7 @@ export default React.memo(function LecturerDashboard() {
   const [flowTimelines, setFlowTimelines] = React.useState([]);
   const [topicNeedFeedback, setTopicNeedFeedback] = React.useState([]);
   const [applications, setApplications] = React.useState([]);
+  const [anouncements, setAnouncements] = React.useState([]);
 
   const [fieldTemplate, setFieldTemplate] = React.useState({});
   const [showCreate, setShowCreate] = React.useState(false);
@@ -256,6 +264,26 @@ export default React.memo(function LecturerDashboard() {
       });
   }, [currentUser.id, fetchWaitingTopics]);
 
+  const fetchAnouncements = React.useCallback(() => {
+    request({
+      to: LIST_ANNOUNCEMENT(currentSemester.id).url,
+      method: LIST_ANNOUNCEMENT(currentSemester.id).method,
+    })
+      .then(res => {
+        console.log(
+          res.data.data
+            .map(AnouncementTransformer.down)
+            .filter(anounce => anounce.role === 2)
+        );
+        setAnouncements(
+          res.data.data
+            .map(AnouncementTransformer.down)
+            .filter(anounce => anounce.role === 2)
+        );
+      })
+      .catch(err => {});
+  }, [currentSemester.id]);
+
   const fetchInit = React.useCallback(() => {
     fetchCurrentLecturer();
     if (currentSemester.status === 0) {
@@ -264,10 +292,15 @@ export default React.memo(function LecturerDashboard() {
     if (currentSemester.status === 1) {
       fetchTotalTopicsByStatus(3);
     }
+    if (currentSemester.status === 3) {
+      fetchTotalTopicsByStatus(4);
+    }
     fetchTotalTopicsByType('mentoring');
     fetchTotalTopicsByType('submitted');
+    fetchAnouncements();
   }, [
     currentSemester.status,
+    fetchAnouncements,
     fetchCurrentLecturer,
     fetchTotalTopicsByStatus,
     fetchTotalTopicsByType,
@@ -433,18 +466,7 @@ export default React.memo(function LecturerDashboard() {
       <div className="row">
         <div className="col-lg-6 col-xxl-4">
           {currentSemester.status === 3 && (
-            <Anouncement
-              className="gutter-b"
-              date="20 Jun 2020"
-              body={
-                <>
-                  Lorem ipsum dolor,
-                  <br />
-                  <br /> Consectetur adipiscing elit, sed do eiusmod tempor
-                  incididunt ut labore et dolore magna aliqua. <br />
-                </>
-              }
-            />
+            <Anouncement announcements={anouncements} />
           )}
 
           {currentSemester.status === 0 && (
@@ -516,18 +538,7 @@ export default React.memo(function LecturerDashboard() {
 
         <div className="col-lg-6 col-xxl-4">
           {currentSemester.status !== 3 && (
-            <Anouncement
-              className="gutter-b"
-              date="20 Jun 2020"
-              body={
-                <>
-                  Lorem ipsum dolor,
-                  <br />
-                  <br /> Consectetur adipiscing elit, sed do eiusmod tempor
-                  incididunt ut labore et dolore magna aliqua. <br />
-                </>
-              }
-            />
+            <Anouncement announcements={anouncements} />
           )}
 
           {currentSemester.status === 1 && (
@@ -544,7 +555,7 @@ export default React.memo(function LecturerDashboard() {
             </div>
           )}
 
-          {currentSemester.status === 0 && (
+          {[0, 3].includes(currentSemester.status) && (
             <FlowTimeline className="gutter-b" items={flowTimelines} />
           )}
         </div>

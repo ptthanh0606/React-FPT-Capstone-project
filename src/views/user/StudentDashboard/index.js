@@ -22,6 +22,8 @@ import {
   READ_TEAM,
 } from 'endpoints';
 import * as TeamTransformer from 'modules/semester/team/transformers';
+import * as AnouncementTransformer from 'modules/semester/announcement/transformers';
+
 import { Button } from 'react-bootstrap';
 import SemesterPhase from 'components/CMSWidgets/SemesterPhase';
 import { handleErrors } from 'utils/common';
@@ -50,6 +52,7 @@ export default React.memo(function LecturerDashboard() {
     setCurrentPublicTeamPreviews,
   ] = React.useState([]);
   const [teamApplications, setTeamApplications] = React.useState([]);
+  const [anouncements, setAnouncements] = React.useState([]);
 
   const [numberOfTeams, setNumberOfTeams] = React.useState(0);
   const [totalTopics, setTotalTopics] = React.useState(0);
@@ -292,7 +295,16 @@ export default React.memo(function LecturerDashboard() {
       method: LIST_ANNOUNCEMENT(currentSemester.id).method,
     })
       .then(res => {
-        console.log(res.data);
+        console.log(
+          res.data.data
+            .map(AnouncementTransformer.down)
+            .filter(anounce => anounce.role === 0)
+        );
+        setAnouncements(
+          res.data.data
+            .map(AnouncementTransformer.down)
+            .filter(anounce => anounce.role === 0)
+        );
       })
       .catch(err => {});
   }, [currentSemester.id]);
@@ -464,19 +476,7 @@ export default React.memo(function LecturerDashboard() {
 
           {currentSemester.status !== 3 && (
             <>
-              <Anouncement
-                body={
-                  <>
-                    Lorem ipsum dolor sit amet, <br />
-                    <br />
-                    Consectetur adipiscing elit, sed do eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua. Ut enim ad
-                    minim veniam, quis nostrud exercitation ullamco laboris nisi
-                    ut aliquip ex ea commodo consequat. <br />
-                  </>
-                }
-                date="2020-06-06"
-              />
+              <Anouncement announcements={anouncements} />
               <FlowTimeline className=" gutter-b" />
             </>
           )}
@@ -484,19 +484,7 @@ export default React.memo(function LecturerDashboard() {
         <div className="col-lg-6 col-xxl-4">
           {currentSemester.status === 3 && (
             <>
-              <Anouncement
-                body={
-                  <>
-                    Lorem ipsum dolor sit amet, <br />
-                    <br />
-                    Consectetur adipiscing elit, sed do eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua. Ut enim ad
-                    minim veniam, quis nostrud exercitation ullamco laboris nisi
-                    ut aliquip ex ea commodo consequat. <br />
-                  </>
-                }
-                date="2020-06-06"
-              />
+              <Anouncement announcements={anouncements} />
               <FlowTimeline className=" gutter-b" />
             </>
           )}

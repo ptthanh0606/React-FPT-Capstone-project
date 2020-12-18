@@ -873,23 +873,6 @@ const Topic = () => {
         case 'lecturer':
           buttons = (
             <>
-              {[0].includes(currentSemester.status) &&
-                [0].includes(currentTopic.status) &&
-                !isUserApprover && (
-                  <>
-                    <span class="svg-icon svg-icon-warning mr-1">
-                      <SVG
-                        src={toAbsoluteUrl(
-                          '/media/svg/icons/Code/Warning-1-circle.svg'
-                        )}
-                      ></SVG>
-                    </span>
-                    <span className="text-warning font-weight-bolder">
-                      This topic is not approved yet to be mentored.
-                    </span>
-                  </>
-                )}
-
               {constants.statusTitles[currentTopic.status] === 'Waiting' &&
                 currentTopic.submitter.value === currentUser.id && (
                   <>
@@ -964,7 +947,6 @@ const Topic = () => {
     isTeamApplied,
     isTeamInTopic,
     isTeamLocked,
-    isUserApprover,
     isUserMentor,
     showUpdate,
     updateFieldTemplate,

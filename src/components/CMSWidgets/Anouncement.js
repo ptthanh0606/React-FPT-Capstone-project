@@ -2,8 +2,7 @@ import React from 'react';
 
 const Anouncement = ({
   type = 'primary',
-  date = 'Title',
-  body = <>body</>,
+  announcements = [{ updatedAt: '', title: '', content: '' }],
 }) => {
   return (
     <div
@@ -14,16 +13,29 @@ const Anouncement = ({
         backgroundImage: 'url(assets/media/svg/shapes/abstract-4.svg)',
       }}
     >
-      <div className="card-body">
-        <span className="card-title font-weight-bolder text-muted text-hover-primary font-size-h5">
-          Anouncement
+      <div className="card-body d-flex flex-column align-items-start">
+        <span className="card-title font-weight-bolder text-muted text-hover-primary font-size-h5 mb-4">
+          Anouncements
         </span>
 
-        <div className={`font-weight-bolder text-${type} mt-9 mb-5`}>
-          {date}
-        </div>
+        {announcements.length ? (
+          announcements.map(announce => (
+            <div className="mt-9 mb-4">
+              <div className={`font-weight-bolder text-${type}`}>
+                {announce.updatedAt}
+              </div>
 
-        <p className="text-dark-75 font-size-h5 m-0">{body}</p>
+              <div className="text-dark-75 font-size-h6 m-0 d-flex flex-column">
+                <span className="font-weight-bolder mb-4">
+                  {announce.title}
+                </span>
+                {announce.content}
+              </div>
+            </div>
+          ))
+        ) : (
+          <>No anouncement available</>
+        )}
       </div>
     </div>
   );
