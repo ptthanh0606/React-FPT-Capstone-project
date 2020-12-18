@@ -5,7 +5,9 @@ export function downList(i) {
     id: i?.id || console.log('id field not found'),
     name: i?.name || console.log('name field not found'),
     note: i?.note || console.log('note field not found'),
-    attachment: i?.attachment || console.log('attachment field not found'),
+    attachment: {
+      name: i?.attachment || console.log('attachment field not found'),
+    },
     department: i?.department
       ? {
           label:
@@ -60,7 +62,9 @@ export function downRead(i) {
     note: i?.note || console.log('note field not found'),
     description: i?.description || console.log('description field not found'),
     keywords: i?.keywords || console.log('keywords field not found'),
-    attachment: i?.attachment || console.log('attachment field not found'),
+    attachment: {
+      name: i?.attachment || console.log('attachment field not found'),
+    },
     maxMembers:
       i?.maxMembers !== undefined
         ? i?.maxMembers
@@ -153,6 +157,8 @@ export function up(i) {
     return 0;
   });
 
+  console.log(i);
+
   return {
     name: i?.name,
     code: i?.code,
@@ -169,7 +175,8 @@ export function up(i) {
       weight: Number(j.weight),
     })),
     keywords: i?.keywords,
-    attachment: i?.attachment,
+    attachment:
+      i?.attachment?.constructor?.name === 'File' ? i?.attachment : undefined,
     submitterId: Number(i?.submitter?.value),
   };
 }
