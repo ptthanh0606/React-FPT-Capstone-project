@@ -527,7 +527,7 @@ const Team = () => {
                   <div className="d-flex justify-content-between card-spacer flex-grow-1">
                     <div className="d-flex flex-column mr-2">
                       <span className="text-dark-75 font-weight-bolder font-size-h5">
-                        Applications
+                        Applications history
                       </span>
                       <span className="text-muted font-weight-bold mt-2">
                         Topic that this team applied

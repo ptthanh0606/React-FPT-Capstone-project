@@ -13,13 +13,13 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
 
   // --------------------------------------------------------------
 
-  const [data, setData] = React.useReducer((state, action) => {
-    if (action.name === 'all') return { ...state, ...action.value };
-    return {
-      ...state,
-      [action.name]: action.value,
-    };
-  }, {});
+  // const [data, setData] = React.useReducer((state, action) => {
+  //   if (action.name === 'all') return { ...state, ...action.value };
+  //   return {
+  //     ...state,
+  //     [action.name]: action.value,
+  //   };
+  // }, {});
 
   // ---------------------------------------------------------------
 
@@ -52,12 +52,14 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
             Grading section for mentors and councils
           </span>
           <span className="text-info font-size-sm font-weight-bold">
-            (Click the checkpoint to start grading.)
+            {currentRole === 'lecturer' && (
+              <>(Click the checkpoint to start grading.)</>
+            )}
           </span>
         </div>
         {currentRole === 'lecturer' && isUserMentor && (
-          <button className="btn btn-light-info">
-            <span className="svg-icon svg-icon-sm ml-0 mr-2">
+          <button className="btn btn-light-info d-flex align-items-center">
+            <span className="svg-icon svg-icon-md ml-0 mr-2">
               <SVG
                 src={toAbsoluteUrl('/media/svg/icons/General/Save.svg')}
               ></SVG>
@@ -69,11 +71,11 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
 
       <Accordion>
         {evals?.map((i, index) => (
-          <Card className="mb-10">
+          <Card className="mb-7">
             <Card.Header>
               <Accordion.Toggle
                 as={Card.Header}
-                className={`bg-${constantsCp.statusClasses[i.status]}`}
+                className={`bg-${constantsCp.statusClasses[0]}`}
                 eventKey={i.id}
                 style={{
                   padding: '1rem',
@@ -82,29 +84,49 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
               >
                 <div className="d-flex align-items-center justify-content-between flex-wrap">
                   <div className="d-flex flex-column">
-                    <span className="font-size-h3 font-weight-bolder text-white text-uppercase">
+                    <span
+                      className={`font-size-h3 font-weight-bolder text-${
+                        i.status ? 'dark-50' : 'white'
+                      } text-uppercase`}
+                    >
                       {i.name}
                     </span>
-                    <div className="d-flex font-size-sm text-white mt-3">
+                    <div
+                      className={`d-flex font-size-sm text-${
+                        i.status === 0 ? 'dark' : 'white'
+                      } mt-3`}
+                    >
                       <OverlayTrigger
                         placement="bottom"
                         overlay={<Tooltip>This checkpoint weight</Tooltip>}
                       >
                         <div className="mr-10">
-                          <i class="flaticon2-pie-chart-3 text-white mr-2 icon-nm"></i>
+                          <i
+                            class={`flaticon2-pie-chart-3 text-${
+                              i.status === 0 ? 'dark' : 'white'
+                            } mr-2 icon-nm`}
+                          ></i>
                           {i.weight}
                         </div>
                       </OverlayTrigger>
                       <div className="mr-10">
-                        <i class="flaticon2-paperplane text-white mr-2 icon-nm"></i>
-                        Submitted at:
+                        <i
+                          class={`flaticon2-paperplane text-${
+                            i.status === 0 ? 'dark' : 'white'
+                          } mr-2 icon-nm`}
+                        ></i>
+                        Submission due date
                         <span className="ml-2 font-weight-bolder">
                           {constantsCp.convertDateDown(i.submitDueDate)}
                         </span>
                       </div>
                       <div className="mr-10">
-                        <i class="flaticon2-notepad text-white mr-2 icon-nm"></i>
-                        Evaluated at:
+                        <i
+                          class={`flaticon2-notepad text-${
+                            i.status === 0 ? 'dark' : 'white'
+                          } mr-2 icon-nm`}
+                        ></i>
+                        Evauluation date
                         <span className="ml-2 font-weight-bolder">
                           {constantsCp.convertDateDown(i.evaluateDueDate)}
                         </span>
@@ -121,7 +143,11 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
                     placement="bottom"
                     overlay={<Tooltip>Final status of this checkpoint</Tooltip>}
                   >
-                    <span class={`text-white font-weight-bolder`}>
+                    <span
+                      class={`text-${
+                        i.status === 0 ? 'dark' : 'white'
+                      } font-weight-bolder`}
+                    >
                       {constantsCp.statusTitles[i.status]}
                     </span>
                   </OverlayTrigger>
