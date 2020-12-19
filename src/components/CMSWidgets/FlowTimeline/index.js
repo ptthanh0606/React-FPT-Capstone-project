@@ -30,9 +30,7 @@ const FlowTimeline = ({
       <div className="card-body pt-4">
         <div className="timeline timeline-6 mt-3">
           {items?.length ? (
-            items.map(item => (
-              <TimelineItem date={item.date} content={item.content} />
-            ))
+            items.map(item => <TimelineItem {...item} />)
           ) : (
             <>Nothing yet...</>
           )}

@@ -313,16 +313,18 @@ export default function Teams() {
           <Engaging
             className="gutter-b"
             bgColor="#FFF4DE"
-            bgSize="90%"
+            bgSize="25%"
             title="Quick guide"
             textColorTitle="danger"
             textColorSubTitle="dark"
-            imageUrl="/media/svg/humans/custom-2.svg"
+            imageUrl="/media/svg/illustrations/login-visual-4.svg"
             subTitle={
               <>
                 Select 1 of the 2 options above to be a member of a team.
                 <br />
-                You can either <b>Join</b> or <b>Create a team</b> to start.
+                You can either <b>Join</b> or <b>Create a team</b> to start. You
+                can also press join button icon in the available public teams
+                table below.
               </>
             }
           />

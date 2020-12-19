@@ -409,10 +409,10 @@ const Team = () => {
             <Engaging
               className="gutter-b card-stretch"
               bgColor="#FFF4DE"
-              imageUrl="/media/svg/humans/custom-5.svg"
+              imageUrl="/media/svg/illustrations/login-visual-2.svg"
               textColorTitle="danger"
               textColorSubTitle="dark"
-              bgSize="100%"
+              bgSize="50%"
               titleSize="h1"
               title="You have no team"
               action={

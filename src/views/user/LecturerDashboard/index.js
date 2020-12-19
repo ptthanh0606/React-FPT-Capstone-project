@@ -390,79 +390,29 @@ export default React.memo(function LecturerDashboard() {
   React.useEffect(() => {
     setFlowTimelines([
       {
-        date: '12 May',
-        content: (
-          <div className="font-weight-bolder font-size-lg timeline-content pl-3">
-            Start in-capstone phase
-          </div>
-        ),
+        date: '2020-12-19T10:24:21.722Z',
+        content: <div className="pl-3">Start preparing phase</div>,
+        type: 'success',
       },
       {
-        date: '20 May',
-        content: (
-          <div className="timeline-content flex-row d-flex">
-            <span className="font-weight-normal text-muted text-dark-75 pl-3 font-size-lg mr-5">
-              Send topic for approvals
-              <span className="font-weight-bolder text-dark-75">
-                Lam Huu Khanh Phuong, Tran Tuan Anh
-              </span>
-            </span>
-          </div>
-        ),
+        date: '2020-12-19T10:24:21.722Z',
+        content: <div className="pl-3">Reports due date for Checkpoint 1</div>,
+        type: 'danger',
       },
       {
-        date: '1 Jun',
+        date: '2020-12-19T10:24:21.722Z',
         content: (
-          <div className="timeline-content font-weight-bolder font-size-lg text-dark-75 pl-3">
-            Send report
-            <a href="/" className="text-primary ml-1">
-              #1
-            </a>
+          <div className="pl-3">
+            Checkpoint 1 meeting for evaluation with Lam Huu Khanh Phuong, Tran
+            Tuan Anh
           </div>
         ),
+        type: 'info',
       },
       {
-        date: '10 Jun',
-        content: (
-          <div className="timeline-content font-weight-bolder font-size-lg text-dark-75 pl-3">
-            Send report
-            <a href="/" className="text-primary ml-1">
-              #2
-            </a>
-          </div>
-        ),
-      },
-      {
-        date: '15 Jun',
-        content: (
-          <div className="timeline-content font-weight-bolder font-size-lg text-dark-75 pl-3">
-            Send report
-            <a href="/" className="text-primary ml-1">
-              #3
-            </a>
-          </div>
-        ),
-      },
-      {
-        date: '25 Jun',
-        content: (
-          <div className="timeline-content flex-row d-flex">
-            <span className="font-weight-normal text-muted text-dark-75 pl-3 font-size-lg mr-5">
-              Checkpoint meeting with{' '}
-              <span className="font-weight-bolder text-dark-75">
-                Council SE
-              </span>
-            </span>
-          </div>
-        ),
-      },
-      {
-        date: '30 Jun',
-        content: (
-          <div className="timeline-content font-weight-mormal font-size-lg text-muted pl-3">
-            ...
-          </div>
-        ),
+        date: '2020-12-19T10:24:21.722Z',
+        content: <div className="pl-3">Semester end</div>,
+        type: 'success',
       },
     ]);
   }, []);
@@ -521,10 +471,10 @@ export default React.memo(function LecturerDashboard() {
               {topicNeedFeedback?.length ? (
                 <CMSAnotherList
                   className="gutter-b"
-                  title="Topic need feedback"
+                  title="Latest topics need feedback"
                   subTitle="Consider giving feedback for these topics"
                   fallbackMsg="Awaiting for topic submission..."
-                  rows={topicNeedFeedback}
+                  rows={topicNeedFeedback.slice(0, 4)}
                   darkMode={true}
                   isLoading={isProcessing}
                   toolBar={
@@ -577,22 +527,22 @@ export default React.memo(function LecturerDashboard() {
             <FlowTimeline
               className="gutter-b"
               items={flowTimelines}
-              toolBar={
-                <DropdownPopover
-                  value={topicType}
-                  items={[
-                    {
-                      label: 'Submitted',
-                      value: 'Submitted',
-                    },
-                    {
-                      label: 'Mentoring',
-                      value: 'Mentoring',
-                    },
-                  ]}
-                  onChange={value => setTopicType(value)}
-                />
-              }
+              // toolBar={
+              //   <DropdownPopover
+              //     value={topicType}
+              //     items={[
+              //       {
+              //         label: 'Submitted',
+              //         value: 'Submitted',
+              //       },
+              //       {
+              //         label: 'Mentoring',
+              //         value: 'Mentoring',
+              //       },
+              //     ]}
+              //     onChange={value => setTopicType(value)}
+              //   />
+              // }
             />
           )}
         </div>

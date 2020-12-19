@@ -3,6 +3,7 @@ import React from 'react';
 const Engaging = ({
   className = '',
   bgColor = '',
+  bgSize = '25%',
   imageUrl = '',
   title = '',
   textColorTitle = '',
@@ -20,7 +21,7 @@ const Engaging = ({
           style={{
             backgroundColor: bgColor,
             backgroundPosition: `calc(100% + 0.5rem) bottom`,
-            backgroundSize: `25% auto`,
+            backgroundSize: `${bgSize} auto`,
             backgroundImage: `url(${imageUrl})`,
           }}
         >
