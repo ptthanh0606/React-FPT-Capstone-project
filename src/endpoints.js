@@ -400,6 +400,16 @@ export const UPDATE_WEIGHT = id => ({
   method: METHOD.PUT,
 });
 
+export const GET_EVALUATION = id => ({
+  url: READ_TOPIC(id).url + '/evaluations',
+  method: METHOD.GET,
+});
+
+export const PUT_EVALUATION = id => ({
+  url: READ_TOPIC(id).url + '/evaluations',
+  method: METHOD.PUT,
+});
+
 // -----------------------------------------------------------------------------
 
 export const LIST_NOTIFICATION = {

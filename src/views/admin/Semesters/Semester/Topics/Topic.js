@@ -4,7 +4,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import request from 'utils/request';
 import * as endpoints from 'endpoints';
 import { handleErrors } from 'utils/common';
-import { Row, Col, Form, Card, Accordion } from 'react-bootstrap';
+import { Row, Col, Form, Card, Accordion, InputGroup } from 'react-bootstrap';
 import CMSCard from 'components/Card';
 import Button from 'components/Button';
 import MdEditor from 'react-markdown-editor-lite';
@@ -109,7 +109,7 @@ const fakeData = {
           },
         ],
       },
-      columns: [
+      markColumns: [
         {
           id: 1,
           weight: 10,
@@ -117,7 +117,7 @@ const fakeData = {
           marks: [
             {
               id: 1,
-              totalForStudent: 30,
+              totalColumnStudent: 30,
               lecturers: [
                 {
                   id: 1,
@@ -131,7 +131,7 @@ const fakeData = {
             },
             {
               id: 2,
-              totalForStudent: 30,
+              totalColumnStudent: 30,
               lecturers: [
                 {
                   id: 1,
@@ -147,7 +147,7 @@ const fakeData = {
           total: 10,
         },
       ],
-      total: [100, 200], // total student
+      totalCheckpointStudent: [100, 200], // total student
       totalTeam: 10, // total all
     },
   ],
@@ -170,8 +170,9 @@ function transformToGrid(data) {
     // z = current checkpoints
     const grid = [header];
 
-    for (const i of z.columns) {
+    for (const i of z.markColumns) {
       // i = current column
+
       const firstEvaluator = z.council.members[0];
       const evaluatorNum = z.council.members.length;
       const toPush = [
@@ -190,15 +191,15 @@ function transformToGrid(data) {
         toPush.push(
           {
             value: i.marks
-              .find(e => e.id === j.id)
-              .lecturers.find(e => e.id === z.council.members[0].id).value,
+              ?.find(e => e.studentId === j.id)
+              ?.lecturers?.find(e => e.id === z.council.members[0].id)?.value,
             studentId: j.id,
             lecturerId: z.council.members[0].id,
             markColumnId: i.id,
             evaluationId: z.id,
           },
           {
-            value: i.marks.find(e => e.id === j.id).totalForStudent,
+            value: i.marks?.find(e => e.studentId === j.id)?.totalColumnStudent,
             rowSpan: z.council.members.length,
             readOnly: true,
           }
@@ -221,8 +222,8 @@ function transformToGrid(data) {
           ...data.students.map(x => {
             return {
               value: i.marks
-                .find(t => t.id === x.id)
-                .lecturers.find(t => t.id === k.id).value,
+                ?.find(t => t.studentId === x.id)
+                ?.lecturers?.find(t => t.id === k.id)?.value,
               studentId: x.id,
               lecturerId: k.id,
               markColumnId: i.id,
@@ -235,7 +236,12 @@ function transformToGrid(data) {
 
     grid.push([
       { value: 'Total', colSpan: 4, readOnly: true },
-      ...z.total.map(x => ({ value: x, colSpan: 2, readOnly: true })),
+      ...data.students?.map(x => ({
+        value: z?.totalCheckpointStudent?.find(y => y.studentId === x.id)
+          ?.value,
+        colSpan: 2,
+        readOnly: true,
+      })),
       { value: z.totalTeam, readOnly: true },
     ]);
 
@@ -283,6 +289,19 @@ const Topic = ({ semester }) => {
       [action.name]: action.value,
     };
   }, {});
+
+  const fileRef = React.useRef(null);
+  const handleClickFile = React.useCallback(e => {
+    e.preventDefault();
+    fileRef.current.click();
+  }, []);
+
+  const handleFileChange = React.useCallback(event => {
+    setData({
+      value: event.currentTarget.files[0],
+      name: 'attachment',
+    });
+  }, []);
 
   const [teamMembers, setTeamMembers] = React.useState([]);
 
@@ -333,19 +352,34 @@ const Topic = ({ semester }) => {
   const handleUpdate = React.useCallback(
     e => {
       e.preventDefault();
+      const data2 = {
+        ...transformers.up(data),
+        semesterId: Number(semId),
+      };
+
+      const formData = new FormData();
+
+      for (const i of Object.keys(data2)) {
+        if (!data2?.[i]) continue;
+        if (data2[i]?.constructor?.name !== 'File') {
+          formData.append(i, data2[i]);
+        } else {
+          formData.append(i, data2[i], data2[i].name);
+        }
+      }
       request({
         to: endpoints.UPDATE_TOPIC(topicId).url,
         method: endpoints.UPDATE_TOPIC(topicId).method,
         params: {
           topicId,
         },
-        data: transformers.up(data),
+        data: formData,
       })
         .then(loadData)
         .then(() => toast.success('Save topic successfully!'))
         .catch(handleErrors);
     },
-    [data, topicId]
+    [data, semId, topicId]
   );
 
   const handleDelete = React.useCallback(
@@ -391,7 +425,6 @@ const Topic = ({ semester }) => {
           name: 'all',
           value: d,
         });
-        setEvals(transformToGrid(fakeData));
       })
       .catch(err => {
         handleErrors(err);
@@ -449,6 +482,20 @@ const Topic = ({ semester }) => {
       ],
     }));
   }, [setMeta, semId, semester.name, data.name, data.code, topicId]);
+
+  React.useEffect(() => {
+    if (data?.team?.value) {
+      request({
+        to: endpoints.GET_EVALUATION(data.team.value).url,
+        method: endpoints.GET_EVALUATION(data.team.value).method,
+      })
+        .then(res => {
+          setEvals(transformToGrid(res.data.data));
+        })
+        .catch(handleErrors)
+        .finally(() => setIsLoading(false));
+    }
+  }, [data.team]);
 
   return (
     <>
@@ -693,12 +740,31 @@ const Topic = ({ semester }) => {
                 Attachment
               </Form.Label>
               <Col sm={9}>
-                <Form.Control
-                  type="text"
-                  className="form-control form-control-md form-control-solid"
-                  value={data.attachment}
-                  data-name="attachment"
-                  onChange={handleChangeField}
+                <InputGroup
+                  style={{
+                    marginBottom: '-0.5rem',
+                  }}
+                >
+                  <Form.Control
+                    className="form-control form-control-md form-control-solid mb-2"
+                    value={data.attachment?.name}
+                    readOnly
+                  />
+                  <InputGroup.Append
+                    style={{
+                      zIndex: 1,
+                    }}
+                  >
+                    <Button className="form-control" onClick={handleClickFile}>
+                      <i class="fas fa-upload pr-0"></i>
+                    </Button>
+                  </InputGroup.Append>
+                </InputGroup>
+                <Form.File
+                  ref={fileRef}
+                  label={undefined}
+                  onChange={handleFileChange}
+                  className="d-none"
                 />
               </Col>
             </Form.Group>
@@ -869,14 +935,14 @@ const Topic = ({ semester }) => {
               </>
             }
           >
-            <Accordion defaultActiveKey="0">
+            <Accordion>
               {evals?.map((i, index) => (
                 <Card>
                   <Card.Header>
                     <Accordion.Toggle
                       as={Card.Header}
                       variant="span"
-                      eventKey="0"
+                      eventKey={i.name}
                       style={{
                         padding: '1rem',
                         fontSize: '1.25rem',
@@ -900,7 +966,7 @@ const Topic = ({ semester }) => {
                       </small>
                     </Accordion.Toggle>
                   </Card.Header>
-                  <Accordion.Collapse eventKey="0">
+                  <Accordion.Collapse eventKey={i.name}>
                     <Card.Body>
                       <div className="marks-table">
                         <Datasheet
