@@ -231,7 +231,7 @@ export default function Topics({ semester }) {
           topicIds: selected,
           evaluations: data.checkpoints.map(i => ({
             checkpointId: i.id,
-            councilId: i.council.value,
+            councilId: i.council?.value,
             submitDueDate: i.submitDueDate,
             evaluateDueDate: i.evaluateDueDate,
           })),

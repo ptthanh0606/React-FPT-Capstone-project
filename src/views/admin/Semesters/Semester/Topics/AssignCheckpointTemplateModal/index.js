@@ -56,7 +56,7 @@ class CouncilEditor extends React.Component {
     semesterId: 0,
   };
   getValue() {
-    return this.council.value;
+    return this.council?.value;
   }
   render() {
     const { value, onUpdate } = this.props;
@@ -131,7 +131,6 @@ const AssignCheckpointTemplateModal = ({
 
   const handleTableChange = React.useCallback((type, { cellEdit = {} }) => {
     if (type === 'cellEdit') {
-      console.log(cellEdit);
       setCheckpoints(i => {
         const index = i.findIndex(x => x.id === cellEdit.rowId);
         const newI = [...i];

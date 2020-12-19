@@ -1,17 +1,25 @@
 import { addMinutes, format, subMinutes } from 'date-fns';
 
 export function convertDateDown(dateInput) {
-  return format(
-    subMinutes(new Date(dateInput), new Date().getTimezoneOffset()),
-    "yyyy-MM-dd'T'HH:mm:ss.SSS"
-  );
+  try {
+    return format(
+      subMinutes(new Date(dateInput), new Date().getTimezoneOffset()),
+      "yyyy-MM-dd'T'HH:mm:ss.SSS"
+    );
+  } catch (_) {
+    return undefined;
+  }
 }
 
 export function convertDateUp(dateInput) {
-  return format(
-    addMinutes(new Date(dateInput), new Date().getTimezoneOffset()),
-    "yyyy-MM-dd'T'HH:mm:ss.SSS"
-  );
+  try {
+    return format(
+      addMinutes(new Date(dateInput), new Date().getTimezoneOffset()),
+      "yyyy-MM-dd'T'HH:mm:ss.SSS"
+    );
+  } catch (_) {
+    return undefined;
+  }
 }
 
 export function down(i) {
