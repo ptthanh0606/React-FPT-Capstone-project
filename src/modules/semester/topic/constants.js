@@ -165,7 +165,7 @@ export const modalConfigs = [
   },
 ];
 
-export const submitterModalConfigs = [
+export const submitterModalConfigs = semId => [
   {
     name: 'code',
     type: 'text',
@@ -247,6 +247,7 @@ export const submitterModalConfigs = [
         method: endpoints.LIST_TEAM.method,
         params: {
           term: input,
+          semesterId: semId,
           pageSize: 10,
         },
       })

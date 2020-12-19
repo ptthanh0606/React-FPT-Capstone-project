@@ -18,9 +18,12 @@ import {
   JOIN_TEAM,
   LIST_TEAM,
   LIST_TOPIC,
+  LIST_ANNOUNCEMENT,
   READ_TEAM,
 } from 'endpoints';
 import * as TeamTransformer from 'modules/semester/team/transformers';
+import * as AnouncementTransformer from 'modules/semester/announcement/transformers';
+
 import { Button } from 'react-bootstrap';
 import SemesterPhase from 'components/CMSWidgets/SemesterPhase';
 import { handleErrors } from 'utils/common';
@@ -35,8 +38,8 @@ import {
   statusTitles,
 } from 'modules/semester/team/application/constants';
 import { formatRelative, subMinutes } from 'date-fns';
-import { MixedWidget14 } from '_metronic/_partials/widgets';
 import { ProgressChart } from 'components/CMSWidgets/ProgressChart';
+import Engaging from 'components/CMSWidgets/Engaging';
 
 export default React.memo(function LecturerDashboard() {
   const confirm = useConfirm();
@@ -49,6 +52,7 @@ export default React.memo(function LecturerDashboard() {
     setCurrentPublicTeamPreviews,
   ] = React.useState([]);
   const [teamApplications, setTeamApplications] = React.useState([]);
+  const [anouncements, setAnouncements] = React.useState([]);
 
   const [numberOfTeams, setNumberOfTeams] = React.useState(0);
   const [totalTopics, setTotalTopics] = React.useState(0);
@@ -93,9 +97,7 @@ export default React.memo(function LecturerDashboard() {
           history.push(`/team/${res.data.data}`);
           toast.success(`Joined!`);
         })
-        .catch(err => {
-          handleErrors(err);
-        });
+        .catch(err => {});
     },
     [currentSemester.id, history]
   );
@@ -153,9 +155,7 @@ export default React.memo(function LecturerDashboard() {
           res.data?.data?.filter(topic => topic.teamMembers.length === 0).length
         );
       })
-      .catch(err => {
-        handleErrors(err);
-      });
+      .catch(err => {});
   }, [currentSemester.id]);
 
   const fetchOtherTeams = React.useCallback(
@@ -179,7 +179,6 @@ export default React.memo(function LecturerDashboard() {
       })
         .then(res => {
           const transformedRes = res.data?.data?.map(TeamTransformer.down);
-          console.log(transformedRes);
           if (isPublic) {
             setCurrentPublicTeamPreviews(
               transformedRes
@@ -212,7 +211,6 @@ export default React.memo(function LecturerDashboard() {
           setIsProcessing(false);
         })
         .catch(err => {
-          handleErrors(err);
           setIsProcessing(false);
         });
     },
@@ -292,7 +290,20 @@ export default React.memo(function LecturerDashboard() {
     [checkUserInTeam, currentSemester.id, fetchAllTopics, fetchOtherTeams]
   );
 
-  const fetchTeamApplications = React.useCallback(() => {}, []);
+  const fetchAnouncements = React.useCallback(() => {
+    request({
+      to: LIST_ANNOUNCEMENT(currentSemester.id).url,
+      method: LIST_ANNOUNCEMENT(currentSemester.id).method,
+    })
+      .then(res => {
+        setAnouncements(
+          res.data.data
+            .map(AnouncementTransformer.down)
+            .filter(anounce => anounce.role === 0)
+        );
+      })
+      .catch(err => {});
+  }, [currentSemester.id]);
 
   // -------------------------------------------------------------------------
 
@@ -307,7 +318,14 @@ export default React.memo(function LecturerDashboard() {
     checkUserInTeam();
     fetchOtherTeams();
     fetchAllTopics();
-  }, [checkUserInTeam, fetchAllTopics, fetchOtherTeams, setMeta]);
+    fetchAnouncements();
+  }, [
+    checkUserInTeam,
+    fetchAllTopics,
+    fetchAnouncements,
+    fetchOtherTeams,
+    setMeta,
+  ]);
 
   return (
     <>
@@ -322,6 +340,21 @@ export default React.memo(function LecturerDashboard() {
       </div>
       <div className="row">
         <div className="col-lg-12 col-xxl-4">
+          {currentSemester.status === 3 && (
+            <Engaging2
+              className="gutter-b"
+              bgColor="info"
+              bgSize="50%"
+              title="Semester over"
+              textColorTitle="white"
+              textColorSubTitle="white"
+              svgVariant={5}
+              subTitle={
+                <>All activities are finished, all informations are view only</>
+              }
+            />
+          )}
+
           {currentSemester.status !== 3 && (
             <TopicTeamPreview
               className="card-stretch gutter-b"
@@ -422,22 +455,17 @@ export default React.memo(function LecturerDashboard() {
             )}
         </div>
         <div className="col-lg-6 col-xxl-4">
-          <Anouncement
-            body={
-              <>
-                Lorem ipsum dolor sit amet, <br />
-                <br />
-                Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                commodo consequat. <br />
-              </>
-            }
-            date="2020-06-06"
-          />
+          {currentSemester.status !== 3 && (
+            <>
+              <Anouncement announcements={anouncements} />
+            </>
+          )}
           <FlowTimeline className=" gutter-b" />
         </div>
         <div className="col-lg-6 col-xxl-4">
+          {currentSemester.status === 3 && (
+            <Anouncement announcements={anouncements} />
+          )}
           {!isStudentHaveTopic && (
             <div className="row">
               <div

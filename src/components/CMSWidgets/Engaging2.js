@@ -3,7 +3,6 @@ import React from 'react';
 const Engaging2 = ({
   className = '',
   bgColor = '',
-  imageUrl = '',
   title = '',
   textColorTitle = '',
   titleSize = '',

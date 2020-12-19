@@ -13,6 +13,9 @@ export function downList(i) {
           label:
             i?.department?.code ||
             console.log('department code field not found'),
+          fullLabel:
+            i?.department?.name ||
+            console.log('department name field not found'),
           value:
             i?.department?.id || console.log('department id field not found'),
         }

@@ -622,7 +622,7 @@ const Topic = () => {
 
   const handleSubmitReport = React.useCallback(weightData => {
     //
-  });
+  }, []);
 
   const onFeedbackSuccess = React.useCallback(
     e => {
@@ -634,13 +634,26 @@ const Topic = () => {
   const handleConfirmSettingModal = React.useCallback(
     fieldData => {
       setIsProcessing(true);
+
+      fieldData = transformers.up(fieldData);
+
+      const data = new FormData();
+      for (const i of Object.keys(fieldData)) {
+        if (!fieldData?.[i]) continue;
+        if (fieldData[i]?.constructor?.name !== 'File') {
+          data.append(i, fieldData[i]);
+        } else {
+          data.append(i, fieldData[i], fieldData[i].name);
+        }
+      }
+
       request({
         to: endpoints.UPDATE_TOPIC(id).url,
         method: endpoints.UPDATE_TOPIC(id).method,
         params: {
           topicId: id,
         },
-        data: transformers.up(fieldData),
+        data: data,
       })
         .then(res => {
           toast.success('Update topic successfully');
@@ -859,23 +872,6 @@ const Topic = () => {
         case 'lecturer':
           buttons = (
             <>
-              {[0].includes(currentSemester.status) &&
-                [0].includes(currentTopic.status) &&
-                !isUserApprover && (
-                  <>
-                    <span class="svg-icon svg-icon-warning mr-1">
-                      <SVG
-                        src={toAbsoluteUrl(
-                          '/media/svg/icons/Code/Warning-1-circle.svg'
-                        )}
-                      ></SVG>
-                    </span>
-                    <span className="text-warning font-weight-bolder">
-                      This topic is not approved yet to be mentored.
-                    </span>
-                  </>
-                )}
-
               {constants.statusTitles[currentTopic.status] === 'Waiting' &&
                 currentTopic.submitter.value === currentUser.id && (
                   <>
@@ -890,7 +886,9 @@ const Topic = () => {
                     <CMSModal
                       isShowFlg={showUpdate}
                       onHide={() => setShowUpdate(false)}
-                      configs={constants.submitterModalConfigs}
+                      configs={constants.submitterModalConfigs(
+                        currentSemester.id
+                      )}
                       title="Update topic"
                       subTitle="Change this topic info"
                       onConfirmForm={handleConfirmSettingModal}
@@ -935,6 +933,7 @@ const Topic = () => {
     return buttons;
   }, [
     currentRole,
+    currentSemester.id,
     currentSemester.status,
     currentTopic,
     currentUser.id,
@@ -950,7 +949,6 @@ const Topic = () => {
     isTeamApplied,
     isTeamInTopic,
     isTeamLocked,
-    isUserApprover,
     isUserMentor,
     showUpdate,
     updateFieldTemplate,
@@ -1066,6 +1064,7 @@ const Topic = () => {
           }`}
         >
           <TopicDetailCard
+            attachmentLinkName={currentTopic.attachment?.name || ''}
             topicId={currentTopic.id || ''}
             topicCode={currentTopic.code || ''}
             topicName={currentTopic.name || ''}
