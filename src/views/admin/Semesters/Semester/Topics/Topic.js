@@ -453,8 +453,8 @@ const Topic = ({ semester }) => {
       e.preventDefault();
       setIsUpdating(true);
       request({
-        to: endpoints.PUT_EVALUATION(data.team?.value).url,
-        method: endpoints.PUT_EVALUATION(data.team?.value).method,
+        to: endpoints.PUT_EVALUATION(topicId).url,
+        method: endpoints.PUT_EVALUATION(topicId).method,
         data: {
           marks: transformToData(evals),
         },
@@ -466,7 +466,7 @@ const Topic = ({ semester }) => {
         .catch(handleErrors)
         .finally(() => setIsUpdating(false));
     },
-    [data.team, evals]
+    [evals, topicId]
   );
 
   React.useEffect(() => {
@@ -499,18 +499,18 @@ const Topic = ({ semester }) => {
   }, [setMeta, semId, semester.name, data.name, data.code, topicId]);
 
   React.useEffect(() => {
-    if (data?.team?.value) {
+    if (topicId) {
       request({
-        to: endpoints.GET_EVALUATION(data.team.value).url,
-        method: endpoints.GET_EVALUATION(data.team.value).method,
+        to: endpoints.GET_EVALUATION(topicId).url,
+        method: endpoints.GET_EVALUATION(topicId).method,
       })
         .then(res => {
           setEvals(transformToGrid(res.data.data));
         })
-        .catch(handleErrors)
+        .catch(() => {})
         .finally(() => setIsLoading(false));
     }
-  }, [data.team, l2]);
+  }, [l2, topicId]);
 
   return (
     <>
@@ -951,66 +951,72 @@ const Topic = ({ semester }) => {
             }
           >
             <Accordion>
-              {evals?.map((i, index) => (
-                <Card>
-                  <Card.Header>
-                    <Accordion.Toggle
-                      as={Card.Header}
-                      variant="span"
-                      eventKey={i.name}
-                      style={{
-                        padding: '1rem',
-                        fontSize: '1.25rem',
-                      }}
-                    >
-                      {i.name}
-                      <span
-                        class={`label label-inline label-${
-                          constantsCp.statusClasses[i.status]
-                        } font-weight-bold float-right`}
-                        style={{ fontSize: '1.25rem', padding: '1rem' }}
-                      >
-                        {constantsCp.statusTitles[i.status]}
-                      </span>
-                      <small className="form-text text-muted">
-                        Weight: <b>{i.weight}</b>, Submit at:{' '}
-                        <b>{constantsCp.convertDateDown(i.submitDueDate)}</b>,
-                        Evaluate at:{' '}
-                        <b>{constantsCp.convertDateDown(i.evaluateDueDate)}</b>,
-                        by: <b>{i.council.name}</b>
-                      </small>
-                    </Accordion.Toggle>
-                  </Card.Header>
-                  <Accordion.Collapse eventKey={i.name}>
-                    <Card.Body>
-                      <div className="marks-table">
-                        <Datasheet
-                          data={i.grid || []}
-                          valueRenderer={cell => cell.value}
-                          onCellsChanged={changes =>
-                            handleGradeChange(changes, index)
-                          }
-                          dataEditor={props => {
-                            return (
-                              <input
-                                onChange={e =>
-                                  props.onChange(e.currentTarget.value)
-                                }
-                                value={props.value}
-                                onKeyDown={props.onKeyDown}
-                                type="number"
-                                min="0"
-                                max="10"
-                                step="0.01"
-                              />
-                            );
+              {evals?.length > 0
+                ? evals?.map((i, index) => (
+                    <Card>
+                      <Card.Header>
+                        <Accordion.Toggle
+                          as={Card.Header}
+                          variant="span"
+                          eventKey={i.name}
+                          style={{
+                            padding: '1rem',
+                            fontSize: '1.25rem',
                           }}
-                        />
-                      </div>
-                    </Card.Body>
-                  </Accordion.Collapse>
-                </Card>
-              ))}
+                        >
+                          {i.name}
+                          <span
+                            class={`label label-inline label-${
+                              constantsCp.statusClasses[i.status]
+                            } font-weight-bold float-right`}
+                            style={{ fontSize: '1.25rem', padding: '1rem' }}
+                          >
+                            {constantsCp.statusTitles[i.status]}
+                          </span>
+                          <small className="form-text text-muted">
+                            Weight: <b>{i.weight}</b>, Submit at:{' '}
+                            <b>
+                              {constantsCp.convertDateDown(i.submitDueDate)}
+                            </b>
+                            , Evaluate at:{' '}
+                            <b>
+                              {constantsCp.convertDateDown(i.evaluateDueDate)}
+                            </b>
+                            , by: <b>{i.council.name}</b>
+                          </small>
+                        </Accordion.Toggle>
+                      </Card.Header>
+                      <Accordion.Collapse eventKey={i.name}>
+                        <Card.Body>
+                          <div className="marks-table">
+                            <Datasheet
+                              data={i.grid || []}
+                              valueRenderer={cell => cell.value}
+                              onCellsChanged={changes =>
+                                handleGradeChange(changes, index)
+                              }
+                              dataEditor={props => {
+                                return (
+                                  <input
+                                    onChange={e =>
+                                      props.onChange(e.currentTarget.value)
+                                    }
+                                    value={props.value}
+                                    onKeyDown={props.onKeyDown}
+                                    type="number"
+                                    min="0"
+                                    max="10"
+                                    step="0.01"
+                                  />
+                                );
+                              }}
+                            />
+                          </div>
+                        </Card.Body>
+                      </Accordion.Collapse>
+                    </Card>
+                  ))
+                : 'No evaluation data'}
             </Accordion>
           </CMSCard>
         </Col>
