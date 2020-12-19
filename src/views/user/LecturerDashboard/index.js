@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import metaAtom from 'store/meta';
@@ -12,6 +12,7 @@ import { toAbsoluteUrl } from '_metronic/_helpers';
 import {
   CREATE_TOPIC,
   LIST_ANNOUNCEMENT,
+  LIST_TIMELINES,
   LIST_TOPIC,
   READ_LECTURER,
   READ_TOPIC,
@@ -62,40 +63,24 @@ export default React.memo(function LecturerDashboard() {
   // ---------------------------------------------------------------------
 
   const fetchTimelines = React.useCallback(() => {
-    // setIsProcessing(true);
-    // request({
-    //   to: LIST_TOPIC.url,
-    //   method: LIST_TOPIC.method,
-    //   params: {
-    //     pageNumber: 1,
-    //     pageSize: 2,
-    //     semesterId: currentSemester.id,
-    //     departmentId: depId,
-    //     status: 0,
-    //   },
-    // })
-    //   .then(res => {
-    //     if (res.data.data.length) {
-    //       let transformedRes = res?.data?.data
-    //         .map(topicTranformer.downList)
-    //         .map(topic => ({
-    //           labelId: topic.id,
-    //           label: topic.name,
-    //           subLabel: topic.code,
-    //           emailAvatar: '',
-    //           altLabel: topic.submitter.label,
-    //           altLabelLinkTo: `/profile/lecturer/${topic.submitter.value}`,
-    //           altLabelExtended: 'Submit by',
-    //           darkMode: true,
-    //         }));
-    //       setTopicNeedFeedback(old => [...old, ...transformedRes]);
-    //       setIsProcessing(false);
-    //     }
-    //   })
-    //   .catch(err => {
-    //     handleErrors(err);
-    //   });
-  }, []);
+    setIsProcessing(true);
+    request({
+      to: LIST_TIMELINES(currentSemester.id).url,
+      method: LIST_TIMELINES(currentSemester.id).method,
+      params: {
+        departmentId: 1,
+      },
+    })
+      .then(res => {
+        console.log(res.data.data);
+        if (res.data.data) {
+          setIsProcessing(false);
+        }
+      })
+      .catch(err => {
+        handleErrors(err);
+      });
+  }, [currentSemester.id]);
 
   const fetchTopicApplications = React.useCallback(id => {
     if (id) {
@@ -154,7 +139,7 @@ export default React.memo(function LecturerDashboard() {
               .map(topic => ({
                 labelId: topic.id,
                 label: topic.name,
-                subLabel: topic.code,
+                subLabel: topic.department.fullLabel,
                 emailAvatar: '',
                 altLabel: topic.submitter.label,
                 altLabelLinkTo: `/profile/lecturer/${topic.submitter.value}`,
@@ -513,7 +498,7 @@ export default React.memo(function LecturerDashboard() {
                       '/media/svg/icons/Design/Join-1.svg'
                     ),
                     label: 'Apply for mentor',
-                    onClick: () => history.push('/topic'),
+                    onClick: () => history.push('/topic?type=applymentor'),
                   },
                   {
                     className: 'col px-6 py-8 rounded-xl mb-7',
@@ -542,6 +527,9 @@ export default React.memo(function LecturerDashboard() {
                   rows={topicNeedFeedback}
                   darkMode={true}
                   isLoading={isProcessing}
+                  toolBar={
+                    <Link to={`/topic?type=needfeedback`}>View all</Link>
+                  }
                 />
               ) : (
                 <Engaging2
@@ -586,7 +574,26 @@ export default React.memo(function LecturerDashboard() {
           )}
 
           {[0, 3].includes(currentSemester.status) && (
-            <FlowTimeline className="gutter-b" items={flowTimelines} />
+            <FlowTimeline
+              className="gutter-b"
+              items={flowTimelines}
+              toolBar={
+                <DropdownPopover
+                  value={topicType}
+                  items={[
+                    {
+                      label: 'Submitted',
+                      value: 'Submitted',
+                    },
+                    {
+                      label: 'Mentoring',
+                      value: 'Mentoring',
+                    },
+                  ]}
+                  onChange={value => setTopicType(value)}
+                />
+              }
+            />
           )}
         </div>
 
@@ -665,7 +672,7 @@ export default React.memo(function LecturerDashboard() {
       <CMSModal
         isShowFlg={showCreate}
         onHide={() => setShowCreate(false)}
-        configs={constants.submitterModalConfigs}
+        configs={constants.submitterModalConfigs(currentSemester.id)}
         title="Create new topic"
         subTitle="Submit new topic to this capstone semester"
         onConfirmForm={handleCreate}

@@ -409,7 +409,7 @@ const Team = () => {
             <Engaging
               className="gutter-b card-stretch"
               bgColor="#FFF4DE"
-              imageUrl="/media/svg/humans/custom-7.svg"
+              imageUrl="/media/svg/humans/custom-5.svg"
               textColorTitle="danger"
               textColorSubTitle="dark"
               bgSize="100%"
@@ -417,7 +417,7 @@ const Team = () => {
               title="You have no team"
               action={
                 <Link
-                  to="/team"
+                  to="/team?type=teamguide"
                   className="btn btn-danger font-weight-bold py-2 px-6 mt-3"
                 >
                   Take me there

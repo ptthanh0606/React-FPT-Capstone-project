@@ -29,8 +29,14 @@ import { Button } from 'react-bootstrap';
 import Engaging from 'components/CMSWidgets/Engaging';
 import MessageTile from 'components/CMSWidgets/MessageTile';
 import { toAbsoluteUrl } from '_metronic/_helpers';
+import { useLocation } from 'react-router-dom';
+import queryString from 'query-string';
 
 export default function Topics() {
+  const location = useLocation();
+
+  // ---------------------------------------------------------------------------
+
   const setMeta = useSetRecoilState(metaAtom);
   const semester = useRecoilValue(semesterStore);
   const currentUser = useRecoilValue(userAtom);
@@ -64,6 +70,8 @@ export default function Topics() {
   const [isSubmittedTopics, setIsSubmittedTopics] = React.useState(false);
   const [isStudentHaveTeam, setIsStudentHaveTeam] = React.useState(false);
   const [isStudentHaveTopic, setIsStudentHaveTopic] = React.useState(false);
+  const [isFromNeedFeedback, setIsFromNeedFeedback] = React.useState(false);
+  const [isFromApplyMentor, setIsFromApplyMentor] = React.useState(false);
 
   // ---------------------------------------------------------------------------
 
@@ -183,6 +191,9 @@ export default function Topics() {
           toast.success('Create topic successfully');
           setShowCreate(false);
           setFieldTemplate({});
+          setIsMentoringTopics(false);
+          setIsSubmittedTopics(true);
+          setIsAllTopics(false);
           loadTopics('all');
           let currentState = 'all';
           if (isMentoringTopics) {
@@ -249,7 +260,7 @@ export default function Topics() {
     if (role === 'student') {
       checkUserInTeam();
     }
-  }, [checkUserInTeam, loadTopics, role]);
+  }, [checkUserInTeam, loadTopics, location.search, role]);
 
   React.useEffect(() => {
     setMeta(meta => ({
@@ -269,7 +280,7 @@ export default function Topics() {
               className="btn btn-primary font-weight-bold"
               onClick={showCreateModal}
             >
-              <i className="fas fa-plus mr2"></i>
+              <i className="fas fa-paper-plane mr-2"></i>
               Submit
             </button>
           ) : null}
@@ -278,8 +289,55 @@ export default function Topics() {
     }));
   }, [role, semester.name, semester.status, setMeta, showCreateModal]);
 
+  React.useEffect(() => {
+    const messageType = queryString.parse(location.search).type;
+    switch (messageType) {
+      case 'needfeedback':
+        setIsFromNeedFeedback(true);
+        break;
+      case 'applymentor':
+        setIsFromApplyMentor(true);
+        break;
+
+      default:
+        break;
+    }
+  }, [location.search]);
+
   return (
     <>
+      {isFromNeedFeedback && (
+        <MessageTile
+          iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Info-circle.svg')}
+          content={
+            <>
+              Select your assigned department with topic status <b>"Waiting"</b>{' '}
+              filters to start feedback.
+            </>
+          }
+          baseColor="info"
+          className="gutter-b"
+        />
+      )}
+
+      {isFromApplyMentor && (
+        <Engaging
+          className="gutter-b"
+          bgColor="#8950FC"
+          bgSize="40%"
+          title="Quick guide"
+          textColorTitle="white"
+          textColorSubTitle="white"
+          imageUrl="/media/svg/humans/custom-8.svg"
+          subTitle={
+            <>
+              Pick a topic with status <b>"Approved"</b> and apply to become a
+              mentor.
+            </>
+          }
+        />
+      )}
+
       {role === 'student' && isStudentHaveTeam && !isStudentHaveTopic && (
         <Engaging
           className="gutter-b"
@@ -305,6 +363,7 @@ export default function Topics() {
           iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Info-circle.svg')}
           content={
             <>
+              Looks like you are not in a team yet...
               <b>Create a team</b> or <b>join a team</b> to start assigning for
               topic!
             </>
@@ -371,7 +430,7 @@ export default function Topics() {
         <CMSModal
           isShowFlg={showCreate}
           onHide={hideCreateModal}
-          configs={constants.submitterModalConfigs}
+          configs={constants.submitterModalConfigs(semester.id)}
           title="Create new topic"
           subTitle="Submit new topic to this capstone semester"
           onConfirmForm={handleCreate}

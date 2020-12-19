@@ -118,7 +118,9 @@ export default React.memo(function LecturerDashboard() {
             history.push(`/team/${id}`);
             toast.success(`Joined, you are now a member of ${name}!`);
           })
-          .catch(err => {});
+          .catch(err => {
+            handleErrors(err);
+          });
       };
     },
     [currentSemester.id, history]

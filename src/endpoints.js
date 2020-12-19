@@ -242,6 +242,13 @@ export const DELETE_ANNOUNCEMENT = id => ({
 
 // -----------------------------------------------------------------------------
 
+export const LIST_TIMELINES = id => ({
+  url: READ_SEMESTER(id).url + '/timelines',
+  method: METHOD.GET,
+});
+
+// -----------------------------------------------------------------------------
+
 export const LIST_STUDENT = {
   url: config.api + 'students',
   method: METHOD.GET,

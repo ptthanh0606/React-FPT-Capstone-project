@@ -886,7 +886,9 @@ const Topic = () => {
                     <CMSModal
                       isShowFlg={showUpdate}
                       onHide={() => setShowUpdate(false)}
-                      configs={constants.submitterModalConfigs}
+                      configs={constants.submitterModalConfigs(
+                        currentSemester.id
+                      )}
                       title="Update topic"
                       subTitle="Change this topic info"
                       onConfirmForm={handleConfirmSettingModal}
@@ -931,6 +933,7 @@ const Topic = () => {
     return buttons;
   }, [
     currentRole,
+    currentSemester.id,
     currentSemester.status,
     currentTopic,
     currentUser.id,

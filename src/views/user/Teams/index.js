@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 
 import * as endpoints from 'endpoints';
 import * as transformers from 'modules/semester/team/transformers';
@@ -31,9 +31,12 @@ import { useDebounce } from 'use-debounce/lib';
 import { handleErrors } from 'utils/common';
 import request from 'utils/request';
 import useConfirm from 'utils/confirm';
+import queryString from 'query-string';
+import Engaging from 'components/CMSWidgets/Engaging';
 
 export default function Teams() {
   const history = useHistory();
+  const location = useLocation();
   const confirm = useConfirm();
   const [l, loadData] = React.useReducer(() => ({}), {});
   // ------------------------------------------------------------------
@@ -63,6 +66,7 @@ export default function Teams() {
 
   const currentRole = useRecoilValue(role);
   const [joinTeamModalShowFlg, setJoinTeamModalShowFlg] = React.useState(false);
+  const [isFromTeamGuide, setIsFromTeamGuide] = React.useState(false);
 
   const [
     showCreateStudentTeamModalFlg,
@@ -290,60 +294,94 @@ export default function Teams() {
     fetchTeams();
   }, [l, fetchTeams]);
 
+  React.useEffect(() => {
+    const messageType = queryString.parse(location.search).type;
+    switch (messageType) {
+      case 'teamguide':
+        setIsFromTeamGuide(true);
+        break;
+
+      default:
+        break;
+    }
+  }, [location.search]);
+
   return (
-    <Card>
-      <CardHeader title="All teams">
-        <CardHeaderToolbar className="text-nowrap"></CardHeaderToolbar>
-      </CardHeader>
-      <CardBody>
-        <Filters filters={filters} setFilters={setFilters} />
-        <Table
-          columns={columns}
-          data={data}
-          total={total}
-          isLoading={isLoading}
-          selected={selected}
-          setSelected={setSelected}
-          page={page}
-          setPage={setPage}
-          pageSize={pageSize}
-          setPageSize={setPageSize}
-          sortField={sortField}
-          setSortField={setSortField}
-          sortOrder={sortOrder}
-          setSortOrder={setSortOrder}
-          defaultSorted={defaultSorted}
-          pageSizeList={sizePerPageList}
+    <>
+      {isFromTeamGuide && (
+        <>
+          <Engaging
+            className="gutter-b"
+            bgColor="#FFF4DE"
+            bgSize="90%"
+            title="Quick guide"
+            textColorTitle="danger"
+            textColorSubTitle="dark"
+            imageUrl="/media/svg/humans/custom-2.svg"
+            subTitle={
+              <>
+                Select 1 of the 2 options above to be a member of a team.
+                <br />
+                You can either <b>Join</b> or <b>Create a team</b> to start.
+              </>
+            }
+          />
+        </>
+      )}
+      <Card>
+        <CardHeader title="All teams">
+          <CardHeaderToolbar className="text-nowrap"></CardHeaderToolbar>
+        </CardHeader>
+        <CardBody>
+          <Filters filters={filters} setFilters={setFilters} />
+          <Table
+            columns={columns}
+            data={data}
+            total={total}
+            isLoading={isLoading}
+            selected={selected}
+            setSelected={setSelected}
+            page={page}
+            setPage={setPage}
+            pageSize={pageSize}
+            setPageSize={setPageSize}
+            sortField={sortField}
+            setSortField={setSortField}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            defaultSorted={defaultSorted}
+            pageSizeList={sizePerPageList}
+          />
+        </CardBody>
+        <CMSModal
+          isShowFlg={showCreateStudentTeamModalFlg}
+          onHide={handleHideCreateStudentTeamModal}
+          title="Create your team"
+          subTitle="Before you can match a topic in this semester is you have to have a team"
+          configs={modalConfigs}
+          fieldTemplate={fieldTemplate}
+          onConfirmForm={handleConfirmCreate}
+          isProcessing={isProcessing}
         />
-      </CardBody>
-      <CMSModal
-        isShowFlg={showCreateStudentTeamModalFlg}
-        onHide={handleHideCreateStudentTeamModal}
-        title="Create your team"
-        subTitle="Before you can match a topic in this semester is you have to have a team"
-        configs={modalConfigs}
-        fieldTemplate={fieldTemplate}
-        onConfirmForm={handleConfirmCreate}
-        isProcessing={isProcessing}
-      />
-      <CMSModal
-        isShowFlg={joinTeamModalShowFlg}
-        onHide={() => setJoinTeamModalShowFlg(false)}
-        title="Join team with code"
-        fieldTemplate={{
-          code: '',
-        }}
-        configs={[
-          {
-            type: 'text',
-            name: 'code',
-            label: 'Code',
-            smallLabel: 'Enter team code to quickly join a team',
-          },
-        ]}
-        onConfirmForm={handleJoinWithCode}
-        primaryButtonLabel="Join"
-      />
-    </Card>
+        <CMSModal
+          isShowFlg={joinTeamModalShowFlg}
+          onHide={() => setJoinTeamModalShowFlg(false)}
+          title="Join team with code"
+          fieldTemplate={{
+            code: '',
+          }}
+          configs={[
+            {
+              type: 'text',
+              name: 'code',
+              label: 'Code',
+              smallLabel: 'Enter team code to quickly join a team',
+            },
+          ]}
+          onConfirmForm={handleJoinWithCode}
+          primaryButtonLabel="Join"
+        />
+      </Card>
+    </>
   );
 }
