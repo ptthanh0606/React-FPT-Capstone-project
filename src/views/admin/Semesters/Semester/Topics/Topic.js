@@ -267,7 +267,7 @@ function transformToData(data) {
   for (const k of data) {
     for (const i of k.grid) {
       for (const j of i) {
-        if (j.readOnly !== true) marks.push(j);
+        if (j.readOnly !== true && j.value) marks.push(j);
       }
     }
   }
@@ -279,9 +279,11 @@ const Topic = ({ semester }) => {
   const history = useHistory();
   const setMeta = useSetRecoilState(metaAtom);
   const [l, loadData] = React.useReducer(() => ({}), {});
+  const [l2, loadData2] = React.useReducer(() => ({}), {});
   const confirm = useConfirm();
   const [evals, setEvals] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isUpdating, setIsUpdating] = React.useState(false);
   const [data, setData] = React.useReducer((state, action) => {
     if (action.name === 'all') return { ...state, ...action.value };
     return {
@@ -449,9 +451,22 @@ const Topic = ({ semester }) => {
   const onSaveEvals = React.useCallback(
     e => {
       e.preventDefault();
-      console.log(transformToData(evals));
+      setIsUpdating(true);
+      request({
+        to: endpoints.PUT_EVALUATION(data.team?.value).url,
+        method: endpoints.PUT_EVALUATION(data.team?.value).method,
+        data: {
+          marks: transformToData(evals),
+        },
+      })
+        .then(res => {
+          toast.success('Updated');
+          loadData2();
+        })
+        .catch(handleErrors)
+        .finally(() => setIsUpdating(false));
     },
-    [evals]
+    [data.team, evals]
   );
 
   React.useEffect(() => {
@@ -495,7 +510,7 @@ const Topic = ({ semester }) => {
         .catch(handleErrors)
         .finally(() => setIsLoading(false));
     }
-  }, [data.team]);
+  }, [data.team, l2]);
 
   return (
     <>
@@ -928,7 +943,7 @@ const Topic = ({ semester }) => {
             title="Evaluations"
             toolbar={
               <>
-                <Button>
+                <Button isLoading={isUpdating}>
                   <i className="fas fa-trash mr-2" onClick={onSaveEvals}></i>
                   Save
                 </Button>
