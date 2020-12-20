@@ -154,7 +154,7 @@ const TopicTeamPreview = ({
             />
           )}
 
-          {!isStudentHaveTeam && (
+          {[0, 1].includes(currentSemester.status) && !isStudentHaveTeam && (
             <MessageTile
               className="m-0"
               iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Info-circle.svg')}
@@ -164,6 +164,15 @@ const TopicTeamPreview = ({
                   for topic!
                 </>
               }
+              baseColor="warning"
+            />
+          )}
+
+          {[2, 3].includes(currentSemester.status) && !isStudentHaveTeam && (
+            <MessageTile
+              className="m-0"
+              iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Info-circle.svg')}
+              content={<>Capstone semester is running...</>}
               baseColor="warning"
             />
           )}

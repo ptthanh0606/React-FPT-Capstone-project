@@ -367,35 +367,35 @@ export default React.memo(function LecturerDashboard() {
         setFlowTimelines(timelineTransformer.down(res.data.data));
       })
       .catch(err => {
-        handleErrors(err);
+        setFlowTimelines([]);
       });
-    setFlowTimelines([
-      {
-        date: '2020-12-19T10:24:21.722Z',
-        content: <div className="pl-3">Start preparing phase</div>,
-        type: 'success',
-      },
-      {
-        date: '2020-12-19T10:24:21.722Z',
-        content: <div className="pl-3">Reports due date for Checkpoint 1</div>,
-        type: 'danger',
-      },
-      {
-        date: '2020-12-19T10:24:21.722Z',
-        content: (
-          <div className="pl-3">
-            Checkpoint 1 meeting for evaluation with Lam Huu Khanh Phuong, Tran
-            Tuan Anh
-          </div>
-        ),
-        type: 'info',
-      },
-      {
-        date: '2020-12-19T10:24:21.722Z',
-        content: <div className="pl-3">Semester end</div>,
-        type: 'success',
-      },
-    ]);
+    // setFlowTimelines([
+    //   {
+    //     date: '2020-12-19T10:24:21.722Z',
+    //     content: <div className="pl-3">Start preparing phase</div>,
+    //     type: 'success',
+    //   },
+    //   {
+    //     date: '2020-12-19T10:24:21.722Z',
+    //     content: <div className="pl-3">Reports due date for Checkpoint 1</div>,
+    //     type: 'danger',
+    //   },
+    //   {
+    //     date: '2020-12-19T10:24:21.722Z',
+    //     content: (
+    //       <div className="pl-3">
+    //         Checkpoint 1 meeting for evaluation with Lam Huu Khanh Phuong, Tran
+    //         Tuan Anh
+    //       </div>
+    //     ),
+    //     type: 'info',
+    //   },
+    //   {
+    //     date: '2020-12-19T10:24:21.722Z',
+    //     content: <div className="pl-3">Semester end</div>,
+    //     type: 'success',
+    //   },
+    // ]);
   }, [currentSemester.id]);
 
   React.useEffect(() => {
@@ -450,7 +450,7 @@ export default React.memo(function LecturerDashboard() {
             />
           )}
 
-          {currentSemester.status !== 3 && !isStudentHaveTeam && (
+          {[0, 1].includes(currentSemester.status) && !isStudentHaveTeam && (
             <QuickAction
               className="gutter-b"
               title="Quick team actions"
@@ -545,7 +545,7 @@ export default React.memo(function LecturerDashboard() {
               <Anouncement announcements={anouncements} />
             </>
           )}
-          <FlowTimeline className=" gutter-b" items={flowTimelines} />
+          <FlowTimeline className=" gutter-b" items={flowTimelines || []} />
         </div>
         <div className="col-lg-6 col-xxl-4">
           {currentSemester.status === 3 && (
@@ -615,7 +615,7 @@ export default React.memo(function LecturerDashboard() {
             />
           )}
 
-          {currentSemester.status !== 3 &&
+          {![2, 3].includes(currentSemester.status) &&
             !isStudentHaveTeam &&
             !isStudentHaveTopic && (
               <CMSList

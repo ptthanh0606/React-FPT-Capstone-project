@@ -867,7 +867,8 @@ const Topic = () => {
             )}
 
             {currentSemester.status === 2 &&
-              [4, 5, 6].includes(currentTopic.status) && (
+              [4, 5, 6].includes(currentTopic.status) &&
+              (isUserMentor || isTeamInTopic) && (
                 <div className="col-lg-6 col-xxl-12">
                   <GroupCard
                     className="gutter-b"
