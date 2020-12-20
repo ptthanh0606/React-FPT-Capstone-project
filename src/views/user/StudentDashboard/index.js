@@ -20,9 +20,11 @@ import {
   LIST_TOPIC,
   LIST_ANNOUNCEMENT,
   READ_TEAM,
+  LIST_TIMELINES,
 } from 'endpoints';
 import * as TeamTransformer from 'modules/semester/team/transformers';
 import * as AnouncementTransformer from 'modules/semester/announcement/transformers';
+import * as timelineTransformer from 'modules/timelines/transformers';
 
 import { Button } from 'react-bootstrap';
 import SemesterPhase from 'components/CMSWidgets/SemesterPhase';
@@ -317,6 +319,15 @@ export default React.memo(function LecturerDashboard() {
   }, [setMeta]);
 
   React.useEffect(() => {
+    request({
+      to: LIST_TIMELINES(currentSemester.id).url,
+      method: LIST_TIMELINES(currentSemester.id).method,
+    })
+      .then(res => {
+        console.log(res.data.data);
+        setFlowTimelines(timelineTransformer.down(res.data.data));
+      })
+      .catch(err => {});
     setFlowTimelines([
       {
         date: '2020-12-19T10:24:21.722Z',
@@ -344,7 +355,7 @@ export default React.memo(function LecturerDashboard() {
         type: 'success',
       },
     ]);
-  }, []);
+  }, [currentSemester.id]);
 
   React.useEffect(() => {
     checkUserInTeam();

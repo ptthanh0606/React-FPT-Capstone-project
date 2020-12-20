@@ -2,23 +2,27 @@ import React from 'react';
 import { statusCSS } from './constants';
 
 export function down(i) {
-  let content = '';
-  if (i.status === 0) {
-    content = '';
-  } else if (i.status === 1) {
-    content = <>Reports due date for {i?.name}</>;
-  } else if (i.status === 2) {
-    content = (
-      <>
-        Checkpoint 1 meeting for evaluation with{' '}
-        {i?.council?.members?.map(member => member.name + ' ')}
-      </>
-    );
-  } else console.log('status field not found');
-
-  return {
-    date: '',
-    type: statusCSS[i?.status],
-    content: content,
-  };
+  return [
+    {
+      date:
+        i?.semester?.assigningDate ||
+        console.log('Assigning date field not found'),
+      type: statusCSS[0],
+      content: 'Start assigning phase',
+    },
+    {
+      date:
+        i?.semester?.assigningDate ||
+        console.log('Inprogress date field not found'),
+      type: statusCSS[0],
+      content: 'Start In-progress phase',
+    },
+    {
+      date:
+        i?.semester?.assigningDate ||
+        console.log('finished date field not found'),
+      type: statusCSS[0],
+      content: 'Capstone semester end',
+    },
+  ];
 }
