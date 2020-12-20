@@ -1,16 +1,21 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 import { toAbsoluteUrl } from '_metronic/_helpers';
-import SVG from 'react-inlinesvg';
-import { OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap';
-import FeedbackSection from './FeedbackSection';
+import md5 from 'utils/md5';
+
 import * as constants from 'modules/semester/topic/constants';
 import * as semesterConstants from 'modules/semester/constants';
-import md5 from 'utils/md5';
+
+import { useRecoilValue } from 'recoil';
 import userAtom from 'store/user';
 import semesterAtom from 'store/semester';
-import { useRecoilValue } from 'recoil';
-import { Link } from 'react-router-dom';
+import { role } from 'auth/recoil/selectors';
+
+import { OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap';
+import SVG from 'react-inlinesvg';
 import ReactMarkdown from 'react-markdown';
+import FeedbackSection from './FeedbackSection';
 import GradingSection from './GradingSection';
 
 const TopicDetailCard = ({
@@ -38,6 +43,7 @@ const TopicDetailCard = ({
 }) => {
   const currentUser = useRecoilValue(userAtom);
   const currentSemester = useRecoilValue(semesterAtom);
+  const currentRole = useRecoilValue(role);
 
   // -----------------------------------------------------------------------------
 
@@ -270,7 +276,7 @@ const TopicDetailCard = ({
                 {['Assigned', 'Passed', 'Failed'].includes(
                   constants.statusTitles[status]
                 ) &&
-                  isUserMentor && (
+                  currentRole === 'lecturer' && (
                     <GradingSection
                       evaluations={evaluations || []}
                       isUserMentor={isUserMentor}
@@ -291,8 +297,12 @@ const TopicDetailCard = ({
           </>
         ) : (
           <div className="d-flex align-items-center">
-            <Spinner className="mr-5" animation="border"></Spinner>
-            <span className="text">Loading...</span>
+            <Spinner
+              className="mr-5"
+              animation="border"
+              variant="primary"
+            ></Spinner>
+            <span className="text text-primary">Loading...</span>
           </div>
         )}
       </div>

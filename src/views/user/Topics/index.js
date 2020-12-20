@@ -194,17 +194,12 @@ export default function Topics() {
           setIsMentoringTopics(false);
           setIsSubmittedTopics(true);
           setIsAllTopics(false);
-          loadTopics('all');
-          let currentState = 'all';
-          if (isMentoringTopics) {
-            currentState = 'mentoring';
-          } else currentState = 'submitted';
-          loadTopics(currentState);
+          loadTopics('submitted');
         })
         .catch(handleErrors)
         .finally(() => setIsProcessing(false));
     },
-    [currentUser.id, isMentoringTopics, loadTopics, semester.id]
+    [currentUser.id, loadTopics, semester.id]
   );
 
   const handleLoadAllSubmitted = React.useCallback(() => {
@@ -324,7 +319,7 @@ export default function Topics() {
         <Engaging
           className="gutter-b"
           bgColor="#8950FC"
-          bgSize="40%"
+          bgSize="25%"
           title="Quick guide"
           textColorTitle="white"
           textColorSubTitle="white"
@@ -342,7 +337,7 @@ export default function Topics() {
         <Engaging
           className="gutter-b"
           bgColor="#8950FC"
-          bgSize="40%"
+          bgSize="25%"
           title="Quick guide"
           textColorTitle="white"
           textColorSubTitle="white"
@@ -372,6 +367,22 @@ export default function Topics() {
           className="gutter-b"
         />
       )}
+      {semester.status === 0 &&
+        role === 'student' &&
+        isStudentHaveTeam &&
+        isStudentHaveTopic && (
+          <MessageTile
+            iconSrc={toAbsoluteUrl('/media/svg/icons/Code/Info-circle.svg')}
+            content={
+              <>
+                Topics are now in processing, wait for the next phase of
+                semester to view and send applications.
+              </>
+            }
+            baseColor="info"
+            className="gutter-b"
+          />
+        )}
       <Card>
         <CardHeader title="All topics">
           {role === 'lecturer' && (

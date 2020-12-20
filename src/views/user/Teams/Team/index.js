@@ -409,10 +409,10 @@ const Team = () => {
             <Engaging
               className="gutter-b card-stretch"
               bgColor="#FFF4DE"
-              imageUrl="/media/svg/humans/custom-5.svg"
+              imageUrl="/media/svg/illustrations/login-visual-2.svg"
               textColorTitle="danger"
               textColorSubTitle="dark"
-              bgSize="100%"
+              bgSize="50%"
               titleSize="h1"
               title="You have no team"
               action={
@@ -527,7 +527,7 @@ const Team = () => {
                   <div className="d-flex justify-content-between card-spacer flex-grow-1">
                     <div className="d-flex flex-column mr-2">
                       <span className="text-dark-75 font-weight-bolder font-size-h5">
-                        Applications
+                        Applications history
                       </span>
                       <span className="text-muted font-weight-bold mt-2">
                         Topic that this team applied

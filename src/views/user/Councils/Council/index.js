@@ -18,6 +18,8 @@ import { role } from 'auth/recoil/selectors';
 import CMSAnotherList from 'components/CMSAnotherList';
 import { useHistory, useParams } from 'react-router-dom';
 import { down } from 'modules/semester/council/transformers';
+import MessageTile from 'components/CMSWidgets/MessageTile';
+import { toAbsoluteUrl } from '_metronic/_helpers';
 
 const Council = () => {
   const history = useHistory();
@@ -97,26 +99,7 @@ const Council = () => {
       ],
       toolbar: currentRole === 'lecturer' &&
         isUserInCouncil &&
-        isUserLeadCouncil && (
-          <>
-            {/* <button
-            type="button"
-            onClick={showUpdateModal}
-            className="btn btn-primary font-weight-bold btn-sm btn-light mr-2"
-          >
-            <i className="fas fa-cog mr-2"></i>
-            Settings
-          </button>
-          <Update
-            isShowFlg={showUpdate}
-            setIsShowFlg={setShowUpdate}
-            onHide={hideUpdateModal}
-            onConfirmForm={edit}
-            isProcessing={isProcessing}
-            fieldTemplate={updateFieldTemplate}
-          /> */}
-          </>
-        ),
+        isUserLeadCouncil && <></>,
     });
   }, [
     currenSem.name,
@@ -204,7 +187,7 @@ const Council = () => {
         </div>
       </div>
       <div className="row">
-        <div className="col-lg-12 col-xxl-9">
+        <div className={`col-lg-12 col-xxl-${isUserInCouncil ? '9' : '12'}`}>
           <Row>
             {(currentCouncil?.members?.length &&
               currentCouncil?.members
@@ -220,7 +203,18 @@ const Council = () => {
                       roleProp="lecturer"
                     />
                   </Col>
-                ))) || <Col>No member</Col>}
+                ))) || (
+              <Col xl={12}>
+                <MessageTile
+                  iconSrc={toAbsoluteUrl(
+                    '/media/svg/icons/Code/Info-circle.svg'
+                  )}
+                  content={<>There is no members in this group.</>}
+                  baseColor="warning"
+                  className="gutter-b"
+                />
+              </Col>
+            )}
             {(currentCouncil?.members?.length &&
               currentCouncil?.members
                 .filter(({ isLeader }) => isLeader !== true)
@@ -239,16 +233,17 @@ const Council = () => {
                 ))) || <Col></Col>}
           </Row>
         </div>
-        <div className="col-lg-12 col-xxl-3">
-          {currentRole === 'lecturer' && (
+
+        {currentRole === 'lecturer' && isUserInCouncil && (
+          <div className="col-lg-12 col-xxl-3">
             <CMSAnotherList
               className="gutter-b"
               title="Topic need evaluate"
               rows={incomingTopic}
               darkMode={true}
             />
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </>
   );

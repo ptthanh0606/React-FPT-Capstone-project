@@ -28,13 +28,14 @@ const TeamHeader = ({
                               <Spinner
                                 className="font-size-h5"
                                 animation="border"
+                                variant="primary"
                               />
                             </>
                           )}
                         </span>
                       </div>
 
-                      <div className="d-flex flex-wrap my-2 align-items-center">
+                      <div className="d-flex flex-wrap mt-5 align-items-center">
                         {department && (
                           <OverlayTrigger
                             placement="bottom"
@@ -52,7 +53,7 @@ const TeamHeader = ({
                         {teamType && (
                           <OverlayTrigger
                             placement="bottom"
-                            overlay={<Tooltip>Is this team private</Tooltip>}
+                            overlay={<Tooltip>Visibility</Tooltip>}
                           >
                             <div className="d-flex align-items-center mr-10">
                               <i class="fas fa-shield-alt icon-md mr-2" />
@@ -73,7 +74,7 @@ const TeamHeader = ({
                   {withTopic && (
                     <>
                       <div className="separator separator-solid my-7"></div>
-                      <span className="text-muted font-size-h6 font-weight-bolder">
+                      <span className="text-muted font-size-md font-weight-bolder">
                         {`Assigned to`}{' '}
                       </span>
                       <div className="d-flex align-items-center justify-content-between flex-wrap">

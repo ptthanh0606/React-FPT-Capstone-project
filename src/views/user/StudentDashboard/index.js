@@ -20,9 +20,11 @@ import {
   LIST_TOPIC,
   LIST_ANNOUNCEMENT,
   READ_TEAM,
+  LIST_TIMELINES,
 } from 'endpoints';
 import * as TeamTransformer from 'modules/semester/team/transformers';
 import * as AnouncementTransformer from 'modules/semester/announcement/transformers';
+import * as timelineTransformer from 'modules/timelines/transformers';
 
 import { Button } from 'react-bootstrap';
 import SemesterPhase from 'components/CMSWidgets/SemesterPhase';
@@ -39,7 +41,6 @@ import {
 } from 'modules/semester/team/application/constants';
 import { formatRelative, subMinutes } from 'date-fns';
 import { ProgressChart } from 'components/CMSWidgets/ProgressChart';
-import Engaging from 'components/CMSWidgets/Engaging';
 
 export default React.memo(function LecturerDashboard() {
   const confirm = useConfirm();
@@ -53,6 +54,7 @@ export default React.memo(function LecturerDashboard() {
   ] = React.useState([]);
   const [teamApplications, setTeamApplications] = React.useState([]);
   const [anouncements, setAnouncements] = React.useState([]);
+  const [flowTimelines, setFlowTimelines] = React.useState([]);
 
   const [numberOfTeams, setNumberOfTeams] = React.useState(0);
   const [totalTopics, setTotalTopics] = React.useState(0);
@@ -97,7 +99,9 @@ export default React.memo(function LecturerDashboard() {
           history.push(`/team/${res.data.data}`);
           toast.success(`Joined!`);
         })
-        .catch(err => {});
+        .catch(err => {
+          handleErrors(err);
+        });
     },
     [currentSemester.id, history]
   );
@@ -315,6 +319,47 @@ export default React.memo(function LecturerDashboard() {
   }, [setMeta]);
 
   React.useEffect(() => {
+    request({
+      to: LIST_TIMELINES(currentSemester.id).url,
+      method: LIST_TIMELINES(currentSemester.id).method,
+    })
+      .then(res => {
+        console.log(res.data.data);
+        setFlowTimelines(timelineTransformer.down(res.data.data));
+      })
+      .catch(err => {
+        handleErrors(err);
+      });
+    setFlowTimelines([
+      {
+        date: '2020-12-19T10:24:21.722Z',
+        content: <div className="pl-3">Start preparing phase</div>,
+        type: 'success',
+      },
+      {
+        date: '2020-12-19T10:24:21.722Z',
+        content: <div className="pl-3">Reports due date for Checkpoint 1</div>,
+        type: 'danger',
+      },
+      {
+        date: '2020-12-19T10:24:21.722Z',
+        content: (
+          <div className="pl-3">
+            Checkpoint 1 meeting for evaluation with Lam Huu Khanh Phuong, Tran
+            Tuan Anh
+          </div>
+        ),
+        type: 'info',
+      },
+      {
+        date: '2020-12-19T10:24:21.722Z',
+        content: <div className="pl-3">Semester end</div>,
+        type: 'success',
+      },
+    ]);
+  }, [currentSemester.id]);
+
+  React.useEffect(() => {
     checkUserInTeam();
     fetchOtherTeams();
     fetchAllTopics();
@@ -460,7 +505,7 @@ export default React.memo(function LecturerDashboard() {
               <Anouncement announcements={anouncements} />
             </>
           )}
-          <FlowTimeline className=" gutter-b" />
+          <FlowTimeline className=" gutter-b" items={flowTimelines} />
         </div>
         <div className="col-lg-6 col-xxl-4">
           {currentSemester.status === 3 && (

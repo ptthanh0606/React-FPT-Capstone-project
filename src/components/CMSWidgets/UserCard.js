@@ -2,10 +2,7 @@ import CMSModal from 'components/CMSModal/CMSModal';
 import React from 'react';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import useConfirm from 'utils/confirm';
 import md5 from 'utils/md5';
-import { role } from 'auth/recoil/selectors';
-import { useRecoilValue } from 'recoil';
 
 const UserCard = ({
   id = '',
@@ -15,23 +12,23 @@ const UserCard = ({
   isLead = false,
   roleProp = '',
   weight = 10,
-  isUserLeadCouncil = false,
+  // isUserLeadCouncil = false,
 }) => {
   const [showEditWeight, setShowEditWeight] = React.useState(false);
-  const confirm = useConfirm();
-  const currentRole = useRecoilValue(role);
+  // const confirm = useConfirm();
+  // const currentRole = useRecoilValue(role);
   // ------------------------------------------------------------------
 
-  const handleMakeLeader = React.useCallback(() => {
-    confirm({
-      title: 'Confirm required',
-      body: 'Transfer leadership to selected members?',
-    });
-  }, [confirm]);
+  // const handleMakeLeader = React.useCallback(() => {
+  //   confirm({
+  //     title: 'Confirm required',
+  //     body: 'Transfer leadership to selected members?',
+  //   });
+  // }, [confirm]);
 
-  const handleEditWeight = React.useCallback(() => {
-    setShowEditWeight(true);
-  }, []);
+  // const handleEditWeight = React.useCallback(() => {
+  //   setShowEditWeight(true);
+  // }, []);
 
   // ------------------------------------------------------------------
 
@@ -84,7 +81,7 @@ const UserCard = ({
             </OverlayTrigger>
           </div>
 
-          {currentRole === 'lecturer' && isUserLeadCouncil && !isLead && (
+          {/* {currentRole === 'lecturer' && isUserLeadCouncil && !isLead && (
             <div className="mt-9 mb-4 d-flex justify-content-center">
               <OverlayTrigger
                 placement="bottom"
@@ -111,7 +108,7 @@ const UserCard = ({
                 </button>
               </OverlayTrigger>
             </div>
-          )}
+          )} */}
         </div>
       </div>
 

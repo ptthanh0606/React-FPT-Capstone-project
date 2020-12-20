@@ -26,329 +26,7 @@ import TopicDetailCard from 'components/CMSWidgets/TopicDetailCard';
 import useConfirm from 'utils/confirm';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { toAbsoluteUrl } from '_metronic/_helpers';
-
-const fakeData = {
-  students: [
-    {
-      id: 1,
-      code: 'DuyHD',
-    },
-    { id: 2, code: 'ThanhPT' },
-  ],
-  checkpoints: [
-    {
-      id: 1,
-      name: 'Checkpoint 1',
-      status: 2,
-      weight: 50,
-      submitDueDate: '2022-09-01T00:00:00',
-      evaluateDueDate: '2022-09-01T00:00:00',
-      council: {
-        id: 1,
-        name: 'ThanhPTLecturer, DuyHDLecturer',
-        members: [
-          {
-            id: 1,
-            weight: 100,
-            code: 'KhanhKT',
-          },
-          {
-            id: 2,
-            weight: 10,
-            code: 'PhuongLHK',
-          },
-        ],
-      },
-      columns: [
-        {
-          id: 1,
-          weight: 10,
-          name: 'Cot diem 1',
-          grade: [
-            // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
-            // Moi array la cac diem cua 1 column
-            [1, 2, 3],
-            [4, 5, 6],
-          ],
-          total: 10,
-        },
-        {
-          id: 2,
-          weight: 10,
-          name: 'Cot diem 2',
-          grade: [
-            // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
-            // Moi array la cac diem cua 1 column
-            [7, 8, 9],
-            [10, 10, 12],
-          ],
-          total: 100,
-        },
-      ],
-      total: [100, 200], // total student
-      totalTeam: 10, // total all
-    },
-    {
-      id: 2,
-      name: 'Checkpoint 2',
-      status: 1,
-      weight: 80,
-      submitDueDate: '2022-09-01T00:00:00',
-      evaluateDueDate: '2022-09-01T00:00:00',
-      council: {
-        id: 1,
-        name: 'Council IB',
-        members: [
-          {
-            id: 1,
-            weight: 100,
-            code: 'KhanhKT',
-          },
-          {
-            id: 2,
-            weight: 10,
-            code: 'PhuongLHK',
-          },
-        ],
-      },
-      columns: [
-        {
-          id: 1,
-          weight: 10,
-          name: 'Cot diem 1',
-          grade: [
-            // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
-            // Moi array la cac diem cua 1 column
-            [1, 2, 3],
-            [4, 5, 6],
-          ],
-          total: 10,
-        },
-        {
-          id: 2,
-          weight: 10,
-          name: 'Cot diem 2',
-          grade: [
-            // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
-            // Moi array la cac diem cua 1 column
-            [7, 8, 9],
-            [10, 11, 12],
-          ],
-          total: 100,
-        },
-      ],
-      total: [100, 200], // total student
-      totalTeam: 10, // total all
-    },
-    {
-      id: 3,
-      name: 'Checkpoint 3',
-      status: 0,
-      weight: 80,
-      submitDueDate: '2022-09-01T00:00:00',
-      evaluateDueDate: '2022-09-01T00:00:00',
-      council: {
-        id: 1,
-        name: 'Council IB',
-        members: [
-          {
-            id: 1,
-            weight: 100,
-            code: 'KhanhKT',
-          },
-          {
-            id: 2,
-            weight: 10,
-            code: 'PhuongLHK',
-          },
-        ],
-      },
-      columns: [
-        {
-          id: 1,
-          weight: 10,
-          name: 'Cot diem 1',
-          grade: [
-            // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
-            // Moi array la cac diem cua 1 column
-            [1, 2, 3],
-            [4, 5, 6],
-          ],
-          total: 10,
-        },
-        {
-          id: 2,
-          weight: 10,
-          name: 'Cot diem 2',
-          grade: [
-            // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
-            // Moi array la cac diem cua 1 column
-            [7, 8, 9],
-            [10, 10, 12],
-          ],
-          total: 100,
-        },
-      ],
-      total: [100, 200], // total student
-      totalTeam: 10, // total all
-    },
-    {
-      id: 4,
-      name: 'Checkpoint 4',
-      status: 0,
-      weight: 130,
-      submitDueDate: '2022-09-01T00:00:00',
-      evaluateDueDate: '2022-09-01T00:00:00',
-      council: {
-        id: 1,
-        name: 'Council IB',
-        members: [
-          {
-            id: 1,
-            weight: 100,
-            code: 'KhanhKT',
-          },
-          {
-            id: 2,
-            weight: 10,
-            code: 'PhuongLHK',
-          },
-        ],
-      },
-      columns: [
-        {
-          id: 1,
-          weight: 10,
-          name: 'Cot diem 1',
-          grade: [
-            // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
-            // Moi array la cac diem cua 1 column
-            [1, 2, 3],
-            [4, 5, 6],
-          ],
-          total: 10,
-        },
-        {
-          id: 2,
-          weight: 10,
-          name: 'Cot diem 2',
-          grade: [
-            // 1st: Evaluator 1, 2nd: Evaluator 1, 3rd: Total cua student trong cot diem
-            // Moi array la cac diem cua 1 column
-            [7, 8, 9],
-            [10, 10, 12],
-          ],
-          total: 100,
-        },
-      ],
-      total: [100, 200], // total student
-      totalTeam: 10, // total all
-    },
-  ],
-};
-
-function transformToGrid(data) {
-  const final = [];
-  const header = [
-    { value: '', readOnly: true, colSpan: 4 },
-    ...data.students.map(i => ({
-      value: i.code,
-      readOnly: true,
-      colSpan: 2,
-      id: i.id,
-    })),
-    { value: 'Team', readOnly: true },
-  ];
-
-  for (const z of data.checkpoints) {
-    const grid = [header];
-
-    for (const i in z.columns) {
-      const firstEvaluator = z.council.members[0];
-      const evaluatorNum = z.council.members.length;
-      const toPush = [
-        { value: z.columns[i].name, readOnly: true, rowSpan: evaluatorNum },
-        {
-          value: z.columns[i].weight,
-          readOnly: true,
-          rowSpan: evaluatorNum,
-        },
-        { value: firstEvaluator.code, readOnly: true },
-        { value: firstEvaluator.weight, readOnly: true },
-      ];
-
-      for (const j in data.students) {
-        toPush.push(
-          {
-            value: z.columns[i].grade[j][0],
-            studentId: data.students[j].id,
-            lecturerId: z.council.members[0].id,
-            markColumnId: z.columns[i].id,
-            evaluationId: z.id,
-          },
-          {
-            value: z.columns[i].grade[j][z.columns[i].grade.length],
-            rowSpan: z.council.members.length,
-            readOnly: true,
-          }
-        );
-      }
-
-      toPush.push({
-        value: z.columns[i].total,
-        rowSpan: z.council.members.length,
-        readOnly: true,
-      });
-
-      grid.push(toPush);
-
-      for (const k in z.council.members.slice(1)) {
-        grid.push([
-          { value: z.council.members[+k + 1].code, readOnly: true },
-          { value: z.council.members[+k + 1].weight, readOnly: true },
-          ...z.columns[i].grade.map((x, index) => ({
-            value: x[+k + 1],
-            studentId: data.students[index].id,
-            lecturerId: z.council.members[+k + 1].id,
-            markColumnId: z.columns[i].id,
-            evaluationId: z.id,
-          })),
-        ]);
-      }
-    }
-
-    grid.push([
-      { value: 'Total', colSpan: 4, readOnly: true },
-      ...z.total.map(x => ({ value: x, colSpan: 2, readOnly: true })),
-      { value: z.totalTeam, readOnly: true },
-    ]);
-
-    final.push({
-      id: z.id,
-      name: z.name,
-      weight: z.weight,
-      submitDueDate: z.submitDueDate,
-      evaluateDueDate: z.evaluateDueDate,
-      council: z.council,
-      status: z.status,
-      grid,
-    });
-  }
-
-  return final;
-}
-
-function transformToData(data) {
-  const grades = [];
-  for (const k of data) {
-    for (const i of k.grid) {
-      for (const j of i) {
-        if (j.readOnly !== true) grades.push(j);
-      }
-    }
-  }
-  return grades;
-}
+import { transformToGrid } from './transformers';
 
 const Topic = () => {
   const history = useHistory();
@@ -488,7 +166,6 @@ const Topic = () => {
         checkPreConditions(transformedRes);
         setCurrentTopic(transformedRes);
         setIsProcessing(false);
-        setEvals(transformToGrid(fakeData));
       })
       .catch(err => {
         history.push('/topic');
@@ -530,6 +207,21 @@ const Topic = () => {
         setIsStudentUserHaveTeam(false);
       });
   }, [currentSemester.id, currentUser.id, id]);
+
+  const fetchEvaluation = React.useCallback(() => {
+    if (id) {
+      request({
+        to: endpoints.GET_EVALUATION(id).url,
+        method: endpoints.GET_EVALUATION(id).method,
+      })
+        .then(res => {
+          setEvals(transformToGrid(res.data.data));
+        })
+        .catch(err => {
+          handleErrors(err);
+        });
+    }
+  }, [id]);
 
   // ----------------------------------------------------------
 
@@ -899,7 +591,7 @@ const Topic = () => {
                   </>
                 )}
               {[0, 1].includes(currentSemester.status) &&
-                [2, 3].includes(currentTopic.status) &&
+                [2, 3, 4].includes(currentTopic.status) &&
                 !isUserMentor && (
                   <button
                     type="button"
@@ -1004,7 +696,17 @@ const Topic = () => {
       // fetchCouncil();
     }
     fetchTopic();
-  }, [currentRole, fetchCouncil, fetchTopic, fetchUserTeam]);
+    if (currentSemester.status === 2) {
+      fetchEvaluation();
+    }
+  }, [
+    currentRole,
+    currentSemester.status,
+    fetchCouncil,
+    fetchEvaluation,
+    fetchTopic,
+    fetchUserTeam,
+  ]);
 
   const applicationsMap = React.useCallback(
     applications => {
