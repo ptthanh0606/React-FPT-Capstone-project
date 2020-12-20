@@ -51,7 +51,7 @@ export function transformToGrid(data) {
             studentId: j.id,
             lecturerId: firstEvaluator?.id,
             markColumnId: i.id,
-            evaluationId: z.id,
+            evaluationId: z.evaluationId,
           },
           {
             value: i.marks?.find(e => e.studentId === j.id)?.totalColumnStudent,
@@ -81,7 +81,7 @@ export function transformToGrid(data) {
             studentId: x.id,
             lecturerId: k.id,
             markColumnId: i.id,
-            evaluationId: z.id,
+            evaluationId: z.evaluationId,
           })),
         ]);
       }

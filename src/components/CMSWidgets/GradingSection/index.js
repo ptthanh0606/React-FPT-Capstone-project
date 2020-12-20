@@ -6,6 +6,7 @@ import * as constantsCp from 'modules/semester/topic/checkpoints/constants';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 import { role } from 'auth/recoil/selectors';
 import { useRecoilValue } from 'recoil';
+import MdEditor from 'react-markdown-editor-lite';
 import semesterAtom from 'store/semester';
 import { PUT_EVALUATION } from 'endpoints';
 import { useParams } from 'react-router-dom';
@@ -13,23 +14,53 @@ import toast from 'utils/toast';
 import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 import { transformToData } from 'modules/semester/topic/checkpoints/transformers';
+import Comment from '../FeedbackSection/Comment';
+import Button from 'components/Button';
+import MarkdownIt from 'markdown-it';
 
-const GradingSection = ({ evaluations = [], isUserMentor }) => {
+const mdParser = new MarkdownIt();
+
+const GradingSection = ({
+  evaluations = [],
+  isUserMentor = false,
+  checkpointFeedbacks = [],
+  onSuccessFeedback = () => {},
+}) => {
   const [evals, setEvals] = React.useState([]);
   const currentRole = useRecoilValue(role);
   const currentSemester = useRecoilValue(semesterAtom);
   const { id } = useParams();
   const [isUpdating, setIsUpdating] = React.useState(false);
 
-  // --------------------------------------------------------------
+  // ------------------------------------------------------------------------------
 
-  // const [data, setData] = React.useReducer((state, action) => {
-  //   if (action.name === 'all') return { ...state, ...action.value };
-  //   return {
-  //     ...state,
-  //     [action.name]: action.value,
-  //   };
-  // }, {});
+  const [commentValue, setCommentValue] = React.useState('');
+  const [commentHtml, setCommentHtml] = React.useState('');
+  const [isSubmitLoading, setIsSubmitLoading] = React.useState(false);
+
+  // ------------------------------------------------------------------------------
+
+  const handleEditorChange = React.useCallback(e => {
+    setCommentValue(e.text);
+    setCommentHtml(e.html);
+  }, []);
+
+  const handleSubmitFeedback = React.useCallback(() => {
+    setIsSubmitLoading(true);
+    // request({
+    //   to: FEEDBACK_TOPIC(id).url,
+    //   method: FEEDBACK_TOPIC(id).method,
+    //   data: '"' + commentHtml + '"',
+    // })
+    //   .then(res => {
+    onSuccessFeedback();
+    setIsSubmitLoading(false);
+    // })
+    // .catch(err => {
+    //   handleErrors(err);
+    //   setIsSubmitLoading(false);
+    // });
+  }, [onSuccessFeedback]);
 
   // ---------------------------------------------------------------
 
@@ -194,6 +225,12 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
             </Card.Header>
             <Accordion.Collapse eventKey={i.id}>
               <Card.Body>
+                <div className="my-5">
+                  <span className="text-dark font-size-h5 font-weight-bold">
+                    Grading
+                  </span>
+                </div>
+
                 <div className="marks-table">
                   <ReactDataSheet
                     data={i.grid || []}
@@ -228,10 +265,64 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
                     }}
                   />
                 </div>
+
+                <div className="my-5">
+                  <span className="text-dark font-size-h5 font-weight-bold">
+                    Feedback for evaluators
+                  </span>
+                </div>
+
+                <form className="form">
+                  <div className="form-group">
+                    <MdEditor
+                      style={{ height: '200px' }}
+                      value={commentValue}
+                      renderHTML={text => mdParser.render(text)}
+                      onChange={handleEditorChange}
+                    />
+                  </div>
+                  <div className="row">
+                    <div className="col">
+                      <Button
+                        isLoading={isSubmitLoading}
+                        onClick={handleSubmitFeedback}
+                        className="btn btn-light-primary font-weight-bold"
+                      >
+                        Submit
+                      </Button>
+                      <button
+                        type="button"
+                        onClick={() => setCommentValue('')}
+                        className="btn btn-clean font-weight-bold ml-2"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                </form>
+                <div className="timeline timeline-3">
+                  <div className="my-5">
+                    <span className="text-dark font-size-h5 font-weight-bold">
+                      Evaluator feedbacks
+                    </span>
+                  </div>
+                  <div className="timeline-items">
+                    {checkpointFeedbacks.map(fb => (
+                      <Comment
+                        key={index}
+                        email={fb.email || ''}
+                        name={fb.name}
+                        id={fb.id}
+                        date={fb.date}
+                        content={fb.content}
+                      />
+                    ))}
+                  </div>
+                </div>
               </Card.Body>
             </Accordion.Collapse>
           </Card>
-        ))}
+        )) || <></>}
       </Accordion>
     </>
   );

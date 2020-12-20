@@ -128,11 +128,12 @@ const FeedbackSection = ({
           </div>
           <div className="timeline-items">
             {feedbacks?.length ? (
-              feedbacks.map(fb => (
+              feedbacks.map((fb, index) => (
                 <Comment
-                  key={feedbacks.indexOf(fb)}
+                  key={index}
                   email={fb.approver.email || ''}
                   name={fb.approver.name}
+                  id={fb.approver.id}
                   date={fb.date}
                   content={fb.content}
                 />

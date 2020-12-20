@@ -40,6 +40,7 @@ const TopicDetailCard = ({
   isUserMentor = false,
   isTeamInTopic = false,
   isLoading = true,
+  checkpointFeedbacks = [],
 }) => {
   const currentUser = useRecoilValue(userAtom);
   const currentSemester = useRecoilValue(semesterAtom);
@@ -290,6 +291,7 @@ const TopicDetailCard = ({
                     <GradingSection
                       evaluations={evaluations || []}
                       isUserMentor={isUserMentor}
+                      checkpointFeedbacks={checkpointFeedbacks}
                     />
                   )}
               </>

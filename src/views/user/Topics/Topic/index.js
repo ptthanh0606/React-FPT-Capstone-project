@@ -44,6 +44,15 @@ const Topic = () => {
 
   const [currentTopic, setCurrentTopic] = React.useState({});
   const [evals, setEvals] = React.useState([]);
+  const [checkpointFeedbacks, setCheckpointFeedbacks] = React.useState([
+    {
+      id: 1,
+      name: 'phan thong thanh',
+      email: 'phanthongthanh0606@gmail.com',
+      date: '2020-06-06',
+      content: 'Helllooooooooo',
+    },
+  ]);
   const [isStudentUserHaveTeam, setIsStudentUserHaveTeam] = React.useState(
     false
   );
@@ -215,6 +224,7 @@ const Topic = () => {
         method: endpoints.GET_EVALUATION(id).method,
       })
         .then(res => {
+          console.log(res.data.data);
           setEvals(transformToGrid(res.data.data));
         })
         .catch(err => {
@@ -786,6 +796,7 @@ const Topic = () => {
             onFeedbackSuccess={onFeedbackSuccess}
             isLoading={isProcessing}
             evaluations={evals || []}
+            checkpointFeedbacks={checkpointFeedbacks}
           />
         </div>
         <div className="col-lg-12 col-xxl-3">
