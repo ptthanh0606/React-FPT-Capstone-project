@@ -274,6 +274,11 @@ export const DELETE_STUDENT = id => ({
   method: METHOD.DELETE,
 });
 
+export const IMPORT_STUDENT = {
+  url: LIST_STUDENT.url + '/import',
+  method: METHOD.POST,
+};
+
 // -----------------------------------------------------------------------------
 
 export const LIST_TEAM = {

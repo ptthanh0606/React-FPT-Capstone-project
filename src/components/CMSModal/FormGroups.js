@@ -16,8 +16,6 @@ const FormGroups = ({
   handleChangeFields = function () {},
   type = '',
 }) => {
-  const fileRef = React.useRef(null);
-
   const handleChange = React.useCallback(
     event => {
       handleChangeFields(event.currentTarget.value, config.name);
@@ -31,6 +29,8 @@ const FormGroups = ({
     },
     [config.name, handleChangeFields]
   );
+
+  const fileRef = React.useRef(null);
 
   const handleClickFile = React.useCallback(e => {
     e.preventDefault();

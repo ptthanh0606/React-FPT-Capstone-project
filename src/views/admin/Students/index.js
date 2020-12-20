@@ -15,6 +15,7 @@ import * as endpoints from 'endpoints';
 
 import * as transformers from 'modules/student/transformers';
 import * as constants from 'modules/student/constants';
+import Button from 'components/Button';
 
 export default function Lecturers() {
   const confirm = useConfirm();
@@ -43,6 +44,38 @@ export default function Lecturers() {
   const [showUpdate, setShowUpdate] = React.useState(false);
   const [editId, setEditId] = React.useState(0);
   const [isProcessing, setIsProcessing] = React.useState(false);
+
+  // ---------------------------------------------------------------------------
+
+  const fileRef = React.useRef(null);
+  const [isUploading, setIsUploading] = React.useState(false);
+
+  const handleClickFile = React.useCallback(e => {
+    e.preventDefault();
+    fileRef.current.click();
+  }, []);
+
+  const handleFileChange = React.useCallback(event => {
+    event.preventDefault();
+    const data = new FormData();
+    data.append(
+      'file',
+      event.currentTarget.files[0],
+      event.currentTarget.files[0].name
+    );
+    setIsUploading(true);
+    request({
+      to: endpoints.IMPORT_STUDENT.url,
+      method: endpoints.IMPORT_STUDENT.method,
+      data: data,
+    })
+      .then(res => {
+        toast.success('Import student successfully');
+        loadData();
+      })
+      .catch(handleErrors)
+      .finally(() => setIsUploading(false));
+  }, []);
 
   // ---------------------------------------------------------------------------
 
@@ -165,17 +198,41 @@ export default function Lecturers() {
         { title: 'All students', path: '/student/all' },
       ],
       toolbar: (
-        <button
-          type="button"
-          className="btn btn-primary font-weight-bold btn-sm"
-          onClick={showCreateModal}
-        >
-          <i className="fas fa-plus mr-2"></i>
-          New
-        </button>
+        <>
+          <Button
+            type="button"
+            className="btn btn-primary font-weight-bold btn-sm"
+            onClick={handleClickFile}
+            isLoading={isUploading}
+          >
+            <i className="fas fa-file-import mr-2"></i>
+            Import
+          </Button>
+          &nbsp;
+          <button
+            type="button"
+            className="btn btn-primary font-weight-bold btn-sm"
+            onClick={showCreateModal}
+          >
+            <i className="fas fa-plus mr-2"></i>
+            New
+          </button>
+          <input
+            ref={fileRef}
+            type="file"
+            onChange={handleFileChange}
+            className="d-none"
+          />
+        </>
       ),
     });
-  }, [setMeta, showCreateModal]);
+  }, [
+    handleClickFile,
+    handleFileChange,
+    isUploading,
+    setMeta,
+    showCreateModal,
+  ]);
 
   React.useEffect(() => {
     setIsLoading(true);
