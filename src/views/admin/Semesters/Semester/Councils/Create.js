@@ -248,13 +248,14 @@ const CreateCouncil = ({
               type: 'text',
               label: 'Council name',
               placeholder: 'Give this council a name...',
+              required: true,
             }}
             value={name}
             handleChangeFields={value => setName(value)}
           />
           <Form.Group as={Row}>
             <Form.Label column sm={3}>
-              Department
+              Department<span style={{ color: 'red' }}> *</span>
             </Form.Label>
             <Col sm={9}>
               <SelectTagInput

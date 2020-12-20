@@ -125,18 +125,21 @@ export const modalConfigs = [
     type: 'text',
     label: 'Lecturer code name',
     placeholder: 'Code name...',
+    required: true,
   },
   {
     name: 'name',
     type: 'text',
     label: 'Lecturer full name',
     placeholder: 'Full name...',
+    required: true,
   },
   {
     name: 'email',
     type: 'email',
     label: 'Lecturer email',
     placeholder: 'Email...',
+    required: true,
   },
   {
     name: 'departments',

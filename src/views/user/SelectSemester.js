@@ -3,7 +3,8 @@ import Table from 'components/Table';
 import Filters from 'views/admin/Semesters/Filters.js';
 
 import metaAtom from 'store/meta';
-import { useSetRecoilState } from 'recoil';
+import userAtom from 'store/user';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 import { Link } from 'react-router-dom';
 
 import { useDebounce } from 'use-debounce';
@@ -20,6 +21,7 @@ import styles from 'views/admin/Semesters/nearest.module.scss';
 
 export default function SelectSemester() {
   const setMeta = useSetRecoilState(metaAtom);
+  const user = useRecoilValue(userAtom);
 
   const [l] = React.useReducer(() => ({}), {});
 
@@ -96,17 +98,54 @@ export default function SelectSemester() {
     >
       <div
         style={{
-          textAlign: 'right',
-          padding: '1.5rem 1.5rem 0 0',
+          margin: '1.5rem 2.5rem',
         }}
       >
-        <Link
-          className="btn btn-secondary font-weight-bold btn-sm"
-          to="/logout"
+        <span
+          style={{
+            float: 'right',
+          }}
         >
-          <i className="fas fa-sign-out-alt mr-2"></i>
-          Logout
-        </Link>
+          <Link
+            className="btn btn-secondary font-weight-bold btn-sm"
+            to="/logout"
+          >
+            <i className="fas fa-sign-out-alt mr-2"></i>
+            Logout
+          </Link>
+        </span>
+        <span
+          style={{
+            fontSize: '1.5rem',
+            fontWeight: '600',
+          }}
+        >
+          Welcome, {user.name}
+        </span>
+        <br />
+        <span>
+          Please select a semester to perform the activities corresponding to
+          the faculity role.
+        </span>
+      </div>
+      <div
+        style={{
+          content: '',
+          clear: 'both',
+          display: 'table',
+        }}
+      ></div>
+      <div
+        style={{
+          marginTop: '1rem',
+          marginLeft: '4.5rem',
+          marginBottom: '-2rem',
+
+          fontSize: '1.25rem',
+          fontWeight: 600,
+        }}
+      >
+        Nearest semesters
       </div>
       <ScrollContainer
         className={styles['semester-scroll'] + ' alert-shadow gutter-b'}
@@ -115,6 +154,17 @@ export default function SelectSemester() {
           <SemesterCard {...s} key={s.id} />
         ))}
       </ScrollContainer>
+      <div
+        style={{
+          marginLeft: '4.5rem',
+          marginTop: '-2rem',
+          marginBottom: '1rem',
+          fontSize: '1.25rem',
+          fontWeight: 600,
+        }}
+      >
+        All semesters
+      </div>
       <div className="mx-8">
         <Filters filters={filters} setFilters={setFilters} />
         <Table

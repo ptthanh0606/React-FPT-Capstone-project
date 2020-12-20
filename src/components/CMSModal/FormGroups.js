@@ -50,6 +50,7 @@ const FormGroups = ({
         <Form.Group as={Row}>
           <Form.Label column sm={3}>
             {config.label}
+            {config.required && <span style={{ color: 'red' }}> *</span>}
           </Form.Label>
           <Col sm={9}>
             <Form.Control
@@ -71,6 +72,7 @@ const FormGroups = ({
         <Form.Group as={Row}>
           <Form.Label column sm={3}>
             {config.label}
+            {config.required && <span style={{ color: 'red' }}> *</span>}
           </Form.Label>
           <Col sm={9}>
             <Form.Control
@@ -94,6 +96,7 @@ const FormGroups = ({
         <Form.Group as={Row}>
           <Form.Label column sm={3}>
             {config.label}
+            {config.required && <span style={{ color: 'red' }}> *</span>}
           </Form.Label>
           <Col sm={9}>
             <MdEditor
@@ -112,6 +115,7 @@ const FormGroups = ({
         <Form.Group as={Row}>
           <Form.Label column sm={3}>
             {config.label}
+            {config.required && <span style={{ color: 'red' }}> *</span>}
           </Form.Label>
           <Col sm={9}>
             <Form.Control
@@ -133,6 +137,7 @@ const FormGroups = ({
         <Form.Group as={Row}>
           <Form.Label column sm={3}>
             {config.label}
+            {config.required && <span style={{ color: 'red' }}> *</span>}
           </Form.Label>
           <Col sm={9}>
             <Form.Control
@@ -154,6 +159,7 @@ const FormGroups = ({
         <Form.Group as={Row}>
           <Form.Label column sm={3}>
             {config.label}
+            {config.required && <span style={{ color: 'red' }}> *</span>}
           </Form.Label>
           <Col sm={9}>
             <Form.Control
@@ -172,6 +178,7 @@ const FormGroups = ({
         <Form.Group as={Row}>
           <Form.Label column sm={3}>
             {config.label}
+            {config.required && <span style={{ color: 'red' }}> *</span>}
           </Form.Label>
           <Col sm={9}>
             <Form.Control
@@ -190,6 +197,7 @@ const FormGroups = ({
         <Form.Group as={Row}>
           <Form.Label column sm={3}>
             {config.label}
+            {config.required && <span style={{ color: 'red' }}> *</span>}
           </Form.Label>
           <Col sm={9}>
             <SelectBox
@@ -207,6 +215,7 @@ const FormGroups = ({
         <Form.Group as={Row}>
           <Form.Label column sm={3}>
             {config.label}
+            {config.required && <span style={{ color: 'red' }}> *</span>}
           </Form.Label>
           <Col sm={9}>
             <ToggleSwitch
@@ -225,6 +234,7 @@ const FormGroups = ({
         <Form.Group as={Row}>
           <Form.Label column sm={3}>
             {config.label}
+            {config.required && <span style={{ color: 'red' }}> *</span>}
           </Form.Label>
           <Col sm={9}>
             <InputGroup
@@ -261,6 +271,7 @@ const FormGroups = ({
         <Form.Group as={Row}>
           <Form.Label column sm={3}>
             {config.label}
+            {config.required && <span style={{ color: 'red' }}> *</span>}
           </Form.Label>
           <Col sm={9}>
             <SelectTagInput
@@ -279,6 +290,7 @@ const FormGroups = ({
         <Form.Group as={Row}>
           <Form.Label column sm={3}>
             {config.label}
+            {config.required && <span style={{ color: 'red' }}> *</span>}
           </Form.Label>
           <Col sm={9}>
             <CreateableTagInput
