@@ -35,124 +35,6 @@ import toast from 'utils/toast';
 
 const mdParser = new MarkdownIt();
 
-// const config = [
-//   // Begin header
-//   [
-//     { value: '', readOnly: true, colSpan: 4 },
-//     { value: 'Student 1', readOnly: true, colSpan: 2, id: 1 },
-//     { value: 'Student 2', readOnly: true, colSpan: 2, id: 2 },
-//     { value: 'Team', readOnly: true },
-//   ],
-//   // Begin column 1
-//   [
-//     { value: 'Columns 1', readOnly: true, rowSpan: 3, id: 1 }, // rowspan = so mentor
-//     { value: 50, readOnly: true, rowSpan: 3 },
-//     { value: 'Evaluator 1', readOnly: true, id: 1 },
-//     { value: 10, readOnly: true },
-//     { value: 2 }, // student 1
-//     { value: 2, rowSpan: 3, readOnly: true }, // total student 1
-//     { value: 4 }, // student 2
-//     { value: 2, rowSpan: 3, readOnly: true }, // total student 2
-//     { value: 2, rowSpan: 3, readOnly: true }, // total team
-//   ],
-//   [
-//     { value: 'Evaluator 2', readOnly: true },
-//     { value: 100, readOnly: true },
-//     { value: 2 }, // student 1
-//     { value: 4 }, // student 2
-//   ],
-//   [
-//     { value: 'Evaluator 3', readOnly: true },
-//     { value: 50, readOnly: true },
-//     { value: 2 }, // student 1
-//     { value: 4 }, // student 2
-//   ],
-//   // End column 1
-//   // Begin Total
-//   [
-//     { value: 'Total', colSpan: 4, readOnly: true },
-//     { value: 2, colSpan: 2, readOnly: true },
-//     { value: 2, colSpan: 2, readOnly: true },
-//     { value: 2, readOnly: true },
-//   ],
-// ];
-
-const fakeData = {
-  students: [
-    {
-      id: 1,
-      code: 'DuyHD',
-    },
-    { id: 2, code: 'ThanhPT' },
-  ],
-  checkpoints: [
-    {
-      id: 1,
-      name: 'Checkpoint 1',
-      status: 3,
-      weight: 100,
-      submitDueDate: '2022-09-01T00:00:00',
-      evaluateDueDate: '2022-09-01T00:00:00',
-      council: {
-        id: 1,
-        name: 'Council XYZ',
-        members: [
-          {
-            id: 1,
-            weight: 100,
-            code: 'KhanhKT',
-          },
-          {
-            id: 2,
-            weight: 10,
-            code: 'PhuongLHK',
-          },
-        ],
-      },
-      markColumns: [
-        {
-          id: 1,
-          weight: 10,
-          name: 'Col 1',
-          marks: [
-            {
-              id: 1,
-              totalColumnStudent: 30,
-              lecturers: [
-                {
-                  id: 1,
-                  value: 10,
-                },
-                {
-                  id: 2,
-                  value: 20,
-                },
-              ],
-            },
-            {
-              id: 2,
-              totalColumnStudent: 30,
-              lecturers: [
-                {
-                  id: 1,
-                  value: 10,
-                },
-                {
-                  id: 2,
-                  value: 20,
-                },
-              ],
-            },
-          ],
-          total: 10,
-        },
-      ],
-      totalCheckpointStudent: [100, 200], // total student
-      totalTeam: 10, // total all
-    },
-  ],
-};
-
 function transformToGrid(data) {
   const final = [];
   const header = [
@@ -173,8 +55,12 @@ function transformToGrid(data) {
     for (const i of z.markColumns) {
       // i = current column
 
-      const firstEvaluator = z.council.members[0];
-      const evaluatorNum = z.council.members.length;
+      const firstEvaluator = z.council.members[0] || {
+        id: -1,
+        code: '',
+        weight: '',
+      };
+      const evaluatorNum = z.council.members.length || 1;
       const toPush = [
         { value: i.name, readOnly: true, rowSpan: evaluatorNum },
         {
@@ -182,8 +68,8 @@ function transformToGrid(data) {
           readOnly: true,
           rowSpan: evaluatorNum,
         },
-        { value: firstEvaluator.code, readOnly: true },
-        { value: firstEvaluator.weight, readOnly: true },
+        { value: firstEvaluator?.code, readOnly: true },
+        { value: firstEvaluator?.weight, readOnly: true },
       ];
 
       for (const j of data.students) {
@@ -192,15 +78,15 @@ function transformToGrid(data) {
           {
             value: i.marks
               ?.find(e => e.studentId === j.id)
-              ?.lecturers?.find(e => e.id === z.council.members[0].id)?.value,
+              ?.lecturers?.find(e => e.id === firstEvaluator?.id)?.value,
             studentId: j.id,
-            lecturerId: z.council.members[0].id,
+            lecturerId: firstEvaluator?.id,
             markColumnId: i.id,
             evaluationId: z.id,
           },
           {
             value: i.marks?.find(e => e.studentId === j.id)?.totalColumnStudent,
-            rowSpan: z.council.members.length,
+            rowSpan: evaluatorNum,
             readOnly: true,
           }
         );
@@ -208,7 +94,7 @@ function transformToGrid(data) {
 
       toPush.push({
         value: i.totalColumnTeam,
-        rowSpan: z.council.members.length,
+        rowSpan: evaluatorNum,
         readOnly: true,
       });
 
@@ -219,17 +105,15 @@ function transformToGrid(data) {
         grid.push([
           { value: k.code, readOnly: true },
           { value: k.weight, readOnly: true },
-          ...data.students.map(x => {
-            return {
-              value: i.marks
-                ?.find(t => t.studentId === x.id)
-                ?.lecturers?.find(t => t.id === k.id)?.value,
-              studentId: x.id,
-              lecturerId: k.id,
-              markColumnId: i.id,
-              evaluationId: z.id,
-            };
-          }),
+          ...data.students.map(x => ({
+            value: i.marks
+              ?.find(t => t.studentId === x.id)
+              ?.lecturers?.find(t => t.id === k.id)?.value,
+            studentId: x.id,
+            lecturerId: k.id,
+            markColumnId: i.id,
+            evaluationId: z.id,
+          })),
         ]);
       }
     }
@@ -256,8 +140,6 @@ function transformToGrid(data) {
       grid,
     });
   }
-
-  console.log(final);
 
   return final;
 }
@@ -525,12 +407,18 @@ const Topic = ({ semester }) => {
         method: endpoints.GET_EVALUATION(topicId).method,
       })
         .then(res => {
-          setEvals(transformToGrid(res.data.data));
+          const data = transformToGrid(res.data.data);
+          console.log(data);
+          setEvals(data);
         })
         .catch(() => {})
         .finally(() => setIsLoading(false));
     }
   }, [l2, topicId]);
+
+  React.useEffect(() => {
+    console.log(evals);
+  }, [evals]);
 
   return (
     <>
