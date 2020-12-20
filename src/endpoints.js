@@ -193,6 +193,11 @@ export const LIST_ACTIVE_STUDENTS = id => ({
   method: METHOD.GET,
 });
 
+export const IMPORT_ACTIVE_STUDENTS = id => ({
+  url: READ_SEMESTER(id).url + '/students/import',
+  method: METHOD.POST,
+});
+
 export const CREATE_ACTIVE_STUDENTS = id => ({
   url: LIST_ACTIVE_STUDENTS(id).url,
   method: METHOD.POST,
