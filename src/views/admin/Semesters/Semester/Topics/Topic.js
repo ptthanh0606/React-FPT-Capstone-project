@@ -858,7 +858,7 @@ const Topic = ({ semester }) => {
             toolbar={
               <>
                 <Button isLoading={isUpdating}>
-                  <i className="fas fa-trash mr-2" onClick={onSaveEvals}></i>
+                  <i className="fas fa-save mr-2" onClick={onSaveEvals}></i>
                   Save
                 </Button>
               </>
