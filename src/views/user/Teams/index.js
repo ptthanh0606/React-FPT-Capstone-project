@@ -161,7 +161,7 @@ export default function Teams() {
                 )}
               ></SVG>
             </span>
-            <span className="text-warning font-weight-bold mr-1">
+            <span className="text-warning font-weight-bolder mr-1">
               You cannot create or join a team in this semester phase.
             </span>
           </>

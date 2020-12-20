@@ -1,4 +1,7 @@
-export function transformToGrid(data) {
+export function transformToGrid(data, currentId) {
+  const cellProp = {
+    className: 'text-nowrap py-2 px-5',
+  };
   const final = [];
   const header = [
     { value: '', readOnly: true, colSpan: 4 },
@@ -7,9 +10,9 @@ export function transformToGrid(data) {
       readOnly: true,
       colSpan: 2,
       id: i.id,
-      className: 'text-nowrap',
+      ...cellProp,
     })),
-    { value: 'Team', readOnly: true },
+    { value: 'Team', readOnly: true, ...cellProp },
   ];
 
   for (const z of data.checkpoints) {
@@ -30,15 +33,26 @@ export function transformToGrid(data) {
           value: i.name,
           readOnly: true,
           rowSpan: evaluatorNum,
-          width: '400px',
+          ...cellProp,
         },
         {
           value: i.weight,
           readOnly: true,
           rowSpan: evaluatorNum,
+          ...cellProp,
         },
-        { value: firstEvaluator?.code, readOnly: true },
-        { value: firstEvaluator?.weight, readOnly: true },
+        {
+          value: firstEvaluator?.code,
+          readOnly: true,
+          width: '200px',
+          ...cellProp,
+        },
+        {
+          value: firstEvaluator?.weight,
+          readOnly: true,
+          width: '50px',
+          ...cellProp,
+        },
       ];
 
       for (const j of data.students) {
@@ -52,11 +66,13 @@ export function transformToGrid(data) {
             lecturerId: firstEvaluator?.id,
             markColumnId: i.id,
             evaluationId: z.evaluationId,
+            ...cellProp,
           },
           {
             value: i.marks?.find(e => e.studentId === j.id)?.totalColumnStudent,
             rowSpan: evaluatorNum,
             readOnly: true,
+            ...cellProp,
           }
         );
       }
@@ -65,6 +81,7 @@ export function transformToGrid(data) {
         value: i.totalColumnTeam,
         rowSpan: evaluatorNum,
         readOnly: true,
+        ...cellProp,
       });
 
       grid.push(toPush);
@@ -72,8 +89,8 @@ export function transformToGrid(data) {
       for (const k of z.council.members.slice(1)) {
         // k: current council members
         grid.push([
-          { value: k.code, readOnly: true },
-          { value: k.weight, readOnly: true },
+          { value: k.code, readOnly: true, ...cellProp },
+          { value: k.weight, readOnly: true, ...cellProp },
           ...data.students.map(x => ({
             value: i.marks
               ?.find(t => t.studentId === x.id)
@@ -82,6 +99,7 @@ export function transformToGrid(data) {
             lecturerId: k.id,
             markColumnId: i.id,
             evaluationId: z.evaluationId,
+            ...cellProp,
           })),
         ]);
       }
@@ -94,8 +112,9 @@ export function transformToGrid(data) {
           ?.value,
         colSpan: 2,
         readOnly: true,
+        ...cellProp,
       })),
-      { value: z.totalTeam, readOnly: true },
+      { value: z.totalTeam, readOnly: true, ...cellProp },
     ]);
 
     final.push({
