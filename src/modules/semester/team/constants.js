@@ -63,23 +63,23 @@ export const createColumns = (
         );
       },
     },
-    {
-      dataField: 'leader',
-      text: 'Leader',
-      formatter: function (cellContent, row) {
-        return (
-          cellContent?.label &&
-          cellContent?.value && (
-            <Link
-              className={'text-dark font-weight-bold'}
-              to={'/profile/student/' + cellContent?.value}
-            >
-              {cellContent?.label}
-            </Link>
-          )
-        );
-      },
-    },
+    // {
+    //   dataField: 'leader',
+    //   text: 'Leader',
+    //   formatter: function (cellContent, row) {
+    //     return (
+    //       cellContent?.label &&
+    //       cellContent?.value && (
+    //         <Link
+    //           className={'text-dark font-weight-bold'}
+    //           to={'/profile/student/' + cellContent?.value}
+    //         >
+    //           {cellContent?.label}
+    //         </Link>
+    //       )
+    //     );
+    //   },
+    // },
     {
       dataField: 'members',
       text: 'Members',
@@ -92,6 +92,7 @@ export const createColumns = (
                   to={'/profile/student/' + i?.value}
                 >
                   {i?.label}
+                  {i?.isLeader && ' (Leader)'}
                 </Link>
               ))
               ?.reduce((prev, curr) => [prev, ', ', curr])
