@@ -55,11 +55,15 @@ export default function Announcements({ semester }) {
   // ---------------------------------------------------------------------------
 
   const showCreateModal = React.useCallback(() => {
+    if (semester.status === 3) {
+      toast.warn('Semester is finished, cannot make any further changes.');
+      return;
+    }
     setShowCreate(true);
     setFieldTemplate({
       role: 0,
     });
-  }, []);
+  }, [semester.status]);
 
   const hideCreateModal = React.useCallback(() => {
     setShowCreate(false);
@@ -113,6 +117,10 @@ export default function Announcements({ semester }) {
   const handleEdit = React.useCallback(
     e => {
       e.preventDefault();
+      if (semester.status === 3) {
+        toast.warn('Semester is finished, cannot make any further changes.');
+        return;
+      }
       const id = Number(e.currentTarget.getAttribute('data-id'));
       if (!Number.isInteger(id)) {
         toast.error('Internal Server Error');
@@ -129,12 +137,16 @@ export default function Announcements({ semester }) {
         })
         .catch(handleErrors);
     },
-    [semId]
+    [semId, semester.status]
   );
 
   const handleRemove = React.useCallback(
     e => {
       e.preventDefault();
+      if (semester.status === 3) {
+        toast.warn('Semester is finished, cannot make any further changes.');
+        return;
+      }
       const id = Number(e.currentTarget.getAttribute('data-id'));
       console.log(id);
       if (!Number.isInteger(id)) {
@@ -159,7 +171,7 @@ export default function Announcements({ semester }) {
             .catch(handleErrors),
       });
     },
-    [confirm, semId]
+    [confirm, semId, semester.status]
   );
 
   // ---------------------------------------------------------------------------

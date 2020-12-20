@@ -330,137 +330,149 @@ export const createColumns = (
         );
       },
     },
-    {
+  ];
+
+  if (role === 'admin')
+    cols.push({
       dataField: 'checkpointTemplate',
       text: 'Checkpoint Template',
       formatter: function StatusColumnFormatter(cellContent, row) {
         return cellContent && cellContent.label;
       },
-    },
-    {
-      dataField: 'submitter',
-      text: 'Submitter',
-      formatter: function StatusColumnFormatter(cellContent, row) {
-        return (
-          <Link
-            className="text-dark font-weight-bold text-nowrap"
-            to={'/profile/lecturer/' + cellContent.value}
-          >
-            {cellContent.label}
-          </Link>
-        );
+    });
+
+  cols.push(
+    ...[
+      {
+        dataField: 'submitter',
+        text: 'Submitter',
+        formatter: function StatusColumnFormatter(cellContent, row) {
+          return (
+            <Link
+              className="text-dark font-weight-bold text-nowrap"
+              to={'/profile/lecturer/' + cellContent.value}
+            >
+              {cellContent.label}
+            </Link>
+          );
+        },
       },
-    },
-    {
-      dataField: 'status',
-      text: 'Status',
-      sort: true,
-      formatter: (cellContent, row) => {
-        const getLabelCssClasses = () => {
-          return `label label-lg label-light-${
-            statusClasses[row.status]
-          } label-inline text-nowrap text-nowrap`;
-        };
-        return (
-          <span className={getLabelCssClasses()}>
-            {statusTitles[row.status]}
-          </span>
-        );
+      {
+        dataField: 'status',
+        text: 'Status',
+        sort: true,
+        formatter: (cellContent, row) => {
+          const getLabelCssClasses = () => {
+            return `label label-lg label-light-${
+              statusClasses[row.status]
+            } label-inline text-nowrap text-nowrap`;
+          };
+          return (
+            <span className={getLabelCssClasses()}>
+              {statusTitles[row.status]}
+            </span>
+          );
+        },
       },
-    },
-    {
-      dataField: 'teamMembers',
-      text: 'Members',
-      formatter: (cellContent, row) => {
-        return (
-          <>
-            {cellContent?.length > 0
-              ? cellContent
-                  .map(i => (
-                    <Link
-                      className="text-dark font-weight-bold text-nowrap"
-                      to={'/profile/student/' + i.value}
-                    >
-                      {i.label}
-                    </Link>
-                  ))
-                  .reduce((prev, curr) => [prev, ', ', curr])
-              : ''}
-          </>
-        );
+      {
+        dataField: 'teamMembers',
+        text: 'Members',
+        formatter: (cellContent, row) => {
+          return (
+            <>
+              {cellContent?.length > 0
+                ? cellContent
+                    .map(i => (
+                      <Link
+                        className="text-dark font-weight-bold text-nowrap"
+                        to={'/profile/student/' + i.value}
+                      >
+                        {i.label}
+                        {i?.isLeader && ' (Leader)'}
+                      </Link>
+                    ))
+                    .reduce((prev, curr) => [prev, ', ', curr])
+                : ''}
+            </>
+          );
+        },
+        style: {
+          minWidth: '200px',
+        },
       },
-      style: {
-        minWidth: '200px',
+      {
+        dataField: 'mentorMembers',
+        text: 'Mentors',
+        formatter: function StatusColumnFormatter(cellContent, row) {
+          return (
+            <>
+              {cellContent?.length > 0
+                ? cellContent
+                    .map(i => (
+                      <Link
+                        className="text-dark font-weight-bold"
+                        to={'/profile/lecturer/' + i.value}
+                      >
+                        {i.label}
+                      </Link>
+                    ))
+                    .reduce((prev, curr) => [prev, ', ', curr])
+                : ''}
+            </>
+          );
+        },
+        style: {
+          minWidth: '200px',
+        },
       },
-    },
-    {
-      dataField: 'mentorMembers',
-      text: 'Mentors',
-      formatter: function StatusColumnFormatter(cellContent, row) {
-        return (
-          <>
-            {cellContent?.length > 0
-              ? cellContent
-                  .map(i => (
-                    <Link
-                      className="text-dark font-weight-bold"
-                      to={'/profile/lecturer/' + i.value}
-                    >
-                      {i.label}
-                    </Link>
-                  ))
-                  .reduce((prev, curr) => [prev, ', ', curr])
-              : ''}
-          </>
-        );
-      },
-      style: {
-        minWidth: '200px',
-      },
-    },
-    {
-      dataField: 'note',
-      text: 'Note',
-      style: {
-        minWidth: '200px',
-      },
-    },
-  ];
+    ]
+  );
 
   if (role === 'admin') {
-    cols.push({
-      dataField: 'action',
-      text: 'Actions',
-      formatter: (cellContent, row, rowIndex) => {
-        return (
-          <span className="text-nowrap">
-            <a
-              href="/"
-              title="Edit"
-              className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
-              data-id={row.id}
-              onClick={handleEdit}
-            >
-              <i className="fas fa-pencil-alt mx-2"></i>
-            </a>
-            <a
-              href="/"
-              title="Remove"
-              className="btn btn-icon btn-light btn-hover-primary btn-sm"
-              data-id={row.id}
-              onClick={handleRemove}
-            >
-              <i className="fas fa-trash mx-2"></i>
-            </a>
-          </span>
-        );
-      },
-      classes: 'text-right pr-0',
-      headerClasses: 'text-right pr-3',
-      style: {
-        minWidth: '100px',
-      },
-    });
+    cols.push(
+      ...[
+        {
+          dataField: 'note',
+          text: 'Note',
+          style: {
+            minWidth: '200px',
+          },
+        },
+        {
+          dataField: 'action',
+          text: 'Actions',
+          formatter: (cellContent, row, rowIndex) => {
+            return (
+              <span className="text-nowrap">
+                <a
+                  href="/"
+                  title="Edit"
+                  className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
+                  data-id={row.id}
+                  onClick={handleEdit}
+                >
+                  <i className="fas fa-pencil-alt mx-2"></i>
+                </a>
+                <a
+                  href="/"
+                  title="Remove"
+                  className="btn btn-icon btn-light btn-hover-primary btn-sm"
+                  data-id={row.id}
+                  onClick={handleRemove}
+                >
+                  <i className="fas fa-trash mx-2"></i>
+                </a>
+              </span>
+            );
+          },
+          classes: 'text-right pr-0',
+          headerClasses: 'text-right pr-3',
+          style: {
+            minWidth: '100px',
+          },
+        },
+      ]
+    );
   }
 
   return columnsTransformer(cols);

@@ -22,6 +22,7 @@ import * as endpoints from 'endpoints';
 import * as transformers from 'modules/semester/activeStudent/transformers';
 import * as constants from 'modules/semester/activeStudent/constants';
 import AddActiveStudentModal from './AddActiveStudentModal';
+import Button from 'components/Button';
 
 export const statusClasses = ['danger', 'info', 'success', ''];
 export const statusTitles = ['Not in a team', 'Assigning', 'Assigned', ''];
@@ -52,9 +53,47 @@ export default function ActiveStudents({ semester }) {
 
   // ---------------------------------------------------------------------------
 
-  const showCreateModal = React.useCallback(() => {
-    setShowCreate(true);
+  const fileRef = React.useRef(null);
+  const [isUploading, setIsUploading] = React.useState(false);
+
+  const handleClickFile = React.useCallback(e => {
+    e.preventDefault();
+    fileRef.current.click();
   }, []);
+
+  const handleFileChange = React.useCallback(
+    event => {
+      event.preventDefault();
+      const data = new FormData();
+      data.append(
+        'file',
+        event.currentTarget.files[0],
+        event.currentTarget.files[0].name
+      );
+      setIsUploading(true);
+      request({
+        to: endpoints.IMPORT_ACTIVE_STUDENTS(semId).url,
+        method: endpoints.IMPORT_ACTIVE_STUDENTS(semId).method,
+        data: data,
+      })
+        .then(res => {
+          toast.success('Import students successfully');
+          loadData();
+        })
+        .catch(handleErrors)
+        .finally(() => setIsUploading(false));
+    },
+    [semId]
+  );
+  // ---------------------------------------------------------------------------
+
+  const showCreateModal = React.useCallback(() => {
+    if (semester.status === 3) {
+      toast.warn('Semester is finished, cannot make any further changes.');
+      return;
+    }
+    setShowCreate(true);
+  }, [semester.status]);
 
   const hideCreateModal = React.useCallback(() => {
     setShowCreate(false);
@@ -80,6 +119,10 @@ export default function ActiveStudents({ semester }) {
   const handleRemove = React.useCallback(
     e => {
       e.preventDefault();
+      if (semester.status === 3) {
+        toast.warn('Semester is finished, cannot make any further changes.');
+        return;
+      }
       const id = Number(e.currentTarget.getAttribute('data-id'));
       if (!Number.isInteger(id)) {
         toast.error('Internal Server Error');
@@ -109,7 +152,7 @@ export default function ActiveStudents({ semester }) {
             .catch(handleErrors),
       });
     },
-    [confirm, semId]
+    [confirm, semId, semester.status]
   );
 
   // const handleRemoveAllSelected = React.useCallback(
@@ -217,6 +260,16 @@ export default function ActiveStudents({ semester }) {
             Remove ({(Array.isArray(selected) && selected.length) || 0})
           </button>
           &nbsp; */}
+          <Button
+            type="button"
+            className="btn btn-primary font-weight-bold"
+            onClick={handleClickFile}
+            isLoading={isUploading}
+          >
+            <i className="fas fa-file-import mr-2"></i>
+            Import
+          </Button>
+          &nbsp;
           <button
             type="button"
             className="btn btn-primary font-weight-bold"
@@ -225,6 +278,12 @@ export default function ActiveStudents({ semester }) {
             <i className="fas fa-plus mr-2"></i>
             Add
           </button>
+          <input
+            ref={fileRef}
+            type="file"
+            onChange={handleFileChange}
+            className="d-none"
+          />
         </CardHeaderToolbar>
       </CardHeader>
       <CardBody>

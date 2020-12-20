@@ -26,6 +26,7 @@ const Information = ({ loadData = function () {} }) => {
   const [maxApplication, setMaxApplication] = React.useState('');
   const [marginPass, setMarginPass] = React.useState(0);
   const [matchingDate, setMatchingDate] = React.useState('');
+  const [status, setStatus] = React.useState(0);
   const [inprogressDate, setInprogressDate] = React.useState('');
   const [finishedDate, setFinishedDate] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
@@ -47,6 +48,7 @@ const Information = ({ loadData = function () {} }) => {
         setInprogressDate(downData?.inprogressDate);
         setFinishedDate(downData?.finishedDate);
         setMarginPass(downData?.marginPass);
+        setStatus(downData?.status);
 
         setMeta(meta => ({
           ...meta,
@@ -65,6 +67,10 @@ const Information = ({ loadData = function () {} }) => {
   }, [setMeta, id]);
 
   const handleSave = React.useCallback(() => {
+    if (status === 3) {
+      toast.warn('Semester is finished, cannot make any further changes.');
+      return;
+    }
     setIsLoading(true);
     request({
       to: endpoints.UPDATE_SEMESTER(id).url,
@@ -95,6 +101,7 @@ const Information = ({ loadData = function () {} }) => {
     matchingDate,
     maxApplication,
     name,
+    status,
   ]);
 
   return (

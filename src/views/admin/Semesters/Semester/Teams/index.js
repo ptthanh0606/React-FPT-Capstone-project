@@ -57,7 +57,11 @@ export default function Teams({ semester }) {
 
   const showCreateModal = React.useCallback(() => {
     setShowCreate(true);
-  }, []);
+    if (semester.status === 3) {
+      toast.warn('Semester is finished, cannot make any further changes.');
+      return;
+    }
+  }, [semester.status]);
 
   const hideCreateModal = React.useCallback(() => {
     setShowCreate(false);
@@ -118,6 +122,10 @@ export default function Teams({ semester }) {
   const handleEdit = React.useCallback(
     e => {
       e.preventDefault();
+      if (semester.status === 3) {
+        toast.warn('Semester is finished, cannot make any further changes.');
+        return;
+      }
       const id = Number(e.currentTarget.getAttribute('data-id'));
       if (!Number.isInteger(id)) {
         toast.error('Internal Server Error');
@@ -138,12 +146,16 @@ export default function Teams({ semester }) {
         })
         .catch(handleErrors);
     },
-    [semId]
+    [semId, semester.status]
   );
 
   const handleRemove = React.useCallback(
     e => {
       e.preventDefault();
+      if (semester.status === 3) {
+        toast.warn('Semester is finished, cannot make any further changes.');
+        return;
+      }
       const id = Number(e.currentTarget.getAttribute('data-id'));
       if (!Number.isInteger(id)) {
         toast.error('Internal Server Error');
@@ -174,7 +186,7 @@ export default function Teams({ semester }) {
             .catch(handleErrors),
       });
     },
-    [confirm]
+    [confirm, semester.status]
   );
 
   // ---------------------------------------------------------------------------
