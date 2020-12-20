@@ -139,8 +139,7 @@ export default function SelectSemester() {
         style={{
           marginTop: '1rem',
           marginLeft: '4.5rem',
-          marginBottom: '-2rem',
-
+          marginBottom: '-1.25rem',
           fontSize: '1.25rem',
           fontWeight: 600,
         }}
