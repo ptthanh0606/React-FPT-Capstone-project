@@ -44,6 +44,7 @@ function transformToGrid(data) {
       readOnly: true,
       colSpan: 2,
       id: i.id,
+      className: 'text-nowrap',
     })),
     { value: 'Team', readOnly: true },
   ];
@@ -66,7 +67,7 @@ function transformToGrid(data) {
           value: i.name,
           readOnly: true,
           rowSpan: evaluatorNum,
-          width: '200px',
+          width: '400px',
         },
         {
           value: i.weight,
