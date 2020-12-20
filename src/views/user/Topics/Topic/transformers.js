@@ -1,143 +1,103 @@
-import React from 'react';
-
-export const transformToGrid = function (
-  data,
-  currentUserId = '',
-  isStudentView = false
-) {
+export function transformToGrid(data) {
   const final = [];
-
-  for (const checkpoint of data.checkpoints) {
-    let header = [];
-
-    header = [{ value: '', readOnly: true }];
-    const grid = [];
-
-    for (const markCol of checkpoint.markColumns) {
-      header.push({
-        value: <>{markCol.name}</>,
-        colSpan: checkpoint.council.members.length,
-        readOnly: true,
-      });
-    }
-    header.push({
-      value: '',
+  const header = [
+    { value: '', readOnly: true, colSpan: 4 },
+    ...data.students.map(i => ({
+      value: '[' + i.code + '] ' + i.name,
       readOnly: true,
-    });
-    grid.push(header);
+      colSpan: 2,
+      id: i.id,
+    })),
+    { value: 'Team', readOnly: true },
+  ];
 
-    // Push evaluators row
-    const numberOfCol = checkpoint.markColumns.length;
-    const evaluatorRow = [];
-    evaluatorRow.push({
-      value: '',
-      readOnly: true,
-    });
-    for (let i = 0; i < numberOfCol; i++) {
-      evaluatorRow.push(
-        ...checkpoint.council.members.map(mem => ({
-          value: mem.code,
-          readOnly: true,
-          colSpan: 1,
-          id: i,
-        }))
-      );
-    }
-    evaluatorRow.push({
-      value: 'Total of student',
-      readOnly: true,
-    });
-    grid.push(evaluatorRow);
+  for (const z of data.checkpoints) {
+    // z = current checkpoints
+    const grid = [header];
 
-    // Push students row
-    for (const student of data.students) {
-      let studentRow = [];
-      studentRow.push({
-        value: student.code,
-        readOnly: true,
-      });
-      for (let i = 0; i < evaluatorRow.length - 2; i++) {
-        let isUserNotEvaluator = false;
-        let studentMark = 0;
-        for (let j = 0; j < numberOfCol; j++) {
-          studentMark = checkpoint.markColumns[j].marks.find(
-            mark => mark.studentId === student.id
-          ).totalColumnStudent;
+    for (const i of z.markColumns) {
+      // i = current column
 
-          isUserNotEvaluator = !checkpoint.markColumns[j].marks.some(mark =>
-            mark.lecturers.some(lec => {
-              return lec.id === currentUserId;
-            })
-          );
-        }
-
-        studentRow.push({
-          value: studentMark,
-          readOnly: !isStudentView ? isUserNotEvaluator : true,
-        });
-      }
-      studentRow.push({
-        // value: checkpoint.totalCheckpointStudent[student.id],
-        value: 'Pending',
-        readOnly: true,
-      });
-      grid.push(studentRow);
-
-      let totalStudentRow = [];
-      totalStudentRow.push({
-        value: 'Total',
-        readOnly: true,
-      });
-      for (let i = 0; i < numberOfCol; i++) {
-        totalStudentRow.push({
-          value: 0,
-          readOnly: true,
-          colSpan: checkpoint.council.members.length,
-        });
-      }
-      totalStudentRow.push({
-        value: '',
-        readOnly: true,
-      });
-
-      grid.push(totalStudentRow);
-
-      grid.push([
+      const firstEvaluator = z.council.members[0];
+      const evaluatorNum = z.council.members.length;
+      const toPush = [
+        { value: i.name, readOnly: true, rowSpan: evaluatorNum },
         {
-          value: '',
-          colSpan: evaluatorRow.length,
+          value: i.weight,
           readOnly: true,
+          rowSpan: evaluatorNum,
         },
-      ]);
+        { value: firstEvaluator.code, readOnly: true },
+        { value: firstEvaluator.weight, readOnly: true },
+      ];
+
+      for (const j of data.students) {
+        // j = current student
+        toPush.push(
+          {
+            value: i.marks
+              ?.find(e => e.studentId === j.id)
+              ?.lecturers?.find(e => e.id === z.council.members[0].id)?.value,
+            studentId: j.id,
+            lecturerId: z.council.members[0].id,
+            markColumnId: i.id,
+            evaluationId: z.id,
+          },
+          {
+            value: i.marks?.find(e => e.studentId === j.id)?.totalColumnStudent,
+            rowSpan: z.council.members.length,
+            readOnly: true,
+          }
+        );
+      }
+
+      toPush.push({
+        value: i.totalColumnTeam,
+        rowSpan: z.council.members.length,
+        readOnly: true,
+      });
+
+      grid.push(toPush);
+
+      for (const k of z.council.members.slice(1)) {
+        // k: current council members
+        grid.push([
+          { value: k.code, readOnly: true },
+          { value: k.weight, readOnly: true },
+          ...data.students.map(x => {
+            return {
+              value: i.marks
+                ?.find(t => t.studentId === x.id)
+                ?.lecturers?.find(t => t.id === k.id)?.value,
+              studentId: x.id,
+              lecturerId: k.id,
+              markColumnId: i.id,
+              evaluationId: z.id,
+            };
+          }),
+        ]);
+      }
     }
 
-    // Push team row
-    let teamRow = [];
-    teamRow.push({
-      value: 'Team total',
-      readOnly: true,
-    });
-    for (let i = 0; i < numberOfCol; i++) {
-      teamRow.push({
-        value: 0,
+    grid.push([
+      { value: 'Total', colSpan: 4, readOnly: true },
+      ...data.students?.map(x => ({
+        value: z?.totalCheckpointStudent?.find(y => y.studentId === x.id)
+          ?.value,
+        colSpan: 2,
         readOnly: true,
-        colSpan: checkpoint.council.members.length,
-      });
-    }
-    teamRow.push({
-      value: 'Pending',
-      readOnly: true,
-    });
-    grid.push(teamRow);
+      })),
+      { value: z.totalTeam, readOnly: true },
+    ]);
 
     final.push({
-      id: checkpoint.id,
-      name: checkpoint.name,
-      weight: checkpoint.weight,
-      submitDueDate: checkpoint.submitDueDate,
-      evaluateDueDate: checkpoint.evaluateDueDate,
-      council: checkpoint.council,
-      status: checkpoint.status,
+      id: z.id,
+      name: z.name,
+      weight: z.weight,
+      submitDueDate: z.submitDueDate,
+      evaluateDueDate: z.evaluateDueDate,
+      council: z.council,
+      status: z.status,
       grid,
     });
   }
@@ -145,9 +105,9 @@ export const transformToGrid = function (
   console.log(final);
 
   return final;
-};
+}
 
-export const transformToData = function (data) {
+export function transformToData(data) {
   const marks = [];
   for (const k of data) {
     for (const i of k.grid) {
@@ -157,4 +117,4 @@ export const transformToData = function (data) {
     }
   }
   return marks;
-};
+}

@@ -6,10 +6,20 @@ import * as constantsCp from 'modules/semester/topic/checkpoints/constants';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 import { role } from 'auth/recoil/selectors';
 import { useRecoilValue } from 'recoil';
+import semesterAtom from 'store/semester';
+import { PUT_EVALUATION } from 'endpoints';
+import { useParams } from 'react-router-dom';
+import toast from 'utils/toast';
+import request from 'utils/request';
+import { transformToData } from 'views/user/Topics/Topic/transformers';
+import { handleErrors } from 'utils/common';
 
 const GradingSection = ({ evaluations = [], isUserMentor }) => {
   const [evals, setEvals] = React.useState([]);
   const currentRole = useRecoilValue(role);
+  const currentSemester = useRecoilValue(semesterAtom);
+  const { id } = useParams();
+  const [isUpdating, setIsUpdating] = React.useState(false);
 
   // --------------------------------------------------------------
 
@@ -36,6 +46,30 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
     [evals]
   );
 
+  const onSaveEvals = React.useCallback(
+    e => {
+      e.preventDefault();
+      if (currentSemester.status === 3) {
+        toast.warn('Semester is finished, cannot make any further changes.');
+        return;
+      }
+      setIsUpdating(true);
+      request({
+        to: PUT_EVALUATION(id).url,
+        method: PUT_EVALUATION(id).method,
+        data: {
+          marks: transformToData(evals),
+        },
+      })
+        .then(res => {
+          toast.success('Updated');
+        })
+        .catch(handleErrors)
+        .finally(() => setIsUpdating(false));
+    },
+    [currentSemester.status, evals, id]
+  );
+
   // ---------------------------------------------------------------
 
   React.useEffect(() => {
@@ -58,7 +92,10 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
           </span>
         </div>
         {currentRole === 'lecturer' && isUserMentor && (
-          <button className="btn btn-light-info d-flex align-items-center">
+          <button
+            className="btn btn-light-info d-flex align-items-center"
+            onClick={onSaveEvals}
+          >
             <span className="svg-icon svg-icon-md ml-0 mr-2">
               <SVG
                 src={toAbsoluteUrl('/media/svg/icons/General/Save.svg')}
@@ -86,14 +123,14 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
                   <div className="d-flex flex-column">
                     <span
                       className={`font-size-h3 font-weight-bolder text-${
-                        i.status ? 'dark-50' : 'white'
+                        i.status === 0 ? 'white' : 'white'
                       } text-uppercase`}
                     >
                       {i.name}
                     </span>
                     <div
                       className={`d-flex font-size-sm text-${
-                        i.status === 0 ? 'dark' : 'white'
+                        i.status === 0 ? 'white' : 'white'
                       } mt-3`}
                     >
                       <OverlayTrigger
@@ -103,7 +140,7 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
                         <div className="mr-10">
                           <i
                             class={`flaticon2-pie-chart-3 text-${
-                              i.status === 0 ? 'dark' : 'white'
+                              i.status === 0 ? 'white' : 'white'
                             } mr-2 icon-nm`}
                           ></i>
                           {i.weight}
@@ -112,7 +149,7 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
                       <div className="mr-10">
                         <i
                           class={`flaticon2-paperplane text-${
-                            i.status === 0 ? 'dark' : 'white'
+                            i.status === 0 ? 'white' : 'white'
                           } mr-2 icon-nm`}
                         ></i>
                         Submission due date
@@ -123,7 +160,7 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
                       <div className="mr-10">
                         <i
                           class={`flaticon2-notepad text-${
-                            i.status === 0 ? 'dark' : 'white'
+                            i.status === 0 ? 'white' : 'white'
                           } mr-2 icon-nm`}
                         ></i>
                         Evauluation date
@@ -145,7 +182,7 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
                   >
                     <span
                       class={`text-${
-                        i.status === 0 ? 'dark' : 'white'
+                        i.status === 0 ? 'white' : 'white'
                       } font-weight-bolder`}
                     >
                       {constantsCp.statusTitles[i.status]}
@@ -155,41 +192,42 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
               </Accordion.Toggle>
             </Card.Header>
             <Accordion.Collapse eventKey={i.id}>
-              <ReactDataSheet
-                sheetRenderer={props => (
-                  <table
-                    border="1"
-                    className={props.className}
-                    style={{
-                      width: '100%',
+              <Card.Body>
+                <div className="marks-table">
+                  <ReactDataSheet
+                    data={i.grid || []}
+                    sheetRenderer={props => {
+                      return (
+                        <table
+                          className={props.className}
+                          style={{ width: '100%' }}
+                        >
+                          <thead></thead>
+                          <tbody>{props.children}</tbody>
+                        </table>
+                      );
                     }}
-                  >
-                    <tbody>{props.children}</tbody>
-                  </table>
-                )}
-                rowRenderer={props => (
-                  <tr {...props} className={props.className}>
-                    {props.children}
-                  </tr>
-                )}
-                data={i.grid || []}
-                valueRenderer={cell => cell.value}
-                onCellsChanged={changes => handleGradeChange(changes, index)}
-                dataEditor={props => {
-                  return (
-                    <input
-                      style={{ height: '100%' }}
-                      onChange={e => props.onChange(e.currentTarget.value)}
-                      value={props.value}
-                      onKeyDown={props.onKeyDown}
-                      type="number"
-                      min="0"
-                      max="10"
-                      step="0.01"
-                    />
-                  );
-                }}
-              />
+                    valueRenderer={cell => cell.value}
+                    onCellsChanged={changes =>
+                      handleGradeChange(changes, index)
+                    }
+                    dataEditor={props => {
+                      return (
+                        <input
+                          style={{ height: '100%' }}
+                          onChange={e => props.onChange(e.currentTarget.value)}
+                          value={props.value}
+                          onKeyDown={props.onKeyDown}
+                          type="number"
+                          min="0"
+                          max="10"
+                          step="0.01"
+                        />
+                      );
+                    }}
+                  />
+                </div>
+              </Card.Body>
             </Accordion.Collapse>
           </Card>
         ))}

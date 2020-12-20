@@ -327,7 +327,9 @@ export default React.memo(function LecturerDashboard() {
         console.log(res.data.data);
         setFlowTimelines(timelineTransformer.down(res.data.data));
       })
-      .catch(err => {});
+      .catch(err => {
+        handleErrors(err);
+      });
     setFlowTimelines([
       {
         date: '2020-12-19T10:24:21.722Z',

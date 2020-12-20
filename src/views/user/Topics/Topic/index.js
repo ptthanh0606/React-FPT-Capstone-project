@@ -215,22 +215,13 @@ const Topic = () => {
         method: endpoints.GET_EVALUATION(id).method,
       })
         .then(res => {
-          if (res?.data?.data) {
-            console.log(res?.data?.data);
-            setEvals(
-              transformToGrid(
-                res?.data?.data,
-                currentUser.id,
-                currentRole === 'student'
-              )
-            );
-          }
+          setEvals(transformToGrid(res.data.data));
         })
         .catch(err => {
           handleErrors(err);
         });
     }
-  }, [currentRole, currentUser.id, id]);
+  }, [id]);
 
   // ----------------------------------------------------------
 
