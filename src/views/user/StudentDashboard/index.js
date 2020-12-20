@@ -634,14 +634,16 @@ export default React.memo(function LecturerDashboard() {
               />
             )}
 
-          {currentSemester.status === 2 && (
-            <ProgressChart
-              title="Checkpoints progress"
-              subTitle="Overall status of checkpoints"
-              percent={progressCheckpoint}
-              baseColor="info"
-            />
-          )}
+          {currentSemester.status === 2 &&
+            isStudentHaveTeam &&
+            isStudentHaveTopic && (
+              <ProgressChart
+                title="Checkpoints progress"
+                subTitle="Overall status of checkpoints"
+                percent={progressCheckpoint}
+                baseColor="info"
+              />
+            )}
         </div>
       </div>
       <CMSModal

@@ -1,18 +1,49 @@
 export function transformToGrid(data, currentId, isLecturer) {
   const cellProp = {
-    className: 'text-nowrap py-2 px-5',
+    className: 'text-nowrap py-2 px-5 text-dark',
+  };
+  const headerProp = {
+    className:
+      'text-nowrap py-2 px-5 font-weight-bolder bg-gray-500 text-white',
+  };
+  const headerStudentProp = {
+    className:
+      'text-nowrap py-2 px-5 font-weight-bolder bg-gray-500 text-white',
   };
   const final = [];
   const header = [
-    { value: '', readOnly: true, colSpan: 4 },
+    {
+      value: 'Mark columns',
+      readOnly: true,
+      ...headerProp,
+    },
+    {
+      value: 'weight',
+      readOnly: true,
+      ...headerProp,
+    },
+    {
+      value: 'Evaluators',
+      readOnly: true,
+      ...headerProp,
+    },
+    {
+      value: 'Evaluator weight',
+      readOnly: true,
+      ...headerProp,
+    },
     ...data.students.map(i => ({
       value: '[' + i.code + '] ' + i.name,
       readOnly: true,
       colSpan: 2,
       id: i.id,
-      ...cellProp,
+      ...headerStudentProp,
     })),
-    { value: 'Team', readOnly: true, ...cellProp },
+    {
+      value: 'Team',
+      readOnly: true,
+      ...headerStudentProp,
+    },
   ];
 
   for (const z of data.checkpoints) {
@@ -108,7 +139,7 @@ export function transformToGrid(data, currentId, isLecturer) {
     }
 
     grid.push([
-      { value: 'Total', colSpan: 4, readOnly: true },
+      { value: 'Total', colSpan: 4, readOnly: true, ...cellProp },
       ...data.students?.map(x => ({
         value: z?.totalCheckpointStudent?.find(y => y.studentId === x.id)
           ?.value,

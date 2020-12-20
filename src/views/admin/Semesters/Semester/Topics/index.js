@@ -92,6 +92,7 @@ export default function Topics({ semester }) {
           data.append(i, fieldData[i], fieldData[i].name);
         }
       }
+      console.log(data);
       request({
         to: endpoints.CREATE_TOPIC.url,
         method: endpoints.CREATE_TOPIC.method,

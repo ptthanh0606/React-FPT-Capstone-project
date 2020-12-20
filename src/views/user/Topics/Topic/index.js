@@ -24,9 +24,10 @@ import CMSList from 'components/CMSList';
 import GroupCard from 'components/GroupCard';
 import TopicDetailCard from 'components/CMSWidgets/TopicDetailCard';
 import useConfirm from 'utils/confirm';
-import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Button, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 import { transformToGrid } from 'modules/semester/topic/checkpoints/transformers';
+import { convertDateDown } from 'modules/semester/team/application/transformers';
 
 const Topic = () => {
   const history = useHistory();
@@ -43,6 +44,7 @@ const Topic = () => {
   // ----------------------------------------------------------
 
   const [currentTopic, setCurrentTopic] = React.useState({});
+  const [reports, setReports] = React.useState([]);
   const [evals, setEvals] = React.useState([]);
   const [isStudentUserHaveTeam, setIsStudentUserHaveTeam] = React.useState(
     false
@@ -230,6 +232,38 @@ const Topic = () => {
     }
   }, [currentRole, currentUser.id, id]);
 
+  const fetchReport = React.useCallback(() => {
+    setReports(
+      [
+        {
+          id: 0,
+          title: 'Report #1',
+          attachment: 'string',
+          attachmentLink: 'string',
+          createdAt: '2020-12-20T22:44:59.185Z',
+          updatedAt: '2020-12-20T22:44:59.185Z',
+          topicId: 0,
+        },
+      ].map(report => ({
+        label: report.title,
+        subLabel: convertDateDown(report.updatedAt),
+        attachmentLink: report.attachmentLink,
+      }))
+    );
+    request({
+      to: endpoints.READ_REPORT.url,
+      method: endpoints.READ_REPORT.method,
+      params: {
+        topicId: id,
+      },
+    })
+      .then(res => {
+        console.log(res.data.data);
+      })
+      .catch(handleErrors)
+      .finally(() => setIsProcessing(false));
+  }, [id]);
+
   // ----------------------------------------------------------
 
   const handleConfirmApproveTeam = React.useCallback(
@@ -318,10 +352,6 @@ const Topic = () => {
     },
     [currentTopic.id, fetchTopic, id]
   );
-
-  const handleSubmitReport = React.useCallback(weightData => {
-    //
-  }, []);
 
   const onFeedbackSuccess = React.useCallback(
     e => {
@@ -475,6 +505,36 @@ const Topic = () => {
       onConfirm: onConfirmApplyMatching,
     });
   }, [confirm, onConfirmApplyMatching]);
+
+  const fileRef = React.useRef(null);
+
+  const handleClickFile = React.useCallback(e => {
+    e.preventDefault();
+    fileRef.current.click();
+  }, []);
+
+  const handleFileChange = React.useCallback(
+    event => {
+      console.log(event.currentTarget.files[0]);
+      const data = new FormData();
+      data.append(
+        'attachment',
+        event.currentTarget.files[0],
+        event.currentTarget.files[0].name
+      );
+      data.append('topicId', id);
+      request({
+        to: endpoints.SEND_REPORT.url,
+        method: endpoints.SEND_REPORT.method,
+        data: data,
+      })
+        .then(res => {
+          toast.success('Report sent!');
+        })
+        .catch(handleErrors);
+    },
+    [id]
+  );
 
   // ----------------------------------------------------------
 
@@ -699,18 +759,18 @@ const Topic = () => {
   React.useEffect(() => {
     if (currentRole === 'student') {
       fetchUserTeam();
-    } else {
-      // fetchCouncil();
     }
     fetchTopic();
     if (currentSemester.status === 2) {
       fetchEvaluation();
+      fetchReport();
     }
   }, [
     currentRole,
     currentSemester.status,
     fetchCouncil,
     fetchEvaluation,
+    fetchReport,
     fetchTopic,
     fetchUserTeam,
   ]);
@@ -875,14 +935,25 @@ const Topic = () => {
                         ? 'No report by team yet...'
                         : 'Awaiting for report submission...'
                     }
-                    group={[]}
-                    handleSubmitRowData={handleSubmitReport}
+                    group={reports}
+                    type="report"
                     toolBar={
                       currentRole === 'student' && isStudentTeamLead ? (
-                        <button className="btn btn-light-info mt-2 font-weight-bolder">
-                          <i class="far fa-file-archive icon-md mr-1"></i>
-                          Submit
-                        </button>
+                        <>
+                          <button
+                            className="btn btn-light-info mt-2 font-weight-bolder"
+                            onClick={handleClickFile}
+                          >
+                            <i class="far fa-file-archive icon-md mr-1"></i>
+                            Submit
+                          </button>
+                          <Form.File
+                            ref={fileRef}
+                            label={undefined}
+                            onChange={handleFileChange}
+                            className="d-none"
+                          />
+                        </>
                       ) : (
                         <></>
                       )

@@ -187,41 +187,37 @@ const GradingSection = ({
               </Accordion.Toggle>
             </Card.Header>
             <Accordion.Collapse eventKey={i.id}>
-              <Card.Body>
-                <div className="marks-table" style={{ overflowX: 'scroll' }}>
-                  <ReactDataSheet
-                    data={i.grid || []}
-                    sheetRenderer={props => {
-                      return (
-                        <table
-                          className={props.className}
-                          style={{ minWidth: '100%' }}
-                        >
-                          {props.children}
-                        </table>
-                      );
-                    }}
-                    valueRenderer={cell => cell.value}
-                    onCellsChanged={changes =>
-                      handleGradeChange(changes, index)
-                    }
-                    dataEditor={props => {
-                      return (
-                        <input
-                          style={{ height: '100%' }}
-                          onChange={e => props.onChange(e.currentTarget.value)}
-                          value={props.value}
-                          onKeyDown={props.onKeyDown}
-                          type="number"
-                          min="0"
-                          max="10"
-                          step="0.01"
-                        />
-                      );
-                    }}
-                  />
-                </div>
-              </Card.Body>
+              <div className="marks-table" style={{ overflowX: 'scroll' }}>
+                <ReactDataSheet
+                  data={i.grid || []}
+                  sheetRenderer={props => {
+                    return (
+                      <table
+                        className={props.className}
+                        style={{ minWidth: '100%' }}
+                      >
+                        {props.children}
+                      </table>
+                    );
+                  }}
+                  valueRenderer={cell => cell.value}
+                  onCellsChanged={changes => handleGradeChange(changes, index)}
+                  dataEditor={props => {
+                    return (
+                      <input
+                        style={{ height: '100%' }}
+                        onChange={e => props.onChange(e.currentTarget.value)}
+                        value={props.value}
+                        onKeyDown={props.onKeyDown}
+                        type="number"
+                        min="0"
+                        max="10"
+                        step="0.01"
+                      />
+                    );
+                  }}
+                />
+              </div>
             </Accordion.Collapse>
           </Card>
         )) || <></>}

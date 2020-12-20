@@ -458,6 +458,23 @@ export const CANCEL_APPLICATION = id => ({
 
 // -----------------------------------------------------------------------------
 
+export const READ_REPORT = {
+  url: config.api + 'reports',
+  method: METHOD.GET,
+};
+
+export const SEND_REPORT = {
+  url: config.api + 'reports',
+  method: METHOD.POST,
+};
+
+export const REMOVE_REPORT = id => ({
+  url: config.api + 'reports/' + id,
+  method: METHOD.GET,
+});
+
+// -----------------------------------------------------------------------------
+
 export const LIST_EVALUATION = {
   url: config.api + 'evaluations',
   method: METHOD.GET,
