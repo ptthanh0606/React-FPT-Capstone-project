@@ -158,7 +158,7 @@ function transformToGrid(data) {
   const header = [
     { value: '', readOnly: true, colSpan: 4 },
     ...data.students.map(i => ({
-      value: i.code,
+      value: '[' + i.code + '] ' + i.name,
       readOnly: true,
       colSpan: 2,
       id: i.id,
@@ -207,7 +207,7 @@ function transformToGrid(data) {
       }
 
       toPush.push({
-        value: i.total,
+        value: i.totalColumnTeam,
         rowSpan: z.council.members.length,
         readOnly: true,
       });
@@ -310,6 +310,10 @@ const Topic = ({ semester }) => {
   const handleReject = React.useCallback(
     e => {
       e.preventDefault();
+      if (semester.status === 3) {
+        toast.warn('Semester is finished, cannot make any further changes.');
+        return;
+      }
       request({
         to: endpoints.REJECT_TOPIC(topicId).url,
         method: endpoints.REJECT_TOPIC(topicId).method,
@@ -319,12 +323,16 @@ const Topic = ({ semester }) => {
         })
         .catch(handleErrors);
     },
-    [topicId]
+    [semester.status, topicId]
   );
 
   const handleApprove = React.useCallback(
     e => {
       e.preventDefault();
+      if (semester.status === 3) {
+        toast.warn('Semester is finished, cannot make any further changes.');
+        return;
+      }
       request({
         to: endpoints.APPROVE_TOPIC(topicId).url,
         method: endpoints.APPROVE_TOPIC(topicId).method,
@@ -334,7 +342,7 @@ const Topic = ({ semester }) => {
         })
         .catch(handleErrors);
     },
-    [topicId]
+    [semester.status, topicId]
   );
 
   const handleChangeField = React.useCallback(e => {
@@ -354,6 +362,10 @@ const Topic = ({ semester }) => {
   const handleUpdate = React.useCallback(
     e => {
       e.preventDefault();
+      if (semester.status === 3) {
+        toast.warn('Semester is finished, cannot make any further changes.');
+        return;
+      }
       const data2 = {
         ...transformers.up(data),
         semesterId: Number(semId),
@@ -381,12 +393,16 @@ const Topic = ({ semester }) => {
         .then(() => toast.success('Save topic successfully!'))
         .catch(handleErrors);
     },
-    [data, semId, topicId]
+    [data, semId, semester.status, topicId]
   );
 
   const handleDelete = React.useCallback(
     e => {
       e.preventDefault();
+      if (semester.status === 3) {
+        toast.warn('Semester is finished, cannot make any further changes.');
+        return;
+      }
       confirm({
         title: 'Removal Confirmation',
         body: (
@@ -412,7 +428,7 @@ const Topic = ({ semester }) => {
             .catch(handleErrors),
       });
     },
-    [confirm, history, semId, topicId]
+    [confirm, history, semId, semester.status, topicId]
   );
 
   React.useEffect(() => {
@@ -451,6 +467,10 @@ const Topic = ({ semester }) => {
   const onSaveEvals = React.useCallback(
     e => {
       e.preventDefault();
+      if (semester.status === 3) {
+        toast.warn('Semester is finished, cannot make any further changes.');
+        return;
+      }
       setIsUpdating(true);
       request({
         to: endpoints.PUT_EVALUATION(topicId).url,
@@ -466,7 +486,7 @@ const Topic = ({ semester }) => {
         .catch(handleErrors)
         .finally(() => setIsUpdating(false));
     },
-    [evals, topicId]
+    [evals, semester.status, topicId]
   );
 
   React.useEffect(() => {

@@ -65,8 +65,12 @@ export default function Topics({ semester }) {
   // ---------------------------------------------------------------------------
 
   const showCreateModal = React.useCallback(() => {
+    if (semester.status === 3) {
+      toast.warn('Semester is finished, cannot make any further changes.');
+      return;
+    }
     setShowCreate(true);
-  }, []);
+  }, [semester.status]);
 
   const hideCreateModal = React.useCallback(() => {
     setShowCreate(false);
@@ -149,31 +153,42 @@ export default function Topics({ semester }) {
     [editId]
   );
 
-  const handleEdit = React.useCallback(e => {
-    e.preventDefault();
-    const id = Number(e.currentTarget.getAttribute('data-id'));
-    if (!Number.isInteger(id)) {
-      toast.error('Internal Server Error');
-      return;
-    }
-    request({
-      to: endpoints.READ_TOPIC(id).url,
-      method: endpoints.READ_TOPIC(id).method,
-      params: {
-        topicId: id,
-      },
-    })
-      .then(res => {
-        setEditId(id);
-        setUpdateFieldTemplate(transformers.downRead(res.data?.data) || {});
-        setShowUpdate(true);
+  const handleEdit = React.useCallback(
+    e => {
+      e.preventDefault();
+      if (semester.status === 3) {
+        toast.warn('Semester is finished, cannot make any further changes.');
+        return;
+      }
+      const id = Number(e.currentTarget.getAttribute('data-id'));
+      if (!Number.isInteger(id)) {
+        toast.error('Internal Server Error');
+        return;
+      }
+      request({
+        to: endpoints.READ_TOPIC(id).url,
+        method: endpoints.READ_TOPIC(id).method,
+        params: {
+          topicId: id,
+        },
       })
-      .catch(handleErrors);
-  }, []);
+        .then(res => {
+          setEditId(id);
+          setUpdateFieldTemplate(transformers.downRead(res.data?.data) || {});
+          setShowUpdate(true);
+        })
+        .catch(handleErrors);
+    },
+    [semester.status]
+  );
 
   const handleRemove = React.useCallback(
     e => {
       e.preventDefault();
+      if (semester.status === 3) {
+        toast.warn('Semester is finished, cannot make any further changes.');
+        return;
+      }
       const id = Number(e.currentTarget.getAttribute('data-id'));
       if (!Number.isInteger(id)) {
         toast.error('Internal Server Error');
@@ -204,15 +219,22 @@ export default function Topics({ semester }) {
             .catch(handleErrors),
       });
     },
-    [confirm]
+    [confirm, semester.status]
   );
 
   // ---------------------------------------------------------------------------
 
-  const handleAssignCheckpointTemplate = React.useCallback(e => {
-    e.preventDefault();
-    setIsShowAssignCheckpointTemplate(true);
-  }, []);
+  const handleAssignCheckpointTemplate = React.useCallback(
+    e => {
+      e.preventDefault();
+      if (semester.status === 3) {
+        toast.warn('Semester is finished, cannot make any further changes.');
+        return;
+      }
+      setIsShowAssignCheckpointTemplate(true);
+    },
+    [semester.status]
+  );
 
   const columns = React.useMemo(
     () => constants.createColumns({ handleEdit, handleRemove }),
