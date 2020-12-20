@@ -1,6 +1,7 @@
 .marks-table {
+  overflow: auto;
   table {
-    width: 100%;
+    // width: 100%;
     td {
       vertical-align: middle !important;
       padding: 0.5rem !important;

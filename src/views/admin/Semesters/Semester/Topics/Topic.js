@@ -62,7 +62,12 @@ function transformToGrid(data) {
       };
       const evaluatorNum = z.council.members.length || 1;
       const toPush = [
-        { value: i.name, readOnly: true, rowSpan: evaluatorNum },
+        {
+          value: i.name,
+          readOnly: true,
+          rowSpan: evaluatorNum,
+          width: '200px',
+        },
         {
           value: i.weight,
           readOnly: true,
@@ -411,7 +416,7 @@ const Topic = ({ semester }) => {
           console.log(data);
           setEvals(data);
         })
-        .catch(() => {})
+        .catch(handleErrors)
         .finally(() => setIsLoading(false));
     }
   }, [l2, topicId]);
