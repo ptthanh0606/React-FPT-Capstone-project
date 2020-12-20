@@ -216,13 +216,19 @@ const Topic = () => {
       })
         .then(res => {
           console.log(res.data.data);
-          setEvals(transformToGrid(res.data.data));
+          setEvals(
+            transformToGrid(
+              res.data.data,
+              currentUser.id,
+              currentRole === 'lecturer'
+            )
+          );
         })
         .catch(err => {
           handleErrors(err);
         });
     }
-  }, [id]);
+  }, [currentRole, currentUser.id, id]);
 
   // ----------------------------------------------------------
 

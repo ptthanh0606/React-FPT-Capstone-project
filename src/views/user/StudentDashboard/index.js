@@ -369,33 +369,6 @@ export default React.memo(function LecturerDashboard() {
       .catch(err => {
         setFlowTimelines([]);
       });
-    // setFlowTimelines([
-    //   {
-    //     date: '2020-12-19T10:24:21.722Z',
-    //     content: <div className="pl-3">Start preparing phase</div>,
-    //     type: 'success',
-    //   },
-    //   {
-    //     date: '2020-12-19T10:24:21.722Z',
-    //     content: <div className="pl-3">Reports due date for Checkpoint 1</div>,
-    //     type: 'danger',
-    //   },
-    //   {
-    //     date: '2020-12-19T10:24:21.722Z',
-    //     content: (
-    //       <div className="pl-3">
-    //         Checkpoint 1 meeting for evaluation with Lam Huu Khanh Phuong, Tran
-    //         Tuan Anh
-    //       </div>
-    //     ),
-    //     type: 'info',
-    //   },
-    //   {
-    //     date: '2020-12-19T10:24:21.722Z',
-    //     content: <div className="pl-3">Semester end</div>,
-    //     type: 'success',
-    //   },
-    // ]);
   }, [currentSemester.id]);
 
   React.useEffect(() => {

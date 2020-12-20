@@ -1,4 +1,4 @@
-export function transformToGrid(data, currentId) {
+export function transformToGrid(data, currentId, isLecturer) {
   const cellProp = {
     className: 'text-nowrap py-2 px-5',
   };
@@ -66,6 +66,7 @@ export function transformToGrid(data, currentId) {
             lecturerId: firstEvaluator?.id,
             markColumnId: i.id,
             evaluationId: z.evaluationId,
+            readOnly: currentId !== firstEvaluator?.id && isLecturer === false,
             ...cellProp,
           },
           {
@@ -99,6 +100,7 @@ export function transformToGrid(data, currentId) {
             lecturerId: k.id,
             markColumnId: i.id,
             evaluationId: z.evaluationId,
+            readOnly: currentId !== k.id && isLecturer === false,
             ...cellProp,
           })),
         ]);

@@ -14,7 +14,7 @@ export function down(i) {
     },
     {
       date:
-        i?.semester?.assigningDate ||
+        i?.semester?.inProgressDate ||
         console.log('Inprogress date field not found'),
       type: statusCSS[0],
       content: 'Start In-progress phase',
@@ -26,12 +26,21 @@ export function down(i) {
       {
         date: j.submitDueDate,
         type: statusCSS[1],
-        content: `Finish all the work for checkpoint "${j.checkpoint.name}"`,
+        content: (
+          <span>
+            Finish all the work for checkpoint <b>"{j.checkpoint.name}"</b>
+          </span>
+        ),
       },
       {
         date: j.evaluateDueDate,
         type: statusCSS[2],
-        content: `Checkpoint "${j.checkpoint.name}" evaluation meeting with`,
+        content: (
+          <span>
+            Checkpoint <b>"{j.checkpoint.name}"</b> evaluation meeting with{' '}
+            <b>"{j.council.name}"</b>
+          </span>
+        ),
       },
     ])
     .map(k => {
@@ -40,8 +49,7 @@ export function down(i) {
 
   timelines.push({
     date:
-      i?.semester?.assigningDate ||
-      console.log('finished date field not found'),
+      i?.semester?.finishedDate || console.log('finished date field not found'),
     type: statusCSS[0],
     content: 'Capstone semester end',
   });
