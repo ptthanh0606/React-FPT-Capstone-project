@@ -21,6 +21,7 @@ import {
   LIST_ANNOUNCEMENT,
   READ_TEAM,
   LIST_TIMELINES,
+  GET_EVALUATION,
 } from 'endpoints';
 import * as TeamTransformer from 'modules/semester/team/transformers';
 import * as AnouncementTransformer from 'modules/semester/announcement/transformers';
@@ -68,6 +69,8 @@ export default React.memo(function LecturerDashboard() {
   // -------------------------------------------------------------------------
 
   const [userTeam, setUserTeam] = React.useState([]);
+  const [checkpoints, setCheckpoints] = React.useState([]);
+  const [progressCheckpoint, setProgressCheckpoint] = React.useState(0);
 
   // -------------------------------------------------------------------------
 
@@ -144,6 +147,35 @@ export default React.memo(function LecturerDashboard() {
   );
 
   // ---------------------------------------------------------------------
+
+  const fetchEvaluation = React.useCallback(topicId => {
+    request({
+      to: GET_EVALUATION(topicId).url,
+      method: GET_EVALUATION(topicId).method,
+    })
+      .then(res => {
+        if (res?.data?.data.checkpoints) {
+          setProgressCheckpoint(
+            (res.data.data.checkpoints.filter(checkpoint => {
+              return [2, 3].includes(checkpoint.status);
+            }).length /
+              res.data.data.checkpoints.length) *
+              100
+          );
+          setCheckpoints(
+            res?.data?.data.checkpoints.map(checkpoint => ({
+              status: checkpoint.status,
+              name: checkpoint.name,
+              submissionDeadline: checkpoint.submitDueDate,
+              evaluateDate: checkpoint.evaluateDueDate,
+            }))
+          );
+        }
+      })
+      .catch(err => {
+        handleErrors(err);
+      });
+  }, []);
 
   const fetchAllTopics = React.useCallback(() => {
     request({
@@ -258,13 +290,21 @@ export default React.memo(function LecturerDashboard() {
         setIsStudentHaveTopic(!!transformedRes.topic.label);
         setIsStudentHaveTeam(true);
         setUserTeam(transformedRes);
+        if (currentSemester.status === 2) {
+          fetchEvaluation(transformedRes.topic?.value);
+        }
       })
       .catch(() => {
         setIsStudentHaveTeam(false);
         fetchOtherTeams(true);
         setModalConfigs(createTeamAsStudentModalConfigs(currentSemester.id));
       });
-  }, [currentSemester.id, fetchOtherTeams]);
+  }, [
+    currentSemester.id,
+    currentSemester.status,
+    fetchEvaluation,
+    fetchOtherTeams,
+  ]);
 
   const onCreateTeam = React.useCallback(
     fieldData => {
@@ -324,7 +364,6 @@ export default React.memo(function LecturerDashboard() {
       method: LIST_TIMELINES(currentSemester.id).method,
     })
       .then(res => {
-        console.log(res.data.data);
         setFlowTimelines(timelineTransformer.down(res.data.data));
       })
       .catch(err => {
@@ -407,6 +446,7 @@ export default React.memo(function LecturerDashboard() {
               isStudentHaveTopic={isStudentHaveTopic}
               members={userTeam.members}
               topic={userTeam.topic}
+              checkpoints={checkpoints}
             />
           )}
 
@@ -625,7 +665,7 @@ export default React.memo(function LecturerDashboard() {
             <ProgressChart
               title="Checkpoints progress"
               subTitle="Overall status of checkpoints"
-              percent={75}
+              percent={progressCheckpoint}
               baseColor="info"
             />
           )}

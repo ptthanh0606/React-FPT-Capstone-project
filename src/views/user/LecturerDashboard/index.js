@@ -305,6 +305,9 @@ export default React.memo(function LecturerDashboard() {
     if (currentSemester.status === 1) {
       fetchTotalTopicsByStatus(3);
     }
+    if (currentSemester.status === 2) {
+      fetchTotalTopicsByStatus(4);
+    }
     if (currentSemester.status === 3) {
       fetchTotalTopicsByStatus(4);
     }

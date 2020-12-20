@@ -11,8 +11,8 @@ import { PUT_EVALUATION } from 'endpoints';
 import { useParams } from 'react-router-dom';
 import toast from 'utils/toast';
 import request from 'utils/request';
-import { transformToData } from 'views/user/Topics/Topic/transformers';
 import { handleErrors } from 'utils/common';
+import { transformToData } from 'modules/semester/topic/checkpoints/transformers';
 
 const GradingSection = ({ evaluations = [], isUserMentor }) => {
   const [evals, setEvals] = React.useState([]);
@@ -48,6 +48,7 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
 
   const onSaveEvals = React.useCallback(
     e => {
+      console.log(transformToData(evals));
       e.preventDefault();
       if (currentSemester.status === 3) {
         toast.warn('Semester is finished, cannot make any further changes.');

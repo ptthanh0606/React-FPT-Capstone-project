@@ -7,6 +7,7 @@ export function transformToGrid(data) {
       readOnly: true,
       colSpan: 2,
       id: i.id,
+      className: 'text-nowrap',
     })),
     { value: 'Team', readOnly: true },
   ];
@@ -18,17 +19,26 @@ export function transformToGrid(data) {
     for (const i of z.markColumns) {
       // i = current column
 
-      const firstEvaluator = z.council.members[0];
-      const evaluatorNum = z.council.members.length;
+      const firstEvaluator = z.council.members[0] || {
+        id: -1,
+        code: '',
+        weight: '',
+      };
+      const evaluatorNum = z.council.members.length || 1;
       const toPush = [
-        { value: i.name, readOnly: true, rowSpan: evaluatorNum },
+        {
+          value: i.name,
+          readOnly: true,
+          rowSpan: evaluatorNum,
+          width: '400px',
+        },
         {
           value: i.weight,
           readOnly: true,
           rowSpan: evaluatorNum,
         },
-        { value: firstEvaluator.code, readOnly: true },
-        { value: firstEvaluator.weight, readOnly: true },
+        { value: firstEvaluator?.code, readOnly: true },
+        { value: firstEvaluator?.weight, readOnly: true },
       ];
 
       for (const j of data.students) {
@@ -37,15 +47,15 @@ export function transformToGrid(data) {
           {
             value: i.marks
               ?.find(e => e.studentId === j.id)
-              ?.lecturers?.find(e => e.id === z.council.members[0].id)?.value,
+              ?.lecturers?.find(e => e.id === firstEvaluator?.id)?.value,
             studentId: j.id,
-            lecturerId: z.council.members[0].id,
+            lecturerId: firstEvaluator?.id,
             markColumnId: i.id,
             evaluationId: z.id,
           },
           {
             value: i.marks?.find(e => e.studentId === j.id)?.totalColumnStudent,
-            rowSpan: z.council.members.length,
+            rowSpan: evaluatorNum,
             readOnly: true,
           }
         );
@@ -53,7 +63,7 @@ export function transformToGrid(data) {
 
       toPush.push({
         value: i.totalColumnTeam,
-        rowSpan: z.council.members.length,
+        rowSpan: evaluatorNum,
         readOnly: true,
       });
 
@@ -64,17 +74,15 @@ export function transformToGrid(data) {
         grid.push([
           { value: k.code, readOnly: true },
           { value: k.weight, readOnly: true },
-          ...data.students.map(x => {
-            return {
-              value: i.marks
-                ?.find(t => t.studentId === x.id)
-                ?.lecturers?.find(t => t.id === k.id)?.value,
-              studentId: x.id,
-              lecturerId: k.id,
-              markColumnId: i.id,
-              evaluationId: z.id,
-            };
-          }),
+          ...data.students.map(x => ({
+            value: i.marks
+              ?.find(t => t.studentId === x.id)
+              ?.lecturers?.find(t => t.id === k.id)?.value,
+            studentId: x.id,
+            lecturerId: k.id,
+            markColumnId: i.id,
+            evaluationId: z.id,
+          })),
         ]);
       }
     }
@@ -101,8 +109,6 @@ export function transformToGrid(data) {
       grid,
     });
   }
-
-  console.log(final);
 
   return final;
 }

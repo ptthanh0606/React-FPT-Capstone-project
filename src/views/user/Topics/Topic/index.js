@@ -26,7 +26,7 @@ import TopicDetailCard from 'components/CMSWidgets/TopicDetailCard';
 import useConfirm from 'utils/confirm';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { toAbsoluteUrl } from '_metronic/_helpers';
-import { transformToGrid } from './transformers';
+import { transformToGrid } from 'modules/semester/topic/checkpoints/transformers';
 
 const Topic = () => {
   const history = useHistory();

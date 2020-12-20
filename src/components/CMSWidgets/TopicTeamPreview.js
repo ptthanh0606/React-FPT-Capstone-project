@@ -7,8 +7,14 @@ import semesterAtom from 'store/semester';
 import { useRecoilValue } from 'recoil';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { format } from 'date-fns';
 
-const Checkpoint = ({ status = 1, name = '', submissionDeadline = '' }) => {
+const Checkpoint = ({
+  status = 1,
+  name = '',
+  submissionDeadline = '',
+  evaluateDate = '',
+}) => {
   const [statusClass] = React.useState(['', '-primary', '-success', '-danger']);
 
   return (
@@ -44,7 +50,7 @@ const Checkpoint = ({ status = 1, name = '', submissionDeadline = '' }) => {
             overlay={<Tooltip>You finish all reports before this date</Tooltip>}
           >
             <div class="font-size-sm text-muted font-weight-bold mt-1">
-              Due at: {submissionDeadline}
+              Due at {format(new Date(submissionDeadline), 'dd MMM')}
             </div>
           </OverlayTrigger>
         )}
@@ -54,12 +60,12 @@ const Checkpoint = ({ status = 1, name = '', submissionDeadline = '' }) => {
             overlay={
               <Tooltip>
                 Checkpoint is being evaluate, results will be publish after{' '}
-                {submissionDeadline}
+                {format(new Date(submissionDeadline), 'dd MMM')}
               </Tooltip>
             }
           >
             <div class="font-size-sm text-muted font-weight-bold mt-1">
-              Evaluating...
+              Evaluate at {evaluateDate}
             </div>
           </OverlayTrigger>
         )}
@@ -77,6 +83,14 @@ const TopicTeamPreview = ({
     label: '',
     code: '',
   },
+  checkpoints = [
+    {
+      status: 0,
+      name: '',
+      submissionDeadline: '',
+      evaluateDate: '',
+    },
+  ],
 }) => {
   const currentSemester = useRecoilValue(semesterAtom);
 
@@ -161,24 +175,12 @@ const TopicTeamPreview = ({
                 <span className="text-dark mr-2 font-size-lg font-weight-bolder pb-4">
                   Your team checkpoints status
                 </span>
-                <div class="mt-2 mb-5">
-                  <div class="row row-paddingless mb-10">
-                    <div class="col">
-                      <Checkpoint name="Checkpoint 1" status={3} />
+                <div class="row row-paddingless mb-10 mt-3">
+                  {checkpoints.map(checkpoint => (
+                    <div class="col-6 mb-8">
+                      <Checkpoint {...checkpoint} />
                     </div>
-                    <div class="col">
-                      <Checkpoint name="Checkpoint 2" status={2} />
-                    </div>
-                  </div>
-
-                  <div class="row row-paddingless">
-                    <div class="col">
-                      <Checkpoint name="Checkpoint 3" status={1} />
-                    </div>
-                    <div class="col">
-                      <Checkpoint name="Checkpoint 4" status={0} />
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             )}
