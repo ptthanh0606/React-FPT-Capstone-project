@@ -19,6 +19,11 @@ export function HeaderMobile() {
     };
   }, [uiService]);
 
+  const getHeaderLogo = () => {
+    let result = 'logo-dark.png';
+    return toAbsoluteUrl(`/media/logos/${result}`);
+  };
+
   return (
     <>
       {/*begin::Header Mobile*/}
@@ -29,7 +34,7 @@ export function HeaderMobile() {
       >
         {/*begin::Logo*/}
         <Link to="/">
-          <img alt="logo" src={layoutProps.headerLogo} />
+          <img alt="logo" src={getHeaderLogo()} />
         </Link>
         {/*end::Logo*/}
 

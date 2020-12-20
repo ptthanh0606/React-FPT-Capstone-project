@@ -82,70 +82,26 @@ export default function SelectSemester() {
   }, [setMeta]);
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        width: '100vw',
-        height: '100vh',
-        maxHeight: '100vh',
-        overflow: 'auto',
-        paddingBottom: '1rem',
-        top: 0,
-        left: 0,
-        zIndex: 100,
-        backgroundColor: 'white',
-      }}
-    >
-      <div
-        style={{
-          margin: '1.5rem 2.5rem',
-        }}
-      >
-        <span
-          style={{
-            float: 'right',
-          }}
-        >
+    <div className="bg-white" style={{ height: '100vh' }}>
+      <div className="container-fluid d-flex justify-content-between align-items-center mt-10">
+        <div className="d-flex flex-column">
+          <span className="font-weight-bolder font-size-h1">
+            Welcome, {user.name}
+          </span>
+          <span className="text-muted">
+            Please select a semester to perform the activities corresponding to
+            the faculity role.
+          </span>
+        </div>
+        <div className="">
           <Link
-            className="btn btn-secondary font-weight-bold btn-sm"
+            className="btn btn-light-info font-weight-bold btn-sm ml-5"
             to="/logout"
           >
             <i className="fas fa-sign-out-alt mr-2"></i>
             Logout
           </Link>
-        </span>
-        <span
-          style={{
-            fontSize: '1.5rem',
-            fontWeight: '600',
-          }}
-        >
-          Welcome, {user.name}
-        </span>
-        <br />
-        <span>
-          Please select a semester to perform the activities corresponding to
-          the faculity role.
-        </span>
-      </div>
-      <div
-        style={{
-          content: '',
-          clear: 'both',
-          display: 'table',
-        }}
-      ></div>
-      <div
-        style={{
-          marginTop: '1rem',
-          marginLeft: '4.5rem',
-          marginBottom: '-2rem',
-
-          fontSize: '1.25rem',
-          fontWeight: 600,
-        }}
-      >
-        Nearest semesters
+        </div>
       </div>
       <ScrollContainer
         className={styles['semester-scroll'] + ' alert-shadow gutter-b'}
@@ -154,37 +110,30 @@ export default function SelectSemester() {
           <SemesterCard {...s} key={s.id} />
         ))}
       </ScrollContainer>
-      <div
-        style={{
-          marginLeft: '4.5rem',
-          marginTop: '-2rem',
-          marginBottom: '1rem',
-          fontSize: '1.25rem',
-          fontWeight: 600,
-        }}
-      >
-        All semesters
-      </div>
-      <div className="mx-8">
-        <Filters filters={filters} setFilters={setFilters} />
-        <Table
-          columns={columns}
-          data={data}
-          total={total}
-          isLoading={isLoading}
-          selected={selected}
-          setSelected={setSelected}
-          page={page}
-          setPage={setPage}
-          pageSize={pageSize}
-          setPageSize={setPageSize}
-          sortField={sortField}
-          setSortField={setSortField}
-          sortOrder={sortOrder}
-          setSortOrder={setSortOrder}
-          defaultSorted={constants.defaultSorted}
-          pageSizeList={constants.sizePerPageList}
-        />
+
+      <div className="container-fluid">
+        <span className="font-weight-bolder font-size-h4">All semesters</span>
+        <div className="mt-8">
+          <Filters filters={filters} setFilters={setFilters} />
+          <Table
+            columns={columns}
+            data={data}
+            total={total}
+            isLoading={isLoading}
+            selected={selected}
+            setSelected={setSelected}
+            page={page}
+            setPage={setPage}
+            pageSize={pageSize}
+            setPageSize={setPageSize}
+            sortField={sortField}
+            setSortField={setSortField}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            defaultSorted={constants.defaultSorted}
+            pageSizeList={constants.sizePerPageList}
+          />
+        </div>
       </div>
     </div>
   );
