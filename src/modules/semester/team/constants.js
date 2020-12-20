@@ -205,6 +205,7 @@ export const createModalConfigs = semId => [
     type: 'text',
     label: 'Team name',
     placeholder: 'Give this team a name...',
+    required: true,
   },
   {
     name: 'maxMembers',
@@ -212,6 +213,7 @@ export const createModalConfigs = semId => [
     label: 'Maximum member',
     smallLabel: 'Maximum member can join this team',
     placeholder: '10',
+    required: true,
   },
   {
     name: 'department',
@@ -219,6 +221,7 @@ export const createModalConfigs = semId => [
     label: 'Department',
     smallLabel: 'This team belong to which department, cannot update',
     readOnlyWhenEdit: true,
+    required: true,
     load: (input, callback) => {
       request({
         to: endpoints.LIST_DEPARTMENT.url,
@@ -297,6 +300,7 @@ export const createTeamAsStudentModalConfigs = semId => [
     type: 'text',
     label: 'Team name',
     placeholder: 'Give this team a name...',
+    required: true,
   },
   {
     name: 'maxMembers',
@@ -304,6 +308,7 @@ export const createTeamAsStudentModalConfigs = semId => [
     label: 'Maximum member',
     smallLabel: 'Maximum member can join this team',
     placeholder: '10',
+    required: true,
   },
   {
     name: 'isPublic',

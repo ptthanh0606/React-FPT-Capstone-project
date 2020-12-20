@@ -112,6 +112,7 @@ export const modalConfigs = [
     type: 'text',
     label: 'Checkpoint template name',
     placeholder: 'Give this checkpoint template a name...',
+    required: true,
   },
   {
     name: 'description',

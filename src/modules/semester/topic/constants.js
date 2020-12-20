@@ -40,6 +40,7 @@ export const modalConfigs = [
     label: 'Code',
     smallLabel: 'Specify a code for this topic',
     placeholder: 'Code...',
+    required: true,
   },
   {
     name: 'name',
@@ -47,13 +48,15 @@ export const modalConfigs = [
     label: 'Name',
     smallLabel: 'Give this topic a name',
     placeholder: 'Name...',
+    required: true,
   },
   {
     name: 'abstract',
     type: 'textarea',
     label: 'Abstract',
-    smallLabel: 'Brief description for this topic',
-    placeholder: 'Description...',
+    smallLabel: 'Abstract for this topic',
+    placeholder: 'Abstract...',
+    required: true,
   },
   {
     name: 'description',
@@ -61,6 +64,7 @@ export const modalConfigs = [
     label: 'Description',
     smallLabel: 'Brief description for this topic',
     placeholder: 'Description...',
+    required: true,
   },
   {
     name: 'note',
@@ -75,6 +79,7 @@ export const modalConfigs = [
     label: 'Minimum team members',
     smallLabel: 'Minimum team member for this topic',
     placeholder: '0',
+    required: true,
   },
   {
     name: 'maxMembers',
@@ -82,6 +87,7 @@ export const modalConfigs = [
     label: 'Maximum team members',
     smallLabel: 'Maximum team member for this topic',
     placeholder: '4',
+    required: true,
   },
   {
     name: 'department',
@@ -89,6 +95,7 @@ export const modalConfigs = [
     label: 'Department',
     smallLabel: 'This team belong to which department, cannot update',
     readOnlyWhenEdit: true,
+    required: true,
     load: (input, callback) => {
       request({
         to: endpoints.LIST_DEPARTMENT.url,
@@ -151,6 +158,7 @@ export const modalConfigs = [
         .catch(() => callback([]));
     },
     isMulti: false,
+    required: true,
   },
   {
     name: 'keywords',
@@ -172,6 +180,7 @@ export const submitterModalConfigs = semId => [
     label: 'Code',
     smallLabel: 'Specify a code for this topic',
     placeholder: 'Code...',
+    required: true,
   },
   {
     name: 'name',
@@ -179,6 +188,7 @@ export const submitterModalConfigs = semId => [
     label: 'Name',
     smallLabel: 'Give this topic a name',
     placeholder: 'Name...',
+    required: true,
   },
   {
     name: 'abstract',
@@ -186,6 +196,7 @@ export const submitterModalConfigs = semId => [
     label: 'Abstract',
     smallLabel: 'Brief description for this topic',
     placeholder: 'Description...',
+    required: true,
   },
   {
     name: 'description',
@@ -193,6 +204,7 @@ export const submitterModalConfigs = semId => [
     label: 'Description',
     smallLabel: 'Brief description for this topic',
     placeholder: 'Description...',
+    required: true,
   },
   {
     name: 'note',
@@ -207,6 +219,7 @@ export const submitterModalConfigs = semId => [
     label: 'Minimum team members',
     smallLabel: 'Minimum team member for this topic',
     placeholder: '0',
+    required: true,
   },
   {
     name: 'maxMembers',
@@ -214,6 +227,7 @@ export const submitterModalConfigs = semId => [
     label: 'Maximum team members',
     smallLabel: 'Maximum team member for this topic',
     placeholder: '4',
+    required: true,
   },
   {
     name: 'department',
@@ -235,6 +249,7 @@ export const submitterModalConfigs = semId => [
         })
         .catch(() => callback([]));
     },
+    required: true,
   },
   {
     name: 'team',

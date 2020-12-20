@@ -104,18 +104,21 @@ export const modalConfigs = [
     type: 'text',
     label: 'Student full name',
     placeholder: 'Full name...',
+    required: true,
   },
   {
     name: 'code',
     type: 'text',
     label: 'Student code',
     placeholder: 'Enter student code...',
+    required: true,
   },
   {
     name: 'email',
     type: 'text',
     label: 'Student email',
     placeholder: 'Enter student @fpt.edu.vn email...',
+    required: true,
   },
   {
     name: 'department',
@@ -137,6 +140,7 @@ export const modalConfigs = [
         .catch(() => callback([]));
     },
     isMulti: false,
+    required: true,
   },
   {
     name: 'biography',

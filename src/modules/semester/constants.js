@@ -111,6 +111,7 @@ export const modalConfigs = [
     type: 'text',
     label: 'Semester name',
     placeholder: 'Semester name...',
+    required: true,
   },
   {
     name: 'maxApplication',
@@ -119,6 +120,7 @@ export const modalConfigs = [
     smallLabel:
       'Maximum number of application that a team can send at any-time',
     placeholder: '10',
+    required: true,
   },
 
   {
@@ -128,6 +130,7 @@ export const modalConfigs = [
     label: 'Margin pass',
     smallLabel: 'Minimum grade for student to pass this semester',
     placeholder: '5',
+    required: true,
   },
   {
     name: 'matchingDate',
@@ -136,6 +139,7 @@ export const modalConfigs = [
     smallLabel:
       'Ending date of Assigning-phase, all team must matched with a topic before this day',
     step: 3600,
+    required: true,
   },
   {
     name: 'inprogressDate',
@@ -144,6 +148,7 @@ export const modalConfigs = [
     smallLabel:
       'Ending date of In-progress-phase, all team must have done the capstone project and waiting for final evaluation',
     step: 3600,
+    required: true,
   },
   {
     name: 'finishedDate',
@@ -152,5 +157,6 @@ export const modalConfigs = [
     smallLabel:
       'Ending date of Finished-phase (and semester as well), all evaluation is published.',
     step: 3600,
+    required: true,
   },
 ];

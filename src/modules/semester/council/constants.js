@@ -2,9 +2,6 @@ import React from 'react';
 
 import { columnsTransformer } from 'utils/common';
 import { Link } from 'react-router-dom';
-import * as endpoints from 'endpoints';
-import { mDown as mDownLec } from 'modules/lecturer/transformers';
-import request from 'utils/request';
 
 //------------------------------------------------------------------------------
 
@@ -110,27 +107,3 @@ export const createColumns = ({ handleEdit, handleRemove }, role = 'admin') => {
 
   return columnsTransformer(cols);
 };
-
-export const modalConfigs = [
-  {
-    name: 'members',
-    type: 'selectBoxAsync',
-    label: 'Members',
-    smallLabel: 'Member of this council, first member is leader',
-    load: (input, callback) => {
-      request({
-        to: endpoints.LIST_LECTURER.url,
-        method: endpoints.LIST_LECTURER.method,
-        params: {
-          term: input,
-          pageSize: 10,
-        },
-      })
-        .then(res => {
-          callback(res.data.data?.map(mDownLec) || []);
-        })
-        .catch(() => callback([]));
-    },
-    isMulti: true,
-  },
-];

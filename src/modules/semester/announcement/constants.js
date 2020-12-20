@@ -106,16 +106,19 @@ export const modalConfigs = [
         value: 2,
       },
     ],
+    required: true,
   },
   {
     name: 'title',
     type: 'text',
     label: 'Title',
     smallLabel: 'Title of this announcement',
+    required: true,
   },
   {
     name: 'content',
     type: 'markdown',
     label: 'Content',
+    required: true,
   },
 ];

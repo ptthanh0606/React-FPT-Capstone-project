@@ -79,17 +79,20 @@ export const modalConfigs = [
     type: 'text',
     label: 'Admin code',
     placeholder: 'Admin code',
+    required: true,
   },
   {
     name: 'name',
     type: 'text',
     label: 'Admin full name',
     placeholder: 'Full name...',
+    required: true,
   },
   {
     name: 'email',
     type: 'text',
     label: 'Admin email',
     placeholder: 'Enter admin @fpt.edu.vn email...',
+    required: true,
   },
 ];

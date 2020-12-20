@@ -122,12 +122,14 @@ export const modalConfigs = [
     type: 'text',
     label: 'Department name',
     placeholder: 'Give this department a name...',
+    required: true,
   },
   {
     name: 'code',
     type: 'text',
     label: 'Department code',
     smallLabel: 'Ex: Software Engineer to be "SE"',
+    required: true,
   },
   {
     name: 'approvers',
