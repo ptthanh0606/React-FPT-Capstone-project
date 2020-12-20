@@ -277,7 +277,7 @@ export const createColumns = (
   const cols = [
     {
       dataField: 'id',
-      text: 'ID',
+      text: 'No',
       sort: true,
     },
     {

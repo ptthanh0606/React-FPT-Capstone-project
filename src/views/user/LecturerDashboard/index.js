@@ -438,6 +438,26 @@ export default React.memo(function LecturerDashboard() {
           )}
 
           {currentSemester.status === 0 && (
+            <Engaging2
+              className="gutter-b"
+              title={
+                <>
+                  <span>Welcome</span>
+                  <br />
+                  <br />
+                  This is your dasboard, from here you can quickly start with
+                  some actions for this semester.
+                </>
+              }
+              textColorTitle="white"
+              subTitle="Start by submit a topic or join mentoring a topic."
+              textColorSubTitle="white"
+              svgVariant={4}
+              bgColor="primary"
+            />
+          )}
+
+          {currentSemester.status === 0 && (
             <QuickAction
               className="gutter-b"
               title="Quick topic actions"
@@ -485,23 +505,7 @@ export default React.memo(function LecturerDashboard() {
                   }
                 />
               ) : (
-                <Engaging2
-                  className="gutter-b"
-                  title={
-                    <>
-                      <span>Welcome</span>
-                      <br />
-                      <br />
-                      This is your dasboard, from here you can quickly start
-                      with some actions for this semester.
-                    </>
-                  }
-                  textColorTitle="white"
-                  subTitle="Start by submit a topic or join mentoring a topic."
-                  textColorSubTitle="white"
-                  svgVariant={4}
-                  bgColor="primary"
-                />
+                <></>
               )}
             </>
           )}

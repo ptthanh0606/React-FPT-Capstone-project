@@ -7,6 +7,7 @@ import * as endpoints from 'endpoints';
 import { mDown as mDownDep } from 'modules/department/transformers';
 import { mDown as mDownAStu } from 'modules/semester/activeStudent/transformers';
 import { mDown as mDownTopic } from 'modules/semester/topic/transformers';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 //------------------------------------------------------------------------------
 
@@ -91,8 +92,15 @@ export const createColumns = (
                   className={'text-dark font-weight-bold text-nowrap'}
                   to={'/profile/student/' + i?.value}
                 >
+                  {i?.isLeader && (
+                    <OverlayTrigger
+                      placement="bottom"
+                      overlay={<Tooltip>Leader</Tooltip>}
+                    >
+                      <i class="flaticon-star mr-2 text-warning"></i>
+                    </OverlayTrigger>
+                  )}
                   {i?.label}
-                  {i?.isLeader && ' (Leader)'}
                 </Link>
               ))
               ?.reduce((prev, curr) => [prev, ', ', curr])
