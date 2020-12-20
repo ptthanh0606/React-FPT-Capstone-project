@@ -289,63 +289,70 @@ export const createColumns = (
   { handleEdit = function () {}, handleRemove = function () {} },
   role = 'admin'
 ) => {
-  const cols = [
-    {
+  const cols = [];
+  if (role === 'admin')
+    cols.push({
       dataField: 'id',
       text: 'ID',
       sort: true,
-    },
-    {
-      dataField: 'department',
-      text: 'Dep',
-      sort: true,
-      formatter: (cellContent, row) => {
-        return cellContent.label;
+    });
+  cols.push(
+    ...[
+      {
+        dataField: 'department',
+        text: 'Dep',
+        sort: true,
+        formatter: (cellContent, row) => {
+          return cellContent.label;
+        },
       },
-    },
-    {
-      dataField: 'code',
-      text: 'Code',
-      sort: true,
-    },
-    {
-      text: 'Information',
-      dataField: 'topic',
-      sort: true,
-      formatter: function StatusColumnFormatter(cellContent, row) {
-        return (
-          <Link className="text-dark font-weight-bold" to={'./topic/' + row.id}>
-            <div>
-              <div className="text-nowrap text-dark-75 font-weight-bold font-size-lg mb-0">
-                {row.name}
+      {
+        dataField: 'code',
+        text: 'Code',
+        sort: true,
+      },
+      {
+        text: 'Information',
+        dataField: 'topic',
+        sort: true,
+        formatter: function StatusColumnFormatter(cellContent, row) {
+          return (
+            <Link
+              className="text-dark font-weight-bold"
+              to={'./topic/' + row.id}
+            >
+              <div>
+                <div className="text-nowrap text-dark-75 font-weight-bold font-size-lg mb-0">
+                  {row.name}
+                </div>
+                <span className="text-muted font-weight-bold text-hover-primary">
+                  {row.abstract}
+                </span>
               </div>
-              <span className="text-muted font-weight-bold text-hover-primary">
-                {row.abstract}
-              </span>
-            </div>
-          </Link>
-        );
+            </Link>
+          );
+        },
       },
-    },
-    {
-      dataField: 'attachment',
-      text: 'Detail',
-      formatter: (cellContent, row) => {
-        if (!cellContent?.name) return null;
-        return (
-          <a
-            href={cellContent.name}
-            title="Download"
-            className="btn btn-icon btn-light btn-hover-primary btn-sm"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <i className="fas fa-download my-2"></i>
-          </a>
-        );
+      {
+        dataField: 'attachment',
+        text: 'Detail',
+        formatter: (cellContent, row) => {
+          if (!cellContent?.name) return null;
+          return (
+            <a
+              href={cellContent.name}
+              title="Download"
+              className="btn btn-icon btn-light btn-hover-primary btn-sm"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <i className="fas fa-download my-2"></i>
+            </a>
+          );
+        },
       },
-    },
-  ];
+    ]
+  );
 
   if (role === 'admin')
     cols.push({
