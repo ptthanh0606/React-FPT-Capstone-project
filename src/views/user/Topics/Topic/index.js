@@ -233,23 +233,6 @@ const Topic = () => {
   }, [currentRole, currentUser.id, id]);
 
   const fetchReport = React.useCallback(() => {
-    setReports(
-      [
-        {
-          id: 0,
-          title: 'Report #1',
-          attachment: 'string',
-          attachmentLink: 'string',
-          createdAt: '2020-12-20T22:44:59.185Z',
-          updatedAt: '2020-12-20T22:44:59.185Z',
-          topicId: 0,
-        },
-      ].map(report => ({
-        label: report.title,
-        subLabel: convertDateDown(report.updatedAt),
-        attachmentLink: report.attachmentLink,
-      }))
-    );
     request({
       to: endpoints.READ_REPORT.url,
       method: endpoints.READ_REPORT.method,
@@ -258,7 +241,14 @@ const Topic = () => {
       },
     })
       .then(res => {
-        console.log(res.data.data);
+        console.log();
+        setReports(
+          res.data.data.map(report => ({
+            label: report.title,
+            subLabel: convertDateDown(report.updatedAt),
+            attachmentLink: report.attachmentLink,
+          }))
+        );
       })
       .catch(handleErrors)
       .finally(() => setIsProcessing(false));
@@ -515,7 +505,6 @@ const Topic = () => {
 
   const handleFileChange = React.useCallback(
     event => {
-      console.log(event.currentTarget.files[0]);
       const data = new FormData();
       data.append(
         'attachment',
@@ -523,6 +512,7 @@ const Topic = () => {
         event.currentTarget.files[0].name
       );
       data.append('topicId', id);
+      data.append('title', event.currentTarget.files[0].name);
       request({
         to: endpoints.SEND_REPORT.url,
         method: endpoints.SEND_REPORT.method,

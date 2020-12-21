@@ -22,12 +22,14 @@ import {
   READ_TEAM,
   LIST_TIMELINES,
   GET_EVALUATION,
+  READ_REPORT,
+  SEND_REPORT,
 } from 'endpoints';
 import * as TeamTransformer from 'modules/semester/team/transformers';
 import * as AnouncementTransformer from 'modules/semester/announcement/transformers';
 import * as timelineTransformer from 'modules/timelines/transformers';
 
-import { Button } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import SemesterPhase from 'components/CMSWidgets/SemesterPhase';
 import { handleErrors } from 'utils/common';
 import useConfirm from 'utils/confirm';
@@ -42,6 +44,7 @@ import {
 } from 'modules/semester/team/application/constants';
 import { formatRelative, subMinutes } from 'date-fns';
 import { ProgressChart } from 'components/CMSWidgets/ProgressChart';
+import { convertDateDown } from 'modules/semester/team/application/transformers';
 
 export default React.memo(function LecturerDashboard() {
   const confirm = useConfirm();
@@ -54,6 +57,17 @@ export default React.memo(function LecturerDashboard() {
     setCurrentPublicTeamPreviews,
   ] = React.useState([]);
   const [teamApplications, setTeamApplications] = React.useState([]);
+  const [teamReports, setTeamReports] = React.useState([
+    {
+      label: 'Report #1',
+      subLabel: 'At 2020-03-03',
+      actions: (
+        <button class="btn btn-light">
+          <i class="fas fa-download p-0"></i>
+        </button>
+      ),
+    },
+  ]);
   const [anouncements, setAnouncements] = React.useState([]);
   const [flowTimelines, setFlowTimelines] = React.useState([]);
 
@@ -253,6 +267,31 @@ export default React.memo(function LecturerDashboard() {
     [currentSemester.id, handleJoinPublicTeam]
   );
 
+  const fetchTeamReport = React.useCallback(id => {
+    request({
+      to: READ_REPORT.url,
+      method: READ_REPORT.method,
+      params: {
+        topicId: id,
+      },
+    })
+      .then(res => {
+        setTeamReports(
+          res.data.data.map(report => ({
+            label: report.title,
+            subLabel: convertDateDown(report.updatedAt),
+            actions: (
+              <a href={report.attachmentLink} class="btn btn-light">
+                <i class="fas fa-download p-0"></i>
+              </a>
+            ),
+          }))
+        );
+      })
+      .catch(handleErrors)
+      .finally(() => setIsProcessing(false));
+  }, []);
+
   const checkUserInTeam = React.useCallback(() => {
     request({
       to: READ_TEAM(0).url,
@@ -289,6 +328,9 @@ export default React.memo(function LecturerDashboard() {
         );
         setIsStudentHaveTopic(!!transformedRes.topic.label);
         setIsStudentHaveTeam(true);
+        if (currentSemester.status === 2) {
+          fetchTeamReport(transformedRes.topic.value);
+        }
         setUserTeam(transformedRes);
         if (currentSemester.status === 2) {
           fetchEvaluation(transformedRes.topic?.value);
@@ -304,6 +346,7 @@ export default React.memo(function LecturerDashboard() {
     currentSemester.status,
     fetchEvaluation,
     fetchOtherTeams,
+    fetchTeamReport,
   ]);
 
   const onCreateTeam = React.useCallback(
@@ -348,6 +391,36 @@ export default React.memo(function LecturerDashboard() {
       })
       .catch(err => {});
   }, [currentSemester.id]);
+
+  const fileRef = React.useRef(null);
+
+  const handleClickFile = React.useCallback(e => {
+    e.preventDefault();
+    fileRef.current.click();
+  }, []);
+
+  const handleFileChange = React.useCallback(
+    event => {
+      const data = new FormData();
+      data.append(
+        'attachment',
+        event.currentTarget.files[0],
+        event.currentTarget.files[0].name
+      );
+      data.append('topicId', userTeam.topic.value);
+      data.append('title', event.currentTarget.files[0].name);
+      request({
+        to: SEND_REPORT.url,
+        method: SEND_REPORT.method,
+        data: data,
+      })
+        .then(res => {
+          toast.success('Report sent!');
+        })
+        .catch(handleErrors);
+    },
+    [userTeam]
+  );
 
   // -------------------------------------------------------------------------
 
@@ -422,6 +495,17 @@ export default React.memo(function LecturerDashboard() {
               checkpoints={checkpoints}
             />
           )}
+
+          {currentSemester.status === 2 &&
+            isStudentHaveTeam &&
+            isStudentHaveTopic && (
+              <ProgressChart
+                title="Checkpoints progress"
+                subTitle="Overall status of checkpoints"
+                percent={progressCheckpoint}
+                baseColor="info"
+              />
+            )}
 
           {[0, 1].includes(currentSemester.status) && !isStudentHaveTeam && (
             <QuickAction
@@ -619,29 +703,24 @@ export default React.memo(function LecturerDashboard() {
                 className="gutter-b"
                 title="Your team reports"
                 fallbackMsg="No reports found from team..."
-                rows={[
-                  {
-                    label: 'Report #1',
-                    subLabel: 'At 2020-03-03',
-                    actions: (
-                      <button class="btn btn-light">
-                        <i class="fas fa-download p-0"></i>
-                      </button>
-                    ),
-                  },
-                ]}
-                toolBar={<Button>Send report</Button>}
-              />
-            )}
-
-          {currentSemester.status === 2 &&
-            isStudentHaveTeam &&
-            isStudentHaveTopic && (
-              <ProgressChart
-                title="Checkpoints progress"
-                subTitle="Overall status of checkpoints"
-                percent={progressCheckpoint}
-                baseColor="info"
+                rows={teamReports}
+                toolBar={
+                  <>
+                    <button
+                      className="btn btn-light-info mt-2 font-weight-bolder"
+                      onClick={handleClickFile}
+                    >
+                      <i class="far fa-file-archive icon-md mr-1"></i>
+                      Send report
+                    </button>
+                    <Form.File
+                      ref={fileRef}
+                      label={undefined}
+                      onChange={handleFileChange}
+                      className="d-none"
+                    />
+                  </>
+                }
               />
             )}
         </div>

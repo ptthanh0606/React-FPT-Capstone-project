@@ -69,9 +69,9 @@ const GroupCard = ({
                           <span className="text-muted">{report.subLabel}</span>
                         </div>
                       </div>
-                      <button class="btn btn-light">
+                      <a href={report.attachmentLink} class="btn btn-light">
                         <i class="fas fa-download p-0"></i>
-                      </button>
+                      </a>
                     </div>
                   </>
                 ))
