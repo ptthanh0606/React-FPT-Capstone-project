@@ -117,7 +117,7 @@ export default function Topics() {
       ...f,
       isOwnSubmit: true,
       isOwnMentorTopic: false,
-      status: 0,
+      status: null,
     }));
     setIsSubmittedTopics(true);
     setIsReviewedTopics(false);
@@ -131,7 +131,7 @@ export default function Topics() {
       ...f,
       isOwnSubmit: false,
       isOwnMentorTopic: true,
-      status: 0,
+      status: null,
     }));
     setIsSubmittedTopics(false);
     setIsReviewedTopics(false);
