@@ -20,6 +20,7 @@ import {
 import { applicationRowActionFormatter, rowActionFormatter } from './constants';
 import * as topicTranformer from 'modules/semester/topic/transformers';
 import * as AnouncementTransformer from 'modules/semester/announcement/transformers';
+import * as timelineTransformer from 'modules/timelines/transformers';
 
 import Anouncement from 'components/CMSWidgets/Anouncement';
 import QuickAction from 'components/CMSWidgets/QuickAction';
@@ -46,6 +47,7 @@ export default React.memo(function LecturerDashboard() {
   const history = useHistory();
 
   const [topicType, setTopicType] = React.useState('Mentoring');
+  const [selectedDep, setSelectedDep] = React.useState('');
   const [totalTopic, setTotalTopics] = React.useState(0);
   const [totalMentoring, setTotalMentoring] = React.useState(0);
   const [totalSubmitted, setTotalSubmitted] = React.useState(0);
@@ -55,6 +57,7 @@ export default React.memo(function LecturerDashboard() {
   const [topicNeedFeedback, setTopicNeedFeedback] = React.useState([]);
   const [applications, setApplications] = React.useState([]);
   const [anouncements, setAnouncements] = React.useState([]);
+  const [currentLecturerDept, setCurrentLecturerDept] = React.useState([]);
 
   const [fieldTemplate, setFieldTemplate] = React.useState({});
   const [showCreate, setShowCreate] = React.useState(false);
@@ -62,25 +65,31 @@ export default React.memo(function LecturerDashboard() {
 
   // ---------------------------------------------------------------------
 
-  const fetchTimelines = React.useCallback(() => {
-    setIsProcessing(true);
-    request({
-      to: LIST_TIMELINES(currentSemester.id).url,
-      method: LIST_TIMELINES(currentSemester.id).method,
-      params: {
-        departmentId: 1,
-      },
-    })
-      .then(res => {
-        console.log(res.data.data);
-        if (res.data.data) {
-          setIsProcessing(false);
-        }
+  const fetchTimelines = React.useCallback(
+    depId => {
+      console.log(depId);
+      setIsProcessing(true);
+      request({
+        to: LIST_TIMELINES(currentSemester.id).url,
+        method: LIST_TIMELINES(currentSemester.id).method,
+        params: {
+          departmentId: depId,
+        },
       })
-      .catch(err => {
-        handleErrors(err);
-      });
-  }, [currentSemester.id]);
+        .then(res => {
+          console.log(res.data.data);
+          if (res.data.data) {
+            console.log(timelineTransformer.downLecturer(res.data.data));
+            setFlowTimelines(timelineTransformer.downLecturer(res.data.data));
+            setIsProcessing(false);
+          }
+        })
+        .catch(err => {
+          handleErrors(err);
+        });
+    },
+    [currentSemester.id]
+  );
 
   const fetchTopicApplications = React.useCallback(id => {
     if (id) {
@@ -272,15 +281,24 @@ export default React.memo(function LecturerDashboard() {
       method: READ_LECTURER(currentUser.id).method,
     })
       .then(res => {
+        console.log(res.data.data);
         const lecturerApproverDepIDs = res.data.data.departments
           .filter(dep => dep.isApprover === true)
           .map(dep => dep.id);
         lecturerApproverDepIDs.map(id => fetchWaitingTopics(id));
+        setCurrentLecturerDept(
+          res.data.data.departments.map(dep => ({
+            label: dep.name,
+            value: dep.id,
+          }))
+        );
+        setSelectedDep(res.data.data.departments[0].id);
+        fetchTimelines(res.data.data.departments[0].id);
       })
       .catch(err => {
         handleErrors(err);
       });
-  }, [currentUser.id, fetchWaitingTopics]);
+  }, [currentUser.id, fetchTimelines, fetchWaitingTopics]);
 
   const fetchAnouncements = React.useCallback(() => {
     request({
@@ -314,12 +332,10 @@ export default React.memo(function LecturerDashboard() {
     fetchTotalTopicsByType('mentoring');
     fetchTotalTopicsByType('submitted');
     fetchAnouncements();
-    fetchTimelines();
   }, [
     currentSemester.status,
     fetchAnouncements,
     fetchCurrentLecturer,
-    fetchTimelines,
     fetchTotalTopicsByStatus,
     fetchTotalTopicsByType,
   ]);
@@ -389,37 +405,6 @@ export default React.memo(function LecturerDashboard() {
     }
   }, [fetchTopicsByType, topicType]);
 
-  // Flow timelines
-  React.useEffect(() => {
-    setFlowTimelines([
-      {
-        date: '2020-12-19T10:24:21.722Z',
-        content: <div className="pl-3">Start preparing phase</div>,
-        type: 'success',
-      },
-      {
-        date: '2020-12-19T10:24:21.722Z',
-        content: <div className="pl-3">Reports due date for Checkpoint 1</div>,
-        type: 'danger',
-      },
-      {
-        date: '2020-12-19T10:24:21.722Z',
-        content: (
-          <div className="pl-3">
-            Checkpoint 1 meeting for evaluation with Lam Huu Khanh Phuong, Tran
-            Tuan Anh
-          </div>
-        ),
-        type: 'info',
-      },
-      {
-        date: '2020-12-19T10:24:21.722Z',
-        content: <div className="pl-3">Semester end</div>,
-        type: 'success',
-      },
-    ]);
-  }, []);
-
   return (
     <>
       <div className="row">
@@ -486,7 +471,17 @@ export default React.memo(function LecturerDashboard() {
           )}
 
           {[1, 2].includes(currentSemester.status) && (
-            <FlowTimeline className="gutter-b" items={flowTimelines} />
+            <FlowTimeline
+              className="gutter-b"
+              items={flowTimelines}
+              toolBar={
+                <DropdownPopover
+                  value={selectedDep}
+                  items={currentLecturerDept}
+                  onChange={fetchTimelines}
+                />
+              }
+            />
           )}
 
           {currentSemester.status === 0 && (
@@ -534,22 +529,13 @@ export default React.memo(function LecturerDashboard() {
             <FlowTimeline
               className="gutter-b"
               items={flowTimelines}
-              // toolBar={
-              //   <DropdownPopover
-              //     value={topicType}
-              //     items={[
-              //       {
-              //         label: 'Submitted',
-              //         value: 'Submitted',
-              //       },
-              //       {
-              //         label: 'Mentoring',
-              //         value: 'Mentoring',
-              //       },
-              //     ]}
-              //     onChange={value => setTopicType(value)}
-              //   />
-              // }
+              toolBar={
+                <DropdownPopover
+                  value={selectedDep}
+                  items={currentLecturerDept}
+                  onChange={fetchTimelines}
+                />
+              }
             />
           )}
         </div>

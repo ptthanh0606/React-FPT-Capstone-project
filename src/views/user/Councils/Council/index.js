@@ -6,6 +6,7 @@ import { Col, Row } from 'react-bootstrap';
 import { handleErrors } from 'utils/common';
 import * as endpoints from 'endpoints';
 import * as transformers from 'modules/semester/council/transformers';
+import * as timelineTransformer from 'modules/timelines/transformers';
 
 import metaAtom from 'store/meta';
 import userAtom from 'store/user';
@@ -86,6 +87,42 @@ const Council = () => {
     [currenSem.id, id]
   );
 
+  const fetchTimelines = React.useCallback(
+    (depId, currentCouncilId) => {
+      setIsProcessing(true);
+      request({
+        to: endpoints.LIST_TIMELINES(currenSem.id).url,
+        method: endpoints.LIST_TIMELINES(currenSem.id).method,
+        params: {
+          departmentId: depId,
+        },
+      })
+        .then(res => {
+          let topics = [];
+          for (const topic of res.data.data.topics) {
+            for (const e of topic.evaluations) {
+              if (e.council.id === currentCouncilId) {
+                topics.push(topic);
+              }
+            }
+          }
+          setIncomingTopic(
+            topics.map(topic => ({
+              id: topic.id,
+              labelId: topic.id,
+              label: topic.name,
+              subLabel: topic.code,
+              darkMode: true,
+            }))
+          );
+        })
+        .catch(err => {
+          handleErrors(err);
+        });
+    },
+    [currenSem.id]
+  );
+
   // --------------------------------------------------------------------
 
   React.useEffect(() => {
@@ -158,6 +195,8 @@ const Council = () => {
     })
       .then(res => {
         const transformedRes = down(res.data.data);
+        console.log(transformedRes);
+        fetchTimelines(transformedRes.department.value, transformedRes.id);
         setCurrentCouncil(transformedRes);
         setIsUserInCouncil(
           transformedRes.members.some(({ value }) => value === currentUser.id)
@@ -171,7 +210,15 @@ const Council = () => {
         history.push('/council');
         handleErrors(err);
       });
-  }, [l, currenSem.id, currentUser.id, history, history.push, id]);
+  }, [
+    l,
+    currenSem.id,
+    currentUser.id,
+    history,
+    history.push,
+    id,
+    fetchTimelines,
+  ]);
 
   // ---------------------------------------------------------
 
@@ -241,6 +288,7 @@ const Council = () => {
               title="Topic need evaluate"
               rows={incomingTopic}
               darkMode={true}
+              fallbackMsg={'No topics to be evaluate...'}
             />
           </div>
         )}

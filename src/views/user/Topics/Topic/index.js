@@ -217,7 +217,6 @@ const Topic = () => {
         method: endpoints.GET_EVALUATION(id).method,
       })
         .then(res => {
-          console.log(res.data.data);
           setEvals(
             transformToGrid(
               res.data.data,
@@ -241,7 +240,6 @@ const Topic = () => {
       },
     })
       .then(res => {
-        console.log();
         setReports(
           res.data.data.map(report => ({
             label: report.title,

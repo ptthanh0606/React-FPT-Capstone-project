@@ -56,3 +56,65 @@ export function down(i) {
 
   return timelines;
 }
+
+export function downLecturer(i) {
+  let timelines = [];
+
+  timelines.push(
+    {
+      date:
+        i?.semester?.assigningDate ||
+        console.log('Assigning date field not found'),
+      type: statusCSS[0],
+      content: 'Start assigning phase',
+    },
+    {
+      date:
+        i?.semester?.inProgressDate ||
+        console.log('Inprogress date field not found'),
+      type: statusCSS[0],
+      content: 'Start In-progress phase',
+    }
+  );
+
+  const evals = [];
+
+  for (const j of i?.topics) {
+    for (const g of j?.evaluations) {
+      evals.push({
+        date: g.submitDueDate,
+        content: 'Submit ' + g.checkpoint.name + ' for topic ' + j?.name,
+        type: statusCSS[1],
+      });
+      evals.push({
+        date: g.evaluateDueDate,
+        type: statusCSS[2],
+        content:
+          'Checkpoint ' +
+          g.checkpoint.name +
+          ' of topic ' +
+          j?.name +
+          ' is evaluated',
+      });
+    }
+  }
+
+  evals.sort((a, b) => {
+    const aDate = new Date(a.date);
+    const bDate = new Date(b.date);
+    if (aDate > bDate) return 1;
+    if (bDate > aDate) return -1;
+    return 1;
+  });
+
+  timelines.push(...evals);
+
+  timelines.push({
+    date:
+      i?.semester?.finishedDate || console.log('finished date field not found'),
+    type: statusCSS[0],
+    content: 'Capstone semester end',
+  });
+
+  return timelines;
+}
