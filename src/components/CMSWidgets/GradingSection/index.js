@@ -107,7 +107,7 @@ const GradingSection = ({
             <Card.Header>
               <Accordion.Toggle
                 as={Card.Header}
-                className={`bg-${constantsCp.statusClasses[0]}`}
+                className={`bg-${constantsCp.statusClasses[i.status]}`}
                 eventKey={i.id}
                 style={{
                   padding: '1rem',
