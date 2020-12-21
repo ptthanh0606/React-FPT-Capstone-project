@@ -88,6 +88,7 @@ export function transformToGrid(data, currentId, isLecturer) {
 
       for (const j of data.students) {
         // j = current student
+
         toPush.push(
           {
             value: i.marks
@@ -131,7 +132,7 @@ export function transformToGrid(data, currentId, isLecturer) {
             lecturerId: k.id,
             markColumnId: i.id,
             evaluationId: z.evaluationId,
-            readOnly: currentId !== k.id && isLecturer === false,
+            readOnly: currentId !== k.id,
             ...cellProp,
           })),
         ]);
