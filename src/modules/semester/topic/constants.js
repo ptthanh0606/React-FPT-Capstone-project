@@ -296,6 +296,7 @@ export const createColumns = (
       text: 'No',
       sort: true,
     });
+
   cols.push(
     ...[
       {
@@ -312,7 +313,7 @@ export const createColumns = (
         sort: true,
       },
       {
-        text: 'Information',
+        text: 'Title',
         dataField: 'topic',
         sort: true,
         formatter: function StatusColumnFormatter(cellContent, row) {
@@ -335,7 +336,7 @@ export const createColumns = (
       },
       {
         dataField: 'attachment',
-        text: 'Detail',
+        text: 'Attachment',
         formatter: (cellContent, row) => {
           if (!cellContent?.name) return null;
           return (
@@ -363,22 +364,24 @@ export const createColumns = (
       },
     });
 
+  if (['admin', 'lecturer'].includes(role))
+    cols.push({
+      dataField: 'submitter',
+      text: 'Submitter',
+      formatter: function StatusColumnFormatter(cellContent, row) {
+        return (
+          <Link
+            className="text-dark font-weight-bold text-nowrap"
+            to={'/profile/lecturer/' + cellContent.value}
+          >
+            {cellContent.label}
+          </Link>
+        );
+      },
+    });
+
   cols.push(
     ...[
-      {
-        dataField: 'submitter',
-        text: 'Submitter',
-        formatter: function StatusColumnFormatter(cellContent, row) {
-          return (
-            <Link
-              className="text-dark font-weight-bold text-nowrap"
-              to={'/profile/lecturer/' + cellContent.value}
-            >
-              {cellContent.label}
-            </Link>
-          );
-        },
-      },
       {
         dataField: 'status',
         text: 'Status',
@@ -394,32 +397,6 @@ export const createColumns = (
               {statusTitles[row.status]}
             </span>
           );
-        },
-      },
-      {
-        dataField: 'teamMembers',
-        text: 'Members',
-        formatter: (cellContent, row) => {
-          return (
-            <>
-              {cellContent?.length > 0
-                ? cellContent
-                    .map(i => (
-                      <Link
-                        className="text-dark font-weight-bold text-nowrap"
-                        to={'/profile/student/' + i.value}
-                      >
-                        {i.label}
-                        {i?.isLeader && ' (Leader)'}
-                      </Link>
-                    ))
-                    .reduce((prev, curr) => [prev, ', ', curr])
-                : ''}
-            </>
-          );
-        },
-        style: {
-          minWidth: '200px',
         },
       },
       {
@@ -449,6 +426,34 @@ export const createColumns = (
       },
     ]
   );
+
+  if (['admin', 'lecturer'].includes(role))
+    cols.push({
+      dataField: 'teamMembers',
+      text: 'Members',
+      formatter: (cellContent, row) => {
+        return (
+          <>
+            {cellContent?.length > 0
+              ? cellContent
+                  .map(i => (
+                    <Link
+                      className="text-dark font-weight-bold text-nowrap"
+                      to={'/profile/student/' + i.value}
+                    >
+                      {i.label}
+                      {i?.isLeader && ' (Leader)'}
+                    </Link>
+                  ))
+                  .reduce((prev, curr) => [prev, ', ', curr])
+              : ''}
+          </>
+        );
+      },
+      style: {
+        minWidth: '200px',
+      },
+    });
 
   if (role === 'admin') {
     cols.push(

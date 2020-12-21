@@ -168,23 +168,22 @@ export default React.memo(function LecturerDashboard() {
       method: GET_EVALUATION(topicId).method,
     })
       .then(res => {
-        if (res?.data?.data.checkpoints) {
-          setProgressCheckpoint(
-            (res.data.data.checkpoints.filter(checkpoint => {
-              return [2, 3].includes(checkpoint.status);
-            }).length /
-              res.data.data.checkpoints.length) *
-              100
-          );
-          setCheckpoints(
-            res?.data?.data.checkpoints.map(checkpoint => ({
-              status: checkpoint.status,
-              name: checkpoint.name,
-              submissionDeadline: checkpoint.submitDueDate,
-              evaluateDate: checkpoint.evaluateDueDate,
-            }))
-          );
-        }
+        console.log(res.data.data);
+        setProgressCheckpoint(
+          (res.data.data.checkpoints.filter(checkpoint => {
+            return [2, 3].includes(checkpoint.status);
+          }).length /
+            res.data.data.checkpoints.length) *
+            100
+        );
+        setCheckpoints(
+          res?.data?.data.checkpoints.map(checkpoint => ({
+            status: checkpoint.status,
+            name: checkpoint.name,
+            submissionDeadline: checkpoint.submitDueDate,
+            evaluateDate: checkpoint.evaluateDueDate,
+          }))
+        );
       })
       .catch(err => {
         handleErrors(err);
@@ -333,7 +332,7 @@ export default React.memo(function LecturerDashboard() {
         }
         setUserTeam(transformedRes);
         if (currentSemester.status === 2) {
-          fetchEvaluation(transformedRes.topic?.value);
+          fetchEvaluation(transformedRes.topic.value);
         }
       })
       .catch(() => {
