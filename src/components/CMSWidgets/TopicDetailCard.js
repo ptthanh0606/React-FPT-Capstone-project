@@ -282,7 +282,8 @@ const TopicDetailCard = ({
                 {['Assigned', 'Passed', 'Failed'].includes(
                   constants.statusTitles[status]
                 ) &&
-                  currentRole === 'lecturer' && (
+                  currentRole === 'lecturer' &&
+                  isUserMentor && (
                     <GradingSection
                       evaluations={evaluations || []}
                       isUserMentor={isUserMentor}
@@ -293,6 +294,7 @@ const TopicDetailCard = ({
                 {['Assigned', 'Passed', 'Failed'].includes(
                   constants.statusTitles[status]
                 ) &&
+                  currentRole === 'student' &&
                   isTeamInTopic && (
                     <GradingSection
                       evaluations={evaluations || []}
