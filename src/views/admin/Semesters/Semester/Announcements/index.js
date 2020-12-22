@@ -61,7 +61,7 @@ export default function Announcements({ semester }) {
     }
     setShowCreate(true);
     setFieldTemplate({
-      role: 0,
+      role: 1,
     });
   }, [semester.status]);
 

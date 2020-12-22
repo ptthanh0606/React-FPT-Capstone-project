@@ -102,6 +102,37 @@ export default function SelectSemester() {
             Logout
           </Link>
         </div>
+        <span
+          style={{
+            fontSize: '1.5rem',
+            fontWeight: '600',
+          }}
+        >
+          Welcome, {user.name}
+        </span>
+        <br />
+        <span>
+          Please select a semester to perform the activities corresponding to
+          the faculity role.
+        </span>
+      </div>
+      <div
+        style={{
+          content: '',
+          clear: 'both',
+          display: 'table',
+        }}
+      ></div>
+      <div
+        style={{
+          marginTop: '1rem',
+          marginLeft: '4.5rem',
+          marginBottom: '-1.25rem',
+          fontSize: '1.25rem',
+          fontWeight: 600,
+        }}
+      >
+        Nearest semesters
       </div>
       <ScrollContainer
         className={styles['semester-scroll'] + ' alert-shadow gutter-b'}

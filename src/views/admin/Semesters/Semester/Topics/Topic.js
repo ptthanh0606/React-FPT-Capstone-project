@@ -155,7 +155,7 @@ function transformToData(data) {
   for (const k of data) {
     for (const i of k.grid) {
       for (const j of i) {
-        if (j.readOnly !== true && j.value) marks.push(j);
+        if (j.readOnly !== true && j.value != undefined) marks.push(j);
       }
     }
   }
@@ -858,7 +858,7 @@ const Topic = ({ semester }) => {
             toolbar={
               <>
                 <Button isLoading={isUpdating}>
-                  <i className="fas fa-trash mr-2" onClick={onSaveEvals}></i>
+                  <i className="fas fa-save mr-2" onClick={onSaveEvals}></i>
                   Save
                 </Button>
               </>
