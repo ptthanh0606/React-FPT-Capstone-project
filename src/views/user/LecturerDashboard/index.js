@@ -472,6 +472,7 @@ export default React.memo(function LecturerDashboard() {
 
           {[1, 2].includes(currentSemester.status) && (
             <FlowTimeline
+              semesterName={currentSemester.name}
               className="gutter-b"
               items={flowTimelines}
               toolBar={
@@ -527,6 +528,7 @@ export default React.memo(function LecturerDashboard() {
 
           {[0, 3].includes(currentSemester.status) && (
             <FlowTimeline
+              semesterName={currentSemester.name}
               className="gutter-b"
               items={flowTimelines}
               toolBar={

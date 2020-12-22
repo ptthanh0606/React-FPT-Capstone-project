@@ -827,6 +827,7 @@ const Topic = () => {
             topicName={currentTopic.name || ''}
             fullDesc={currentTopic.description || ''}
             department={currentTopic.department || ''}
+            note={currentTopic.note || ''}
             status={currentTopic.status}
             minMembers={currentTopic.minMembers || ''}
             maxMember={currentTopic.maxMembers || ''}
