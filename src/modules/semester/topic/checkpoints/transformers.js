@@ -171,7 +171,7 @@ export function transformToData(data) {
   for (const k of data) {
     for (const i of k.grid) {
       for (const j of i) {
-        if (j.readOnly !== true && j.value) marks.push(j);
+        if (j.readOnly !== true && j.value !== undefined) marks.push(j);
       }
     }
   }
