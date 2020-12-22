@@ -48,6 +48,7 @@ import { convertDateDown } from 'modules/semester/team/application/transformers'
 
 export default React.memo(function LecturerDashboard() {
   const confirm = useConfirm();
+  const [l, loadData] = React.useReducer(() => ({}), []);
   const history = useHistory();
 
   // -------------------------------------------------------------------------
@@ -325,14 +326,16 @@ export default React.memo(function LecturerDashboard() {
               ),
             }))
         );
-        setIsStudentHaveTopic(!!transformedRes.topic.label);
         setIsStudentHaveTeam(true);
-        if (currentSemester.status === 2) {
-          fetchTeamReport(transformedRes.topic.value);
-        }
+        setIsStudentHaveTopic(!!transformedRes.topic.label);
         setUserTeam(transformedRes);
-        if (currentSemester.status === 2) {
-          fetchEvaluation(transformedRes.topic.value);
+        if (!!transformedRes.topic.label) {
+          if (currentSemester.status === 2) {
+            fetchTeamReport(transformedRes.topic.value);
+          }
+          if (currentSemester.status === 2) {
+            fetchEvaluation(transformedRes.topic.value);
+          }
         }
       })
       .catch(() => {
@@ -415,6 +418,7 @@ export default React.memo(function LecturerDashboard() {
       })
         .then(res => {
           toast.success('Report sent!');
+          loadData();
         })
         .catch(handleErrors);
     },
@@ -449,6 +453,7 @@ export default React.memo(function LecturerDashboard() {
     fetchAllTopics();
     fetchAnouncements();
   }, [
+    l,
     checkUserInTeam,
     fetchAllTopics,
     fetchAnouncements,

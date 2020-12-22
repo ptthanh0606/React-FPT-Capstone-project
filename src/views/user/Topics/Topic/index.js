@@ -749,7 +749,7 @@ const Topic = () => {
       fetchUserTeam();
     }
     fetchTopic();
-    if (currentSemester.status === 2) {
+    if (currentSemester.status === 2 && isTeamInTopic) {
       fetchEvaluation();
       fetchReport();
     }
@@ -761,6 +761,7 @@ const Topic = () => {
     fetchReport,
     fetchTopic,
     fetchUserTeam,
+    isTeamInTopic,
   ]);
 
   const applicationsMap = React.useCallback(
