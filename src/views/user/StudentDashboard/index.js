@@ -45,6 +45,7 @@ import {
 import { formatRelative, subMinutes } from 'date-fns';
 import { ProgressChart } from 'components/CMSWidgets/ProgressChart';
 import { convertDateDown } from 'modules/semester/team/application/transformers';
+import Button from 'components/Button';
 
 export default React.memo(function LecturerDashboard() {
   const confirm = useConfirm();
@@ -268,6 +269,7 @@ export default React.memo(function LecturerDashboard() {
   );
 
   const fetchTeamReport = React.useCallback(id => {
+    setIsProcessing(true);
     request({
       to: READ_REPORT.url,
       method: READ_REPORT.method,
@@ -396,13 +398,13 @@ export default React.memo(function LecturerDashboard() {
 
   const fileRef = React.useRef(null);
 
-  const handleClickFile = React.useCallback(e => {
-    e.preventDefault();
+  const handleClickFile = React.useCallback(() => {
     fileRef.current.click();
   }, []);
 
   const handleFileChange = React.useCallback(
     event => {
+      setIsProcessing(true);
       const data = new FormData();
       data.append(
         'attachment',
@@ -420,7 +422,8 @@ export default React.memo(function LecturerDashboard() {
           toast.success('Report sent!');
           loadData();
         })
-        .catch(handleErrors);
+        .catch(handleErrors)
+        .finally(() => setIsProcessing(false));
     },
     [userTeam]
   );
@@ -520,17 +523,6 @@ export default React.memo(function LecturerDashboard() {
               bgColor="danger"
             />
           )}
-
-          {currentSemester.status === 2 &&
-            isStudentHaveTeam &&
-            isStudentHaveTopic && (
-              <ProgressChart
-                title="Checkpoints progress"
-                subTitle="Overall status of checkpoints"
-                percent={progressCheckpoint}
-                baseColor="info"
-              />
-            )}
 
           {[0, 1].includes(currentSemester.status) && !isStudentHaveTeam && (
             <QuickAction
@@ -709,6 +701,18 @@ export default React.memo(function LecturerDashboard() {
           {currentSemester.status === 2 &&
             isStudentHaveTeam &&
             isStudentHaveTopic && (
+              <ProgressChart
+                className="gutter-b"
+                title="Checkpoints progress"
+                subTitle="Overall status of checkpoints"
+                percent={progressCheckpoint}
+                baseColor="info"
+              />
+            )}
+
+          {currentSemester.status === 2 &&
+            isStudentHaveTeam &&
+            isStudentHaveTopic && (
               <CMSList
                 className="gutter-b"
                 title="Your team reports"
@@ -716,13 +720,14 @@ export default React.memo(function LecturerDashboard() {
                 rows={teamReports}
                 toolBar={
                   <>
-                    <button
-                      className="btn btn-light-info mt-2 font-weight-bolder"
+                    <Button
+                      isLoading={isProcessing}
+                      className="btn btn-sm btn-light-info mt-2 font-weight-bolder"
                       onClick={handleClickFile}
                     >
                       <i class="far fa-file-archive icon-md mr-1"></i>
                       Send report
-                    </button>
+                    </Button>
                     <Form.File
                       ref={fileRef}
                       label={undefined}
