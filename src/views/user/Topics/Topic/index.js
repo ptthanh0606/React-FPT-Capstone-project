@@ -220,13 +220,16 @@ const Topic = () => {
         method: endpoints.GET_EVALUATION(id).method,
       })
         .then(res => {
-          setEvals(
-            transformToGrid(
-              res.data.data,
-              currentUser.id,
-              currentRole === 'lecturer'
-            )
+          const evals = transformToGrid(
+            res.data.data,
+            currentUser.id,
+            currentRole === 'lecturer'
           );
+          if (evals.some(e => e.status === 2)) {
+            setEvals(evals.filter(e => e.status === 2));
+          } else {
+            setEvals(evals);
+          }
         })
         .catch(err => {
           handleErrors(err);
