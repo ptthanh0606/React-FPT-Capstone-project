@@ -479,7 +479,9 @@ export default React.memo(function LecturerDashboard() {
               textColorSubTitle="white"
               svgVariant={5}
               subTitle={
-                <>All activities are finished, all informations are view only</>
+                <>
+                  All activities are finished, all informations are view only!
+                </>
               }
             />
           )}
