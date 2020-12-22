@@ -313,7 +313,7 @@ const Topic = ({ semester }) => {
           })
             .then(res => {
               history.push('/semester/' + semId + '/topic');
-              toast.error('Delete topic successfully!');
+              toast.success('Delete topic successfully!');
             })
             .catch(handleErrors),
       });
