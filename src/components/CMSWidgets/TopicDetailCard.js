@@ -26,6 +26,7 @@ const TopicDetailCard = ({
   fullDesc = '',
   department = '',
   status = '',
+  note = '',
   minMembers = 0,
   maxMember = 0,
   mentorMembers = [],
@@ -125,6 +126,10 @@ const TopicDetailCard = ({
                         >
                           {constants.statusTitles[status]}
                         </span>
+                      </div>
+                      <div className="mr-10">
+                        <div className="font-weight-bolder mb-2">Note</div>
+                        <span>{note}</span>
                       </div>
                     </div>
                   </div>
