@@ -130,7 +130,7 @@ const TopicDetailCard = ({
                       </div>
                       <div className="mr-10">
                         <div className="font-weight-bolder mb-2">Note</div>
-                        <span>{note}</span>
+                        <span>{note || '(No note provided)'}</span>
                       </div>
                     </div>
                   </div>
