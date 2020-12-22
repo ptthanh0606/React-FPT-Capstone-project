@@ -73,6 +73,7 @@ const Topic = () => {
   const [showUpdate, setShowUpdate] = React.useState(false);
   const [isProcessing, setIsProcessing] = React.useState(false);
   const [isButtonProcessing, setIsButtonProcessing] = React.useState(false);
+  const [isGradingProcessing, setIsGradingProcessing] = React.useState(false);
 
   // ----------------------------------------------------------
 
@@ -505,7 +506,7 @@ const Topic = () => {
 
   const handleFileChange = React.useCallback(
     event => {
-      setIsButtonProcessing(true);
+      setIsGradingProcessing(true);
       const data = new FormData();
       data.append(
         'attachment',
@@ -524,7 +525,7 @@ const Topic = () => {
           loadData();
         })
         .catch(handleErrors)
-        .finally(() => setIsButtonProcessing(false));
+        .finally(() => setIsGradingProcessing(false));
     },
     [id]
   );
@@ -758,6 +759,10 @@ const Topic = () => {
       fetchEvaluation();
       fetchReport();
     }
+    if (currentSemester.status === 2 && isUserMentor) {
+      fetchEvaluation();
+      fetchReport();
+    }
   }, [
     l,
     currentRole,
@@ -768,6 +773,7 @@ const Topic = () => {
     fetchTopic,
     fetchUserTeam,
     isTeamInTopic,
+    isUserMentor,
   ]);
 
   const applicationsMap = React.useCallback(
@@ -828,6 +834,7 @@ const Topic = () => {
           }`}
         >
           <TopicDetailCard
+            isButtonProcessing={isGradingProcessing}
             attachmentLinkName={currentTopic.attachment?.name || ''}
             topicId={currentTopic.id || ''}
             topicCode={currentTopic.code || ''}
