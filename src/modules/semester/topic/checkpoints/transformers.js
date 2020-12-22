@@ -88,6 +88,15 @@ export function transformToGrid(data, currentId, isLecturer) {
 
       for (const j of data.students) {
         // j = current student
+        let isReadOnly = false;
+
+        if (isLecturer) {
+          if (currentId !== firstEvaluator?.id) {
+            isReadOnly = true;
+          }
+        }
+
+        console.log(isReadOnly);
 
         toPush.push(
           {
@@ -98,7 +107,7 @@ export function transformToGrid(data, currentId, isLecturer) {
             lecturerId: firstEvaluator?.id,
             markColumnId: i.id,
             evaluationId: z.evaluationId,
-            readOnly: currentId !== firstEvaluator?.id && isLecturer === false,
+            readOnly: isReadOnly,
             ...cellProp,
           },
           {
