@@ -13,6 +13,7 @@ const FlowTimeline = ({
       ),
     },
   ],
+  semesterName = '',
   toolBar = <></>,
   ...props
 }) => {
@@ -22,7 +23,7 @@ const FlowTimeline = ({
         <h3 className="card-title align-items-start flex-column">
           <span className="font-weight-bolder text-dark">Flow timeline</span>
           <span className="text-muted mt-3 font-weight-bold font-size-sm">
-            Keep track of Fall 2020
+            Keep track of {semesterName}
           </span>
         </h3>
         <div className="card-toolbar">{toolBar}</div>

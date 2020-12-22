@@ -495,6 +495,25 @@ export default React.memo(function LecturerDashboard() {
             />
           )}
 
+          {currentSemester.status === 0 && !isStudentHaveTeam && (
+            <Engaging2
+              className="gutter-b"
+              title={
+                <>
+                  <span>Welcome</span>
+                  <br />
+                  <br />
+                  This is your dasboard, from here you can quickly start with
+                  some actions before assigning for a capstone topic.
+                </>
+              }
+              textColorTitle="white"
+              textColorSubTitle="white"
+              svgVariant={7}
+              bgColor="danger"
+            />
+          )}
+
           {currentSemester.status === 2 &&
             isStudentHaveTeam &&
             isStudentHaveTopic && (
@@ -533,25 +552,6 @@ export default React.memo(function LecturerDashboard() {
                   },
                 ],
               ]}
-            />
-          )}
-
-          {currentSemester.status === 0 && !isStudentHaveTeam && (
-            <Engaging2
-              className="gutter-b"
-              title={
-                <>
-                  <span>Welcome</span>
-                  <br />
-                  <br />
-                  This is your dasboard, from here you can quickly start with
-                  some actions before assigning for a capstone topic.
-                </>
-              }
-              textColorTitle="white"
-              textColorSubTitle="white"
-              svgVariant={7}
-              bgColor="danger"
             />
           )}
 
@@ -601,7 +601,11 @@ export default React.memo(function LecturerDashboard() {
               <Anouncement announcements={anouncements} />
             </>
           )}
-          <FlowTimeline className=" gutter-b" items={flowTimelines || []} />
+          <FlowTimeline
+            className=" gutter-b"
+            semesterName={currentSemester.name}
+            items={flowTimelines || []}
+          />
         </div>
         <div className="col-lg-6 col-xxl-4">
           {currentSemester.status === 3 && (
