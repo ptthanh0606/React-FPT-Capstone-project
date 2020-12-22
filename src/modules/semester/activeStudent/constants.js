@@ -21,15 +21,15 @@ export const statusClasses = [
   'danger',
   'warning',
   'primary',
-  'success',
   'danger',
+  'success',
 ];
 export const statusTitles = [
   'Not in a team',
   'Assigning',
   'Assigned',
-  'Passed',
   'Failed',
+  'Passed',
 ];
 
 // export const createColumns = ({ handleEdit, handleRemove }) =>
