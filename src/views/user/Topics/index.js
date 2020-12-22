@@ -391,15 +391,17 @@ export default function Topics() {
         <CardHeader title="All topics">
           {role === 'lecturer' && (
             <CardHeaderToolbar className="text-nowrap">
-              <Button
-                className={`ml-2 ${
-                  isReviewedTopics ? 'font-weight-bolder' : 'text-primary'
-                }`}
-                variant={isReviewedTopics && 'primary'}
-                onClick={reviewedTopicFilter}
-              >
-                Reviewed
-              </Button>
+              {[0, 1].includes(semester.status) && (
+                <Button
+                  className={`ml-2 ${
+                    isReviewedTopics ? 'font-weight-bolder' : 'text-primary'
+                  }`}
+                  variant={isReviewedTopics && 'primary'}
+                  onClick={reviewedTopicFilter}
+                >
+                  Reviewed
+                </Button>
+              )}
               <Button
                 className={`ml-2 ${
                   isAssignedTopics ? 'font-weight-bolder' : 'text-primary'
