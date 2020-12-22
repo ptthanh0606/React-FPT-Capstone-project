@@ -187,6 +187,7 @@ const Topic = ({ semester }) => {
   }, []);
 
   const handleFileChange = React.useCallback(event => {
+    event.preventDefault();
     setData({
       value: event.currentTarget.files[0],
       name: 'attachment',

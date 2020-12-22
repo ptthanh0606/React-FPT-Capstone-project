@@ -39,6 +39,7 @@ const FormGroups = ({
 
   const handleFileChange = React.useCallback(
     event => {
+      event.preventDefault();
       handleChangeFields(event.currentTarget.files[0], config.name);
     },
     [config.name, handleChangeFields]
