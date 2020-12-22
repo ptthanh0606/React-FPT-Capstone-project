@@ -68,12 +68,114 @@ export default function Topics() {
   const [isAllTopics, setIsAllTopics] = React.useState(true);
   const [isMentoringTopics, setIsMentoringTopics] = React.useState(false);
   const [isSubmittedTopics, setIsSubmittedTopics] = React.useState(false);
+  const [isReviewedTopics, setIsReviewedTopics] = React.useState(false);
+  const [isAssignedTopics, setIsAssignedTopics] = React.useState(false);
+
   const [isStudentHaveTeam, setIsStudentHaveTeam] = React.useState(false);
   const [isStudentHaveTopic, setIsStudentHaveTopic] = React.useState(false);
   const [isFromNeedFeedback, setIsFromNeedFeedback] = React.useState(false);
   const [isFromApplyMentor, setIsFromApplyMentor] = React.useState(false);
 
   // ---------------------------------------------------------------------------
+
+  const loadTopics = React.useCallback(() => {
+    const source = {};
+    setIsLoading(true);
+
+    request({
+      to: endpoints.LIST_TOPIC.url,
+      method: endpoints.LIST_TOPIC.method,
+      params: {
+        ...debouncedFilters,
+        pageNumber: page,
+        pageSize: pageSize,
+        sortField: sortField,
+        sortOrder: sortOrder,
+        semesterId: semester.id,
+      },
+      source,
+    })
+      .then(res => {
+        setData(res.data?.data?.map(transformers.downList));
+        setTotal(res.data?.totalRecords);
+        setPage(res.data?.pageNumber);
+        setPageSize(res.data?.pageSize);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        handleErrors(err);
+        if (!err.isCancel) setIsLoading(false);
+      });
+
+    return () => {
+      source.cancel();
+    };
+  }, [debouncedFilters, page, pageSize, semester.id, sortField, sortOrder]);
+
+  const myTopicFilter = React.useCallback(() => {
+    setFilters(f => ({
+      ...f,
+      isOwnSubmit: true,
+      isOwnMentorTopic: false,
+      status: null,
+    }));
+    setIsSubmittedTopics(true);
+    setIsReviewedTopics(false);
+    setIsAssignedTopics(false);
+    setIsAllTopics(false);
+    setIsMentoringTopics(false);
+  }, []);
+
+  const mentoringTopicFilter = React.useCallback(() => {
+    setFilters(f => ({
+      ...f,
+      isOwnSubmit: false,
+      isOwnMentorTopic: true,
+      status: null,
+    }));
+    setIsSubmittedTopics(false);
+    setIsReviewedTopics(false);
+    setIsAssignedTopics(false);
+    setIsAllTopics(false);
+    setIsMentoringTopics(true);
+  }, []);
+
+  const assignedTopicFilter = React.useCallback(() => {
+    setFilters(f => ({
+      ...f,
+      isOwnSubmit: false,
+      isOwnMentorTopic: false,
+      status: 4,
+    }));
+    setIsSubmittedTopics(false);
+    setIsReviewedTopics(false);
+    setIsAssignedTopics(true);
+    setIsAllTopics(false);
+    setIsMentoringTopics(false);
+  }, []);
+
+  const reviewedTopicFilter = React.useCallback(() => {
+    setFilters(f => ({
+      ...f,
+      isOwnSubmit: false,
+      isOwnMentorTopic: false,
+      status: 2,
+    }));
+    setIsSubmittedTopics(false);
+    setIsReviewedTopics(true);
+    setIsAssignedTopics(false);
+    setIsAllTopics(false);
+    setIsMentoringTopics(false);
+  }, []);
+
+  const allTopicFilter = React.useCallback(() => {
+    setFilters({});
+    setIsSubmittedTopics(false);
+    setIsReviewedTopics(false);
+    setIsAssignedTopics(false);
+    setIsAllTopics(true);
+    setIsMentoringTopics(false);
+  }, []);
 
   const showCreateModal = React.useCallback(() => {
     setShowCreate(true);
@@ -82,85 +184,6 @@ export default function Topics() {
   const hideCreateModal = React.useCallback(() => {
     setShowCreate(false);
   }, []);
-
-  const loadTopics = React.useCallback(
-    state => {
-      const source = {};
-
-      let callConfigs = {};
-      switch (state) {
-        case 'all':
-          callConfigs = {
-            to: endpoints.LIST_TOPIC.url,
-            method: endpoints.LIST_TOPIC.method,
-            params: {
-              ...debouncedFilters,
-              pageNumber: page,
-              pageSize: pageSize,
-              sortField: sortField,
-              sortOrder: sortOrder,
-              semesterId: semester.id,
-            },
-            source,
-          };
-          break;
-        case 'mentoring':
-          callConfigs = {
-            to: endpoints.LIST_TOPIC.url,
-            method: endpoints.LIST_TOPIC.method,
-            params: {
-              ...debouncedFilters,
-              pageNumber: page,
-              pageSize: pageSize,
-              sortField: sortField,
-              sortOrder: sortOrder,
-              semesterId: semester.id,
-              isOwnMentorTopic: true,
-            },
-            source,
-          };
-          break;
-        case 'submitted':
-          callConfigs = {
-            to: endpoints.LIST_TOPIC.url,
-            method: endpoints.LIST_TOPIC.method,
-            params: {
-              ...debouncedFilters,
-              pageNumber: page,
-              pageSize: pageSize,
-              sortField: sortField,
-              sortOrder: sortOrder,
-              semesterId: semester.id,
-              isOwnSubmit: true,
-            },
-            source,
-          };
-          break;
-
-        default:
-          break;
-      }
-      setIsLoading(true);
-
-      request(callConfigs)
-        .then(res => {
-          setData(res.data?.data?.map(transformers.downList));
-          setTotal(res.data?.totalRecords);
-          setPage(res.data?.pageNumber);
-          setPageSize(res.data?.pageSize);
-          setIsLoading(false);
-        })
-        .catch(err => {
-          handleErrors(err);
-          if (!err.isCancel) setIsLoading(false);
-        });
-
-      return () => {
-        source.cancel();
-      };
-    },
-    [debouncedFilters, page, pageSize, semester.id, sortField, sortOrder]
-  );
 
   const handleCreate = React.useCallback(
     fieldData => {
@@ -191,37 +214,18 @@ export default function Topics() {
           toast.success('Create topic successfully');
           setShowCreate(false);
           setFieldTemplate({});
+
           setIsMentoringTopics(false);
           setIsSubmittedTopics(true);
           setIsAllTopics(false);
-          loadTopics('submitted');
+
+          myTopicFilter();
         })
         .catch(handleErrors)
         .finally(() => setIsProcessing(false));
     },
-    [currentUser.id, loadTopics, semester.id]
+    [currentUser.id, myTopicFilter, semester.id]
   );
-
-  const handleLoadAllSubmitted = React.useCallback(() => {
-    setIsMentoringTopics(false);
-    setIsAllTopics(false);
-    setIsSubmittedTopics(true);
-    loadTopics('submitted');
-  }, [loadTopics]);
-
-  const handleLoadAllMentoring = React.useCallback(() => {
-    setIsMentoringTopics(true);
-    setIsAllTopics(false);
-    setIsSubmittedTopics(false);
-    loadTopics('mentoring');
-  }, [loadTopics]);
-
-  const handleLoadAllTopics = React.useCallback(() => {
-    setIsMentoringTopics(false);
-    setIsAllTopics(true);
-    setIsSubmittedTopics(false);
-    loadTopics('all');
-  }, [loadTopics]);
 
   const checkUserInTeam = React.useCallback(() => {
     request({
@@ -389,28 +393,46 @@ export default function Topics() {
             <CardHeaderToolbar className="text-nowrap">
               <Button
                 className={`ml-2 ${
-                  isSubmittedTopics ? 'font-weight-bolder' : 'text-primary'
+                  isReviewedTopics ? 'font-weight-bolder' : 'text-primary'
                 }`}
-                variant={isSubmittedTopics && 'primary'}
-                onClick={handleLoadAllSubmitted}
+                variant={isReviewedTopics && 'primary'}
+                onClick={reviewedTopicFilter}
               >
-                Submitted
+                Reviewed
+              </Button>
+              <Button
+                className={`ml-2 ${
+                  isAssignedTopics ? 'font-weight-bolder' : 'text-primary'
+                }`}
+                variant={isAssignedTopics && 'primary'}
+                onClick={assignedTopicFilter}
+              >
+                Assigned
               </Button>
               <Button
                 className={`ml-2 ${
                   isMentoringTopics ? 'font-weight-bolder' : 'text-primary'
                 }`}
                 variant={isMentoringTopics && 'primary'}
-                onClick={handleLoadAllMentoring}
+                onClick={mentoringTopicFilter}
               >
                 Mentoring
+              </Button>
+              <Button
+                className={`ml-2 ${
+                  isSubmittedTopics ? 'font-weight-bolder' : 'text-primary'
+                }`}
+                variant={isSubmittedTopics && 'primary'}
+                onClick={myTopicFilter}
+              >
+                Own
               </Button>
               <Button
                 className={`ml-2 ${
                   isAllTopics ? 'font-weight-bolder' : 'text-primary'
                 }`}
                 variant={isAllTopics && 'primary'}
-                onClick={handleLoadAllTopics}
+                onClick={allTopicFilter}
               >
                 All
               </Button>

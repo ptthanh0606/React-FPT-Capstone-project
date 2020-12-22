@@ -11,25 +11,19 @@ import { PUT_EVALUATION } from 'endpoints';
 import { useParams } from 'react-router-dom';
 import toast from 'utils/toast';
 import request from 'utils/request';
-import { transformToData } from 'views/user/Topics/Topic/transformers';
 import { handleErrors } from 'utils/common';
+import { transformToData } from 'modules/semester/topic/checkpoints/transformers';
 
-const GradingSection = ({ evaluations = [], isUserMentor }) => {
+const GradingSection = ({
+  evaluations = [],
+  isUserMentor = false,
+  onSuccessFeedback = () => {},
+}) => {
   const [evals, setEvals] = React.useState([]);
   const currentRole = useRecoilValue(role);
   const currentSemester = useRecoilValue(semesterAtom);
   const { id } = useParams();
   const [isUpdating, setIsUpdating] = React.useState(false);
-
-  // --------------------------------------------------------------
-
-  // const [data, setData] = React.useReducer((state, action) => {
-  //   if (action.name === 'all') return { ...state, ...action.value };
-  //   return {
-  //     ...state,
-  //     [action.name]: action.value,
-  //   };
-  // }, {});
 
   // ---------------------------------------------------------------
 
@@ -48,6 +42,7 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
 
   const onSaveEvals = React.useCallback(
     e => {
+      console.log(transformToData(evals));
       e.preventDefault();
       if (currentSemester.status === 3) {
         toast.warn('Semester is finished, cannot make any further changes.');
@@ -112,7 +107,7 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
             <Card.Header>
               <Accordion.Toggle
                 as={Card.Header}
-                className={`bg-${constantsCp.statusClasses[0]}`}
+                className={`bg-${constantsCp.statusClasses[i.status]}`}
                 eventKey={i.id}
                 style={{
                   padding: '1rem',
@@ -163,7 +158,7 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
                             i.status === 0 ? 'white' : 'white'
                           } mr-2 icon-nm`}
                         ></i>
-                        Evauluation date
+                        Evaluation date
                         <span className="ml-2 font-weight-bolder">
                           {constantsCp.convertDateDown(i.evaluateDueDate)}
                         </span>
@@ -183,7 +178,7 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
                     <span
                       class={`text-${
                         i.status === 0 ? 'white' : 'white'
-                      } font-weight-bolder`}
+                      } font-weight-bolder mt-3`}
                     >
                       {constantsCp.statusTitles[i.status]}
                     </span>
@@ -192,45 +187,40 @@ const GradingSection = ({ evaluations = [], isUserMentor }) => {
               </Accordion.Toggle>
             </Card.Header>
             <Accordion.Collapse eventKey={i.id}>
-              <Card.Body>
-                <div className="marks-table">
-                  <ReactDataSheet
-                    data={i.grid || []}
-                    sheetRenderer={props => {
-                      return (
-                        <table
-                          className={props.className}
-                          style={{ width: '100%' }}
-                        >
-                          <thead></thead>
-                          <tbody>{props.children}</tbody>
-                        </table>
-                      );
-                    }}
-                    valueRenderer={cell => cell.value}
-                    onCellsChanged={changes =>
-                      handleGradeChange(changes, index)
-                    }
-                    dataEditor={props => {
-                      return (
-                        <input
-                          style={{ height: '100%' }}
-                          onChange={e => props.onChange(e.currentTarget.value)}
-                          value={props.value}
-                          onKeyDown={props.onKeyDown}
-                          type="number"
-                          min="0"
-                          max="10"
-                          step="0.01"
-                        />
-                      );
-                    }}
-                  />
-                </div>
-              </Card.Body>
+              <div className="marks-table" style={{ overflowX: 'scroll' }}>
+                <ReactDataSheet
+                  data={i.grid || []}
+                  sheetRenderer={props => {
+                    return (
+                      <table
+                        className={props.className}
+                        style={{ minWidth: '100%' }}
+                      >
+                        {props.children}
+                      </table>
+                    );
+                  }}
+                  valueRenderer={cell => cell.value}
+                  onCellsChanged={changes => handleGradeChange(changes, index)}
+                  dataEditor={props => {
+                    return (
+                      <input
+                        style={{ height: '100%' }}
+                        onChange={e => props.onChange(e.currentTarget.value)}
+                        value={props.value}
+                        onKeyDown={props.onKeyDown}
+                        type="number"
+                        min="0"
+                        max="10"
+                        step="0.01"
+                      />
+                    );
+                  }}
+                />
+              </div>
             </Accordion.Collapse>
           </Card>
-        ))}
+        )) || <></>}
       </Accordion>
     </>
   );

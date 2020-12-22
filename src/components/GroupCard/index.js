@@ -12,6 +12,7 @@ const GroupCard = ({
   booleanFlg = false,
   fallbackMsg,
   leaderId,
+  type,
   handleSubmitRowData = () => {},
 }) => {
   const handleSubmit = React.useCallback(
@@ -47,42 +48,75 @@ const GroupCard = ({
       </div>
       <div className="card-body pt-2">
         <div className={'d-flex-column align-items-center' + className}>
-          <Form id="change-weight-form" onSubmit={handleSubmit}>
-            {group?.length ? (
-              <>
-                {group
-                  .filter(member => member.id === leaderId)
-                  .map(leader => (
-                    <GroupMember
-                      email={leader.email}
-                      key={leader.id}
-                      id={leader.id}
-                      role={role}
-                      label={leader.name}
-                      subLabel={'Leader'}
-                      booleanFlg={booleanFlg}
-                      value={leader.weight}
-                    />
-                  ))}
-                {group
-                  .filter(member => member.id !== leaderId)
-                  .map(mem => (
-                    <GroupMember
-                      email={mem.email}
-                      key={mem.id}
-                      id={mem.id}
-                      role={role}
-                      label={mem.name}
-                      subLabel={''}
-                      booleanFlg={booleanFlg}
-                      value={mem.weight}
-                    />
-                  ))}
-              </>
-            ) : (
-              <>{fallbackMsg}</>
-            )}
-          </Form>
+          {(type === 'report' && (
+            <>
+              {group?.length ? (
+                group.map(report => (
+                  <>
+                    <div
+                      className={
+                        'd-flex justify-content-between mb-5 ' + className
+                      }
+                    >
+                      <div className="d-flex align-items-center">
+                        <div className="d-flex flex-column font-weight-bold">
+                          <a
+                            className="font-weight-bolder"
+                            href={report.attachmentLink}
+                          >
+                            {report.label}
+                          </a>
+                          <span className="text-muted">{report.subLabel}</span>
+                        </div>
+                      </div>
+                      <a href={report.attachmentLink} class="btn btn-light">
+                        <i class="fas fa-download p-0"></i>
+                      </a>
+                    </div>
+                  </>
+                ))
+              ) : (
+                <>{fallbackMsg}</>
+              )}
+            </>
+          )) || (
+            <Form id="change-weight-form" onSubmit={handleSubmit}>
+              {group?.length ? (
+                <>
+                  {group
+                    .filter(member => member.id === leaderId)
+                    .map(leader => (
+                      <GroupMember
+                        email={leader.email}
+                        key={leader.id}
+                        id={leader.id}
+                        role={role}
+                        label={leader.name}
+                        subLabel={'Leader'}
+                        booleanFlg={booleanFlg}
+                        value={leader.weight}
+                      />
+                    ))}
+                  {group
+                    .filter(member => member.id !== leaderId)
+                    .map(mem => (
+                      <GroupMember
+                        email={mem.email}
+                        key={mem.id}
+                        id={mem.id}
+                        role={role}
+                        label={mem.name}
+                        subLabel={''}
+                        booleanFlg={booleanFlg}
+                        value={mem.weight}
+                      />
+                    ))}
+                </>
+              ) : (
+                <>{fallbackMsg}</>
+              )}
+            </Form>
+          )}
         </div>
       </div>
     </div>

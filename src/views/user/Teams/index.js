@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { useHistory, useLocation, useParams } from 'react-router-dom';
+import SVG from 'react-inlinesvg';
 
 import * as endpoints from 'endpoints';
 import * as transformers from 'modules/semester/team/transformers';
@@ -33,6 +34,7 @@ import request from 'utils/request';
 import useConfirm from 'utils/confirm';
 import queryString from 'query-string';
 import Engaging from 'components/CMSWidgets/Engaging';
+import { toAbsoluteUrl } from '_metronic/_helpers';
 
 export default function Teams() {
   const history = useHistory();
@@ -151,7 +153,18 @@ export default function Teams() {
             </button>
           </>
         ) : (
-          <></>
+          <>
+            <span class="svg-icon svg-icon-lg svg-icon-warning mr-1">
+              <SVG
+                src={toAbsoluteUrl(
+                  '/media/svg/icons/Code/Warning-1-circle.svg'
+                )}
+              ></SVG>
+            </span>
+            <span className="text-warning font-weight-bolder mr-1">
+              You cannot create or join a team in this semester phase.
+            </span>
+          </>
         );
         break;
 

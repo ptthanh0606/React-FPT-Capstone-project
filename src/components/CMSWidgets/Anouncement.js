@@ -1,3 +1,4 @@
+import { formatRelative, subMinutes } from 'date-fns';
 import React from 'react';
 
 const Anouncement = ({
@@ -22,7 +23,13 @@ const Anouncement = ({
           announcements.map(announce => (
             <div className="mt-9 mb-4">
               <div className={`font-weight-bolder text-${type}`}>
-                {announce.updatedAt}
+                {formatRelative(
+                  subMinutes(
+                    new Date(announce.updatedAt),
+                    new Date().getTimezoneOffset()
+                  ),
+                  new Date()
+                )}
               </div>
 
               <div className="text-dark-75 font-size-h6 m-0 d-flex flex-column mt-3">

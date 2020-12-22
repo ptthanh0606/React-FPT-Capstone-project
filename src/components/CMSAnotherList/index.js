@@ -45,7 +45,7 @@ const CMSAnotherList = ({
             <span
               className={`text-muted text-${
                 darkMode && 'white'
-              } mt-3 font-weight-bold font-size-sm mb-0`}
+              } mt-3 font-weight-bolder font-size-sm mb-0`}
             >
               {subTitle}
             </span>
@@ -58,7 +58,7 @@ const CMSAnotherList = ({
           rows?.length ? (
             rows.map(row => <Row {...row} />)
           ) : (
-            <>{fallbackMsg}</>
+            <span className="text-white">{fallbackMsg}</span>
           )
         ) : (
           <div className="d-flex align-items-center">
