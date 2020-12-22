@@ -13,11 +13,13 @@ import toast from 'utils/toast';
 import request from 'utils/request';
 import { handleErrors } from 'utils/common';
 import { transformToData } from 'modules/semester/topic/checkpoints/transformers';
+import Button from 'components/Button';
 
 const GradingSection = ({
   evaluations = [],
   isUserMentor = false,
   onSuccessFeedback = () => {},
+  isButtonProcessing = false,
 }) => {
   const [evals, setEvals] = React.useState([]);
   const currentRole = useRecoilValue(role);
@@ -87,7 +89,8 @@ const GradingSection = ({
           </span>
         </div>
         {currentRole === 'lecturer' && isUserMentor && (
-          <button
+          <Button
+            isLoading={isButtonProcessing}
             className="btn btn-light-info d-flex align-items-center"
             onClick={onSaveEvals}
           >
@@ -97,7 +100,7 @@ const GradingSection = ({
               ></SVG>
             </span>
             Save
-          </button>
+          </Button>
         )}
       </div>
 

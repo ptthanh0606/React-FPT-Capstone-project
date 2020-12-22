@@ -24,15 +24,17 @@ import CMSList from 'components/CMSList';
 import GroupCard from 'components/GroupCard';
 import TopicDetailCard from 'components/CMSWidgets/TopicDetailCard';
 import useConfirm from 'utils/confirm';
-import { Button, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { toAbsoluteUrl } from '_metronic/_helpers';
 import { transformToGrid } from 'modules/semester/topic/checkpoints/transformers';
 import { convertDateDown } from 'modules/semester/team/application/transformers';
+import Button from 'components/Button';
 
 const Topic = () => {
   const history = useHistory();
   const { id } = useParams();
   const confirm = useConfirm();
+  const [l, loadData] = React.useReducer(() => ({}));
 
   // ----------------------------------------------------------
 
@@ -57,7 +59,6 @@ const Topic = () => {
   const [isUserMentor, setIsUserMentor] = React.useState(false);
   const [isUserMentorLeader, setIsUserMentorLeader] = React.useState(false);
   const [isUserApprover, setIsUserApprover] = React.useState(false);
-  const [isUserCouncilMember, setIsUserCouncilMember] = React.useState(false);
 
   const [mentorLeaderId, setMentorLeaderId] = React.useState();
   const [studentLeaderId, setStudentLeaderId] = React.useState();
@@ -71,6 +72,8 @@ const Topic = () => {
   const [updateFieldTemplate, setUpdateFieldTemplate] = React.useState({});
   const [showUpdate, setShowUpdate] = React.useState(false);
   const [isProcessing, setIsProcessing] = React.useState(false);
+  const [isButtonProcessing, setIsButtonProcessing] = React.useState(false);
+  const [isGradingProcessing, setIsGradingProcessing] = React.useState(false);
 
   // ----------------------------------------------------------
 
@@ -503,6 +506,7 @@ const Topic = () => {
 
   const handleFileChange = React.useCallback(
     event => {
+      setIsGradingProcessing(true);
       const data = new FormData();
       data.append(
         'attachment',
@@ -518,8 +522,10 @@ const Topic = () => {
       })
         .then(res => {
           toast.success('Report sent!');
+          loadData();
         })
-        .catch(handleErrors);
+        .catch(handleErrors)
+        .finally(() => setIsGradingProcessing(false));
     },
     [id]
   );
@@ -749,11 +755,16 @@ const Topic = () => {
       fetchUserTeam();
     }
     fetchTopic();
-    if (currentSemester.status === 2) {
+    if (currentSemester.status === 2 && isTeamInTopic) {
+      fetchEvaluation();
+      fetchReport();
+    }
+    if (currentSemester.status === 2 && isUserMentor) {
       fetchEvaluation();
       fetchReport();
     }
   }, [
+    l,
     currentRole,
     currentSemester.status,
     fetchCouncil,
@@ -761,6 +772,8 @@ const Topic = () => {
     fetchReport,
     fetchTopic,
     fetchUserTeam,
+    isTeamInTopic,
+    isUserMentor,
   ]);
 
   const applicationsMap = React.useCallback(
@@ -821,6 +834,7 @@ const Topic = () => {
           }`}
         >
           <TopicDetailCard
+            isButtonProcessing={isGradingProcessing}
             attachmentLinkName={currentTopic.attachment?.name || ''}
             topicId={currentTopic.id || ''}
             topicCode={currentTopic.code || ''}
@@ -929,13 +943,14 @@ const Topic = () => {
                     toolBar={
                       currentRole === 'student' && isStudentTeamLead ? (
                         <>
-                          <button
-                            className="btn btn-light-info mt-2 font-weight-bolder"
+                          <Button
+                            isLoading={isButtonProcessing}
+                            className="btn btn-sm btn-light-info mt-2 font-weight-bolder"
                             onClick={handleClickFile}
                           >
                             <i class="far fa-file-archive icon-md mr-1"></i>
                             Submit
-                          </button>
+                          </Button>
                           <Form.File
                             ref={fileRef}
                             label={undefined}

@@ -41,6 +41,7 @@ const TopicDetailCard = ({
   isUserMentor = false,
   isTeamInTopic = false,
   isLoading = true,
+  isButtonProcessing = false,
 }) => {
   const currentUser = useRecoilValue(userAtom);
   const currentSemester = useRecoilValue(semesterAtom);
@@ -285,6 +286,7 @@ const TopicDetailCard = ({
                     <GradingSection
                       evaluations={evaluations || []}
                       isUserMentor={isUserMentor}
+                      isButtonProcessing={isButtonProcessing}
                     />
                   )}
 
@@ -295,6 +297,7 @@ const TopicDetailCard = ({
                     <GradingSection
                       evaluations={evaluations || []}
                       isUserMentor={isUserMentor}
+                      isButtonProcessing={isButtonProcessing}
                     />
                   )}
               </>
