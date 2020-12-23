@@ -837,6 +837,7 @@ const Topic = () => {
           }`}
         >
           <TopicDetailCard
+            loadData={loadData}
             isButtonProcessing={isGradingProcessing}
             attachmentLinkName={currentTopic.attachment?.name || ''}
             topicId={currentTopic.id || ''}
