@@ -415,9 +415,10 @@ const Topic = ({ semester }) => {
         method: endpoints.GET_EVALUATION(topicId).method,
       })
         .then(res => {
-          const data = transformToGrid(res.data.data);
-          console.log(data);
-          setEvals(data);
+          if (res?.data?.data?.students && res?.data?.data?.checkpoints) {
+            const data = transformToGrid(res.data.data);
+            setEvals(data);
+          }
         })
         .catch(handleErrors)
         .finally(() => setIsLoading(false));
