@@ -220,10 +220,18 @@ const Topic = () => {
         method: endpoints.GET_EVALUATION(id).method,
       })
         .then(res => {
+          let isFailed = false;
+          if (currentTopic.status) {
+            if (currentTopic.status === 6) {
+              isFailed = true;
+            }
+          }
+
           const evals = transformToGrid(
             res.data.data,
             currentUser.id,
-            currentRole === 'lecturer'
+            currentRole === 'lecturer',
+            isFailed
           );
           if (evals.some(e => e.status === 2)) {
             setEvals(evals.filter(e => e.status === 2));
@@ -235,7 +243,7 @@ const Topic = () => {
           handleErrors(err);
         });
     }
-  }, [currentRole, currentUser.id, id]);
+  }, [currentRole, currentTopic.status, currentUser.id, id]);
 
   const fetchReport = React.useCallback(() => {
     request({
