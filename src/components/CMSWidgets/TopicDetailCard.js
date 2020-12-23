@@ -19,6 +19,7 @@ import FeedbackSection from './FeedbackSection';
 import GradingSection from './GradingSection';
 
 const TopicDetailCard = ({
+  loadData = () => {},
   className = '',
   topicId = '',
   topicCode = '',
@@ -300,6 +301,7 @@ const TopicDetailCard = ({
                       evaluations={evaluations || []}
                       isUserMentor={isUserMentor}
                       isButtonProcessing={isButtonProcessing}
+                      loadData={loadData}
                     />
                   )}
               </>

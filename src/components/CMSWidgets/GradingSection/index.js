@@ -20,6 +20,7 @@ const GradingSection = ({
   isUserMentor = false,
   onSuccessFeedback = () => {},
   isButtonProcessing = false,
+  loadData = () => {},
 }) => {
   const [evals, setEvals] = React.useState([]);
   const currentRole = useRecoilValue(role);
@@ -60,11 +61,12 @@ const GradingSection = ({
       })
         .then(res => {
           toast.success('Updated');
+          loadData();
         })
         .catch(handleErrors)
         .finally(() => setIsUpdating(false));
     },
-    [currentSemester.status, evals, id]
+    [currentSemester.status, evals, id, loadData]
   );
 
   // ---------------------------------------------------------------
@@ -208,7 +210,7 @@ const GradingSection = ({
                   dataEditor={props => {
                     return (
                       <input
-                        style={{ height: '100%' }}
+                        style={{ height: '100%', minHeight: '25px' }}
                         onChange={e => props.onChange(e.currentTarget.value)}
                         value={props.value}
                         onKeyDown={props.onKeyDown}

@@ -81,6 +81,7 @@ export default React.memo(function LecturerDashboard() {
 
   const [isStudentHaveTeam, setIsStudentHaveTeam] = React.useState(false);
   const [isStudentHaveTopic, setIsStudentHaveTopic] = React.useState(false);
+  const [isDisplayProgress, setIsDisplayProgress] = React.useState(false);
 
   // -------------------------------------------------------------------------
 
@@ -171,13 +172,18 @@ export default React.memo(function LecturerDashboard() {
     })
       .then(res => {
         console.log(res.data.data);
-        setProgressCheckpoint(
-          (res.data.data.checkpoints.filter(checkpoint => {
-            return [2, 3].includes(checkpoint.status);
-          }).length /
-            res.data.data.checkpoints.length) *
-            100
-        );
+        if (res.data.data.checkpoints.some(c => c.status === 2)) {
+          setIsDisplayProgress(false);
+        } else {
+          setIsDisplayProgress(true);
+          setProgressCheckpoint(
+            (res.data.data.checkpoints.filter(checkpoint => {
+              return [3].includes(checkpoint.status);
+            }).length /
+              res.data.data.checkpoints.length) *
+              100
+          );
+        }
         setCheckpoints(
           res?.data?.data.checkpoints.map(checkpoint => ({
             status: checkpoint.status,
@@ -700,7 +706,8 @@ export default React.memo(function LecturerDashboard() {
 
           {currentSemester.status === 2 &&
             isStudentHaveTeam &&
-            isStudentHaveTopic && (
+            isStudentHaveTopic &&
+            isDisplayProgress && (
               <ProgressChart
                 className="gutter-b"
                 title="Checkpoints progress"

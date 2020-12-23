@@ -1,4 +1,4 @@
-export function transformToGrid(data, currentId, isLecturer) {
+export function transformToGrid(data, currentId, isLecturer, isTopicFailed) {
   const cellProp = {
     className: 'text-nowrap py-2 px-5 text-dark',
   };
@@ -90,13 +90,14 @@ export function transformToGrid(data, currentId, isLecturer) {
         // j = current student
         let isReadOnly = false;
 
-        if (isLecturer) {
-          if (currentId !== firstEvaluator?.id) {
+        if (isTopicFailed) {
+          isReadOnly = true;
+          if (!isLecturer) {
+            isReadOnly = true;
+          } else if (currentId !== firstEvaluator?.id) {
             isReadOnly = true;
           }
         }
-
-        console.log(isReadOnly);
 
         toPush.push(
           {
