@@ -9,10 +9,10 @@ import { useRecoilValue } from 'recoil';
 import roleSelector from 'auth/recoil/selectors/role';
 
 const menusOfAdmin = [
-  {
-    path: '/dashboard',
-    title: 'Dashboard',
-  },
+  // {
+  //   path: '/dashboard',
+  //   title: 'Dashboard',
+  // },
   {
     path: '/semester',
     title: 'Semester',

@@ -55,7 +55,7 @@ const Admin = () => {
           )}
         />
         <Route>
-          <Redirect to="/dashboard" />
+          <Redirect to="/semester" />
         </Route>
       </Switch>
     </Layout>

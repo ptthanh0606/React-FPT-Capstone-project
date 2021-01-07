@@ -12,7 +12,7 @@ const SelectBox = ({ placeholder, options, onChange, value, ...rest }) => {
       value={value}
       {...rest}
     >
-      {options.length &&
+      {options.length > 0 &&
         options.map(option => (
           <option value={option.value} key={option.value}>
             {option.label}
