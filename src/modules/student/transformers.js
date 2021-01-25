@@ -21,6 +21,7 @@ export function mDown(i) {
       i?.code && i?.name
         ? i.code + ' ' + i.name
         : console.log('code and name field not found'),
+    email: i?.email || console.log('email field not found'),
   };
 }
 

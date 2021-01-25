@@ -150,6 +150,7 @@ export function mDown(i) {
         ? '[' + i?.code + '] ' + i?.name
         : console.log('topic code and name field not found'),
     value: i?.id,
+    department: i?.department?.code || '',
   };
 }
 
@@ -159,8 +160,6 @@ export function up(i) {
     if (b.isLeader) return 1;
     return 0;
   });
-
-  console.log(i);
 
   return {
     name: i?.name,

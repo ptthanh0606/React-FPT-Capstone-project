@@ -122,6 +122,7 @@ export const modalConfigs = [
     name: 'team',
     type: 'selectBoxAsync',
     label: 'Student team',
+    team: true,
     smallLabel: 'Student team taking this topic',
     load: (input, callback) => {
       request({
@@ -255,6 +256,7 @@ export const submitterModalConfigs = semId => [
     name: 'team',
     type: 'selectBoxAsync',
     label: 'Student team',
+    team: true,
     smallLabel: 'Student team taking this topic',
     load: (input, callback) => {
       request({

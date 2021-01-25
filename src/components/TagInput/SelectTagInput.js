@@ -1,6 +1,7 @@
 import React from 'react';
 import AsyncSelect from 'react-select/async';
 import makeAnimated from 'react-select/animated';
+import { components } from 'react-select';
 
 const animatedComponents = makeAnimated();
 
@@ -57,6 +58,88 @@ const colourStyles = {
   }),
 };
 
+const Option = props => {
+  console.log(props.data);
+  if (props.selectProps.lecturer === true)
+    return (
+      <div
+        style={{
+          ...props.getStyles('option', props),
+          display: 'flex',
+        }}
+        class
+        ref={(props, props.innerRef)}
+        {...props.innerProps}
+      >
+        <div>{props.label}</div>
+        <div style={{ marginLeft: '10px', color: '#aaa' }}>
+          {props.data.name}
+        </div>
+        <div style={{ marginLeft: '10px', color: '#666' }}>
+          {props.data.email}
+        </div>
+      </div>
+    );
+
+  if (props.selectProps.student === true)
+    return (
+      <div
+        style={{
+          ...props.getStyles('option', props),
+          display: 'flex',
+        }}
+        class
+        ref={(props, props.innerRef)}
+        {...props.innerProps}
+      >
+        <div>{props.label}</div>
+        <div style={{ marginLeft: '10px', color: '#aaa' }}>
+          {props.data.email}
+        </div>
+      </div>
+    );
+
+  if (props.selectProps.department === true)
+    return (
+      <div
+        style={{
+          ...props.getStyles('option', props),
+          display: 'flex',
+        }}
+        class
+        ref={(props, props.innerRef)}
+        {...props.innerProps}
+      >
+        <div>{props.label}</div>
+        <div style={{ marginLeft: '10px', color: '#aaa' }}>
+          {props.data.name}
+        </div>
+      </div>
+    );
+
+  if (props.selectProps.team === true)
+    return (
+      <div
+        style={{
+          ...props.getStyles('option', props),
+          display: 'flex',
+        }}
+        class
+        ref={(props, props.innerRef)}
+        {...props.innerProps}
+      >
+        <div>
+          [{props.data.department}] {props.label}
+        </div>
+        <div style={{ marginLeft: '10px', color: '#aaa' }}>
+          {props.data.members.map(e => '[' + e.code + '] ' + e.name).join(', ')}
+        </div>
+      </div>
+    );
+
+  return <components.Option {...props} />;
+};
+
 // Creatable, async, multi-select
 const SelectTagInput = ({
   onChange = function () {},
@@ -83,7 +166,6 @@ const SelectTagInput = ({
           {label}
         </label>
       )}
-
       <AsyncSelect
         {...rest}
         isMulti={isMulti} // Not sure
@@ -97,7 +179,6 @@ const SelectTagInput = ({
         onChange={onChange}
         name={name}
         styles={colourStyles}
-        components={animatedComponents}
         cacheOptions
         defaultOptions
         loadOptions={load}
@@ -106,6 +187,7 @@ const SelectTagInput = ({
         isClearable={isClearable && !readOnly}
         isSearchable={!readOnly}
         openMenuOnClick={!readOnly}
+        components={{ Option }}
       />
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </>

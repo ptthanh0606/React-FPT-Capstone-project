@@ -24,6 +24,10 @@ export function mDown(i) {
     value: i?.id || console.log('id field not found'),
     label: i?.code || console.log('code field not found'),
     name: i?.name || console.log('name field not found'),
+    email: i?.email || console.log('email field not found'),
+    department:
+      i?.departments?.map(j => j?.code).join(', ') ||
+      (console.log('approvers field not found'), ''),
   };
 }
 export function up(i) {

@@ -79,12 +79,39 @@ export function down(i) {
 }
 
 export function mDown(i) {
+  const teamLeadId =
+    i?.teamDetail?.teamLeadId || console.log('teamLeadId field not found');
+  const teamMembers =
+    i?.teamMembers?.map(j => {
+      const obj = {
+        value: j?.id || console.log('team member id field not found'),
+        email: j?.email || console.log('team member email field not found'),
+        label:
+          j?.code && j?.name
+            ? '[' + j.code + '] ' + j.name
+            : console.log('team member name and code field not found'),
+      };
+
+      if (j?.id === teamLeadId) {
+        obj.isLeader = true;
+      }
+      return obj;
+    }) || (console.log('teamMembers field not found'), []);
+
+  teamMembers.sort((a, b) => {
+    if (a.isLeader) return -1;
+    if (b.isLeader) return 1;
+    return 0;
+  });
+
   return {
     label:
       i?.teamDetail?.id && i?.teamDetail?.name
         ? '[' + i.teamDetail.id + '] ' + i.teamDetail.name
         : console.log('team id and name field not found'),
     value: i?.teamDetail?.id || console.log('team id field not found'),
+    department: i?.teamDetail.department?.code || '',
+    members: i?.teamMembers,
   };
 }
 

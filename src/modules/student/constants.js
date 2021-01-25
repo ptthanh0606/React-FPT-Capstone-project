@@ -156,6 +156,7 @@ export const modalConfigs = [
     type: 'selectBoxAsync',
     label: 'Department',
     smallLabel: 'Departments for this lecturer',
+    department: true,
     load: (input, callback) => {
       request({
         to: endpoints.LIST_DEPARTMENT.url,

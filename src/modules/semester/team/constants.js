@@ -230,6 +230,7 @@ export const createModalConfigs = semId => [
     smallLabel: 'This team belong to which department, cannot update',
     readOnlyWhenEdit: true,
     required: true,
+    department: true,
     load: (input, callback) => {
       request({
         to: endpoints.LIST_DEPARTMENT.url,
@@ -249,6 +250,7 @@ export const createModalConfigs = semId => [
     name: 'members',
     type: 'selectBoxAsync',
     label: 'Student members',
+    student: true,
     smallLabel: 'First added user will be leader',
     load: (input, callback) => {
       request({
@@ -270,6 +272,7 @@ export const createModalConfigs = semId => [
     name: 'topic',
     type: 'selectBoxAsync',
     label: 'Topic taken',
+    topic: true,
     smallLabel: 'Select a topic to assign to this student team',
     load: (input, callback) => {
       request({

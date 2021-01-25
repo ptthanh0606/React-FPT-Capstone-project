@@ -136,6 +136,7 @@ export const modalConfigs = [
     type: 'selectBoxAsync',
     label: 'Approver',
     smallLabel: 'Approvers for this department',
+    lecturer: true,
     load: (input, callback) => {
       request({
         to: endpoints.LIST_LECTURER.url,
