@@ -10,6 +10,7 @@ import { addMinutes, format, subMinutes } from 'date-fns';
 import SelectTagInput from 'components/TagInput/SelectTagInput';
 import {
   mDown as mDownCt,
+  mDown2,
   downCheckpoints as downC,
 } from 'modules/checkpointTemplates/transformers';
 import { useParams } from 'react-router-dom';
@@ -64,6 +65,7 @@ class CouncilEditor extends React.Component {
       <SelectTagInput
         onChange={value => onUpdate(value)}
         isMulti={false}
+        council={true}
         load={(input, callback) => {
           request({
             to: endpoints.LIST_COUNCIL(this.props.semesterId).url,
@@ -76,9 +78,9 @@ class CouncilEditor extends React.Component {
             .then(res => {
               callback(
                 [
-                  { label: 'Topic mentors', value: 0 },
-                  ...res.data.data?.map(mDownCt),
-                ] || [{ label: 'Topic mentors', value: 0 }]
+                  { label: 'Topic mentors', value: 0, members: [] },
+                  ...res.data.data?.map(mDown2),
+                ] || [{ label: 'Topic mentors', value: 0, members: [] }]
               );
             })
             .catch(() => callback([]));

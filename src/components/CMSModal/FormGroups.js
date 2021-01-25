@@ -250,7 +250,7 @@ const FormGroups = ({
                 value={value.name}
                 readOnly
               />
-              <InputGroup.Append>
+              <InputGroup.Append style={{ zIndex: 0 }}>
                 <Button className="form-control" onClick={handleClickFile}>
                   <i class="fas fa-upload pr-0"></i>
                 </Button>

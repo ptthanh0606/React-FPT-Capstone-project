@@ -116,6 +116,7 @@ export function downRead(i) {
       : console.log('submitter field not found'),
     team: {
       value: i?.team?.id,
+      leaderId: i?.team?.leaderId,
       label:
         i?.team?.id && i?.team?.name
           ? '[' + i?.team?.id + '] ' + i?.team?.name

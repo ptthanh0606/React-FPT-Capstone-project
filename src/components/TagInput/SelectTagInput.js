@@ -66,18 +66,16 @@ const Option = props => {
         style={{
           ...props.getStyles('option', props),
           display: 'flex',
+          flexDirection: 'column',
         }}
         class
         ref={(props, props.innerRef)}
         {...props.innerProps}
       >
-        <div>{props.label}</div>
-        <div style={{ marginLeft: '10px', color: '#aaa' }}>
-          {props.data.name}
+        <div>
+          {props.label} <span className="text-muted">[{props.data.name}]</span>
         </div>
-        <div style={{ marginLeft: '10px', color: '#666' }}>
-          {props.data.email}
-        </div>
+        <span className="text-muted">{props.data.email}</span>
       </div>
     );
 
@@ -87,15 +85,14 @@ const Option = props => {
         style={{
           ...props.getStyles('option', props),
           display: 'flex',
+          flexDirection: 'column',
         }}
         class
         ref={(props, props.innerRef)}
         {...props.innerProps}
       >
         <div>{props.label}</div>
-        <div style={{ marginLeft: '10px', color: '#aaa' }}>
-          {props.data.email}
-        </div>
+        <div className="text-muted">{props.data.email}</div>
       </div>
     );
 
@@ -105,15 +102,14 @@ const Option = props => {
         style={{
           ...props.getStyles('option', props),
           display: 'flex',
+          flexDirection: 'column',
         }}
         class
         ref={(props, props.innerRef)}
         {...props.innerProps}
       >
         <div>{props.label}</div>
-        <div style={{ marginLeft: '10px', color: '#aaa' }}>
-          {props.data.name}
-        </div>
+        <div className="text-muted">{props.data.name}</div>
       </div>
     );
 
@@ -123,16 +119,48 @@ const Option = props => {
         style={{
           ...props.getStyles('option', props),
           display: 'flex',
+          flexDirection: 'column',
         }}
         class
         ref={(props, props.innerRef)}
         {...props.innerProps}
       >
-        <div>
-          [{props.data.department}] {props.label}
+        <div className="mb-1">
+          {props.label}{' '}
+          <span className="text-muted">[{props.data.department}]</span>
         </div>
-        <div style={{ marginLeft: '10px', color: '#aaa' }}>
-          {props.data.members.map(e => '[' + e.code + '] ' + e.name).join(', ')}
+        <div className="d-flex flex-wrap">
+          {props.data.members.map(e => (
+            <div className="label label-inline label-warning text-white mr-2 mb-1">
+              {'[' + e.code + '] ' + e.name}
+              <span className="ml-1">
+                {e.id === props.leaderId ? 'leader' : ''}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+
+  if (props.selectProps.council === true)
+    return (
+      <div
+        style={{
+          ...props.getStyles('option', props),
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+        class
+        ref={(props, props.innerRef)}
+        {...props.innerProps}
+      >
+        <div className="mb-1">{props.label} </div>
+        <div className="d-flex flex-wrap">
+          {props.data.members.map(e => (
+            <div className="label label-inline label-warning text-white mr-2 mb-1">
+              {e.code}
+            </div>
+          ))}
         </div>
       </div>
     );

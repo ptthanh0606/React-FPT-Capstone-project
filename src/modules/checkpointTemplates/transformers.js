@@ -59,6 +59,19 @@ export function mDown(i) {
   };
 }
 
+export function mDown2(i) {
+  return {
+    value: i?.id || console.log('id field not found'),
+    label: i?.name || console.log('code field not found'),
+    members:
+      i?.members.map(member => ({
+        code: member.code,
+        name: member.name,
+        email: member.email,
+      })) || console.log('members field not found'),
+  };
+}
+
 export function up(i) {
   return {
     name: i?.name,

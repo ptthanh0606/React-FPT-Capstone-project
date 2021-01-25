@@ -4,7 +4,7 @@ const ToggleSwitch = React.memo(
   ({
     onChange = function () {},
     isActive = false,
-    className = 'switch-success',
+    className = 'switch-primary',
   }) => {
     return (
       <span className={'switch switch-sm ' + className}>
