@@ -201,3 +201,17 @@ select::-ms-expand {
 .modal-xxl {
   min-width: 95vw;
 }
+
+tr.nonSelectable {
+  color: lightcoral !important;
+  cursor: not-allowed !important;
+  td {
+    label {
+      cursor: not-allowed !important;
+    }
+    a.text-dark {
+      color: lightcoral !important;
+      cursor: not-allowed !important;
+    }
+  }
+}

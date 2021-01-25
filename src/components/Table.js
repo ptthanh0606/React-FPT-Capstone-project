@@ -7,13 +7,14 @@ import { getSelectRow, getHandlerTableChange } from '_metronic/_helpers';
 
 import { Pagination } from '_metronic/_partials/controls';
 
-export default React.memo(function Table({
+export default function Table({
   columns,
   data,
   total,
   isLoading,
   selected,
   setSelected,
+  nonSelectable = [],
   page,
   setPage,
   pageSize,
@@ -25,6 +26,7 @@ export default React.memo(function Table({
   defaultSorted,
   pageSizeList,
   selectable = false,
+  clientPagination = false,
 }) {
   const paginationOptions = {
     custom: true,
@@ -33,6 +35,17 @@ export default React.memo(function Table({
     sizePerPage: pageSize,
     page: page,
   };
+
+  const innerSetSelected = React.useCallback(
+    s => {
+      setSelected(
+        nonSelectable?.length > 0
+          ? s.filter(v => !nonSelectable.some(e => e === v))
+          : s
+      );
+    },
+    [nonSelectable, setSelected]
+  );
 
   return (
     <>
@@ -47,7 +60,13 @@ export default React.memo(function Table({
                 bootstrap4
                 remote
                 keyField="id"
-                data={data && Array.isArray(data) ? data : []}
+                data={
+                  data && Array.isArray(data)
+                    ? clientPagination
+                      ? data.slice((page - 1) * pageSize, page * pageSize)
+                      : data
+                    : []
+                }
                 columns={columns}
                 defaultSorted={defaultSorted}
                 onTableChange={getHandlerTableChange(
@@ -58,11 +77,15 @@ export default React.memo(function Table({
                 )}
                 selectRow={
                   selectable
-                    ? getSelectRow({
-                        entities: data,
-                        ids: selected,
-                        setIds: setSelected,
-                      })
+                    ? {
+                        ...getSelectRow({
+                          entities: data,
+                          ids: selected,
+                          setIds: innerSetSelected,
+                        }),
+                        nonSelectableClasses: 'nonSelectable',
+                        nonSelectable,
+                      }
                     : undefined
                 }
                 noDataIndication={() => (
@@ -79,4 +102,4 @@ export default React.memo(function Table({
       </PaginationProvider>
     </>
   );
-});
+}
