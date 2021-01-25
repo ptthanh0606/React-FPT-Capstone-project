@@ -165,6 +165,7 @@ export function transformToGrid(data, currentId, isLecturer, isTopicFailed) {
       id: z.id,
       name: z.name,
       weight: z.weight,
+      marginPass: z.marginPass || 0,
       submitDueDate: z.submitDueDate,
       evaluateDueDate: z.evaluateDueDate,
       council: z.council,

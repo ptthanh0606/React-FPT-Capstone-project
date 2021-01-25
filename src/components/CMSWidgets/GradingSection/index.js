@@ -72,6 +72,7 @@ const GradingSection = ({
   // ---------------------------------------------------------------
 
   React.useEffect(() => {
+    console.log(evaluations);
     setEvals(evaluations);
   }, [evaluations]);
 
@@ -172,6 +173,12 @@ const GradingSection = ({
                         By
                         <span className="ml-1 font-weight-bolder">
                           {i.council.name}
+                        </span>
+                      </div>
+                      <div className="mr-10">
+                        Pass mark
+                        <span className="ml-1 font-weight-bolder">
+                          {i.marginPass}
                         </span>
                       </div>
                     </div>
