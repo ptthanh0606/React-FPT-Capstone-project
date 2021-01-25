@@ -11,6 +11,7 @@ import { mDown as mDownDep } from '../department/transformers';
 export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 
 export const sizePerPageList = [
+  { text: '5', value: 5 },
   { text: '10', value: 10 },
   { text: '20', value: 20 },
   { text: '50', value: 50 },
@@ -96,6 +97,36 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
   }
 
   return columnsTransformer(cols);
+};
+
+export const createBaseColumns = () => {
+  return columnsTransformer([
+    {
+      dataField: 'id',
+      text: 'ID',
+      sort: true,
+    },
+    {
+      dataField: 'code',
+      text: 'Code',
+      sort: true,
+    },
+    {
+      dataField: 'email',
+      text: 'Email',
+      sort: true,
+    },
+    {
+      dataField: 'name',
+      text: 'Name',
+      sort: true,
+    },
+    {
+      dataField: 'department',
+      text: 'Department',
+      sort: true,
+    },
+  ]);
 };
 
 export const modalConfigs = [

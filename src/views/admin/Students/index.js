@@ -17,6 +17,91 @@ import * as transformers from 'modules/student/transformers';
 import * as constants from 'modules/student/constants';
 import Button from 'components/Button';
 
+import Import from './import';
+
+const fakeData = [
+  {
+    id: 1,
+    code: 'SE130491',
+    name: 'Huynh Duc Duy',
+    email: 'duyhdse130491@fpt.edu.vn',
+    status: 0,
+    department: 'SE',
+  },
+  {
+    id: 2,
+    code: 'SE130654',
+    name: 'Tran Tuan Anh',
+    email: 'anhttse130654@fpt.edu.vn',
+    status: 0,
+    department: 'SE',
+  },
+  {
+    id: 3,
+    code: 'SE130404',
+    name: 'Tran Thai Trung',
+    email: 'trungttse130404@fpt.edu.vn',
+    status: 0,
+    department: 'SE',
+  },
+  {
+    id: 4,
+    code: 'SE130359',
+    name: 'Phan Thong Thanh',
+    email: 'thanhptse130359@fpt.edu.vn',
+    status: 0,
+    department: 'SE',
+  },
+  {
+    id: 11,
+    code: '123456',
+    name: 'HELLO1',
+    email: 'hahaha@gmail.com',
+    status: 2,
+    department: 'SE',
+  },
+  {
+    id: 12,
+    code: '1234569',
+    name: 'HELLO2',
+    email: 'hahaha2@gmail.com',
+    status: 2,
+    department: 'SE',
+  },
+  {
+    id: 13,
+    code: '1234568',
+    name: 'HELLO3',
+    email: 'hahaha3@gmail.com',
+    status: 0,
+    department: 'SE',
+  },
+  {
+    id: 17,
+    code: 'SE130001',
+    name: 'PT1',
+    email: 'phanthongthanh0606@gmail.com',
+    status: 0,
+    department: 'SE',
+  },
+  {
+    id: 18,
+    code: 'SE130002',
+    name: 'PT2',
+    email: 'huynhmytram2602@gmail.com',
+    status: 0,
+    department: 'SE',
+  },
+  {
+    id: 19,
+    code: 'SE130003',
+    name: 'PT3',
+    email: 'kunvyo0126@gmail.com',
+    status: 0,
+    department: 'SE',
+  },
+];
+
 export default function Lecturers() {
   const confirm = useConfirm();
   const setMeta = useSetRecoilState(metaAtom);
@@ -35,6 +120,17 @@ export default function Lecturers() {
   );
   const [sortField, setSortField] = React.useState(null);
   const [sortOrder, setSortOrder] = React.useState(null);
+
+  //----------------------------------------------------------------------------
+
+  const [isShowImport, setIsShowImport] = React.useState(false);
+  const [students, setStudents] = React.useState([]);
+  const [selectStudents, setSelectedStudents] = React.useState([]);
+
+  const showImport = React.useCallback(() => setIsShowImport(true));
+  const hideImport = React.useCallback(() => setIsShowImport(false));
+
+  const handleImport = React.useCallback(() => {});
 
   //----------------------------------------------------------------------------
 
@@ -202,6 +298,15 @@ export default function Lecturers() {
           <Button
             type="button"
             className="btn btn-primary font-weight-bold btn-sm"
+            onClick={showImport}
+          >
+            <i className="fas fa-file-import mr-2"></i>
+            Import 2
+          </Button>
+          &nbsp;
+          <Button
+            type="button"
+            className="btn btn-primary font-weight-bold btn-sm"
             onClick={handleClickFile}
             isLoading={isUploading}
           >
@@ -232,6 +337,7 @@ export default function Lecturers() {
     isUploading,
     setMeta,
     showCreateModal,
+    showImport,
   ]);
 
   React.useEffect(() => {
@@ -310,6 +416,12 @@ export default function Lecturers() {
         fieldTemplate={updateFieldTemplate}
         primaryButtonLabel="Update"
         isProcessing={isProcessing}
+      />
+      <Import
+        isShowFlg={isShowImport}
+        onHide={hideImport}
+        onAdd={handleImport}
+        data={fakeData}
       />
     </Card>
   );
