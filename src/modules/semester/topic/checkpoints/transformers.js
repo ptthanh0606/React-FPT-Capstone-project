@@ -92,11 +92,10 @@ export function transformToGrid(data, currentId, isLecturer, isTopicFailed) {
 
         if (isTopicFailed) {
           isReadOnly = true;
-          if (!isLecturer) {
-            isReadOnly = true;
-          } else if (currentId !== firstEvaluator?.id) {
-            isReadOnly = true;
-          }
+        } else if (!isLecturer) {
+          isReadOnly = true;
+        } else if (currentId !== firstEvaluator?.id) {
+          isReadOnly = true;
         }
 
         toPush.push(
