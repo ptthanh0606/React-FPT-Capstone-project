@@ -93,6 +93,7 @@ export const modalConfigs = [
     name: 'department',
     type: 'selectBoxAsync',
     label: 'Department',
+    department: true,
     smallLabel: 'This team belong to which department, cannot update',
     readOnlyWhenEdit: true,
     required: true,
@@ -143,6 +144,7 @@ export const modalConfigs = [
     name: 'submitter',
     type: 'selectBoxAsync',
     label: 'Submitter',
+    lecturer: true,
     smallLabel: 'Owner of this topic',
     load: (input, callback) => {
       request({
@@ -234,6 +236,7 @@ export const submitterModalConfigs = semId => [
     name: 'department',
     type: 'selectBoxAsync',
     label: 'Department',
+    department: true,
     smallLabel: 'This team belong to which department, cannot update',
     readOnlyWhenEdit: true,
     load: (input, callback) => {

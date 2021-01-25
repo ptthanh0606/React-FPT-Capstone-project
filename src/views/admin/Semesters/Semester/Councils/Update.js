@@ -355,6 +355,7 @@ const UpdateCouncil = ({
                 </Form.Label>
                 <Col sm={9}>
                   <SelectTagInput
+                    lecturer={true}
                     onChange={value => setLecturerToAdd(value)}
                     isMulti={false}
                     load={(input, callback) => {
