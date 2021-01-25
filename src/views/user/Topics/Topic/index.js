@@ -762,6 +762,7 @@ const Topic = () => {
   });
 
   React.useEffect(() => {
+    console.log('called');
     if (currentRole === 'student') {
       fetchUserTeam();
     }

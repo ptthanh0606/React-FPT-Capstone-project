@@ -289,6 +289,7 @@ const TopicDetailCard = ({
                       evaluations={evaluations || []}
                       isUserMentor={isUserMentor}
                       isButtonProcessing={isButtonProcessing}
+                      loadData={loadData}
                     />
                   )}
 
