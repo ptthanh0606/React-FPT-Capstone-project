@@ -59,7 +59,7 @@ const colourStyles = {
 };
 
 const Option = props => {
-  console.log(props.data);
+  console.log(props);
   if (props.selectProps.lecturer === true)
     return (
       <div
@@ -127,11 +127,19 @@ const Option = props => {
       >
         <div className="mb-1">
           {props.label}{' '}
-          <span className="text-muted">[{props.data.department}]</span>
+          <span className={props.isSelected ? 'text-white' : 'text-muted'}>
+            [{props.data.department}]
+          </span>
         </div>
-        <div className="d-flex flex-wrap">
+        <div className="d-flex flex-wrap align-items-center">
           {props.data.members.map(e => (
-            <div className="label label-inline label-warning text-white mr-2 mb-1">
+            <div
+              className={`label label-inline ${
+                props.isSelected
+                  ? 'label-warning text-white'
+                  : 'label-secondary text-dark'
+              } mr-2 mb-1`}
+            >
               {'[' + e.code + '] ' + e.name}
               <span className="ml-1">
                 {e.id === props.leaderId ? 'leader' : ''}
@@ -155,9 +163,15 @@ const Option = props => {
         {...props.innerProps}
       >
         <div className="mb-1">{props.label} </div>
-        <div className="d-flex flex-wrap">
+        <div className="d-flex flex-wrap align-items-center">
           {props.data.members.map(e => (
-            <div className="label label-inline label-warning text-white mr-2 mb-1">
+            <div
+              className={`label label-inline ${
+                props.isSelected
+                  ? 'label-warning text-white'
+                  : 'label-secondary text-dark'
+              } mr-2 mb-1`}
+            >
               {e.code}
             </div>
           ))}

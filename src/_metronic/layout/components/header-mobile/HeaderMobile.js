@@ -40,6 +40,17 @@ export function HeaderMobile() {
 
         {/*begin::Toolbar*/}
         <div className="d-flex align-items-center">
+          {/*begin::Topbar Mobile Toggle*/}
+          <button
+            className="btn btn-hover-text-primary p-0 ml-2"
+            id="kt_header_mobile_topbar_toggle"
+          >
+            <span className="svg-icon svg-icon-xl">
+              <SVG src={toAbsoluteUrl('/media/svg/icons/General/User.svg')} />
+            </span>
+          </button>
+          {/*end::Topbar Mobile Toggle*/}
+
           {layoutProps.asideDisplay && (
             <>
               {/*begin::Aside Mobile Toggle*/}
@@ -65,17 +76,6 @@ export function HeaderMobile() {
               {/*end::Header Menu Mobile Toggle*/}
             </>
           )}
-
-          {/*begin::Topbar Mobile Toggle*/}
-          <button
-            className="btn btn-hover-text-primary p-0 ml-2"
-            id="kt_header_mobile_topbar_toggle"
-          >
-            <span className="svg-icon svg-icon-xl">
-              <SVG src={toAbsoluteUrl('/media/svg/icons/General/User.svg')} />
-            </span>
-          </button>
-          {/*end::Topbar Mobile Toggle*/}
         </div>
         {/*end::Toolbar*/}
       </div>
