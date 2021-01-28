@@ -25,7 +25,7 @@ const GroupCard = ({
           ...payload,
           {
             id: el.getAttribute('data-weight-id'),
-            weight: el.getAttribute('data-weight'),
+            weight: el.getAttribute('data-weight') || '0',
           },
         ];
       });
