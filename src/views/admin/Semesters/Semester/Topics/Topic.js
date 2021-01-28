@@ -143,6 +143,7 @@ function transformToGrid(data) {
       evaluateDueDate: z.evaluateDueDate,
       council: z.council,
       status: z.status,
+      marginPass: z.marginPass,
       grid,
     });
   }
@@ -891,7 +892,8 @@ const Topic = ({ semester }) => {
                             {constantsCp.statusTitles[i.status]}
                           </span>
                           <small className="form-text text-muted">
-                            Weight: <b>{i.weight}</b>, Submit at:{' '}
+                            Margin Pass: <b>{i.marginPass}</b>, Weight:{' '}
+                            <b>{i.weight}</b>, Submit at:{' '}
                             <b>
                               {constantsCp.convertDateDown(i.submitDueDate)}
                             </b>
