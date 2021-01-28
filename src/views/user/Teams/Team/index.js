@@ -27,6 +27,7 @@ import useConfirm from 'utils/confirm';
 import Engaging from 'components/CMSWidgets/Engaging';
 
 const Team = () => {
+  const [l, loadData] = React.useReducer(() => ({}));
   const history = useHistory();
   const [currentTeam, setCurrentTeam] = React.useState({});
   const [isTeamMatched, setIsTeamMatched] = React.useState(false);
@@ -163,13 +164,13 @@ const Team = () => {
           toast.success('Updated team info.');
           setShowSetting(false);
           setIsProcessing(false);
-          checkInitAction();
+          loadData();
         })
         .catch(err => {
           handleErrors(err);
         });
     },
-    [checkInitAction, currentSemester.id, currentTeam.id]
+    [currentSemester.id, currentTeam.id]
   );
 
   const handleRefreshJoinCode = React.useCallback(() => {
@@ -182,12 +183,12 @@ const Team = () => {
     })
       .then(() => {
         toast.success('Join code updated.');
-        checkInitAction();
+        loadData();
       })
       .catch(err => {
         handleErrors(err);
       });
-  }, [checkInitAction, currentTeam.id]);
+  }, [currentTeam.id]);
 
   const handleChangeLockTeam = React.useCallback(() => {
     request({
@@ -200,12 +201,12 @@ const Team = () => {
     })
       .then(() => {
         toast.success('Lock state changed!');
-        checkInitAction();
+        loadData();
       })
       .catch(err => {
         handleErrors(err);
       });
-  }, [checkInitAction, currentTeam.id, currentTeam.lock]);
+  }, [currentTeam.id, currentTeam.lock]);
 
   const onLeaveConfirm = React.useCallback(() => {
     request({
@@ -244,12 +245,12 @@ const Team = () => {
     })
       .then(() => {
         toast.success('Welcome to our team!');
-        checkInitAction();
+        loadData();
       })
       .catch(err => {
         handleErrors(err);
       });
-  }, [checkInitAction, currentSemester.id, currentTeam.code, id]);
+  }, [currentSemester.id, currentTeam.code, id]);
 
   const handleJoinTeam = React.useCallback(() => {
     confirm({
@@ -397,7 +398,7 @@ const Team = () => {
 
   React.useEffect(() => {
     checkInitAction();
-  }, [id, checkInitAction]);
+  }, [l, id, checkInitAction]);
 
   // ------------------------------------------------------------------
 
