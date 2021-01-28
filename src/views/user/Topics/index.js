@@ -280,7 +280,7 @@ export default function Topics() {
               onClick={showCreateModal}
             >
               <i className="fas fa-paper-plane mr-2"></i>
-              Submit
+              New topic
             </button>
           ) : null}
         </>

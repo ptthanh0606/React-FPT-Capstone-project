@@ -155,38 +155,7 @@ const Council = () => {
   ]);
 
   React.useEffect(() => {
-    const response = [
-      {
-        id: 0,
-        label: 'Capstone Management System',
-        subLabel: 'FA20SE13',
-      },
-      {
-        id: 0,
-        label: 'Web Checker System',
-        subLabel: 'FA20SE11',
-      },
-      {
-        id: 0,
-        label: 'Example topic name',
-        subLabel: 'FA20SE15',
-      },
-      {
-        id: 0,
-        label: 'Example topic name 2',
-        subLabel: 'FA20SE15',
-      },
-      {
-        id: 0,
-        label: 'Example topic name 3',
-        subLabel: 'FA20SE15',
-      },
-      {
-        id: 0,
-        label: 'Example topic name 4',
-        subLabel: 'FA20SE15',
-      },
-    ];
+    const response = [];
     setIncomingTopic(response);
 
     request({
