@@ -124,13 +124,8 @@ export default function Lecturers() {
   //----------------------------------------------------------------------------
 
   const [isShowImport, setIsShowImport] = React.useState(false);
-  const [students, setStudents] = React.useState([]);
-  const [selectStudents, setSelectedStudents] = React.useState([]);
-
-  const showImport = React.useCallback(() => setIsShowImport(true));
-  const hideImport = React.useCallback(() => setIsShowImport(false));
-
-  const handleImport = React.useCallback(() => {});
+  const [importResult, setImportResult] = React.useState('');
+  const hideImport = React.useCallback(() => setIsShowImport(false), []);
 
   //----------------------------------------------------------------------------
 
@@ -153,6 +148,7 @@ export default function Lecturers() {
 
   const handleFileChange = React.useCallback(event => {
     event.preventDefault();
+    event.persist();
     const data = new FormData();
     data.append(
       'file',
@@ -166,11 +162,16 @@ export default function Lecturers() {
       data: data,
     })
       .then(res => {
-        toast.success('Import student successfully');
+        // toast.success('Import student successfully');
+        setImportResult(res.data?.message);
+        setIsShowImport(true);
         loadData();
       })
       .catch(handleErrors)
-      .finally(() => setIsUploading(false));
+      .finally(() => {
+        setIsUploading(false);
+        event.target.value = '';
+      });
   }, []);
 
   // ---------------------------------------------------------------------------
@@ -298,15 +299,6 @@ export default function Lecturers() {
           <Button
             type="button"
             className="btn btn-primary font-weight-bold btn-sm"
-            onClick={showImport}
-          >
-            <i className="fas fa-file-import mr-2"></i>
-            Import 2
-          </Button>
-          &nbsp;
-          <Button
-            type="button"
-            className="btn btn-primary font-weight-bold btn-sm"
             onClick={handleClickFile}
             isLoading={isUploading}
           >
@@ -337,7 +329,6 @@ export default function Lecturers() {
     isUploading,
     setMeta,
     showCreateModal,
-    showImport,
   ]);
 
   React.useEffect(() => {
@@ -420,8 +411,7 @@ export default function Lecturers() {
       <Import
         isShowFlg={isShowImport}
         onHide={hideImport}
-        onAdd={handleImport}
-        data={fakeData}
+        result={importResult}
       />
     </Card>
   );

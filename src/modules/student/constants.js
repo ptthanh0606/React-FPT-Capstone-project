@@ -8,6 +8,11 @@ import { mDown as mDownDep } from '../department/transformers';
 
 //------------------------------------------------------------------------------
 
+export const statusClasses = ['warning', 'info', 'danger', 'success'];
+export const statusTitles = ['Waiting', 'In-progress', 'Failed', 'Passed'];
+
+//------------------------------------------------------------------------------
+
 export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 
 export const sizePerPageList = [
@@ -56,6 +61,23 @@ export const createColumns = ({ handleEdit, handleRemove }) => {
       sort: true,
       formatter: function (cellContent, row) {
         return cellContent?.label;
+      },
+    },
+    {
+      dataField: 'status',
+      text: 'Status',
+      sort: true,
+      formatter: (cellContent, row) => {
+        const getLabelCssClasses = () => {
+          return `label label-lg label-light-${
+            statusClasses[row.status]
+          } label-inline text-nowrap text-nowrap`;
+        };
+        return (
+          <span className={getLabelCssClasses()}>
+            {statusTitles[row.status]}
+          </span>
+        );
       },
     },
   ];

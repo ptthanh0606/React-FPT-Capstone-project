@@ -64,6 +64,7 @@ export default function ActiveStudents({ semester }) {
   const handleFileChange = React.useCallback(
     event => {
       event.preventDefault();
+      event.persist();
       const data = new FormData();
       data.append(
         'file',
@@ -81,7 +82,10 @@ export default function ActiveStudents({ semester }) {
           loadData();
         })
         .catch(handleErrors)
-        .finally(() => setIsUploading(false));
+        .finally(() => {
+          setIsUploading(false);
+          event.target.value = '';
+        });
     },
     [semId]
   );
