@@ -132,3 +132,16 @@ export function up(i) {
     memberIds: i?.members?.map(j => Number(j.value)),
   };
 }
+
+export function upFromStudent(i) {
+  if (!isNumber(i?.maxMembers)) {
+    throw new Error('Max members must be a safe integer');
+  }
+
+  return {
+    name: i?.name,
+    maxMembers: Number(i?.maxMembers) || undefined,
+    isPublic: !!i?.privacy,
+    isLocked: !!i?.lock,
+  };
+}

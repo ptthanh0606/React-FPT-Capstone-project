@@ -277,8 +277,9 @@ const TopicDetailCard = ({
               />
             )}
 
-            {semesterConstants.statusTitles[currentSemester.status] ===
-              'In-progress' && (
+            {['In-progress', 'Finished'].includes(
+              semesterConstants.statusTitles[currentSemester.status]
+            ) && (
               <>
                 {['Assigned', 'Passed', 'Failed'].includes(
                   constants.statusTitles[status]

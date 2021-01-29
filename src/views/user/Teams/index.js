@@ -181,26 +181,31 @@ export default function Teams() {
   const handleConfirmCreate = React.useCallback(
     fieldData => {
       setIsProcessing(true);
-      request({
-        to: endpoints.CREATE_TEAM.url,
-        method: endpoints.CREATE_TEAM.method,
-        data: {
-          ...fieldData,
-          semesterId: Number(currentSemester.id),
-        },
-        params: {
-          semesterId: currentSemester.id,
-        },
-      })
-        .then(res => {
-          toast.success('Create team successfully');
-          setShowCreateStudentTeamModalFlg(false);
-          loadData();
-          fetchTeams();
-          setFieldTemplate({});
+      try {
+        request({
+          to: endpoints.CREATE_TEAM.url,
+          method: endpoints.CREATE_TEAM.method,
+          data: transformers.upFromStudent({
+            ...fieldData,
+            semesterId: Number(currentSemester.id),
+          }),
+          params: {
+            semesterId: currentSemester.id,
+          },
         })
-        .catch(handleErrors)
-        .finally(() => setIsProcessing(false));
+          .then(res => {
+            toast.success('Create team successfully');
+            setShowCreateStudentTeamModalFlg(false);
+            loadData();
+            fetchTeams();
+            setFieldTemplate({});
+          })
+          .catch(handleErrors)
+          .finally(() => setIsProcessing(false));
+      } catch (error) {
+        handleErrors(error);
+      }
+      setIsProcessing(false);
     },
     [currentSemester.id, fetchTeams]
   );
@@ -248,24 +253,27 @@ export default function Teams() {
   const handleJoinWithCode = React.useCallback(
     data => {
       setIsProcessing(true);
-      request({
-        to: endpoints.JOIN_TEAM(0).url,
-        method: endpoints.JOIN_TEAM(0).method,
-        params: {
-          semesterId: currentSemester.id,
-          teamCode: data.code,
-        },
-      })
-        .then(res => {
-          setJoinTeamModalShowFlg(false);
-          history.push(`/team/${res.data.data}`);
-          toast.success(`Joined!`);
-          setIsProcessing(false);
+      if (data.code) {
+        request({
+          to: endpoints.JOIN_TEAM(0).url,
+          method: endpoints.JOIN_TEAM(0).method,
+          params: {
+            semesterId: currentSemester.id,
+            teamCode: data.code,
+          },
         })
-        .catch(err => {
-          handleErrors(err);
-          setIsProcessing(false);
-        });
+          .then(res => {
+            setJoinTeamModalShowFlg(false);
+            history.push(`/team/${res.data.data}`);
+            toast.success(`Joined!`);
+            setIsProcessing(false);
+          })
+          .catch(err => {
+            handleErrors(err);
+            setIsProcessing(false);
+          });
+      }
+      setIsProcessing(false);
     },
     [currentSemester.id, history]
   );
@@ -390,6 +398,7 @@ export default function Teams() {
               type: 'text',
               name: 'code',
               label: 'Code',
+              required: true,
               smallLabel: 'Enter team code to quickly join a team',
             },
           ]}

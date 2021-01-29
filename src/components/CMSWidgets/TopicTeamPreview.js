@@ -15,7 +15,7 @@ const Checkpoint = ({
   submissionDeadline = '',
   evaluateDate = '',
 }) => {
-  const [statusClass] = React.useState(['', '-primary', '-success', '-danger']);
+  const [statusClass] = React.useState(['', '-primary', '-danger', '-success']);
 
   return (
     <div class="d-flex align-items-center mr-2">
@@ -31,10 +31,10 @@ const Checkpoint = ({
                 <i class={`fas fa-circle-notch text${statusClass[status]}`}></i>
               )) ||
               (status === 2 && (
-                <i class={`fas fa-check text${statusClass[status]}`}></i>
+                <i class={`fas fa-slash text${statusClass[status]}`}></i>
               )) ||
               (status === 3 && (
-                <i class={`fas fa-slash text${statusClass[status]}`}></i>
+                <i class={`fas fa-check text${statusClass[status]}`}></i>
               ))}
           </span>
         </div>

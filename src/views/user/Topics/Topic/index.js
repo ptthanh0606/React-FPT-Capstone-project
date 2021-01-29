@@ -772,11 +772,11 @@ const Topic = () => {
       fetchUserTeam();
     }
     fetchTopic();
-    if (currentSemester.status === 2 && isTeamInTopic) {
+    if ([2, 3].includes(currentSemester.status) && isTeamInTopic) {
       fetchEvaluation();
       fetchReport();
     }
-    if (currentSemester.status === 2 && isUserMentor) {
+    if ([2, 3].includes(currentSemester.status) && isUserMentor) {
       fetchEvaluation();
       fetchReport();
     }

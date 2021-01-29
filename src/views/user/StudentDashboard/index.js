@@ -171,7 +171,6 @@ export default React.memo(function LecturerDashboard() {
       method: GET_EVALUATION(topicId).method,
     })
       .then(res => {
-        console.log(res.data.data);
         if (res.data.data.checkpoints.some(c => c.status === 2)) {
           setIsDisplayProgress(false);
         } else {
@@ -362,27 +361,32 @@ export default React.memo(function LecturerDashboard() {
   const onCreateTeam = React.useCallback(
     fieldData => {
       setIsProcessing(true);
-      request({
-        to: CREATE_TEAM.url,
-        method: CREATE_TEAM.method,
-        data: {
-          ...fieldData,
-          semesterId: Number(currentSemester.id),
-        },
-        params: {
-          semesterId: currentSemester.id,
-        },
-      })
-        .then(res => {
-          toast.success('Create team successfully');
-          setShowCreateTeam(false);
-          setFieldTemplate({});
-          checkUserInTeam();
-          fetchOtherTeams();
-          fetchAllTopics();
+      try {
+        request({
+          to: CREATE_TEAM.url,
+          method: CREATE_TEAM.method,
+          data: TeamTransformer.upFromStudent({
+            ...fieldData,
+            semesterId: Number(currentSemester.id),
+          }),
+          params: {
+            semesterId: currentSemester.id,
+          },
         })
-        .catch(handleErrors)
-        .finally(() => setIsProcessing(false));
+          .then(res => {
+            toast.success('Create team successfully');
+            setShowCreateTeam(false);
+            setFieldTemplate({});
+            checkUserInTeam();
+            fetchOtherTeams();
+            fetchAllTopics();
+          })
+          .catch(handleErrors)
+          .finally(() => setIsProcessing(false));
+      } catch (error) {
+        handleErrors(error);
+        setIsProcessing(false);
+      }
     },
     [checkUserInTeam, currentSemester.id, fetchAllTopics, fetchOtherTeams]
   );
