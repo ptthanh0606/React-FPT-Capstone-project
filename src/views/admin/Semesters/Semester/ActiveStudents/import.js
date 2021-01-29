@@ -12,9 +12,9 @@ const Import = ({ isShowFlg, onHide, result }) => {
     >
       <Modal.Header closeButton>
         <Modal.Title id="example-modal-sizes-title-lg">
-          Import student result
+          Import active student result
           <small className="form-text text-muted">
-            Add students to the system
+            Add active students to the semester
           </small>
         </Modal.Title>
       </Modal.Header>

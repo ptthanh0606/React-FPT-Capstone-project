@@ -64,9 +64,11 @@ const CreateCouncil = ({
   const addLecturerToMembers = React.useCallback(
     e => {
       e.preventDefault();
-      setIsShowAdd(false);
-      setLecturerToAdd();
-      if (!members.some(i => i.value === lecturerToAdd.value))
+      if (!lecturerToAdd) {
+        toast.error('Please select a lecturer to add!');
+        return;
+      }
+      if (!members.some(i => i.value === lecturerToAdd.value)) {
         setMembers(i => {
           let newLecturerToAdd = {
             ...lecturerToAdd,
@@ -79,9 +81,12 @@ const CreateCouncil = ({
               isLeader: true,
             };
           }
+
           return [...i, newLecturerToAdd];
         });
-      else toast.error('Lecturer already added!');
+        setIsShowAdd(false);
+        setLecturerToAdd();
+      } else toast.error('Lecturer already added!');
     },
     [lecturerToAdd, members]
   );

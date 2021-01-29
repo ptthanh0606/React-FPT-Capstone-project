@@ -11,6 +11,7 @@ export function down(i) {
         }
       : (console.log('department field not found'), {}),
     biography: i?.biography || console.log('biography field not found'),
+    status: i?.status ?? console.log('status field not found'),
   };
 }
 

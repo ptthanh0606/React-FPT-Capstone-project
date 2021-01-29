@@ -1,10 +1,15 @@
 import React from 'react';
 import { Card, CardBody } from '_metronic/_partials/controls';
+import { Modal } from 'react-bootstrap';
+import Button from 'components/Button';
 import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
 import Table from 'components/Table';
 import Filters from './Filters';
 import CMSModal from 'components/CMSModal/CMSModal';
+import SelectBox from 'components/SelectBox/SelectBox';
+
+import { saveAs } from 'file-saver';
 
 import useConfirm from 'utils/confirm';
 import toast from 'utils/toast';
@@ -15,92 +20,8 @@ import * as endpoints from 'endpoints';
 
 import * as transformers from 'modules/student/transformers';
 import * as constants from 'modules/student/constants';
-import Button from 'components/Button';
 
 import Import from './import';
-
-const fakeData = [
-  {
-    id: 1,
-    code: 'SE130491',
-    name: 'Huynh Duc Duy',
-    email: 'duyhdse130491@fpt.edu.vn',
-    status: 0,
-    department: 'SE',
-  },
-  {
-    id: 2,
-    code: 'SE130654',
-    name: 'Tran Tuan Anh',
-    email: 'anhttse130654@fpt.edu.vn',
-    status: 0,
-    department: 'SE',
-  },
-  {
-    id: 3,
-    code: 'SE130404',
-    name: 'Tran Thai Trung',
-    email: 'trungttse130404@fpt.edu.vn',
-    status: 0,
-    department: 'SE',
-  },
-  {
-    id: 4,
-    code: 'SE130359',
-    name: 'Phan Thong Thanh',
-    email: 'thanhptse130359@fpt.edu.vn',
-    status: 0,
-    department: 'SE',
-  },
-  {
-    id: 11,
-    code: '123456',
-    name: 'HELLO1',
-    email: 'hahaha@gmail.com',
-    status: 2,
-    department: 'SE',
-  },
-  {
-    id: 12,
-    code: '1234569',
-    name: 'HELLO2',
-    email: 'hahaha2@gmail.com',
-    status: 2,
-    department: 'SE',
-  },
-  {
-    id: 13,
-    code: '1234568',
-    name: 'HELLO3',
-    email: 'hahaha3@gmail.com',
-    status: 0,
-    department: 'SE',
-  },
-  {
-    id: 17,
-    code: 'SE130001',
-    name: 'PT1',
-    email: 'phanthongthanh0606@gmail.com',
-    status: 0,
-    department: 'SE',
-  },
-  {
-    id: 18,
-    code: 'SE130002',
-    name: 'PT2',
-    email: 'huynhmytram2602@gmail.com',
-    status: 0,
-    department: 'SE',
-  },
-  {
-    id: 19,
-    code: 'SE130003',
-    name: 'PT3',
-    email: 'kunvyo0126@gmail.com',
-    status: 0,
-    department: 'SE',
-  },
-];
 
 export default function Lecturers() {
   const confirm = useConfirm();
@@ -124,13 +45,8 @@ export default function Lecturers() {
   //----------------------------------------------------------------------------
 
   const [isShowImport, setIsShowImport] = React.useState(false);
-  const [students, setStudents] = React.useState([]);
-  const [selectStudents, setSelectedStudents] = React.useState([]);
-
-  const showImport = React.useCallback(() => setIsShowImport(true));
-  const hideImport = React.useCallback(() => setIsShowImport(false));
-
-  const handleImport = React.useCallback(() => {});
+  const [importResult, setImportResult] = React.useState('');
+  const hideImport = React.useCallback(() => setIsShowImport(false), []);
 
   //----------------------------------------------------------------------------
 
@@ -153,6 +69,7 @@ export default function Lecturers() {
 
   const handleFileChange = React.useCallback(event => {
     event.preventDefault();
+    event.persist();
     const data = new FormData();
     data.append(
       'file',
@@ -166,11 +83,16 @@ export default function Lecturers() {
       data: data,
     })
       .then(res => {
-        toast.success('Import student successfully');
+        // toast.success('Import student successfully');
+        setImportResult(res.data?.message);
+        setIsShowImport(true);
         loadData();
       })
       .catch(handleErrors)
-      .finally(() => setIsUploading(false));
+      .finally(() => {
+        setIsUploading(false);
+        event.target.value = '';
+      });
   }, []);
 
   // ---------------------------------------------------------------------------
@@ -286,6 +208,52 @@ export default function Lecturers() {
 
   // ---------------------------------------------------------------------------
 
+  const [isShowExportPrompt, setIsShowExportPrompt] = React.useState(false);
+  const [isExporting, setIsExporting] = React.useState(false);
+  const [exportMethod, setExportMethod] = React.useState(1);
+
+  const handleChangeExportMethod = React.useCallback(value => {
+    setExportMethod(value);
+  }, []);
+
+  // ---------------------------------------------------------------------------
+
+  const handleExport = React.useCallback(() => {
+    setIsExporting(true);
+    request({
+      to: endpoints.EXPORT_STUDENT.url,
+      method: endpoints.EXPORT_STUDENT.method,
+      params: {
+        ...debouncedFilters,
+        pageNumber: Number(exportMethod) === 2 ? page : undefined,
+        pageSize: pageSize,
+        sortField: sortField,
+        sortOrder: sortOrder,
+      },
+    })
+      .then(res => {
+        saveAs(
+          res.data,
+          res.headers['content-disposition']
+            ?.split(';')[1]
+            ?.split('=')[1]
+            ?.split('"')[1]
+        );
+      })
+      .catch(handleErrors)
+      .finally(() => {
+        setIsExporting(false);
+      });
+  }, [debouncedFilters, exportMethod, page, pageSize, sortField, sortOrder]);
+
+  const showExportPrompt = React.useCallback(() => {
+    setIsShowExportPrompt(true);
+  }, []);
+
+  const hideExportPrompt = React.useCallback(() => {
+    setIsShowExportPrompt(false);
+  }, []);
+
   React.useEffect(() => {
     setMeta({
       title: 'All students',
@@ -298,10 +266,10 @@ export default function Lecturers() {
           <Button
             type="button"
             className="btn btn-primary font-weight-bold btn-sm"
-            onClick={showImport}
+            onClick={showExportPrompt}
           >
-            <i className="fas fa-file-import mr-2"></i>
-            Import 2
+            <i className="fas fa-file-export mr-2"></i>
+            Export
           </Button>
           &nbsp;
           <Button
@@ -333,11 +301,12 @@ export default function Lecturers() {
     });
   }, [
     handleClickFile,
+    handleExport,
     handleFileChange,
     isUploading,
     setMeta,
     showCreateModal,
-    showImport,
+    showExportPrompt,
   ]);
 
   React.useEffect(() => {
@@ -420,9 +389,45 @@ export default function Lecturers() {
       <Import
         isShowFlg={isShowImport}
         onHide={hideImport}
-        onAdd={handleImport}
-        data={fakeData}
+        result={importResult}
       />
+      <Modal
+        size="xs"
+        show={isShowExportPrompt}
+        aria-labelledby="example-modal-sizes-title-lg"
+        onHide={hideExportPrompt}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="example-modal-sizes-title-lg">
+            Select export method
+            <small className="form-text text-muted">
+              Select the method you want to export
+            </small>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <SelectBox
+            onChange={handleChangeExportMethod}
+            options={[
+              { label: 'All', value: 1 },
+              { label: 'This page', value: 2 },
+            ]}
+            value={exportMethod}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={hideExportPrompt}>
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            onClick={handleExport}
+            isLoading={isExporting}
+          >
+            Export
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Card>
   );
 }
