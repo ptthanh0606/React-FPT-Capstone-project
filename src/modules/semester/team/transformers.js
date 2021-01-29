@@ -117,7 +117,7 @@ export function mDown(i) {
 
 export function up(i) {
   return {
-    name: String(i?.name),
+    name: i?.name,
     maxMembers: Number(i?.maxMembers),
     isPublic: !!i?.privacy,
     isLocked: !!i?.lock,

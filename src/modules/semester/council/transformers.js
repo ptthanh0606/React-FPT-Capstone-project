@@ -44,7 +44,7 @@ export function up(i) {
   });
 
   return {
-    name: String(i?.name),
+    name: i?.name,
     departmentId: Number(i?.department?.value),
     lecturerIds: newMembers?.map(j => Number(j.value)),
     weights: newMembers?.map(j => Number(j.weight)),
