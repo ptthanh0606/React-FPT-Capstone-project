@@ -78,37 +78,42 @@ export default function Topics({ semester }) {
 
   const handleCreate = React.useCallback(
     fieldData => {
-      setIsProcessing(true);
-      const data = new FormData();
-      fieldData = {
-        ...transformers.up(fieldData),
-        semesterId: Number(semId),
-      };
-      for (const i of Object.keys(fieldData)) {
-        if (!fieldData?.[i]) continue;
-        if (fieldData[i]?.constructor?.name !== 'File') {
-          data.append(i, fieldData[i]);
-        } else {
-          data.append(i, fieldData[i], fieldData[i].name);
+      try {
+        setIsProcessing(true);
+        const data = new FormData();
+        fieldData = {
+          ...transformers.up(fieldData),
+          semesterId: Number(semId),
+        };
+        for (const i of Object.keys(fieldData)) {
+          if (!fieldData?.[i]) continue;
+          if (fieldData[i]?.constructor?.name !== 'File') {
+            data.append(i, fieldData[i]);
+          } else {
+            data.append(i, fieldData[i], fieldData[i].name);
+          }
         }
-      }
-      console.log(data);
-      request({
-        to: endpoints.CREATE_TOPIC.url,
-        method: endpoints.CREATE_TOPIC.method,
-        data: data,
-        params: {
-          semesterId: semId,
-        },
-      })
-        .then(res => {
-          toast.success('Create topic successfully');
-          setShowCreate(false);
-          loadData();
-          setFieldTemplate({});
+        console.log(data);
+        request({
+          to: endpoints.CREATE_TOPIC.url,
+          method: endpoints.CREATE_TOPIC.method,
+          data: data,
+          params: {
+            semesterId: semId,
+          },
         })
-        .catch(handleErrors)
-        .finally(() => setIsProcessing(false));
+          .then(res => {
+            toast.success('Create topic successfully');
+            setShowCreate(false);
+            loadData();
+            setFieldTemplate({});
+          })
+          .catch(handleErrors)
+          .finally(() => setIsProcessing(false));
+      } catch (err) {
+        handleErrors(err);
+        setIsProcessing(false);
+      }
     },
     [semId]
   );
@@ -121,35 +126,40 @@ export default function Topics({ semester }) {
 
   const edit = React.useCallback(
     fieldData => {
-      setIsProcessing(true);
+      try {
+        setIsProcessing(true);
 
-      fieldData = transformers.up(fieldData);
+        fieldData = transformers.up(fieldData);
 
-      const data = new FormData();
-      for (const i of Object.keys(fieldData)) {
-        if (!fieldData?.[i]) continue;
-        if (fieldData[i]?.constructor?.name !== 'File') {
-          data.append(i, fieldData[i]);
-        } else {
-          data.append(i, fieldData[i], fieldData[i].name);
+        const data = new FormData();
+        for (const i of Object.keys(fieldData)) {
+          if (!fieldData?.[i]) continue;
+          if (fieldData[i]?.constructor?.name !== 'File') {
+            data.append(i, fieldData[i]);
+          } else {
+            data.append(i, fieldData[i], fieldData[i].name);
+          }
         }
-      }
 
-      request({
-        to: endpoints.UPDATE_TOPIC(editId).url,
-        method: endpoints.UPDATE_TOPIC(editId).method,
-        params: {
-          topicId: editId,
-        },
-        data: data,
-      })
-        .then(res => {
-          toast.success('Update topic successfully');
-          setShowUpdate(false);
-          loadData();
+        request({
+          to: endpoints.UPDATE_TOPIC(editId).url,
+          method: endpoints.UPDATE_TOPIC(editId).method,
+          params: {
+            topicId: editId,
+          },
+          data: data,
         })
-        .catch(handleErrors)
-        .finally(() => setIsProcessing(false));
+          .then(res => {
+            toast.success('Update topic successfully');
+            setShowUpdate(false);
+            loadData();
+          })
+          .catch(handleErrors)
+          .finally(() => setIsProcessing(false));
+      } catch (err) {
+        handleErrors(err);
+        setIsProcessing(false);
+      }
     },
     [editId]
   );

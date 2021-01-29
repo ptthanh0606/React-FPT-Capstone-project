@@ -43,19 +43,24 @@ export default React.memo(function NearestSemester() {
 
   const handleCreate = React.useCallback(fieldData => {
     setIsProcessing(true);
-    request({
-      to: endpoints.CREATE_SEMESTER.url,
-      method: endpoints.CREATE_SEMESTER.method,
-      data: transformers.up(fieldData),
-    })
-      .then(res => {
-        toast.success('Create semester successfully');
-        setShowCreate(false);
-        loadData();
-        setFieldTemplate({});
+    try {
+      request({
+        to: endpoints.CREATE_SEMESTER.url,
+        method: endpoints.CREATE_SEMESTER.method,
+        data: transformers.up(fieldData),
       })
-      .catch(handleErrors)
-      .finally(() => setIsProcessing(false));
+        .then(res => {
+          toast.success('Create semester successfully');
+          setShowCreate(false);
+          loadData();
+          setFieldTemplate({});
+        })
+        .catch(handleErrors)
+        .finally(() => setIsProcessing(false));
+    } catch (err) {
+      handleErrors(err);
+      setIsProcessing(false);
+    }
   }, []);
 
   // ---------------------------------------------------------------------------

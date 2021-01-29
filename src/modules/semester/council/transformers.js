@@ -45,7 +45,7 @@ export function up(i) {
 
   return {
     name: i?.name,
-    departmentId: Number(i?.department?.value),
+    departmentId: Number(i?.department?.value) || undefined,
     lecturerIds: newMembers?.map(j => Number(j.value)),
     weights: newMembers?.map(j => Number(j.weight)),
   };

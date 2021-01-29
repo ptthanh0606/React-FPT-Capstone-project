@@ -1,3 +1,5 @@
+import isNumber from 'utils/isNumber';
+
 export function down(i) {
   const teamLeadId =
     i?.teamDetail?.teamLeadId || console.log('teamLeadId field not found');
@@ -116,13 +118,17 @@ export function mDown(i) {
 }
 
 export function up(i) {
+  if (!isNumber(i?.maxMembers)) {
+    throw new Error('Max members must be a safe integer');
+  }
+
   return {
     name: i?.name,
-    maxMembers: Number(i?.maxMembers),
+    maxMembers: Number(i?.maxMembers) || undefined,
     isPublic: !!i?.privacy,
     isLocked: !!i?.lock,
-    departmentId: Number(i?.department?.value),
-    topicId: Number(i?.topic?.value),
+    departmentId: Number(i?.department?.value) || undefined,
+    topicId: Number(i?.topic?.value) || undefined,
     memberIds: i?.members?.map(j => Number(j.value)),
   };
 }

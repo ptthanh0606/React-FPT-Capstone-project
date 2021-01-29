@@ -1,3 +1,5 @@
+import isNumber from 'utils/isNumber';
+
 export function downList(i) {
   return {
     abstract: i?.abstract || console.log('abstract field not found'),
@@ -156,11 +158,17 @@ export function mDown(i) {
 }
 
 export function up(i) {
-  const mentorMembers = [...(i?.mentorMembers || [])].sort(function (a, b) {
-    if (a.isLeader) return -1;
-    if (b.isLeader) return 1;
-    return 0;
-  });
+  // const mentorMembers = [...(i?.mentorMembers || [])].sort(function (a, b) {
+  //   if (a.isLeader) return -1;
+  //   if (b.isLeader) return 1;
+  //   return 0;
+  // });
+
+  if (!isNumber(i?.maxMembers)) {
+    throw new Error('Max members must be a safe integer');
+  }
+  if (!isNumber(i?.minMembers))
+    throw new Error('Min members must be a safe integer');
 
   return {
     name: i?.name,
@@ -173,10 +181,10 @@ export function up(i) {
     departmentId: i?.department?.value && Number(i?.department?.value),
     submitByStudent: !!i?.submitByStudent,
     teamId: i?.team?.value && Number(i?.team?.value),
-    mentorMembers: mentorMembers?.map(j => ({
-      id: Number(j.value),
-      weight: Number(j.weight),
-    })),
+    // mentorMembers: mentorMembers?.map(j => ({
+    //   id: Number(j.value),
+    //   weight: Number(j.weight),
+    // })),
     keywords: i?.keywords,
     attachment:
       i?.attachment?.constructor?.name === 'File' ? i?.attachment : undefined,

@@ -69,23 +69,28 @@ export default function Teams({ semester }) {
 
   const handleCreate = React.useCallback(
     fieldData => {
-      setIsProcessing(true);
-      request({
-        to: endpoints.CREATE_TEAM.url,
-        method: endpoints.CREATE_TEAM.method,
-        data: { ...transformers.up(fieldData), semesterId: Number(semId) },
-        params: {
-          semesterId: semId,
-        },
-      })
-        .then(res => {
-          toast.success('Create team successfully');
-          setShowCreate(false);
-          loadData();
-          setFieldTemplate({});
+      try {
+        setIsProcessing(true);
+        request({
+          to: endpoints.CREATE_TEAM.url,
+          method: endpoints.CREATE_TEAM.method,
+          data: { ...transformers.up(fieldData), semesterId: Number(semId) },
+          params: {
+            semesterId: semId,
+          },
         })
-        .catch(handleErrors)
-        .finally(() => setIsProcessing(false));
+          .then(res => {
+            toast.success('Create team successfully');
+            setShowCreate(false);
+            loadData();
+            setFieldTemplate({});
+          })
+          .catch(handleErrors)
+          .finally(() => setIsProcessing(false));
+      } catch (err) {
+        handleErrors(err);
+        setIsProcessing(false);
+      }
     },
     [semId]
   );
@@ -98,23 +103,28 @@ export default function Teams({ semester }) {
 
   const edit = React.useCallback(
     fieldData => {
-      setIsProcessing(true);
-      request({
-        to: endpoints.UPDATE_TEAM(editId).url,
-        method: endpoints.UPDATE_TEAM(editId).method,
-        params: {
-          teamId: editId,
-          semesterId: semId,
-        },
-        data: { ...transformers.up(fieldData), teamId: editId },
-      })
-        .then(res => {
-          toast.success('Update team successfully');
-          setShowUpdate(false);
-          loadData();
+      try {
+        setIsProcessing(true);
+        request({
+          to: endpoints.UPDATE_TEAM(editId).url,
+          method: endpoints.UPDATE_TEAM(editId).method,
+          params: {
+            teamId: editId,
+            semesterId: semId,
+          },
+          data: { ...transformers.up(fieldData), teamId: editId },
         })
-        .catch(handleErrors)
-        .finally(() => setIsProcessing(false));
+          .then(res => {
+            toast.success('Update team successfully');
+            setShowUpdate(false);
+            loadData();
+          })
+          .catch(handleErrors)
+          .finally(() => setIsProcessing(false));
+      } catch (err) {
+        handleErrors(err);
+        setIsProcessing(false);
+      }
     },
     [editId, semId]
   );

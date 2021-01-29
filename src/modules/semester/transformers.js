@@ -1,4 +1,5 @@
 import { addMinutes, format, subMinutes } from 'date-fns';
+import isNumber from 'utils/isNumber';
 
 export function convertDateDown(dateInput) {
   try {
@@ -49,6 +50,12 @@ export function down(i) {
 }
 
 export function up(i) {
+  if (!isNumber(i?.maxApplication)) {
+    throw new Error('Max application must be a safe integer');
+  }
+  if (!isNumber(i?.marginPass, true))
+    throw new Error('Margin pass must be a safe float');
+
   return {
     name: i?.name,
     maxTopicApplication: Number(i?.maxApplication),
