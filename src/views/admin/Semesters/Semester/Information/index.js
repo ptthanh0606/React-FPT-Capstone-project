@@ -71,27 +71,32 @@ const Information = ({ loadData = function () {} }) => {
       toast.warn('Semester is finished, cannot make any further changes.');
       return;
     }
-    setIsLoading(true);
-    request({
-      to: endpoints.UPDATE_SEMESTER(id).url,
-      method: endpoints.UPDATE_SEMESTER(id).method,
-      data: up({
-        name,
-        maxApplication,
-        matchingDate,
-        inprogressDate,
-        finishedDate,
-        marginPass,
-      }),
-    })
-      .then(res => {
-        toast.success('Update successfully!');
-        loadData();
+    try {
+      setIsLoading(true);
+      request({
+        to: endpoints.UPDATE_SEMESTER(id).url,
+        method: endpoints.UPDATE_SEMESTER(id).method,
+        data: up({
+          name,
+          maxApplication,
+          matchingDate,
+          inprogressDate,
+          finishedDate,
+          marginPass,
+        }),
       })
-      .catch(handleErrors)
-      .finally(() => {
-        setIsLoading(false);
-      });
+        .then(res => {
+          toast.success('Update successfully!');
+          loadData();
+        })
+        .catch(handleErrors)
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } catch (err) {
+      handleErrors(err);
+      setIsLoading(false);
+    }
   }, [
     finishedDate,
     id,

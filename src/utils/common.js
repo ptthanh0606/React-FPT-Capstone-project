@@ -18,6 +18,8 @@ export function handleErrors(err) {
         toast.error('Unauthorized');
       } else if (err?.response?.status === 403) {
         toast.error('Access denied');
+      } else if (err instanceof Error) {
+        toast.error(err.message);
       } else {
         toast.error('Internal Server Error');
         console.log(err);

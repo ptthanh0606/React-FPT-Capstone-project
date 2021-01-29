@@ -252,37 +252,41 @@ const Topic = ({ semester }) => {
 
   const handleUpdate = React.useCallback(
     e => {
-      e.preventDefault();
-      if (semester.status === 3) {
-        toast.warn('Semester is finished, cannot make any further changes.');
-        return;
-      }
-      const data2 = {
-        ...transformers.up(data),
-        semesterId: Number(semId),
-      };
-
-      const formData = new FormData();
-
-      for (const i of Object.keys(data2)) {
-        if (!data2?.[i]) continue;
-        if (data2[i]?.constructor?.name !== 'File') {
-          formData.append(i, data2[i]);
-        } else {
-          formData.append(i, data2[i], data2[i].name);
+      try {
+        e.preventDefault();
+        if (semester.status === 3) {
+          toast.warn('Semester is finished, cannot make any further changes.');
+          return;
         }
+        const data2 = {
+          ...transformers.up(data),
+          semesterId: Number(semId),
+        };
+
+        const formData = new FormData();
+
+        for (const i of Object.keys(data2)) {
+          if (!data2?.[i]) continue;
+          if (data2[i]?.constructor?.name !== 'File') {
+            formData.append(i, data2[i]);
+          } else {
+            formData.append(i, data2[i], data2[i].name);
+          }
+        }
+        request({
+          to: endpoints.UPDATE_TOPIC(topicId).url,
+          method: endpoints.UPDATE_TOPIC(topicId).method,
+          params: {
+            topicId,
+          },
+          data: formData,
+        })
+          .then(loadData)
+          .then(() => toast.success('Save topic successfully!'))
+          .catch(handleErrors);
+      } catch (err) {
+        handleErrors(err);
       }
-      request({
-        to: endpoints.UPDATE_TOPIC(topicId).url,
-        method: endpoints.UPDATE_TOPIC(topicId).method,
-        params: {
-          topicId,
-        },
-        data: formData,
-      })
-        .then(loadData)
-        .then(() => toast.success('Save topic successfully!'))
-        .catch(handleErrors);
     },
     [data, semId, semester.status, topicId]
   );

@@ -364,35 +364,40 @@ const Topic = () => {
 
   const handleConfirmSettingModal = React.useCallback(
     fieldData => {
-      setIsProcessing(true);
+      try {
+        setIsProcessing(true);
 
-      fieldData = transformers.up(fieldData);
+        fieldData = transformers.up(fieldData);
 
-      const data = new FormData();
-      for (const i of Object.keys(fieldData)) {
-        if (!fieldData?.[i]) continue;
-        if (fieldData[i]?.constructor?.name !== 'File') {
-          data.append(i, fieldData[i]);
-        } else {
-          data.append(i, fieldData[i], fieldData[i].name);
+        const data = new FormData();
+        for (const i of Object.keys(fieldData)) {
+          if (!fieldData?.[i]) continue;
+          if (fieldData[i]?.constructor?.name !== 'File') {
+            data.append(i, fieldData[i]);
+          } else {
+            data.append(i, fieldData[i], fieldData[i].name);
+          }
         }
-      }
 
-      request({
-        to: endpoints.UPDATE_TOPIC(id).url,
-        method: endpoints.UPDATE_TOPIC(id).method,
-        params: {
-          topicId: id,
-        },
-        data: data,
-      })
-        .then(res => {
-          toast.success('Update topic successfully');
-          setShowUpdate(false);
-          fetchTopic();
+        request({
+          to: endpoints.UPDATE_TOPIC(id).url,
+          method: endpoints.UPDATE_TOPIC(id).method,
+          params: {
+            topicId: id,
+          },
+          data: data,
         })
-        .catch(handleErrors)
-        .finally(() => setIsProcessing(false));
+          .then(res => {
+            toast.success('Update topic successfully');
+            setShowUpdate(false);
+            fetchTopic();
+          })
+          .catch(handleErrors)
+          .finally(() => setIsProcessing(false));
+      } catch (err) {
+        handleErrors(err);
+        setIsProcessing(false);
+      }
     },
     [fetchTopic, id]
   );
