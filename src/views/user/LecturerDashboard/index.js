@@ -67,7 +67,6 @@ export default React.memo(function LecturerDashboard() {
 
   const fetchTimelines = React.useCallback(
     depId => {
-      console.log(depId);
       setIsProcessing(true);
       request({
         to: LIST_TIMELINES(currentSemester.id).url,
@@ -77,9 +76,7 @@ export default React.memo(function LecturerDashboard() {
         },
       })
         .then(res => {
-          console.log(res.data.data);
           if (res.data.data) {
-            console.log(timelineTransformer.downLecturer(res.data.data));
             setFlowTimelines(timelineTransformer.downLecturer(res.data.data));
             setIsProcessing(false);
           }
@@ -281,23 +278,22 @@ export default React.memo(function LecturerDashboard() {
       method: READ_LECTURER(currentUser.id).method,
     })
       .then(res => {
-        console.log(res.data.data);
         const lecturerApproverDepIDs = res.data.data.departments
           .filter(dep => dep.isApprover === true)
           .map(dep => dep.id);
         lecturerApproverDepIDs.map(id => fetchWaitingTopics(id));
-        setCurrentLecturerDept(
-          res.data.data.departments.map(dep => ({
-            label: dep.name,
-            value: dep.id,
-          }))
-        );
+        if (res.data.data.departments.length) {
+          setCurrentLecturerDept(
+            res.data.data.departments?.map(dep => ({
+              label: dep.name,
+              value: dep.id,
+            }))
+          );
+        }
         setSelectedDep(res.data.data.departments[0].id);
         fetchTimelines(res.data.data.departments[0].id);
       })
-      .catch(err => {
-        handleErrors(err);
-      });
+      .catch(err => {});
   }, [currentUser.id, fetchTimelines, fetchWaitingTopics]);
 
   const fetchAnouncements = React.useCallback(() => {

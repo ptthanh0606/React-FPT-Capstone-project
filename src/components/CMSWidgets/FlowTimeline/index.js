@@ -3,16 +3,7 @@ import TimelineItem from './FlowItem';
 
 const FlowTimeline = ({
   className = '',
-  items = [
-    {
-      date: '12 May',
-      content: (
-        <div className="font-size-lg timeline-content pl-3">
-          Start in-capstone phase
-        </div>
-      ),
-    },
-  ],
+  items = [],
   semesterName = '',
   toolBar = <></>,
   ...props

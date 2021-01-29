@@ -53,10 +53,10 @@ const DropdownPopover = ({
         <ul className="navi navi-hover">
           <li className="navi-header pb-1">
             <span className="text-primary text-uppercase font-weight-bold font-size-sm">
-              Select filter
+              {(!items.length && 'No department available') || 'Select filter'}
             </span>
           </li>
-          {items.length &&
+          {(items.length &&
             items.map(item => (
               <li className="navi-item" key={item.value}>
                 <a
@@ -69,7 +69,8 @@ const DropdownPopover = ({
                   <span className="navi-text">{item.label}</span>
                 </a>
               </li>
-            ))}
+            ))) ||
+            []}
         </ul>
       </Dropdown.Menu>
     </Dropdown>
