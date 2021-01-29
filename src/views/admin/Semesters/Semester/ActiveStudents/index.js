@@ -269,6 +269,7 @@ export default function ActiveStudents({ semester }) {
         sortField: sortField,
         sortOrder: sortOrder,
       },
+      responseType: 'blob',
     })
       .then(res => {
         saveAs(

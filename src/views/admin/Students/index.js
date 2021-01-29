@@ -230,6 +230,7 @@ export default function Lecturers() {
         sortField: sortField,
         sortOrder: sortOrder,
       },
+      responseType: 'blob',
     })
       .then(res => {
         saveAs(
