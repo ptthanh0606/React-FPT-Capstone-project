@@ -8,6 +8,8 @@ import {
 import Table from 'components/Table';
 import Filters from './Filters';
 import { useParams } from 'react-router-dom';
+import { saveAs } from 'file-saver';
+import Import from './import';
 
 import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
@@ -22,7 +24,9 @@ import * as endpoints from 'endpoints';
 import * as transformers from 'modules/semester/activeStudent/transformers';
 import * as constants from 'modules/semester/activeStudent/constants';
 import AddActiveStudentModal from './AddActiveStudentModal';
+import { Modal } from 'react-bootstrap';
 import Button from 'components/Button';
+import SelectBox from 'components/SelectBox/SelectBox';
 
 export const statusClasses = ['danger', 'info', 'success', ''];
 export const statusTitles = ['Not in a team', 'Assigning', 'Assigned', ''];
@@ -78,7 +82,9 @@ export default function ActiveStudents({ semester }) {
         data: data,
       })
         .then(res => {
-          toast.success('Import students successfully');
+          // toast.success('Import student successfully');
+          setImportResult(res.data?.message);
+          setIsShowImport(true);
           loadData();
         })
         .catch(handleErrors)
@@ -89,6 +95,7 @@ export default function ActiveStudents({ semester }) {
     },
     [semId]
   );
+
   // ---------------------------------------------------------------------------
 
   const showCreateModal = React.useCallback(() => {
@@ -234,6 +241,65 @@ export default function ActiveStudents({ semester }) {
       source.cancel();
     };
   }, [l, debouncedFilters, page, pageSize, sortField, sortOrder, semId]);
+  // ---------------------------------------------------------------------------
+
+  const [isShowImport, setIsShowImport] = React.useState(false);
+  const [importResult, setImportResult] = React.useState('');
+  const hideImport = React.useCallback(() => setIsShowImport(false), []);
+
+  const [isShowExportPrompt, setIsShowExportPrompt] = React.useState(false);
+  const [isExporting, setIsExporting] = React.useState(false);
+  const [exportMethod, setExportMethod] = React.useState(1);
+
+  const handleChangeExportMethod = React.useCallback(value => {
+    setExportMethod(value);
+  }, []);
+
+  // ---------------------------------------------------------------------------
+
+  const handleExport = React.useCallback(() => {
+    setIsExporting(true);
+    request({
+      to: endpoints.EXPORT_ACTIVE_STUDENTS(semId).url,
+      method: endpoints.EXPORT_ACTIVE_STUDENTS(semId).method,
+      params: {
+        ...debouncedFilters,
+        pageNumber: Number(exportMethod) === 2 ? page : undefined,
+        pageSize: pageSize,
+        sortField: sortField,
+        sortOrder: sortOrder,
+      },
+    })
+      .then(res => {
+        saveAs(
+          res.data,
+          res.headers['content-disposition']
+            ?.split(';')[1]
+            ?.split('=')[1]
+            ?.split('"')[1]
+        );
+      })
+      .catch(handleErrors)
+      .finally(() => {
+        setIsExporting(false);
+      });
+  }, [
+    debouncedFilters,
+    exportMethod,
+    page,
+    pageSize,
+    semId,
+    sortField,
+    sortOrder,
+  ]);
+
+  const showExportPrompt = React.useCallback(() => {
+    setIsShowExportPrompt(true);
+  }, []);
+
+  const hideExportPrompt = React.useCallback(() => {
+    setIsShowExportPrompt(false);
+  }, []);
 
   React.useEffect(() => {
     setMeta(meta => ({
@@ -264,6 +330,15 @@ export default function ActiveStudents({ semester }) {
             Remove ({(Array.isArray(selected) && selected.length) || 0})
           </button>
           &nbsp; */}
+          <Button
+            type="button"
+            className="btn btn-primary font-weight-bold"
+            onClick={showExportPrompt}
+          >
+            <i className="fas fa-file-export mr-2"></i>
+            Export
+          </Button>
+          &nbsp;
           <Button
             type="button"
             className="btn btn-primary font-weight-bold"
@@ -316,6 +391,48 @@ export default function ActiveStudents({ semester }) {
         onHide={hideCreateModal}
         onAdd={handleCreate}
       />
+      <Import
+        isShowFlg={isShowImport}
+        onHide={hideImport}
+        result={importResult}
+      />
+      <Modal
+        size="xs"
+        show={isShowExportPrompt}
+        aria-labelledby="example-modal-sizes-title-lg"
+        onHide={hideExportPrompt}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="example-modal-sizes-title-lg">
+            Select export method
+            <small className="form-text text-muted">
+              Select the method you want to export
+            </small>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <SelectBox
+            onChange={handleChangeExportMethod}
+            options={[
+              { label: 'All', value: 1 },
+              { label: 'This page', value: 2 },
+            ]}
+            value={exportMethod}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={hideExportPrompt}>
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            onClick={handleExport}
+            isLoading={isExporting}
+          >
+            Export
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Card>
   );
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardBody } from '_metronic/_partials/controls';
-import { Col, Form, Modal, Row } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import Button from 'components/Button';
 import metaAtom from 'store/meta';
 import { useSetRecoilState } from 'recoil';
@@ -268,7 +268,7 @@ export default function Lecturers() {
             className="btn btn-primary font-weight-bold btn-sm"
             onClick={showExportPrompt}
           >
-            <i className="fas fa-file-import mr-2"></i>
+            <i className="fas fa-file-export mr-2"></i>
             Export
           </Button>
           &nbsp;
@@ -416,6 +416,9 @@ export default function Lecturers() {
           />
         </Modal.Body>
         <Modal.Footer>
+          <Button variant="secondary" onClick={hideExportPrompt}>
+            Close
+          </Button>
           <Button
             variant="primary"
             onClick={handleExport}
