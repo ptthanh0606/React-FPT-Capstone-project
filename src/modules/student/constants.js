@@ -16,7 +16,6 @@ export const statusTitles = ['Waiting', 'In-progress', 'Failed', 'Passed'];
 export const defaultSorted = [{ dataField: 'id', order: 'desc' }];
 
 export const sizePerPageList = [
-  { text: '5', value: 5 },
   { text: '10', value: 10 },
   { text: '20', value: 20 },
   { text: '50', value: 50 },

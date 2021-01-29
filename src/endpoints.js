@@ -198,6 +198,11 @@ export const IMPORT_ACTIVE_STUDENTS = id => ({
   method: METHOD.POST,
 });
 
+export const EXPORT_ACTIVE_STUDENTS = id => ({
+  url: READ_SEMESTER(id).url + '/students/export',
+  method: METHOD.POST,
+});
+
 export const CREATE_ACTIVE_STUDENTS = id => ({
   url: LIST_ACTIVE_STUDENTS(id).url,
   method: METHOD.POST,
@@ -281,6 +286,11 @@ export const DELETE_STUDENT = id => ({
 
 export const IMPORT_STUDENT = {
   url: LIST_STUDENT.url + '/import',
+  method: METHOD.POST,
+};
+
+export const EXPORT_STUDENT = {
+  url: LIST_STUDENT.url + '/export',
   method: METHOD.POST,
 };
 
