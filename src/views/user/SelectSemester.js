@@ -82,7 +82,7 @@ export default function SelectSemester() {
   }, [setMeta]);
 
   return (
-    <div className="bg-white" style={{ height: '100vh' }}>
+    <div className="bg-white">
       <div className="container-fluid d-flex justify-content-between align-items-center mt-10">
         <div className="d-flex flex-column">
           <span className="font-weight-bolder font-size-h1">
