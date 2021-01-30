@@ -233,11 +233,8 @@ const Topic = () => {
             currentRole === 'lecturer',
             isFailed
           );
-          if (evals.some(e => e.status === 2)) {
-            setEvals(evals.filter(e => e.status === 2));
-          } else {
-            setEvals(evals);
-          }
+
+          setEvals(evals);
         })
         .catch(err => {
           handleErrors(err);
