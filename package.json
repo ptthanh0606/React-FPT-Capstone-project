@@ -36,7 +36,7 @@
     "jest-enzyme": "^7.1.2",
     "json2mq": "^0.2.0",
     "lint-staged": "^10.5.1",
-    "markdown-it": "^12.0.2",
+    "markdown-it": "^12.0.4",
     "material-ui-popup-state": "^1.7.0",
     "node-sass": "^4.14",
     "object-path": "^0.11.5",
